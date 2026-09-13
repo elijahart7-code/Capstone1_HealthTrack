@@ -819,6 +819,11 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
       }
         .ht-health-assessment {
           width: 100%;
+          padding: 20px;
+          background: white;
+          border: 1px solid #dfeae4;
+          border-radius: 11px;
+          box-sizing: border-box;
         }
 
         .ht-health-assessment-header {
