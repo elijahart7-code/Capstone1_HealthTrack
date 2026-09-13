@@ -43,7 +43,7 @@
         min-height: 100vh;
         font-family: var(--font-sans);
         color: var(--color-ink);
-        background: #f2faf6;
+        background: ##f2fAf6;
         background-attachment: fixed;
     }
 
@@ -903,7 +903,7 @@
         display: flex;
         justify-content: center;
         padding: 0 1.5rem;
-        background: #F2FAF6;
+        background: #e5f2e9;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
