@@ -12,7 +12,7 @@ export async function getDashboard(_req, res) {
     SELECT COUNT(*)::int AS count FROM patients WHERE user_id IS NULL
   `;
 
-  const recentPatients = await sql`SELECT * FROM patients ORDER BY created_at DESC LIMIT 8`;
+  const recentPatients = await sql`SELECT * FROM patients ORDER BY created_at DESC`;
 
   return res.status(200).json({
     message: "Dashboard retrieved.",

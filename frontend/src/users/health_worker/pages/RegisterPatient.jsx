@@ -77,22 +77,22 @@ export function RegisterPatient({ loadData, onRegistered }) {
 
       {error && <div className="ht-login-alert ht-login-alert-error">{error}</div>}
 
-      <form onSubmit={handleSubmit} className="grid gap-4">
-        <div className="ht-panel">
+      <form onSubmit={handleSubmit} className="ht-register-form">
+        <div className="ht-panel ht-form-panel">
           <h2>
             <span className="ht-section-icon" aria-hidden="true">
               <User size={16} strokeWidth={1.8} />
             </span>
             Personal Information
           </h2>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Full Name" required className="sm:col-span-1">
+          <div className="ht-form-grid ht-form-grid-3">
+            <Field label="Full Name" required>
               <Input value={form.full_name} onChange={(e) => set("full_name", e.target.value)} placeholder="Enter full name" />
             </Field>
 
             <Field label="Sex" required>
               <Select value={form.sex} onChange={(e) => set("sex", e.target.value)}>
-                <option value="">-- Select --</option>
+                <option value="">Enter sex</option>
                 <option value="female">Female</option>
                 <option value="male">Male</option>
               </Select>
@@ -102,9 +102,13 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input type="date" value={form.birthdate} onChange={(e) => set("birthdate", e.target.value)} max={new Date().toISOString().slice(0, 10)} />
             </Field>
 
+            <Field label="Age" required>
+              <Input value={""} onChange={() => {}} placeholder="Enter age" />
+            </Field>
+
             <Field label="Civil Status" required>
               <Select value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)}>
-                <option value="">-- Select --</option>
+                <option value="">Enter civil status</option>
                 {CIVIL_STATUSES.map((c) => (
                   <option key={c} value={c} className="capitalize">
                     {c}
@@ -115,7 +119,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
 
             <Field label="Blood Type" required>
               <Select value={form.blood_type} onChange={(e) => set("blood_type", e.target.value)}>
-                <option value="">-- Select --</option>
+                <option value="">Enter blood type</option>
                 {BLOOD_TYPES.map((b) => (
                   <option key={b} value={b}>
                     {b}
@@ -128,14 +132,6 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.occupation} onChange={(e) => set("occupation", e.target.value)} placeholder="Enter occupation" />
             </Field>
 
-            <Field label="Nationality">
-              <Input value={form.nationality} onChange={(e) => set("nationality", e.target.value)} placeholder="Enter nationality" />
-            </Field>
-
-            <Field label="Place of Birth">
-              <Input value={form.place_of_birth} onChange={(e) => set("place_of_birth", e.target.value)} placeholder="Enter place of birth" />
-            </Field>
-
             <Field label="Contact Number" required>
               <Input value={form.contact_number} onChange={(e) => set("contact_number", e.target.value)} placeholder="Enter contact number" />
             </Field>
@@ -143,10 +139,18 @@ export function RegisterPatient({ loadData, onRegistered }) {
             <Field label="Barangay ID Number" required>
               <Input value={form.barangay_id_number} onChange={(e) => set("barangay_id_number", e.target.value)} placeholder="Enter barangay ID number" />
             </Field>
+
+            <Field label="Nationality">
+              <Input value={form.nationality} onChange={(e) => set("nationality", e.target.value)} placeholder="Enter nationality" />
+            </Field>
+
+            <Field label="Place of Birth">
+              <Input value={form.place_of_birth} onChange={(e) => set("place_of_birth", e.target.value)} placeholder="Enter place of birth" />
+            </Field>
           </div>
         </div>
 
-        <div className="ht-panel">
+        <div className="ht-panel ht-form-panel">
           <h2>
             <span className="ht-section-icon" aria-hidden="true">
               <MapPin size={16} strokeWidth={1.8} />
@@ -162,55 +166,62 @@ export function RegisterPatient({ loadData, onRegistered }) {
           </Field>
         </div>
 
-        <div className="ht-panel">
+        <div className="ht-panel ht-form-panel">
           <h2>
             <span className="ht-section-icon" aria-hidden="true">
               <PhoneCall size={16} strokeWidth={1.8} />
             </span>
             Emergency Contacts
           </h2>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="ht-form-grid ht-form-grid-3">
             <Field label="Emergency Contact Name" required>
               <Input value={form.emergency_contact_name} onChange={(e) => set("emergency_contact_name", e.target.value)} placeholder="Enter emergency contact name" />
             </Field>
             <Field label="Emergency Contact Number" required>
               <Input value={form.emergency_contact_number} onChange={(e) => set("emergency_contact_number", e.target.value)} placeholder="Enter emergency contact number" />
             </Field>
-            <Field label="Relationship">
+            <Field label="Relationship" required>
               <Input value={form.emergency_contact_relationship} onChange={(e) => set("emergency_contact_relationship", e.target.value)} placeholder="Enter relationship" />
             </Field>
           </div>
         </div>
 
-        <div className="ht-panel">
-          <h2>
-            <span className="ht-section-icon" aria-hidden="true">
-              <User size={16} strokeWidth={1.8} />
+        <div className="ht-panel ht-form-panel ht-portal-panel">
+          <h2 className="ht-panel-title-row">
+            <span className="ht-section-title-wrap">
+              <span className="ht-section-icon" aria-hidden="true">
+                <User size={16} strokeWidth={1.8} />
+              </span>
+              Patient Portal Account
             </span>
-            Patient Portal Account
           </h2>
 
           <div className="ht-portal-layout">
             <div className="ht-portal-summary">
               <div className="ht-portal-info-block">
-                <p className="ht-portal-info-label">About Patient Portal</p>
+                <div className="ht-portal-info-title">
+                  <span className="ht-portal-mini-check">✓</span>
+                  <span>About Patient Portal</span>
+                </div>
                 <p className="ht-portal-info-text">The patient will use this email address to sign in and view their health information, appointments, and medical records.</p>
-              </div>
-
-              <div className="ht-portal-status-row">
-                <span className="ht-portal-status-label">Account Status:</span>
-                <span className="ht-portal-status ht-portal-status-inactive">Inactive</span>
               </div>
             </div>
 
             <div className="ht-portal-form">
+              <div className="ht-portal-status-row">
+                <span>Account Status:</span>
+                <span className="ht-portal-status ht-portal-status-inactive">Inactive</span>
+              </div>
+
               <Field label="Email Address" required={form.portal_enabled}>
                 <Input
                   type="email"
                   value={form.portal_email}
-                  onChange={(e) => set("portal_email", e.target.value)}
+                  onChange={(e) => {
+                    set("portal_email", e.target.value);
+                    set("portal_enabled", true);
+                  }}
                   placeholder="Enter email address (used for portal login)"
-                  disabled={!form.portal_enabled}
                 />
               </Field>
 
@@ -219,7 +230,6 @@ export function RegisterPatient({ loadData, onRegistered }) {
                   type="checkbox"
                   checked={form.send_login_credentials}
                   onChange={(e) => set("send_login_credentials", e.target.checked)}
-                  disabled={!form.portal_enabled}
                 />
                 <span>Send login credentials to this email address</span>
               </label>
@@ -227,9 +237,9 @@ export function RegisterPatient({ loadData, onRegistered }) {
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="ht-form-actions">
           <button type="submit" className="ht-button" disabled={saving}>
-            {saving ? "Saving..." : "Register patient"}
+            {saving ? "Saving..." : "Register Patient"}
           </button>
           <button type="button" onClick={() => setSearchParams({ page: "patients" })} className="ht-button ht-button-muted">
             Cancel

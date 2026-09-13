@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { RECORD_TYPES } from "../../config/recordTypes";
 import {
-  Activity,
+  Stethoscope,
   CalendarDays,
   CheckCircle2,
   ClipboardList,
@@ -14,6 +14,15 @@ import {
   UserRound,
   Pencil,
   X,
+  HeartPulse,
+  Thermometer,
+  Activity,
+  Wind,
+  Ruler,
+  Scale,
+  PersonStanding,
+  Droplets,
+  Smile,
 } from "lucide-react";
 import { Field, Input, Select, Textarea } from "../../components/ui/Input";
 
@@ -132,7 +141,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     const text = label.toLowerCase();
 
     if (text.includes("condition") || text.includes("diagnosis")) {
-      return <Activity size={17} />;
+      return <Stethoscope size={17} />;
     }
 
     if (text.includes("description")) {
@@ -156,11 +165,52 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     }
 
     if (index === 0) {
-      return <Activity size={17} />;
+      return <Stethoscope size={17} />;
     }
 
     return <ClipboardList size={17} />;
   }
+    function getVitalSignIcon(label) {
+  const text = label.toLowerCase();
+
+  if (text.includes("blood pressure")) {
+    return <HeartPulse size={21} />;
+  }
+
+  if (text.includes("temperature")) {
+    return <Thermometer size={21} />;
+  }
+
+  if (text.includes("pulse")) {
+    return <Activity size={21} />;
+  }
+
+  if (text.includes("respiratory")) {
+    return <Wind size={21} />;
+  }
+
+  if (text.includes("height")) {
+    return <Ruler size={21} />;
+  }
+
+  if (text.includes("weight")) {
+    return <Scale size={21} />;
+  }
+
+  if (text.includes("body mass") || text.includes("bmi")) {
+    return <PersonStanding size={21} />;
+  }
+
+  if (text.includes("oxygen") || text.includes("spo2")) {
+    return <Droplets size={21} />;
+  }
+
+  if (text.includes("pain")) {
+    return <Smile size={21} />;
+  }
+
+  return <HeartPulse size={21} />;
+}
 
   function formatValue(value, field) {
     if (value === null || value === undefined || value === "") {
@@ -216,6 +266,25 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     );
   }
 
+  function getMidwifeNoteItems(value) {
+    if (!value) return ["No notes recorded."];
+
+    const segments = value
+      .replace(/\r\n/g, "\n")
+      .split(/\n+/)
+      .flatMap((chunk) =>
+        chunk
+          .split(/(?<=[.!?])\s+/)
+          .map((item) => item.trim())
+          .filter(Boolean)
+      )
+      .filter(Boolean);
+
+    return segments.length > 0 ? segments : ["No notes recorded."];
+  }
+
+  const isMidwifeNotes = type === "midwife-notes";
+
   return (
     <div className="ht-health-assessment">
       {/* HEADER */}
@@ -243,7 +312,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
               ) : (
                 <>
                   <Plus size={16} />
-                  Add New Assessment
+                  {isMidwifeNotes ? "Add Midwife Note" : "Add New Assessment"}
                 </>
               )}
             </button>
@@ -368,11 +437,12 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
             <ClipboardList size={25} />
           </div>
 
-          <h3>No Health Assessment</h3>
+          <h3>{isMidwifeNotes ? "No Midwife Notes" : "No Health Assessment"}</h3>
 
           <p>
-            No health assessment has been recorded
-            for this patient.
+            {isMidwifeNotes
+              ? "No midwife notes have been recorded for this patient."
+              : "No health assessment has been recorded for this patient."}
           </p>
 
           {canManage && (
@@ -385,154 +455,368 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
               className="ht-health-empty-button"
             >
               <Plus size={16} />
-              Add New Assessment
+              {isMidwifeNotes ? "Add Midwife Note" : "Add New Assessment"}
             </button>
           )}
         </div>
-      ) : (
+      ) : isMidwifeNotes ? (
         <>
-          {records.map((record) => (
-            <div
-              key={record.record_id}
-              className="ht-assessment-card"
-            >
-              {/* CARD TOP */}
-              <div className="ht-assessment-details">
-                {Object.entries(definition.fields).map(
-                  ([column, field], index) => (
-                    <div
-                      key={column}
-                      className="ht-assessment-row"
-                    >
-                      <div className="ht-assessment-icon">
-                        {getFieldIcon(field.label, index)}
-                      </div>
+          <div className="ht-midwife-notes-stack">
+            {records.map((record) => (
+              <div key={record.record_id} className="ht-midwife-note-card">
+                <div className="ht-midwife-card-rail">
+                  <div className="ht-midwife-card-icon">
+                    <FileText size={22} />
+                  </div>
+                </div>
 
-                      <div className="ht-assessment-label">
-                        {field.label}
-                      </div>
-
-                      <div className="ht-assessment-colon">
-                        :
-                      </div>
-
-                      <div className="ht-assessment-value">
-                        {field.type === "select" ? (
-                          <span
-                            className={
-                              field.label
-                                .toLowerCase()
-                                .includes("status")
-                                ? "ht-status-active"
-                                : ""
-                            }
-                          >
-                            {formatValue(
-                              record[column],
-                              field
-                            )}
-                          </span>
-                        ) : (
-                          formatValue(
-                            record[column],
-                            field
-                          )
-                        )}
-                      </div>
+                <div className="ht-midwife-card-content">
+                  <div className="ht-midwife-meta-grid">
+                    <div className="ht-midwife-meta-item">
+                      <span>Consultation Date:</span>
+                      <strong>{getRecordDate(record)}</strong>
                     </div>
-                  )
-                )}
 
-                {/* DATE */}
-                <div className="ht-assessment-row">
-                  <div className="ht-assessment-icon">
-                    <CalendarDays size={17} />
+                    <div className="ht-midwife-meta-item">
+                      <span>Recorded By:</span>
+                      <strong>{getRecordedBy(record) || "Midwife User"}</strong>
+                    </div>
                   </div>
 
-                  <div className="ht-assessment-label">
-                    {definition.dateLabel}
-                  </div>
-
-                  <div className="ht-assessment-colon">
-                    :
-                  </div>
-
-                  <div className="ht-assessment-value">
-                    {getRecordDate(record)}
+                  <div className="ht-midwife-notes-block">
+                    <span>Notes:</span>
+                    <ul>
+                      {getMidwifeNoteItems(record.notes).map((line, index) => (
+                        <li key={`${record.record_id}-${index}`}>{line}</li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>
-
-              {/* FOOTER */}
-              <div className="ht-assessment-footer">
-                <div className="ht-assessment-meta">
-                  {getCreatedDate(record) && (
-                    <div>
-                      <CalendarDays size={14} />
-                      <span>
-                        Recorded on {getCreatedDate(record)}
-                      </span>
-                    </div>
-                  )}
-
-                  {getRecordedBy(record) && (
-                    <div>
-                      <UserRound size={14} />
-                      <span>
-                        Recorded by {getRecordedBy(record)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {canManage && (
-                  <div className="ht-assessment-buttons">
-                    <button
-                      type="button"
-                      className="ht-edit-button"
-                      title="Edit assessment"
-                      onClick={() =>
-                        alert(
-                          "Edit functionality can be connected once the backend update endpoint is available."
-                        )
-                      }
-                    >
-                      <Pencil size={15} />
-                      Edit
-                    </button>
-
-                    <button
-                      type="button"
-                      className="ht-delete-button"
-                      onClick={() =>
-                        handleDelete(record.record_id)
-                      }
-                    >
-                      <Trash2 size={15} />
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
           {records.length >= perPage && (
             <button
               type="button"
-              onClick={() =>
-                setPerPage((p) => p + 10)
-              }
+              onClick={() => setPerPage((p) => p + 10)}
               className="ht-show-more"
             >
               Show more
             </button>
           )}
         </>
-      )}
+      ) : type === "vital-signs" ? (
+  <>
+    {records.map((record) => (
+      <div
+        key={record.record_id}
+        className="ht-vital-record-card"
+      >
+        <div className="ht-vital-grid">
+          {Object.entries(definition.fields).map(
+            ([column, field]) => (
+              <div
+                key={column}
+                className="ht-vital-card"
+              >
+                <div className="ht-vital-icon">
+                  {getVitalSignIcon(field.label)}
+                </div>
+
+                <div className="ht-vital-content">
+                  <div className="ht-vital-label">
+                    {field.label}
+                  </div>
+
+                  <div className="ht-vital-value">
+                    {formatValue(
+                      record[column],
+                      field
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          )}
+        </div>
+
+        <div className="ht-vital-footer">
+          <div className="ht-assessment-meta">
+            {getCreatedDate(record) && (
+              <div>
+                <CalendarDays size={14} />
+                <span>
+                  Recorded on {getCreatedDate(record)}
+                </span>
+              </div>
+            )}
+
+            {getRecordedBy(record) && (
+              <div>
+                <UserRound size={14} />
+                <span>
+                  Recorded by {getRecordedBy(record)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {canManage && (
+            <div className="ht-assessment-buttons">
+              <button
+                type="button"
+                className="ht-edit-button"
+                title="Edit vital signs"
+                onClick={() =>
+                  alert(
+                    "Edit functionality can be connected once the backend update endpoint is available."
+                  )
+                }
+              >
+                <Pencil size={15} />
+                Edit
+              </button>
+
+              <button
+                type="button"
+                className="ht-delete-button"
+                onClick={() =>
+                  handleDelete(record.record_id)
+                }
+              >
+                <Trash2 size={15} />
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+
+    {records.length >= perPage && (
+      <button
+        type="button"
+        onClick={() =>
+          setPerPage((p) => p + 10)
+        }
+        className="ht-show-more"
+      >
+        Show more
+      </button>
+    )}
+  </>
+) : (
+  <>
+    {records.map((record) => (
+      <div
+        key={record.record_id}
+        className="ht-assessment-card"
+      >
+        <div className="ht-assessment-details">
+          {Object.entries(definition.fields).map(
+            ([column, field], index) => (
+              <div
+                key={column}
+                className="ht-assessment-row"
+              >
+                <div className="ht-assessment-icon">
+                  {getFieldIcon(
+                    field.label,
+                    index
+                  )}
+                </div>
+
+                <div className="ht-assessment-label">
+                  {field.label}
+                </div>
+
+                <div className="ht-assessment-colon">
+                  :
+                </div>
+
+                <div className="ht-assessment-value">
+                  {field.type === "select" ? (
+                    <span
+                      className={
+                        field.label
+                          .toLowerCase()
+                          .includes("status")
+                          ? "ht-status-active"
+                          : ""
+                      }
+                    >
+                      {formatValue(
+                        record[column],
+                        field
+                      )}
+                    </span>
+                  ) : (
+                    formatValue(
+                      record[column],
+                      field
+                    )
+                  )}
+                </div>
+              </div>
+            )
+          )}
+
+          <div className="ht-assessment-row">
+            <div className="ht-assessment-icon">
+              <CalendarDays size={17} />
+            </div>
+
+            <div className="ht-assessment-label">
+              {definition.dateLabel}
+            </div>
+
+            <div className="ht-assessment-colon">
+              :
+            </div>
+
+            <div className="ht-assessment-value">
+              {getRecordDate(record)}
+            </div>
+          </div>
+        </div>
+
+        <div className="ht-assessment-footer">
+          <div className="ht-assessment-meta">
+            {getCreatedDate(record) && (
+              <div>
+                <CalendarDays size={14} />
+                <span>
+                  Recorded on {getCreatedDate(record)}
+                </span>
+              </div>
+            )}
+
+            {getRecordedBy(record) && (
+              <div>
+                <UserRound size={14} />
+                <span>
+                  Recorded by {getRecordedBy(record)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {canManage && (
+            <div className="ht-assessment-buttons">
+              <button
+                type="button"
+                className="ht-edit-button"
+                title="Edit assessment"
+                onClick={() =>
+                  alert(
+                    "Edit functionality can be connected once the backend update endpoint is available."
+                  )
+                }
+              >
+                <Pencil size={15} />
+                Edit
+              </button>
+
+              <button
+                type="button"
+                className="ht-delete-button"
+                onClick={() =>
+                  handleDelete(record.record_id)
+                }
+              >
+                <Trash2 size={15} />
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+
+    {records.length >= perPage && (
+      <button
+        type="button"
+        onClick={() =>
+          setPerPage((p) => p + 10)
+        }
+        className="ht-show-more"
+      >
+        Show more
+      </button>
+    )}
+  </>
+)}
 
       {/* DESIGN CSS */}
+
       <style>{`
+      .ht-vital-record-card {
+       width: 100%;
+       padding: 14px;
+       border: 1px solid #dfe8e3;
+       border-radius: 12px;
+       background: #ffffff;
+       box-shadow: 0 2px 8px rgba(36, 55, 46, 0.04);
+      }
+
+      .ht-vital-grid {
+       display: grid;
+       grid-template-columns: repeat(3, minmax(0, 1fr));
+       gap: 12px;
+      }
+
+      .ht-vital-card {
+       min-height: 92px;
+       display: flex;
+       align-items: center;
+       gap: 12px;
+       padding: 14px;
+       border: 1px solid #e1ebe5;
+       border-radius: 9px;
+       background: #fbfdfc;
+       box-sizing: border-box;
+      }
+
+      .ht-vital-icon {
+       width: 42px;
+       height: 42px;
+       min-width: 42px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       border-radius: 50%;
+       background: #e5f3eb;
+       color: #3f765d;
+      }
+
+      .ht-vital-content {
+       min-width: 0;
+      }
+
+      .ht-vital-label {
+       margin-bottom: 5px;
+       font-size: 10px;
+       font-weight: 700;
+       color: #53635b;
+      }
+
+      .ht-vital-value {
+       font-size: 13px;
+       font-weight: 600;
+       color: #26352e;
+       line-height: 1.4;
+      }
+
+      .ht-vital-footer {
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       gap: 15px;
+       margin-top: 14px;
+       padding-top: 12px;
+       border-top: 1px solid #e8eeeb;
+      }
         .ht-health-assessment {
           width: 100%;
         }
@@ -693,16 +977,126 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
           font-weight: 700;
           cursor: pointer;
         }
+        .ht-midwife-notes-stack {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          width: 100%;
+          padding: 16px;
+          border: 1px solid rgba(12, 79, 70, 0.08);
+          border-radius: 14px;
+          background: #f2faf5;
+          box-shadow: 0 4px 18px rgba(15, 29, 26, 0.04);
+          box-sizing: border-box;
+          margin-top: 4px;
+        }
 
-        .ht-assessment-card {
+        .ht-midwife-note-card {
+          display: flex;
+          width: 100%;
+          align-items: stretch;
           overflow: hidden;
           border: 1px solid #dfe8e3;
-          border-radius: 10px;
+          border-radius: 12px;
+          background: #f6faf7;
+          box-shadow: 0 2px 8px rgba(36, 55, 46, 0.04);
+          box-sizing: border-box;
+        }
+
+        .ht-midwife-card-rail {
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          width: 72px;
+          min-width: 72px;
+          padding-top: 18px;
+          background: #dfeee5;
+          border-right: 1px solid #d1e5d8;
+        }
+
+        .ht-midwife-card-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 42px;
+          height: 42px;
+          margin-top: 24px;
+          border-radius: 12px;
+          background: #edf7f0;
+          color: #3a7d62;
+        }
+
+        .ht-midwife-card-content {
+          flex: 1;
+          min-width: 0;
+          padding: 20px 24px 18px;
+        }
+
+        .ht-midwife-meta-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 14px 24px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid #e3e9e5;
+        }
+
+        .ht-midwife-meta-item {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          font-size: 12px;
+          color: #2e3f38;
+        }
+
+        .ht-midwife-meta-item span {
+          font-weight: 700;
+        }
+
+        .ht-midwife-meta-item strong {
+          font-weight: 600;
+          color: #1d2f29;
+        }
+
+        .ht-midwife-notes-block {
+          margin-top: 18px;
+          font-size: 12px;
+          color: #2e3f38;
+        }
+
+        .ht-midwife-notes-block span {
+          display: inline-block;
+          margin-bottom: 10px;
+          font-weight: 700;
+          color: #24352f;
+        }
+
+        .ht-midwife-notes-block ul {
+          margin: 0;
+          padding-left: 18px;
+          padding-right: 8px;
+          line-height: 1.7;
+        }
+
+        .ht-midwife-notes-block li {
+          margin-bottom: 2px;
+          color: #1d2d29;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+        }
+
+        .ht-assessment-card {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          overflow: hidden;
+          border: 1px solid #dfe8e3;
+          border-radius: 12px;
           background: #ffffff;
           box-shadow: 0 2px 8px rgba(36, 55, 46, 0.04);
         }
 
         .ht-assessment-details {
+          width: 100%;
           padding: 7px 14px 10px;
         }
 
@@ -826,6 +1220,14 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         }
 
         @media (max-width: 700px) {
+          
+          .ht-vital-grid{
+            grid-template-columns: 1fr;
+          }
+          .ht-vital-footer{
+            aligns-items: flex-start;
+            flex-direction: column;
+          }
           .ht-health-assessment-header {
             align-items: flex-start;
             flex-direction: column;
@@ -837,6 +1239,25 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
           }
 
           .ht-health-form-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .ht-midwife-note-card {
+            flex-direction: column;
+          }
+
+          .ht-midwife-card-rail {
+            width: 100%;
+            min-height: 58px;
+            border-right: none;
+            border-bottom: 1px solid #d1e5d8;
+          }
+
+          .ht-midwife-card-icon {
+            margin-top: 0;
+          }
+
+          .ht-midwife-meta-grid {
             grid-template-columns: 1fr;
           }
 
