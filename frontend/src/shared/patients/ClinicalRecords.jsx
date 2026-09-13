@@ -12,6 +12,7 @@ import {
   Plus,
   Trash2,
   UserRound,
+  Users,
   Pencil,
   X,
   TriangleAlert,
@@ -26,7 +27,7 @@ import {
   Smile,
   CloudSun,
   Apple,
-  Scissors,
+  BriefcaseMedical,
 } from "lucide-react";
 import { Field, Input, Select, Textarea } from "../../components/ui/Input";
 
@@ -158,6 +159,10 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
   function getFieldIcon(label, index) {
     const text = label.toLowerCase();
 
+    if (text.includes("family")) {
+      return <Users size={17} />;
+    }
+
     if (text.includes("condition") || text.includes("diagnosis")) {
       return <Stethoscope size={17} />;
     }
@@ -183,7 +188,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     }
 
     if (text.includes("surgery") || text.includes("operation")) {
-      return <Scissors size={17} />;
+      return <BriefcaseMedical size={17} />;
     }
 
     if (text.includes("reaction")) {
