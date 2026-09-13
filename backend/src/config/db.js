@@ -388,6 +388,27 @@ export async function connectNeon() {
     await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS oxygen_saturation INTEGER`;
     await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS pain_score INTEGER`;
     await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS recorded_at TIMESTAMP`;
+    await sql`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_schema = 'public'
+            AND table_name = 'vital_signs'
+            AND column_name = 'test_name'
+        ) THEN
+          ALTER TABLE vital_signs ALTER COLUMN test_name DROP NOT NULL;
+        END IF;
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_schema = 'public'
+            AND table_name = 'vital_signs'
+            AND column_name = 'value'
+        ) THEN
+          ALTER TABLE vital_signs ALTER COLUMN value DROP NOT NULL;
+        END IF;
+      END $$;
+    `;
 
     await sql`ALTER TABLE health_assessments ADD COLUMN IF NOT EXISTS condition VARCHAR(255)`;
     await sql`ALTER TABLE health_assessments ADD COLUMN IF NOT EXISTS assessment_date DATE`;
