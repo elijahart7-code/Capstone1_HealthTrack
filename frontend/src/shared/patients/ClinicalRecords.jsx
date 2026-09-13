@@ -505,6 +505,28 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                       ))}
                     </ul>
                   </div>
+
+                  {canManage && (
+                    <div className="ht-assessment-buttons ht-midwife-notes-actions">
+                      <button
+                        type="button"
+                        className="ht-edit-button"
+                        title="Edit midwife note"
+                      >
+                        <Pencil size={15} />
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        className="ht-delete-button"
+                        onClick={() => handleDelete(record.record_id)}
+                      >
+                        <Trash2 size={15} />
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -825,6 +847,11 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
       }
         .ht-health-assessment {
           width: 100%;
+          padding: 20px;
+          background: white;
+          border: 1px solid #dfeae4;
+          border-radius: 11px;
+          box-sizing: border-box;
         }
 
         .ht-health-assessment-header {
@@ -1088,6 +1115,12 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
           color: #1d2d29;
           overflow-wrap: anywhere;
           word-break: break-word;
+        }
+
+        .ht-midwife-notes-actions {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 16px;
         }
 
         .ht-assessment-card {
