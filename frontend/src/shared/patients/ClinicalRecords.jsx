@@ -751,8 +751,6 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
       {/* DESIGN CSS */}
 
       <style>{`
-        /* VITAL SIGNS */
-
       .ht-vital-record-card {
        width: 100%;
        padding: 14px;
@@ -810,15 +808,15 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
        line-height: 1.4;
       }
 
-.ht-vital-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid #e8eeeb;
-}
+      .ht-vital-footer {
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       gap: 15px;
+       margin-top: 14px;
+       padding-top: 12px;
+       border-top: 1px solid #e8eeeb;
+      }
         .ht-health-assessment {
           width: 100%;
         }
@@ -979,7 +977,6 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
           font-weight: 700;
           cursor: pointer;
         }
-
         .ht-midwife-notes-stack {
           display: flex;
           flex-direction: column;
@@ -1220,6 +1217,14 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         }
 
         @media (max-width: 700px) {
+          
+          .ht-vital-grid{
+            grid-template-columns: 1fr;
+          }
+          .ht-vital-footer{
+            aligns-items: flex-start;
+            flex-direction: column;
+          }
           .ht-health-assessment-header {
             align-items: flex-start;
             flex-direction: column;
