@@ -780,35 +780,35 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
        box-sizing: border-box;
       }
 
-.ht-vital-icon {
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: #e5f3eb;
-  color: #3f765d;
-}
+      .ht-vital-icon {
+       width: 42px;
+       height: 42px;
+       min-width: 42px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       border-radius: 50%;
+       background: #e5f3eb;
+       color: #3f765d;
+      }
 
-.ht-vital-content {
-  min-width: 0;
-}
+      .ht-vital-content {
+       min-width: 0;
+      }
 
-.ht-vital-label {
-  margin-bottom: 5px;
-  font-size: 10px;
-  font-weight: 700;
-  color: #53635b;
-}
+      .ht-vital-label {
+       margin-bottom: 5px;
+       font-size: 10px;
+       font-weight: 700;
+       color: #53635b;
+      }
 
-.ht-vital-value {
-  font-size: 13px;
-  font-weight: 600;
-  color: #26352e;
-  line-height: 1.4;
-}
+      .ht-vital-value {
+       font-size: 13px;
+       font-weight: 600;
+       color: #26352e;
+       line-height: 1.4;
+      }
 
 .ht-vital-footer {
   display: flex;
