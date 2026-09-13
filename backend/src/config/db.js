@@ -399,6 +399,14 @@ export async function connectNeon() {
         ) THEN
           ALTER TABLE vital_signs ALTER COLUMN test_name DROP NOT NULL;
         END IF;
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_schema = 'public'
+            AND table_name = 'vital_signs'
+            AND column_name = 'value'
+        ) THEN
+          ALTER TABLE vital_signs ALTER COLUMN value DROP NOT NULL;
+        END IF;
       END $$;
     `;
 
