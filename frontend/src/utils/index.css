@@ -1043,8 +1043,8 @@
 
     .ht-portal-layout {
         display: grid;
-        grid-template-columns: 176px minmax(0, 1fr);
-        gap: 0.45rem 1.85rem;
+        grid-template-columns: 200px minmax(0, 1fr);
+        gap: 0.7rem 1.5rem;
         align-items: start;
     }
 
@@ -1056,16 +1056,16 @@
 
     .ht-portal-info-block {
         border: 1px solid rgba(15, 107, 95, 0.18);
-        border-radius: 7px;
+        border-radius: 8px;
         background: rgba(15, 107, 95, 0.04);
-        padding: 0.45rem 0.55rem 0.42rem;
+        padding: 0.55rem 0.6rem 0.5rem;
     }
 
     .ht-portal-info-title {
         display: flex;
         align-items: center;
         gap: 0.35rem;
-        margin: 0 0 0.25rem;
+        margin: 0 0 0.3rem;
         font-size: 0.68rem;
         font-weight: 700;
         color: #1d2d28;
@@ -1074,10 +1074,10 @@
     .ht-portal-mini-check {
         display: grid;
         place-items: center;
-        width: 11px;
-        height: 11px;
+        width: 12px;
+        height: 12px;
         border-radius: 50%;
-        font-size: 0.5rem;
+        font-size: 0.52rem;
         font-weight: 800;
         background: rgba(15, 107, 95, 0.12);
         color: var(--color-brand);
@@ -1085,28 +1085,29 @@
 
     .ht-portal-info-text {
         margin: 0;
-        line-height: 1.35;
+        line-height: 1.4;
         color: #4a534f;
         font-size: 0.64rem;
-        max-width: 11rem;
+        max-width: 12rem;
     }
 
     .ht-portal-status-row {
         display: inline-flex;
         align-items: center;
-        gap: 0.35rem;
+        gap: 0.4rem;
         color: #1d2d28;
-        font-size: 0.6rem;
+        font-size: 0.64rem;
         font-weight: 700;
+        margin-bottom: 0.2rem;
     }
 
     .ht-portal-status {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0.08rem 0.35rem;
+        padding: 0.08rem 0.42rem;
         border-radius: 999px;
-        font-size: 0.55rem;
+        font-size: 0.56rem;
         font-weight: 700;
         border: 1px solid rgba(31, 36, 33, 0.14);
         line-height: 1.5;
@@ -1116,37 +1117,37 @@
 
     .ht-portal-form {
         display: grid;
-        gap: 0.25rem;
+        gap: 0.3rem;
         padding-top: 0;
         align-content: start;
     }
 
     .ht-portal-form .ht-field {
-        gap: 0.15rem;
+        gap: 0.18rem;
         font-size: 0.68rem;
     }
 
     .ht-portal-form .ht-input {
-        min-height: 26px;
-        padding: 0.3rem 0.5rem;
-        border-radius: 6px;
+        min-height: 30px;
+        padding: 0.35rem 0.55rem;
+        border-radius: 7px;
         font-size: 0.68rem;
     }
 
     .ht-checkbox-inline {
         display: inline-flex;
         align-items: center;
-        gap: 0.35rem;
+        gap: 0.38rem;
         color: #1d2d28;
-        font-size: 0.58rem;
+        font-size: 0.6rem;
         line-height: 1.25;
         cursor: pointer;
-        margin-top: 0;
+        margin-top: 0.05rem;
     }
 
     .ht-checkbox-inline input {
-        width: 11px;
-        height: 11px;
+        width: 12px;
+        height: 12px;
         margin: 0;
         accent-color: var(--color-brand);
     }

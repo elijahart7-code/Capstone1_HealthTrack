@@ -203,7 +203,10 @@ export function RegisterPatient({ loadData, onRegistered }) {
                   <span className="ht-portal-mini-check">✓</span>
                   <span>About Patient Portal</span>
                 </div>
-                <p className="ht-portal-info-text">The patient will use this email address to sign in and view their health information, appointments, and medical records.</p>
+                <p className="ht-portal-info-text">
+                  The patient will use this email address to sign in and view their health information,
+                  appointments, and medical records.
+                </p>
               </div>
             </div>
 
