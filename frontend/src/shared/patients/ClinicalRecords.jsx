@@ -24,6 +24,7 @@ import {
   PersonStanding,
   Droplets,
   Smile,
+  CloudSun,
 } from "lucide-react";
 import { Field, Input, Select, Textarea } from "../../components/ui/Input";
 
@@ -177,6 +178,10 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
     if (text.includes("reaction")) {
       return <TriangleAlert size={17} />;
+    }
+
+    if (text.includes("environment") || text.includes("air") || text.includes("weather")) {
+      return <CloudSun size={17} />;
     }
 
     if (text.includes("remark") || text.includes("note")) {
