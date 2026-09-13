@@ -41,6 +41,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
   const [showForm, setShowForm] = useState(false);
   const [perPage, setPerPage] = useState(10);
   const [form, setForm] = useState({});
+  const [editingRecord, setEditingRecord] = useState(null);
   const [recordDate, setRecordDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
@@ -84,6 +85,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     setForm(blank);
     setRecordDate(new Date().toISOString().slice(0, 10));
     setError(null);
+    setEditingRecord(null);
   }
 
   function toggleForm() {
@@ -94,17 +96,29 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     setShowForm((value) => !value);
   }
 
+  function editRecord(record) {
+    const values = {};
+    Object.keys(definition.fields).forEach((column) => {
+      values[column] = record[column] ?? "";
+    });
+
+    setForm(values);
+    setRecordDate(String(record[definition.dateField] || "").slice(0, 10));
+    setEditingRecord(record);
+    setError(null);
+    setShowForm(true);
+  }
+
   async function handleSave() {
     setError(null);
 
     try {
-      await api.post(
-        `/patients/${patientId}/records/${type}`,
-        {
-          ...form,
-          recordDate,
-        }
-      );
+      const payload = { ...form, recordDate };
+      const url = editingRecord
+        ? `/patients/${patientId}/records/${type}/${editingRecord.record_id}`
+        : `/patients/${patientId}/records/${type}`;
+      const request = editingRecord ? api.patch : api.post;
+      await request(url, payload);
 
       resetForm();
       setShowForm(false);
@@ -330,7 +344,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         <div className="ht-health-form">
           <div className="ht-health-form-title">
             <ClipboardList size={18} />
-            <h3>New Health Assessment</h3>
+            <h3>{editingRecord ? `Edit ${definition.singular}` : `New ${definition.singular}`}</h3>
           </div>
 
           {error && (
@@ -417,7 +431,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
               onClick={handleSave}
               className="ht-health-save-button"
             >
-              Save Assessment
+              {editingRecord ? "Save Changes" : "Save Assessment"}
             </button>
 
             <button
@@ -595,6 +609,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                 type="button"
                 className="ht-edit-button"
                 title="Edit vital signs"
+                onClick={() => editRecord(record)}
               >
                 <Pencil size={15} />
                 Edit
@@ -730,6 +745,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                 type="button"
                 className="ht-edit-button"
                 title="Edit assessment"
+                onClick={() => editRecord(record)}
               >
                 <Pencil size={15} />
                 Edit

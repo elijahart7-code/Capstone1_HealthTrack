@@ -12,7 +12,7 @@ import {
   createPortalAccount,
   registerPatient,
 } from "../controllers/patients/postRequests.controller.js";
-import { updatePatient } from "../controllers/patients/updateRequests.controller.js";
+import { updateClinicalRecord, updatePatient } from "../controllers/patients/updateRequests.controller.js";
 import { deleteClinicalRecord, deletePatient } from "../controllers/patients/deleteRequest.controller.js";
 
 /**
@@ -36,6 +36,7 @@ router.post("/:patientId/portal-account", createPortalAccount);
 
 router.get("/:patientId/records/:type", getClinicalRecords);
 router.post("/:patientId/records/:type", createClinicalRecord);
+router.patch("/:patientId/records/:type/:recordId", updateClinicalRecord);
 router.delete("/:patientId/records/:type/:recordId", deleteClinicalRecord);
 
 export default router;
