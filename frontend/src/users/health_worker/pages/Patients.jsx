@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { Eye } from "lucide-react";
 import { useSearchParams } from "react-router";
 import { calculateAge } from "../../../utils/calculateAge";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { Field, Input, Select } from "../../../components/ui/Input";
-import { Badge, EmptyState, Table, Th, Td } from "../../../components/ui/Table";
+import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 import { PatientRecord } from "../../../shared/patients/PatientRecord";
 
 /** Patient list screen for health workers. */
@@ -92,7 +93,7 @@ export function Patients({ patients, loadData }) {
           <Table>
             <thead>
               <tr>
-                <Th>Name</Th>
+                <Th>Full Name</Th>
                 <Th>Age</Th>
                 <Th>Sex</Th>
                 <Th>Birthdate</Th>
@@ -100,8 +101,8 @@ export function Patients({ patients, loadData }) {
                 <Th>Civil Status</Th>
                 <Th>Blood Type</Th>
                 <Th>Occupation</Th>
-                <Th>Portal access</Th>
-                <Th srOnly>Actions</Th>
+                <Th>Portal Account</Th>
+                <Th>Action</Th>
               </tr>
             </thead>
             <tbody>
@@ -119,13 +120,23 @@ export function Patients({ patients, loadData }) {
                   <Td className="capitalize">{p.civil_status || "--"}</Td>
                   <Td>{p.blood_type || "--"}</Td>
                   <Td>{p.occupation || "--"}</Td>
-                  <Td>{p.user_id ? <Badge>Yes</Badge> : <span className="ht-muted text-xs">No login</span>}</Td>
+                  <Td>
+                    {p.user_id ? (
+                      <span className="ht-status-badge ht-status-badge-active">Active</span>
+                    ) : (
+                      <span className="ht-status-badge ht-status-badge-inactive">Inactive</span>
+                    )}
+                  </Td>
                   <Td>
                     <button
+                      type="button"
                       onClick={() => setSearchParams({ page: "patients", patientId: p.patient_id })}
-                      className="ht-button ht-button-muted"
+                      className="ht-record-action"
                     >
-                      Open record
+                      <span className="ht-record-action-icon">
+                        <Eye size={15} strokeWidth={2} />
+                      </span>
+                      View Record Only
                     </button>
                   </Td>
                 </tr>
