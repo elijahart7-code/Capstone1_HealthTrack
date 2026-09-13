@@ -29,6 +29,8 @@ import {
   Apple,
   BriefcaseMedical,
   ShieldPlus,
+  HeartHandshake,
+  Hospital,
 } from "lucide-react";
 import { Field, Input, Select, Textarea } from "../../components/ui/Input";
 
@@ -162,6 +164,14 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
     if (text.includes("family")) {
       return <Users size={17} />;
+    }
+
+    if (text.includes("hospital") || text.includes("admission") || text.includes("previous hospitalization") || text.includes("hospitalizations")) {
+      return <Hospital size={17} />;
+    }
+
+    if (text.includes("illness") || text.includes("past illness") || text.includes("illnesses")) {
+      return <HeartHandshake size={17} />;
     }
 
     if (text.includes("condition") || text.includes("diagnosis")) {
