@@ -762,23 +762,23 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
        box-shadow: 0 2px 8px rgba(36, 55, 46, 0.04);
       }
 
-.ht-vital-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
+      .ht-vital-grid {
+       display: grid;
+       grid-template-columns: repeat(3, minmax(0, 1fr));
+       gap: 12px;
+      }
 
-.ht-vital-card {
-  min-height: 92px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
-  border: 1px solid #e1ebe5;
-  border-radius: 9px;
-  background: #fbfdfc;
-  box-sizing: border-box;
-}
+      .ht-vital-card {
+       min-height: 92px;
+       display: flex;
+       align-items: center;
+       gap: 12px;
+       padding: 14px;
+       border: 1px solid #e1ebe5;
+       border-radius: 9px;
+       background: #fbfdfc;
+       box-sizing: border-box;
+      }
 
 .ht-vital-icon {
   width: 42px;
