@@ -506,7 +506,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
             </button>
           )}
         </>
-      ) : type === "vital-signs" ? (
+      ) : type === "vital_signs" ? (
   <>
     {records.map((record) => (
       <div
