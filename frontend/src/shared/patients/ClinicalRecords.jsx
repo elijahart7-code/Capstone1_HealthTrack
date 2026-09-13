@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { RECORD_TYPES } from "../../config/recordTypes";
 import {
-  Activity,
+  Stethoscope,
   CalendarDays,
   CheckCircle2,
   ClipboardList,
@@ -12,8 +12,25 @@ import {
   Plus,
   Trash2,
   UserRound,
+  Users,
   Pencil,
   X,
+  TriangleAlert,
+  HeartPulse,
+  Thermometer,
+  Activity,
+  Wind,
+  Ruler,
+  Scale,
+  PersonStanding,
+  Droplets,
+  Smile,
+  CloudSun,
+  Apple,
+  BriefcaseMedical,
+  ShieldPlus,
+  HeartHandshake,
+  Hospital,
 } from "lucide-react";
 import { Field, Input, Select, Textarea } from "../../components/ui/Input";
 
@@ -31,6 +48,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
   const [showForm, setShowForm] = useState(false);
   const [perPage, setPerPage] = useState(10);
   const [form, setForm] = useState({});
+  const [editingRecord, setEditingRecord] = useState(null);
   const [recordDate, setRecordDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
@@ -74,6 +92,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     setForm(blank);
     setRecordDate(new Date().toISOString().slice(0, 10));
     setError(null);
+    setEditingRecord(null);
   }
 
   function toggleForm() {
@@ -84,17 +103,29 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     setShowForm((value) => !value);
   }
 
+  function editRecord(record) {
+    const values = {};
+    Object.keys(definition.fields).forEach((column) => {
+      values[column] = record[column] ?? "";
+    });
+
+    setForm(values);
+    setRecordDate(String(record[definition.dateField] || "").slice(0, 10));
+    setEditingRecord(record);
+    setError(null);
+    setShowForm(true);
+  }
+
   async function handleSave() {
     setError(null);
 
     try {
-      await api.post(
-        `/patients/${patientId}/records/${type}`,
-        {
-          ...form,
-          recordDate,
-        }
-      );
+      const payload = { ...form, recordDate };
+      const url = editingRecord
+        ? `/patients/${patientId}/records/${type}/${editingRecord.record_id}`
+        : `/patients/${patientId}/records/${type}`;
+      const request = editingRecord ? api.patch : api.post;
+      await request(url, payload);
 
       resetForm();
       setShowForm(false);
@@ -131,8 +162,20 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
   function getFieldIcon(label, index) {
     const text = label.toLowerCase();
 
+    if (text.includes("family")) {
+      return <Users size={17} />;
+    }
+
+    if (text.includes("hospital") || text.includes("admission") || text.includes("previous hospitalization") || text.includes("hospitalizations")) {
+      return <Hospital size={17} />;
+    }
+
+    if (text.includes("illness") || text.includes("past illness") || text.includes("illnesses")) {
+      return <HeartHandshake size={17} />;
+    }
+
     if (text.includes("condition") || text.includes("diagnosis")) {
-      return <Activity size={17} />;
+      return <Stethoscope size={17} />;
     }
 
     if (text.includes("description")) {
@@ -143,6 +186,10 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
       return <CalendarDays size={17} />;
     }
 
+    if (text.includes("immunization") || text.includes("vaccination")) {
+      return <ShieldPlus size={17} />;
+    }
+
     if (text.includes("status")) {
       return <CheckCircle2 size={17} />;
     }
@@ -151,16 +198,73 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
       return <Pill size={17} />;
     }
 
+    if (text.includes("food")) {
+      return <Apple size={17} />;
+    }
+
+    if (text.includes("surgery") || text.includes("operation")) {
+      return <BriefcaseMedical size={17} />;
+    }
+
+    if (text.includes("reaction")) {
+      return <TriangleAlert size={17} />;
+    }
+
+    if (text.includes("environment") || text.includes("air") || text.includes("weather")) {
+      return <CloudSun size={17} />;
+    }
+
     if (text.includes("remark") || text.includes("note")) {
       return <MessageSquare size={17} />;
     }
 
     if (index === 0) {
-      return <Activity size={17} />;
+      return <Stethoscope size={17} />;
     }
 
     return <ClipboardList size={17} />;
   }
+    function getVitalSignIcon(label) {
+  const text = label.toLowerCase();
+
+  if (text.includes("blood pressure")) {
+    return <HeartPulse size={21} />;
+  }
+
+  if (text.includes("temperature")) {
+    return <Thermometer size={21} />;
+  }
+
+  if (text.includes("pulse")) {
+    return <Activity size={21} />;
+  }
+
+  if (text.includes("respiratory")) {
+    return <Wind size={21} />;
+  }
+
+  if (text.includes("height")) {
+    return <Ruler size={21} />;
+  }
+
+  if (text.includes("weight")) {
+    return <Scale size={21} />;
+  }
+
+  if (text.includes("body mass") || text.includes("bmi")) {
+    return <PersonStanding size={21} />;
+  }
+
+  if (text.includes("oxygen") || text.includes("spo2")) {
+    return <Droplets size={21} />;
+  }
+
+  if (text.includes("pain")) {
+    return <Smile size={21} />;
+  }
+
+  return <HeartPulse size={21} />;
+}
 
   function formatValue(value, field) {
     if (value === null || value === undefined || value === "") {
@@ -275,7 +379,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         <div className="ht-health-form">
           <div className="ht-health-form-title">
             <ClipboardList size={18} />
-            <h3>New Health Assessment</h3>
+            <h3>{editingRecord ? `Edit ${definition.singular}` : `New ${definition.singular}`}</h3>
           </div>
 
           {error && (
@@ -362,7 +466,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
               onClick={handleSave}
               className="ht-health-save-button"
             >
-              Save Assessment
+              {editingRecord ? "Save Changes" : "Save Assessment"}
             </button>
 
             <button
@@ -441,6 +545,29 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                       ))}
                     </ul>
                   </div>
+
+                  {canManage && (
+                    <div className="ht-assessment-buttons ht-midwife-notes-actions">
+                      <button
+                        type="button"
+                        className="ht-edit-button"
+                        title="Edit midwife note"
+                        onClick={() => editRecord(record)}
+                      >
+                        <Pencil size={15} />
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        className="ht-delete-button"
+                        onClick={() => handleDelete(record.record_id)}
+                      >
+                        <Trash2 size={15} />
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -456,152 +583,316 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
             </button>
           )}
         </>
-      ) : (
-        <>
-          {records.map((record) => (
-            <div
-              key={record.record_id}
-              className="ht-assessment-card"
-            >
-              {/* CARD TOP */}
-              <div className="ht-assessment-details">
-                {Object.entries(definition.fields).map(
-                  ([column, field], index) => (
-                    <div
-                      key={column}
-                      className="ht-assessment-row"
-                    >
-                      <div className="ht-assessment-icon">
-                        {getFieldIcon(field.label, index)}
-                      </div>
+      ) : type === "vital-signs" ? (
+  <>
+    {records.map((record) => (
+      <div
+        key={record.record_id}
+        className="ht-vital-record-card"
+      >
+        <div className="ht-vital-grid">
+          {Object.entries(definition.fields).map(
+            ([column, field]) => (
+              <div
+                key={column}
+                className="ht-vital-card"
+              >
+                <div className="ht-vital-icon">
+                  {getVitalSignIcon(field.label)}
+                </div>
 
-                      <div className="ht-assessment-label">
-                        {field.label}
-                      </div>
-
-                      <div className="ht-assessment-colon">
-                        :
-                      </div>
-
-                      <div className="ht-assessment-value">
-                        {field.type === "select" ? (
-                          <span
-                            className={
-                              field.label
-                                .toLowerCase()
-                                .includes("status")
-                                ? "ht-status-active"
-                                : ""
-                            }
-                          >
-                            {formatValue(
-                              record[column],
-                              field
-                            )}
-                          </span>
-                        ) : (
-                          formatValue(
-                            record[column],
-                            field
-                          )
-                        )}
-                      </div>
-                    </div>
-                  )
-                )}
-
-                {/* DATE */}
-                <div className="ht-assessment-row">
-                  <div className="ht-assessment-icon">
-                    <CalendarDays size={17} />
+                <div className="ht-vital-content">
+                  <div className="ht-vital-label">
+                    {field.label}
                   </div>
 
-                  <div className="ht-assessment-label">
-                    {definition.dateLabel}
-                  </div>
-
-                  <div className="ht-assessment-colon">
-                    :
-                  </div>
-
-                  <div className="ht-assessment-value">
-                    {getRecordDate(record)}
+                  <div className="ht-vital-value">
+                    {formatValue(
+                      record[column],
+                      field
+                    )}
                   </div>
                 </div>
               </div>
-
-              {/* FOOTER */}
-              <div className="ht-assessment-footer">
-                <div className="ht-assessment-meta">
-                  {getCreatedDate(record) && (
-                    <div>
-                      <CalendarDays size={14} />
-                      <span>
-                        Recorded on {getCreatedDate(record)}
-                      </span>
-                    </div>
-                  )}
-
-                  {getRecordedBy(record) && (
-                    <div>
-                      <UserRound size={14} />
-                      <span>
-                        Recorded by {getRecordedBy(record)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {canManage && (
-                  <div className="ht-assessment-buttons">
-                    <button
-                      type="button"
-                      className="ht-edit-button"
-                      title="Edit assessment"
-                      onClick={() =>
-                        alert(
-                          "Edit functionality can be connected once the backend update endpoint is available."
-                        )
-                      }
-                    >
-                      <Pencil size={15} />
-                      Edit
-                    </button>
-
-                    <button
-                      type="button"
-                      className="ht-delete-button"
-                      onClick={() =>
-                        handleDelete(record.record_id)
-                      }
-                    >
-                      <Trash2 size={15} />
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-
-          {records.length >= perPage && (
-            <button
-              type="button"
-              onClick={() =>
-                setPerPage((p) => p + 10)
-              }
-              className="ht-show-more"
-            >
-              Show more
-            </button>
+            )
           )}
-        </>
-      )}
+        </div>
+
+        <div className="ht-vital-footer">
+          <div className="ht-assessment-meta">
+            {getCreatedDate(record) && (
+              <div>
+                <CalendarDays size={14} />
+                <span>
+                  Recorded on {getCreatedDate(record)}
+                </span>
+              </div>
+            )}
+
+            {getRecordedBy(record) && (
+              <div>
+                <UserRound size={14} />
+                <span>
+                  Recorded by {getRecordedBy(record)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {canManage && (
+            <div className="ht-assessment-buttons">
+              <button
+                type="button"
+                className="ht-edit-button"
+                title="Edit vital signs"
+                onClick={() => editRecord(record)}
+              >
+                <Pencil size={15} />
+                Edit
+              </button>
+
+              <button
+                type="button"
+                className="ht-delete-button"
+                onClick={() =>
+                  handleDelete(record.record_id)
+                }
+              >
+                <Trash2 size={15} />
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+
+    {records.length >= perPage && (
+      <button
+        type="button"
+        onClick={() =>
+          setPerPage((p) => p + 10)
+        }
+        className="ht-show-more"
+      >
+        Show more
+      </button>
+    )}
+  </>
+) : (
+  <>
+    {records.map((record) => (
+      <div
+        key={record.record_id}
+        className="ht-assessment-card"
+      >
+        <div className="ht-assessment-details">
+          {Object.entries(definition.fields).map(
+            ([column, field], index) => (
+              <div
+                key={column}
+                className="ht-assessment-row"
+              >
+                <div className="ht-assessment-icon">
+                  {getFieldIcon(
+                    field.label,
+                    index
+                  )}
+                </div>
+
+                <div className="ht-assessment-label">
+                  {field.label}
+                </div>
+
+                <div className="ht-assessment-colon">
+                  :
+                </div>
+
+                <div className="ht-assessment-value">
+                  {field.type === "select" ? (
+                    <span
+                      className={
+                        field.label
+                          .toLowerCase()
+                          .includes("status")
+                          ? "ht-status-active"
+                          : ""
+                      }
+                    >
+                      {formatValue(
+                        record[column],
+                        field
+                      )}
+                    </span>
+                  ) : (
+                    formatValue(
+                      record[column],
+                      field
+                    )
+                  )}
+                </div>
+              </div>
+            )
+          )}
+
+          <div className="ht-assessment-row">
+            <div className="ht-assessment-icon">
+              <CalendarDays size={17} />
+            </div>
+
+            <div className="ht-assessment-label">
+              {definition.dateLabel}
+            </div>
+
+            <div className="ht-assessment-colon">
+              :
+            </div>
+
+            <div className="ht-assessment-value">
+              {getRecordDate(record)}
+            </div>
+          </div>
+        </div>
+
+        <div className="ht-assessment-footer">
+          <div className="ht-assessment-meta">
+            {getCreatedDate(record) && (
+              <div>
+                <CalendarDays size={14} />
+                <span>
+                  Recorded on {getCreatedDate(record)}
+                </span>
+              </div>
+            )}
+
+            {getRecordedBy(record) && (
+              <div>
+                <UserRound size={14} />
+                <span>
+                  Recorded by {getRecordedBy(record)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {canManage && (
+            <div className="ht-assessment-buttons">
+              <button
+                type="button"
+                className="ht-edit-button"
+                title="Edit assessment"
+                onClick={() => editRecord(record)}
+              >
+                <Pencil size={15} />
+                Edit
+              </button>
+
+              <button
+                type="button"
+                className="ht-delete-button"
+                onClick={() =>
+                  handleDelete(record.record_id)
+                }
+              >
+                <Trash2 size={15} />
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+
+    {records.length >= perPage && (
+      <button
+        type="button"
+        onClick={() =>
+          setPerPage((p) => p + 10)
+        }
+        className="ht-show-more"
+      >
+        Show more
+      </button>
+    )}
+  </>
+)}
 
       {/* DESIGN CSS */}
+
       <style>{`
+      .ht-vital-record-card {
+       width: 100%;
+       padding: 14px;
+       border: 1px solid #dfe8e3;
+       border-radius: 12px;
+       background: #ffffff;
+       box-shadow: 0 2px 8px rgba(36, 55, 46, 0.04);
+      }
+
+      .ht-vital-grid {
+       display: grid;
+       grid-template-columns: repeat(3, minmax(0, 1fr));
+       gap: 12px;
+      }
+
+      .ht-vital-card {
+       min-height: 92px;
+       display: flex;
+       align-items: center;
+       gap: 12px;
+       padding: 14px;
+       border: 1px solid #e1ebe5;
+       border-radius: 9px;
+       background: #fbfdfc;
+       box-sizing: border-box;
+      }
+
+      .ht-vital-icon {
+       width: 42px;
+       height: 42px;
+       min-width: 42px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       border-radius: 50%;
+       background: #e5f3eb;
+       color: #3f765d;
+      }
+
+      .ht-vital-content {
+       min-width: 0;
+      }
+
+      .ht-vital-label {
+       margin-bottom: 5px;
+       font-size: 10px;
+       font-weight: 700;
+       color: #53635b;
+      }
+
+      .ht-vital-value {
+       font-size: 13px;
+       font-weight: 600;
+       color: #26352e;
+       line-height: 1.4;
+      }
+
+      .ht-vital-footer {
+       display: flex;
+       align-items: center;
+       justify-content: space-between;
+       gap: 15px;
+       margin-top: 14px;
+       padding-top: 12px;
+       border-top: 1px solid #e8eeeb;
+      }
         .ht-health-assessment {
           width: 100%;
+          padding: 20px;
+          background: white;
+          border: 1px solid #dfeae4;
+          border-radius: 11px;
+          box-sizing: border-box;
         }
 
         .ht-health-assessment-header {
@@ -760,7 +1051,6 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
           font-weight: 700;
           cursor: pointer;
         }
-
         .ht-midwife-notes-stack {
           display: flex;
           flex-direction: column;
@@ -857,12 +1147,21 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         .ht-midwife-notes-block ul {
           margin: 0;
           padding-left: 18px;
+          padding-right: 8px;
           line-height: 1.7;
         }
 
         .ht-midwife-notes-block li {
           margin-bottom: 2px;
           color: #1d2d29;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+        }
+
+        .ht-midwife-notes-actions {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 16px;
         }
 
         .ht-assessment-card {
@@ -1001,6 +1300,14 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         }
 
         @media (max-width: 700px) {
+          
+          .ht-vital-grid{
+            grid-template-columns: 1fr;
+          }
+          .ht-vital-footer{
+            aligns-items: flex-start;
+            flex-direction: column;
+          }
           .ht-health-assessment-header {
             align-items: flex-start;
             flex-direction: column;
