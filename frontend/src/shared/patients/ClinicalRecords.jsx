@@ -517,6 +517,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                         type="button"
                         className="ht-edit-button"
                         title="Edit midwife note"
+                        onClick={() => editRecord(record)}
                       >
                         <Pencil size={15} />
                         Edit
