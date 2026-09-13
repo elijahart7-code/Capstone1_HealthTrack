@@ -14,6 +14,7 @@ import {
   UserRound,
   Pencil,
   X,
+  TriangleAlert,
   HeartPulse,
   Thermometer,
   Activity,
@@ -158,6 +159,10 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
     if (text.includes("medication") || text.includes("medicine")) {
       return <Pill size={17} />;
+    }
+
+    if (text.includes("reaction")) {
+      return <TriangleAlert size={17} />;
     }
 
     if (text.includes("remark") || text.includes("note")) {
