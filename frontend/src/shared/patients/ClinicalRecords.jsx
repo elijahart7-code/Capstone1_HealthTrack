@@ -26,6 +26,7 @@ import {
   Smile,
   CloudSun,
   Apple,
+  Scissors,
 } from "lucide-react";
 import { Field, Input, Select, Textarea } from "../../components/ui/Input";
 
@@ -179,6 +180,10 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
     if (text.includes("food")) {
       return <Apple size={17} />;
+    }
+
+    if (text.includes("surgery") || text.includes("operation")) {
+      return <Scissors size={17} />;
     }
 
     if (text.includes("reaction")) {
