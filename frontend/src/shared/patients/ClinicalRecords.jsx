@@ -1073,12 +1073,15 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         .ht-midwife-notes-block ul {
           margin: 0;
           padding-left: 18px;
+          padding-right: 8px;
           line-height: 1.7;
         }
 
         .ht-midwife-notes-block li {
           margin-bottom: 2px;
           color: #1d2d29;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
 
         .ht-assessment-card {
