@@ -28,6 +28,7 @@ import {
   CloudSun,
   Apple,
   BriefcaseMedical,
+  ShieldPlus,
 } from "lucide-react";
 import { Field, Input, Select, Textarea } from "../../components/ui/Input";
 
@@ -173,6 +174,10 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
     if (text.includes("date")) {
       return <CalendarDays size={17} />;
+    }
+
+    if (text.includes("immunization") || text.includes("vaccination")) {
+      return <ShieldPlus size={17} />;
     }
 
     if (text.includes("status")) {
