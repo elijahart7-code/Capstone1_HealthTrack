@@ -491,6 +491,28 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                       ))}
                     </ul>
                   </div>
+
+                  {canManage && (
+                    <div className="ht-assessment-buttons ht-midwife-notes-actions">
+                      <button
+                        type="button"
+                        className="ht-edit-button"
+                        title="Edit midwife note"
+                      >
+                        <Pencil size={15} />
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        className="ht-delete-button"
+                        onClick={() => handleDelete(record.record_id)}
+                      >
+                        <Trash2 size={15} />
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -568,11 +590,6 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                 type="button"
                 className="ht-edit-button"
                 title="Edit vital signs"
-                onClick={() =>
-                  alert(
-                    "Edit functionality can be connected once the backend update endpoint is available."
-                  )
-                }
               >
                 <Pencil size={15} />
                 Edit
@@ -708,11 +725,6 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                 type="button"
                 className="ht-edit-button"
                 title="Edit assessment"
-                onClick={() =>
-                  alert(
-                    "Edit functionality can be connected once the backend update endpoint is available."
-                  )
-                }
               >
                 <Pencil size={15} />
                 Edit
@@ -1087,6 +1099,12 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
           color: #1d2d29;
           overflow-wrap: anywhere;
           word-break: break-word;
+        }
+
+        .ht-midwife-notes-actions {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 16px;
         }
 
         .ht-assessment-card {
