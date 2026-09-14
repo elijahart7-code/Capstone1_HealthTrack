@@ -203,7 +203,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
                 <span className="ht-portal-status ht-portal-status-inactive">Inactive</span>
               </div>
 
-              <Field label="Email Address" required>
+              <Field label="Email Address (optional)">
                 <Input
                   type="email"
                   value={form.portal_email}
@@ -214,7 +214,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
                 />
               </Field>
 
-              <p className="ht-muted text-sm">The patient signs in with this email address and the default password <strong>password</strong>.</p>
+              <p className="ht-muted text-sm">If provided, the patient can sign in with this email address and the default password <strong>password</strong>.</p>
             </div>
           </div>
         </div>

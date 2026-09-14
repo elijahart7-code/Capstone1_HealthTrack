@@ -19,7 +19,7 @@ export async function registerPatient(req, res) {
   const required = [
     "full_name", "sex", "birthdate", "civil_status", "blood_type",
     "occupation", "barangay_id_number", "contact_number", "address",
-    "emergency_contact_name", "emergency_contact_number", "portal_email",
+    "emergency_contact_name", "emergency_contact_number",
   ];
   for (const field of required) {
     if (!b[field] || !String(b[field]).trim()) {
@@ -34,15 +34,18 @@ export async function registerPatient(req, res) {
 
   const patientId = await generatePatientId();
 
-  const existing = await sql`SELECT id FROM users WHERE email = ${b.portal_email}`;
-  if (existing.length > 0) return res.status(422).json({ error: "That email address is already in use." });
+  let userId = null;
+  if (b.portal_email && String(b.portal_email).trim()) {
+    const existing = await sql`SELECT id FROM users WHERE email = ${b.portal_email}`;
+    if (existing.length > 0) return res.status(422).json({ error: "That email address is already in use." });
 
-  const userId = await generateUserId();
-  const password = await bcrypt.hash("password", 10);
-  await sql`
-    INSERT INTO users (user_id, name, email, password, role)
-    VALUES (${userId}, ${b.full_name.trim()}, ${b.portal_email}, ${password}, 'patient')
-  `;
+    userId = await generateUserId();
+    const password = await bcrypt.hash("password", 10);
+    await sql`
+      INSERT INTO users (user_id, name, email, password, role)
+      VALUES (${userId}, ${b.full_name.trim()}, ${b.portal_email}, ${password}, 'patient')
+    `;
+  }
 
   const rows = await sql`
     INSERT INTO patients (
