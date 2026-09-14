@@ -26,24 +26,34 @@ export function AdminShell() {
     setLoading(true);
     setLoadError(null);
 
-    try {
-      const [dashboardRes, patientsRes, appointmentsRes] = await Promise.all([
+    const [dashboardResult, patientsResult, appointmentsResult] = await Promise.allSettled([
         api.get("/admin/dashboard"),
         api.get("/patients"),
         api.get("/admin/appointments"),
       ]);
-      setDashboard(dashboardRes.data);
-      setPatients(patientsRes.data.patients);
-      setAppointments(appointmentsRes.data.appointments);
-    } catch (error) {
-      console.error(error);
-      setLoadError(
-        error?.response?.data?.error ||
-          "Could not load the admin dashboard. Check that the server is running and sign in again."
-      );
-    } finally {
-      setLoading(false);
+
+    if (dashboardResult.status === "fulfilled") {
+      setDashboard(dashboardResult.value.data);
     }
+    if (patientsResult.status === "fulfilled") {
+      setPatients(patientsResult.value.data.patients || []);
+    } else {
+      setLoadError(
+        patientsResult.reason?.response?.data?.error ||
+          "Could not load the patient list."
+      );
+    }
+    if (appointmentsResult.status === "fulfilled") {
+      setAppointments(appointmentsResult.value.data.appointments || []);
+    }
+    if (dashboardResult.status === "rejected" && patientsResult.status === "fulfilled") {
+      setLoadError(
+        dashboardResult.reason?.response?.data?.error ||
+          "Could not load the admin dashboard."
+      );
+    }
+
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -64,7 +74,7 @@ export function AdminShell() {
       </header>
 
       <main className="ht-content">
-        {loadError ? (
+        {loadError && (page !== "patients" || patients.length === 0) ? (
           <div className="ht-panel">
             <p className="ht-muted text-sm">{loadError}</p>
           </div>

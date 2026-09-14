@@ -15,15 +15,29 @@ export function HealthWorkerShell() {
   const [dashboard, setDashboard] = useState(null);
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [dashboardRes, patientsRes] = await Promise.all([
+    setLoadError(null);
+
+    const [dashboardResult, patientsResult] = await Promise.allSettled([
       api.get("/health-worker/dashboard"),
       api.get("/patients"),
     ]);
-    setDashboard(dashboardRes.data);
-    setPatients(patientsRes.data.patients);
+
+    if (dashboardResult.status === "fulfilled") {
+      setDashboard(dashboardResult.value.data);
+    }
+    if (patientsResult.status === "fulfilled") {
+      setPatients(patientsResult.value.data.patients || []);
+    } else {
+      setLoadError(
+        patientsResult.reason?.response?.data?.error ||
+          "Could not load the patient list."
+      );
+    }
+
     setLoading(false);
   }, []);
 
@@ -49,7 +63,11 @@ export function HealthWorkerShell() {
       </header>
 
       <main className="ht-content">
-        {loading || !dashboard ? (
+        {loadError && (page !== "patients" || patients.length === 0) ? (
+          <div className="ht-panel">
+            <p className="ht-muted text-sm">{loadError}</p>
+          </div>
+        ) : loading || !dashboard ? (
           <p className="ht-muted text-sm">Loading...</p>
         ) : page === "patients" ? (
           <Patients patients={patients} loadData={loadData} />
