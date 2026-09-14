@@ -12,8 +12,10 @@ import {
   Plus,
   Trash2,
   UserRound,
+  Users,
   Pencil,
   X,
+  TriangleAlert,
   HeartPulse,
   Thermometer,
   Activity,
@@ -23,6 +25,12 @@ import {
   PersonStanding,
   Droplets,
   Smile,
+  CloudSun,
+  Apple,
+  BriefcaseMedical,
+  ShieldPlus,
+  HeartHandshake,
+  Hospital,
 } from "lucide-react";
 import { Field, Input, Select, Textarea } from "../../components/ui/Input";
 
@@ -40,6 +48,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
   const [showForm, setShowForm] = useState(false);
   const [perPage, setPerPage] = useState(10);
   const [form, setForm] = useState({});
+  const [editingRecord, setEditingRecord] = useState(null);
   const [recordDate, setRecordDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
@@ -83,6 +92,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     setForm(blank);
     setRecordDate(new Date().toISOString().slice(0, 10));
     setError(null);
+    setEditingRecord(null);
   }
 
   function toggleForm() {
@@ -93,17 +103,29 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     setShowForm((value) => !value);
   }
 
+  function editRecord(record) {
+    const values = {};
+    Object.keys(definition.fields).forEach((column) => {
+      values[column] = record[column] ?? "";
+    });
+
+    setForm(values);
+    setRecordDate(String(record[definition.dateField] || "").slice(0, 10));
+    setEditingRecord(record);
+    setError(null);
+    setShowForm(true);
+  }
+
   async function handleSave() {
     setError(null);
 
     try {
-      await api.post(
-        `/patients/${patientId}/records/${type}`,
-        {
-          ...form,
-          recordDate,
-        }
-      );
+      const payload = { ...form, recordDate };
+      const url = editingRecord
+        ? `/patients/${patientId}/records/${type}/${editingRecord.record_id}`
+        : `/patients/${patientId}/records/${type}`;
+      const request = editingRecord ? api.patch : api.post;
+      await request(url, payload);
 
       resetForm();
       setShowForm(false);
@@ -140,6 +162,18 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
   function getFieldIcon(label, index) {
     const text = label.toLowerCase();
 
+    if (text.includes("family")) {
+      return <Users size={17} />;
+    }
+
+    if (text.includes("hospital") || text.includes("admission") || text.includes("previous hospitalization") || text.includes("hospitalizations")) {
+      return <Hospital size={17} />;
+    }
+
+    if (text.includes("illness") || text.includes("past illness") || text.includes("illnesses")) {
+      return <HeartHandshake size={17} />;
+    }
+
     if (text.includes("condition") || text.includes("diagnosis")) {
       return <Stethoscope size={17} />;
     }
@@ -152,12 +186,32 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
       return <CalendarDays size={17} />;
     }
 
+    if (text.includes("immunization") || text.includes("vaccination")) {
+      return <ShieldPlus size={17} />;
+    }
+
     if (text.includes("status")) {
       return <CheckCircle2 size={17} />;
     }
 
     if (text.includes("medication") || text.includes("medicine")) {
       return <Pill size={17} />;
+    }
+
+    if (text.includes("food")) {
+      return <Apple size={17} />;
+    }
+
+    if (text.includes("surgery") || text.includes("operation")) {
+      return <BriefcaseMedical size={17} />;
+    }
+
+    if (text.includes("reaction")) {
+      return <TriangleAlert size={17} />;
+    }
+
+    if (text.includes("environment") || text.includes("air") || text.includes("weather")) {
+      return <CloudSun size={17} />;
     }
 
     if (text.includes("remark") || text.includes("note")) {
@@ -325,7 +379,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         <div className="ht-health-form">
           <div className="ht-health-form-title">
             <ClipboardList size={18} />
-            <h3>New Health Assessment</h3>
+            <h3>{editingRecord ? `Edit ${definition.singular}` : `New ${definition.singular}`}</h3>
           </div>
 
           {error && (
@@ -412,7 +466,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
               onClick={handleSave}
               className="ht-health-save-button"
             >
-              Save Assessment
+              {editingRecord ? "Save Changes" : "Save Assessment"}
             </button>
 
             <button
@@ -491,6 +545,29 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                       ))}
                     </ul>
                   </div>
+
+                  {canManage && (
+                    <div className="ht-assessment-buttons ht-midwife-notes-actions">
+                      <button
+                        type="button"
+                        className="ht-edit-button"
+                        title="Edit midwife note"
+                        onClick={() => editRecord(record)}
+                      >
+                        <Pencil size={15} />
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        className="ht-delete-button"
+                        onClick={() => handleDelete(record.record_id)}
+                      >
+                        <Trash2 size={15} />
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -568,11 +645,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                 type="button"
                 className="ht-edit-button"
                 title="Edit vital signs"
-                onClick={() =>
-                  alert(
-                    "Edit functionality can be connected once the backend update endpoint is available."
-                  )
-                }
+                onClick={() => editRecord(record)}
               >
                 <Pencil size={15} />
                 Edit
@@ -708,11 +781,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                 type="button"
                 className="ht-edit-button"
                 title="Edit assessment"
-                onClick={() =>
-                  alert(
-                    "Edit functionality can be connected once the backend update endpoint is available."
-                  )
-                }
+                onClick={() => editRecord(record)}
               >
                 <Pencil size={15} />
                 Edit
@@ -819,6 +888,11 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
       }
         .ht-health-assessment {
           width: 100%;
+          padding: 20px;
+          background: white;
+          border: 1px solid #dfeae4;
+          border-radius: 11px;
+          box-sizing: border-box;
         }
 
         .ht-health-assessment-header {
@@ -1073,12 +1147,21 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         .ht-midwife-notes-block ul {
           margin: 0;
           padding-left: 18px;
+          padding-right: 8px;
           line-height: 1.7;
         }
 
         .ht-midwife-notes-block li {
           margin-bottom: 2px;
           color: #1d2d29;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+        }
+
+        .ht-midwife-notes-actions {
+          display: flex;
+          justify-content: flex-end;
+          margin-top: 16px;
         }
 
         .ht-assessment-card {

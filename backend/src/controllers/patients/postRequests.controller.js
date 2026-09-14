@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import crypto from "node:crypto";
 import { sql } from "../../config/db.js";
 import { generateAppointmentId, generatePatientId, generateRecordId, generateUserId } from "../../utils/generateId.js";
 import { isRecordType, RECORD_TYPES } from "../../config/recordTypes.js";
@@ -8,8 +7,8 @@ import { AppointmentPolicy, ClinicalRecordPolicy, PatientPolicy } from "../../po
 /**
  * POST /api/patients
  *
- * Handles patient demographics only and does not create a portal login.
- * An admin can grant portal access afterward from the patient record screen.
+ * Handles patient demographics and creates the patient portal login from the
+ * supplied registration email.
  */
 export async function registerPatient(req, res) {
   if (!PatientPolicy.register(req.user)) {
@@ -35,6 +34,19 @@ export async function registerPatient(req, res) {
 
   const patientId = await generatePatientId();
 
+  let userId = null;
+  if (b.portal_email && String(b.portal_email).trim()) {
+    const existing = await sql`SELECT id FROM users WHERE email = ${b.portal_email}`;
+    if (existing.length > 0) return res.status(422).json({ error: "That email address is already in use." });
+
+    userId = await generateUserId();
+    const password = await bcrypt.hash("password", 10);
+    await sql`
+      INSERT INTO users (user_id, name, email, password, role)
+      VALUES (${userId}, ${b.full_name.trim()}, ${b.portal_email}, ${password}, 'patient')
+    `;
+  }
+
   const rows = await sql`
     INSERT INTO patients (
       patient_id, user_id, first_name, middle_name, last_name, sex, birthdate,
@@ -42,7 +54,7 @@ export async function registerPatient(req, res) {
       address, nationality, place_of_birth, emergency_contact_name,
       emergency_contact_number, emergency_contact_relationship
     ) VALUES (
-      ${patientId}, NULL, ${firstName}, ${middleName}, ${lastName}, ${b.sex}, ${b.birthdate},
+      ${patientId}, ${userId}, ${firstName}, ${middleName}, ${lastName}, ${b.sex}, ${b.birthdate},
       ${b.civil_status}, ${b.blood_type}, ${b.occupation}, ${b.barangay_id_number}, ${b.contact_number || null},
       ${b.address}, ${b.nationality || null}, ${b.place_of_birth || null},
       ${b.emergency_contact_name || null}, ${b.emergency_contact_number || null},
@@ -83,9 +95,7 @@ export async function createAppointment(req, res) {
 /**
  * POST /api/patients/:patientId/portal-account
  *
- * No password is chosen here -- the account gets an unusable random hash,
- * and the patient sets a real password through "forgot password" later, so
- * no staff member ever types, sees, or knows a patient's password.
+ * Patient portal accounts use the required default password "password".
  */
 export async function createPortalAccount(req, res) {
   if (!PatientPolicy.createAccount(req.user)) {
@@ -108,12 +118,12 @@ export async function createPortalAccount(req, res) {
   if (existing.length > 0) return res.status(422).json({ error: "That email address is already in use." });
 
   const userId = await generateUserId();
-  const randomPassword = await bcrypt.hash(crypto.randomBytes(32).toString("hex"), 10);
+  const defaultPassword = await bcrypt.hash("password", 10);
   const fullName = `${patient.last_name}, ${patient.first_name}${patient.middle_name ? " " + patient.middle_name : ""}`;
 
   await sql`
     INSERT INTO users (user_id, name, email, password, role)
-    VALUES (${userId}, ${fullName}, ${email}, ${randomPassword}, 'patient')
+    VALUES (${userId}, ${fullName}, ${email}, ${defaultPassword}, 'patient')
   `;
 
   const updated = await sql`
@@ -121,7 +131,7 @@ export async function createPortalAccount(req, res) {
   `;
 
   return res.status(201).json({
-    message: 'Portal account created. Ask the patient to use "Forgot password" to set their own password.',
+    message: 'Portal account created. The patient can sign in with this email and the default password "password".',
     patient: updated[0],
   });
 }
