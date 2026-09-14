@@ -245,13 +245,6 @@ export function PatientRecord({
             <ArrowLeft size={16} />
             Back to patients
           </button>
-          {isAdmin && (
-            <>
-              <button type="button" onClick={deletePatient} className="ht-delete-button">
-                Delete Patient
-              </button>
-            </>
-          )}
         </div>
       </section>
       {deleteError && <div className="ht-login-alert ht-login-alert-error">{deleteError}</div>}
