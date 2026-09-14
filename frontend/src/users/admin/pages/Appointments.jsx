@@ -16,7 +16,7 @@ const STATUS_COLORS = {
 
 /** Admin appointment management. */
 export function Appointments({ appointments, loadData }) {
-  const [filter, setFilter] = useState("upcoming");
+  const [filter, setFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [, setSearchParams] = useSearchParams();
   const pageSize = 10;
