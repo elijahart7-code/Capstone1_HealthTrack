@@ -11,15 +11,22 @@ import { ENV } from "../../config/env.js";
  * screen. This app does not expose a public sign-up route.
  */
 export async function login(req, res) {
-  const { email, password } = req.body;
+  const { email, password, accountType } = req.body;
 
   console.log(`[AUTH] Login attempt: ${email || "No email provided"}`);
 
-  if (!email || !password) {
+  const roleByAccountType = {
+    patient: "patient",
+    health_worker: "health_worker",
+    admin: "admin",
+  };
+  const expectedRole = roleByAccountType[accountType];
+
+  if (!email || !password || !expectedRole) {
     console.warn(`[AUTH] Login failed: Missing email or password`);
 
     return res.status(422).json({
-      error: "Email and password are required.",
+      error: "Choose a valid account type and enter your email and password.",
     });
   }
 
@@ -49,6 +56,15 @@ export async function login(req, res) {
 
       return res.status(401).json({
         error: "Those credentials don't match our records.",
+      });
+    }
+
+    if (user.role !== expectedRole) {
+      console.warn(
+        `[AUTH] Login failed: Account type mismatch for ${email} (selected=${accountType}, actual=${user.role})`
+      );
+      return res.status(401).json({
+        error: "Those credentials do not match the selected account type.",
       });
     }
 

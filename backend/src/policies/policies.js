@@ -24,10 +24,10 @@ export const PatientPolicy = {
    */
   register: (user) => isHealthWorker(user),
 
-  /** Give a patient a portal login -- the midwife's job, not the health worker's. */
-  createAccount: (user) => isAdmin(user),
+  /** Health workers may create patient portal accounts; admins may too. */
+  createAccount: (user) => isStaff(user),
 
-  update: (user) => isStaff(user),
+  update: (user) => isAdmin(user),
 
   /** Deleting a patient destroys their clinical history -- midwife only. */
   delete: (user) => isAdmin(user),

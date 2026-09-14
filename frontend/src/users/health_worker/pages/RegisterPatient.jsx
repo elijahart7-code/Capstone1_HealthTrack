@@ -9,8 +9,7 @@ const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 const CIVIL_STATUSES = ["single", "married", "widowed", "separated"];
 
 /**
- * Registers a new patient. This form captures demographics only; portal login
- * creation is handled elsewhere through the patient record screen.
+ * Registers a patient and creates their portal login from the required email.
  */
 export function RegisterPatient({ loadData, onRegistered }) {
   const [, setSearchParams] = useSearchParams();
@@ -29,9 +28,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
     emergency_contact_name: "",
     emergency_contact_number: "",
     emergency_contact_relationship: "",
-    portal_enabled: false,
     portal_email: "",
-    send_login_credentials: true,
   });
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -47,16 +44,9 @@ export function RegisterPatient({ loadData, onRegistered }) {
     try {
       const payload = {
         ...form,
-        portal_enabled: undefined,
-        portal_email: undefined,
-        send_login_credentials: undefined,
       };
 
       const { data } = await api.post("/patients", payload);
-
-      if (form.portal_enabled && form.portal_email) {
-        await api.post(`/patients/${data.patient.patient_id}/portal-account`, { email: form.portal_email });
-      }
 
       await loadData();
       onRegistered(data.patient.patient_id);
@@ -213,26 +203,18 @@ export function RegisterPatient({ loadData, onRegistered }) {
                 <span className="ht-portal-status ht-portal-status-inactive">Inactive</span>
               </div>
 
-              <Field label="Email Address" required={form.portal_enabled}>
+              <Field label="Email Address" required>
                 <Input
                   type="email"
                   value={form.portal_email}
                   onChange={(e) => {
                     set("portal_email", e.target.value);
-                    set("portal_enabled", true);
                   }}
                   placeholder="Enter email address (used for portal login)"
                 />
               </Field>
 
-              <label className="ht-checkbox-inline">
-                <input
-                  type="checkbox"
-                  checked={form.send_login_credentials}
-                  onChange={(e) => set("send_login_credentials", e.target.checked)}
-                />
-                <span>Send login credentials to this email address</span>
-              </label>
+              <p className="ht-muted text-sm">The patient signs in with this email address and the default password <strong>password</strong>.</p>
             </div>
           </div>
         </div>

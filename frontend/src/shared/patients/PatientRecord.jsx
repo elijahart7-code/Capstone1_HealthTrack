@@ -50,6 +50,7 @@ export function PatientRecord({
   const [portalEmail, setPortalEmail] = useState("");
   const [accountError, setAccountError] = useState(null);
   const [showEditInformation, setShowEditInformation] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
 
   async function load() {
     setLoading(true);
@@ -150,6 +151,18 @@ export function PatientRecord({
     }
   }
 
+  async function deletePatient() {
+    if (!confirm("Delete this patient and all of their clinical history? This cannot be undone.")) return;
+    setDeleteError(null);
+    try {
+      await api.delete(`/patients/${patientId}`);
+      onPatientUpdated?.();
+      onBack();
+    } catch (err) {
+      setDeleteError(err?.response?.data?.error || "Could not delete this patient.");
+    }
+  }
+
   if (loading) {
     return (
       <div className="ht-loading">
@@ -232,16 +245,24 @@ export function PatientRecord({
             <ArrowLeft size={16} />
             Back to patients
           </button>
-          <button
-            type="button"
-            onClick={() => setShowEditInformation(true)}
-            className="ht-edit-button"
-          >
-            <Pencil size={16} />
-            Edit Information
-          </button>
+          {isAdmin && (
+            <>
+              <button
+                type="button"
+                onClick={() => setShowEditInformation(true)}
+                className="ht-edit-button"
+              >
+                <Pencil size={16} />
+                Edit Information
+              </button>
+              <button type="button" onClick={deletePatient} className="ht-delete-button">
+                Delete Patient
+              </button>
+            </>
+          )}
         </div>
       </section>
+      {deleteError && <div className="ht-login-alert ht-login-alert-error">{deleteError}</div>}
       {/* ================= MAIN CONTENT ================= */}
       <div className="ht-patient-content">
 
@@ -398,7 +419,7 @@ export function PatientRecord({
            <div className="ht-content-card ht-portal-card">
              <div className="ht-card-heading">
                 <h2>Patient Portal Account</h2>
-                   {!patient.user_id && isAdmin && (
+                   {!patient.user_id && (isAdmin || role === "health_worker") && (
                   <button
                   onClick={() =>
                   setShowAccountForm((value) => !value)
@@ -459,7 +480,7 @@ export function PatientRecord({
 
     </div>
 
-  ) : showAccountForm && isAdmin ? (
+  ) : showAccountForm && (isAdmin || role === "health_worker") ? (
 
     <div className="ht-form-box">
 

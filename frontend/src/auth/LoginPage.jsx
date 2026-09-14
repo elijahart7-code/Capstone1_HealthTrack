@@ -5,10 +5,8 @@ import { api } from "../lib/axios";
 import { homeRouteForRole, saveSession } from "../lib/auth";
 
 /**
- * Login screen for the app. The account selector is decorative: it does not
- * change the form payload, and the backend identifies the submitted account
- * by matching the email/password combination. There is no public sign-up
- * route.
+ * Login screen for the app. The selected account type is sent to the backend
+ * and must match the role assigned to the submitted account.
  */
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -24,7 +22,7 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      const { data } = await api.post("/auth/login", { email, password });
+      const { data } = await api.post("/auth/login", { email, password, accountType });
       saveSession(data.token, data.user);
       navigate(homeRouteForRole(data.user.role));
     } catch (err) {
@@ -37,7 +35,7 @@ export default function LoginPage() {
   const accounts = [
     { key: "patient", label: "Patient", icon: User },
     { key: "admin", label: "Admin", icon: UserRoundCog },
-    { key: "health_worker", label: "Health Worker", icon: Users },
+    { key: "health_worker", label: "HealthWorker", icon: Users },
   ];
 
   return (
