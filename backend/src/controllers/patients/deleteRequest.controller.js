@@ -34,15 +34,31 @@ export async function deleteClinicalRecord(req, res) {
 }
 
 /**
- * DELETE /api/patients/:patientId -- destroys the patient and their
- * clinical history (cascading FKs). Admin only.
+ * DELETE /api/patients/:patientId -- destroys the patient and dependent
+ * records. Explicit child deletes support production schemas whose legacy
+ * foreign keys do not have ON DELETE CASCADE.
  */
 export async function deletePatient(req, res) {
   if (!PatientPolicy.delete(req.user)) {
     return res.status(403).json({ error: "Only an admin may remove a patient." });
   }
 
-  const rows = await sql`DELETE FROM patients WHERE patient_id = ${req.params.patientId} RETURNING patient_id`;
+  for (const table of [
+    "appointments",
+    "health_assessments",
+    "vital_signs",
+    "midwife_notes",
+    "medical_histories",
+    "allergies",
+  ]) {
+    await sql.query(`DELETE FROM ${table} WHERE patient_id = $1`, [req.params.patientId]);
+  }
+
+  const rows = await sql.query(
+    "DELETE FROM patients WHERE patient_id = $1 RETURNING patient_id",
+    [req.params.patientId]
+  );
+
   if (rows.length === 0) return res.status(404).json({ error: "Patient not found." });
 
   return res.status(200).json({ message: "Patient removed." });
