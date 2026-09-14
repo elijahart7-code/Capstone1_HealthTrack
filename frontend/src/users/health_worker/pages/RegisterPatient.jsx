@@ -31,6 +31,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
   });
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [sendLoginCredentials, setSendLoginCredentials] = useState(true);
 
   useEffect(() => {
     if (!form.birthdate) {
@@ -202,7 +203,8 @@ export function RegisterPatient({ loadData, onRegistered }) {
                 <span className="ht-portal-status ht-portal-status-inactive">Inactive</span>
               </div>
 
-              <Field label="Email Address (optional)">
+              <label className="ht-portal-field">
+                <span>Email Address <span style={{ color: "var(--color-danger)" }}>*</span></span>
                 <Input
                   type="email"
                   value={form.portal_email}
@@ -211,9 +213,22 @@ export function RegisterPatient({ loadData, onRegistered }) {
                   }}
                   placeholder="Enter email address (used for portal login)"
                 />
-              </Field>
+              </label>
 
-              <p className="ht-muted text-sm">If provided, the patient can sign in with this email address and the default password <strong>password</strong>.</p>
+              <label className="ht-portal-checkbox" style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginTop: "0.75rem" }}>
+                <input
+                  type="checkbox"
+                  checked={sendLoginCredentials}
+                  onChange={(e) => setSendLoginCredentials(e.target.checked)}
+                />
+                <span>Send login credentials to this email address</span>
+              </label>
+
+              {sendLoginCredentials && (
+                <p className="ht-muted text-sm" style={{ marginTop: "0.5rem" }}>
+                  The patient will receive an email with login instructions.
+                </p>
+              )}
             </div>
           </div>
         </div>
