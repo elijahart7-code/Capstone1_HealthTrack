@@ -1,12 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import { User, MapPin, PhoneCall } from "lucide-react";
 import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
-import { Field, Input, Select, Textarea } from "../../../components/ui/Input";
-
-const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-const CIVIL_STATUSES = ["single", "married", "widowed", "separated"];
+import { Field, Input, Textarea } from "../../../components/ui/Input";
+import { calculateAge } from "../../../utils/calculateAge";
 
 /**
  * Registers a patient and creates their portal login from the required email.
@@ -15,10 +13,10 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const [, setSearchParams] = useSearchParams();
   const [form, setForm] = useState({
     full_name: "",
-    sex: "",
+    sex: "not specified",
     birthdate: "",
-    civil_status: "",
-    blood_type: "",
+    civil_status: "not specified",
+    blood_type: "not specified",
     occupation: "",
     barangay_id_number: "",
     contact_number: "",
@@ -32,6 +30,11 @@ export function RegisterPatient({ loadData, onRegistered }) {
   });
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
+
+  const ageValue = useMemo(() => {
+    if (!form.birthdate) return "";
+    return `${calculateAge(form.birthdate)} years old`;
+  }, [form.birthdate]);
 
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -80,42 +83,17 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.full_name} onChange={(e) => set("full_name", e.target.value)} placeholder="Enter full name" />
             </Field>
 
-            <Field label="Sex" required>
-              <Select value={form.sex} onChange={(e) => set("sex", e.target.value)}>
-                <option value="">Enter sex</option>
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-              </Select>
-            </Field>
-
             <Field label="Date of Birth" required>
-              <Input type="date" value={form.birthdate} onChange={(e) => set("birthdate", e.target.value)} max={new Date().toISOString().slice(0, 10)} />
+              <Input
+                type="date"
+                value={form.birthdate}
+                onChange={(e) => set("birthdate", e.target.value)}
+                max={new Date().toISOString().slice(0, 10)}
+              />
             </Field>
 
             <Field label="Age" required>
-              <Input value={""} onChange={() => {}} placeholder="Enter age" />
-            </Field>
-
-            <Field label="Civil Status" required>
-              <Select value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)}>
-                <option value="">Enter civil status</option>
-                {CIVIL_STATUSES.map((c) => (
-                  <option key={c} value={c} className="capitalize">
-                    {c}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-
-            <Field label="Blood Type" required>
-              <Select value={form.blood_type} onChange={(e) => set("blood_type", e.target.value)}>
-                <option value="">Enter blood type</option>
-                {BLOOD_TYPES.map((b) => (
-                  <option key={b} value={b}>
-                    {b}
-                  </option>
-                ))}
-              </Select>
+              <Input value={ageValue} readOnly placeholder="Age will be filled automatically" />
             </Field>
 
             <Field label="Occupation" required>
