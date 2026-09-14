@@ -47,7 +47,7 @@ export const RECORD_TYPES = {
     singular: "Medical History Entry",
     table: "medical_histories",
     dateField: "recorded_at",
-    dateLabel: "Date recorded",
+    dateLabel: "Date Recorded",
     fields: {
       past_illnesses: { label: "Past Illnesses", type: "textarea", required: true, primary: true },
       chronic_conditions: { label: "Chronic Conditions", type: "textarea", required: true, column: true },
