@@ -1122,6 +1122,23 @@
         align-content: start;
     }
 
+    .ht-portal-field {
+        display: grid;
+        gap: 0.18rem;
+        font-size: 0.68rem;
+    }
+
+    .ht-portal-email-alert {
+        display: block;
+        padding: 0.45rem 0.6rem;
+        border: 1px solid rgba(178, 69, 62, 0.2);
+        border-radius: 7px;
+        background: #fff7f6;
+        color: var(--color-danger);
+        font-size: 0.72rem;
+        line-height: 1.35;
+    }
+
     .ht-portal-form .ht-field {
         gap: 0.18rem;
         font-size: 0.68rem;

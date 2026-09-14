@@ -30,6 +30,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
     portal_email: "",
   });
   const [error, setError] = useState(null);
+  const [portalEmailError, setPortalEmailError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [sendLoginCredentials, setSendLoginCredentials] = useState(true);
 
@@ -50,6 +51,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
+    setPortalEmailError(null);
     setSaving(true);
     try {
       const payload = {
@@ -61,7 +63,12 @@ export function RegisterPatient({ loadData, onRegistered }) {
       await loadData();
       onRegistered(data.patient.patient_id);
     } catch (err) {
-      setError(err?.response?.data?.error || "Could not register this patient.");
+      const message = err?.response?.data?.error || "Could not register this patient.";
+      if (message.toLowerCase().includes("email")) {
+        setPortalEmailError(message);
+      } else {
+        setError(message);
+      }
     } finally {
       setSaving(false);
     }
@@ -210,9 +217,15 @@ export function RegisterPatient({ loadData, onRegistered }) {
                   value={form.portal_email}
                   onChange={(e) => {
                     set("portal_email", e.target.value);
+                    setPortalEmailError(null);
                   }}
                   placeholder="Enter email address (used for portal login)"
                 />
+                {portalEmailError && (
+                  <span className="ht-portal-email-alert" role="alert">
+                    {portalEmailError}
+                  </span>
+                )}
               </label>
 
               <label className="ht-portal-checkbox" style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginTop: "0.75rem" }}>
