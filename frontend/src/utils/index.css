@@ -510,12 +510,10 @@
         white-space: nowrap;
     }
 
-    .ht-table tbody tr:nth-child(even) {
-        background: rgba(242, 237, 228, 0.4);
-    }
-
+    .ht-table tbody tr,
+    .ht-table tbody tr:nth-child(even),
     .ht-table tbody tr:hover {
-        background: rgba(15, 107, 95, 0.04);
+        background: #ffffff;
     }
 
     .ht-action-button {
