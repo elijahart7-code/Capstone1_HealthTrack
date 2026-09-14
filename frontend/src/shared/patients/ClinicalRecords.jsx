@@ -12,8 +12,10 @@ import {
   Plus,
   Trash2,
   UserRound,
+  Users,
   Pencil,
   X,
+  TriangleAlert,
   HeartPulse,
   Thermometer,
   Activity,
@@ -23,6 +25,12 @@ import {
   PersonStanding,
   Droplets,
   Smile,
+  CloudSun,
+  Apple,
+  BriefcaseMedical,
+  ShieldPlus,
+  HeartHandshake,
+  Hospital,
 } from "lucide-react";
 import { Field, Input, Select, Textarea } from "../../components/ui/Input";
 
@@ -154,6 +162,18 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
   function getFieldIcon(label, index) {
     const text = label.toLowerCase();
 
+    if (text.includes("family")) {
+      return <Users size={17} />;
+    }
+
+    if (text.includes("hospital") || text.includes("admission") || text.includes("previous hospitalization") || text.includes("hospitalizations")) {
+      return <Hospital size={17} />;
+    }
+
+    if (text.includes("illness") || text.includes("past illness") || text.includes("illnesses")) {
+      return <HeartHandshake size={17} />;
+    }
+
     if (text.includes("condition") || text.includes("diagnosis")) {
       return <Stethoscope size={17} />;
     }
@@ -166,12 +186,32 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
       return <CalendarDays size={17} />;
     }
 
+    if (text.includes("immunization") || text.includes("vaccination")) {
+      return <ShieldPlus size={17} />;
+    }
+
     if (text.includes("status")) {
       return <CheckCircle2 size={17} />;
     }
 
     if (text.includes("medication") || text.includes("medicine")) {
       return <Pill size={17} />;
+    }
+
+    if (text.includes("food")) {
+      return <Apple size={17} />;
+    }
+
+    if (text.includes("surgery") || text.includes("operation")) {
+      return <BriefcaseMedical size={17} />;
+    }
+
+    if (text.includes("reaction")) {
+      return <TriangleAlert size={17} />;
+    }
+
+    if (text.includes("environment") || text.includes("air") || text.includes("weather")) {
+      return <CloudSun size={17} />;
     }
 
     if (text.includes("remark") || text.includes("note")) {

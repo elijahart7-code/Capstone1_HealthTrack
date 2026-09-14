@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { Eye } from "lucide-react";
 import { useSearchParams } from "react-router";
 import { calculateAge } from "../../../utils/calculateAge";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { Field, Input, Select } from "../../../components/ui/Input";
-import { Badge, EmptyState, Table, Th, Td } from "../../../components/ui/Table";
+import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 import { PatientRecord } from "../../../shared/patients/PatientRecord";
 
 /** Patient list screen for health workers. */
@@ -32,7 +33,7 @@ export function Patients({ patients, loadData }) {
 
     return [...list].sort((a, b) => {
       if (sortBy === "newest") return new Date(b.created_at) - new Date(a.created_at);
-      if (sortBy === "birthdate") return new Date(a.birthdate) - new Date(b.birthdate);
+      if (sortBy === "last_name_desc") return b.last_name.localeCompare(a.last_name);
       return a.last_name.localeCompare(b.last_name);
     });
   }, [patients, search, sortBy]);
@@ -80,8 +81,8 @@ export function Patients({ patients, loadData }) {
           <Field label="Sort by">
             <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
               <option value="last_name">Surname (A-Z)</option>
+              <option value="last_name_desc">Surname (Z-A)</option>
               <option value="newest">Recently registered</option>
-              <option value="birthdate">Date of birth</option>
             </Select>
           </Field>
         </div>
@@ -92,7 +93,7 @@ export function Patients({ patients, loadData }) {
           <Table>
             <thead>
               <tr>
-                <Th>Name</Th>
+                <Th>Full Name</Th>
                 <Th>Age</Th>
                 <Th>Sex</Th>
                 <Th>Birthdate</Th>
@@ -100,8 +101,8 @@ export function Patients({ patients, loadData }) {
                 <Th>Civil Status</Th>
                 <Th>Blood Type</Th>
                 <Th>Occupation</Th>
-                <Th>Portal access</Th>
-                <Th srOnly>Actions</Th>
+                <Th>Portal Account</Th>
+                <Th>Action</Th>
               </tr>
             </thead>
             <tbody>
@@ -119,13 +120,23 @@ export function Patients({ patients, loadData }) {
                   <Td className="capitalize">{p.civil_status || "--"}</Td>
                   <Td>{p.blood_type || "--"}</Td>
                   <Td>{p.occupation || "--"}</Td>
-                  <Td>{p.user_id ? <Badge>Yes</Badge> : <span className="ht-muted text-xs">No login</span>}</Td>
+                  <Td>
+                    {p.user_id ? (
+                      <span className="ht-status-badge ht-status-badge-active">Active</span>
+                    ) : (
+                      <span className="ht-status-badge ht-status-badge-inactive">Inactive</span>
+                    )}
+                  </Td>
                   <Td>
                     <button
+                      type="button"
                       onClick={() => setSearchParams({ page: "patients", patientId: p.patient_id })}
-                      className="ht-button ht-button-muted"
+                      className="ht-record-action"
                     >
-                      Open record
+                      <span className="ht-record-action-icon">
+                        <Eye size={15} strokeWidth={2} />
+                      </span>
+                      View Record Only
                     </button>
                   </Td>
                 </tr>

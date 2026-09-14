@@ -16,7 +16,7 @@ const STATUS_COLORS = {
 
 /** Admin appointment management. */
 export function Appointments({ appointments, loadData }) {
-  const [filter, setFilter] = useState("upcoming");
+  const [filter, setFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [, setSearchParams] = useSearchParams();
   const pageSize = 10;
@@ -72,7 +72,7 @@ export function Appointments({ appointments, loadData }) {
             <Select value={filter} onChange={(e) => setFilter(e.target.value)} className="ht-filter-select">
               <option value="upcoming">Upcoming</option>
               <option value="today">Today</option>
-              <option value="past">Past</option>
+              <option value="previous">Previous</option>
               <option value="all">All</option>
             </Select>
           </div>

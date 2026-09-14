@@ -66,8 +66,9 @@ export function HealthWorkerShell() {
         {loadError && (page !== "patients" || patients.length === 0) ? (
           <div className="ht-panel">
             <p className="ht-muted text-sm">{loadError}</p>
+            <button className="ht-button" onClick={loadData}>Try again</button>
           </div>
-        ) : loading || !dashboard ? (
+        ) : loading || (!dashboard && page !== "patients") ? (
           <p className="ht-muted text-sm">Loading...</p>
         ) : page === "patients" ? (
           <Patients patients={patients} loadData={loadData} />

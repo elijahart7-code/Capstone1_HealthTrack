@@ -1,12 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { User, MapPin, PhoneCall } from "lucide-react";
 import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
-import { Field, Input, Select, Textarea } from "../../../components/ui/Input";
-
-const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-const CIVIL_STATUSES = ["single", "married", "widowed", "separated"];
+import { Field, Input, Textarea } from "../../../components/ui/Input";
+import { calculateAge } from "../../../utils/calculateAge";
 
 /**
  * Registers a patient and creates their portal login from the required email.
@@ -17,6 +15,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
     full_name: "",
     sex: "",
     birthdate: "",
+    age: "",
     civil_status: "",
     blood_type: "",
     occupation: "",
@@ -31,7 +30,19 @@ export function RegisterPatient({ loadData, onRegistered }) {
     portal_email: "",
   });
   const [error, setError] = useState(null);
+  const [portalEmailError, setPortalEmailError] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [sendLoginCredentials, setSendLoginCredentials] = useState(true);
+
+  useEffect(() => {
+    if (!form.birthdate) {
+      setForm((f) => ({ ...f, age: "" }));
+      return;
+    }
+
+    const nextAge = String(calculateAge(form.birthdate));
+    setForm((f) => ({ ...f, age: f.age && f.age !== nextAge ? f.age : nextAge }));
+  }, [form.birthdate]);
 
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -40,6 +51,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
+    setPortalEmailError(null);
     setSaving(true);
     try {
       const payload = {
@@ -51,7 +63,12 @@ export function RegisterPatient({ loadData, onRegistered }) {
       await loadData();
       onRegistered(data.patient.patient_id);
     } catch (err) {
-      setError(err?.response?.data?.error || "Could not register this patient.");
+      const message = err?.response?.data?.error || "Could not register this patient.";
+      if (message.toLowerCase().includes("email")) {
+        setPortalEmailError(message);
+      } else {
+        setError(message);
+      }
     } finally {
       setSaving(false);
     }
@@ -81,41 +98,28 @@ export function RegisterPatient({ loadData, onRegistered }) {
             </Field>
 
             <Field label="Sex" required>
-              <Select value={form.sex} onChange={(e) => set("sex", e.target.value)}>
-                <option value="">Enter sex</option>
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-              </Select>
+              <Input value={form.sex} onChange={(e) => set("sex", e.target.value)} placeholder="Enter sex" />
             </Field>
 
             <Field label="Date of Birth" required>
-              <Input type="date" value={form.birthdate} onChange={(e) => set("birthdate", e.target.value)} max={new Date().toISOString().slice(0, 10)} />
+              <Input
+                type="date"
+                value={form.birthdate}
+                onChange={(e) => set("birthdate", e.target.value)}
+                max={new Date().toISOString().slice(0, 10)}
+              />
             </Field>
 
             <Field label="Age" required>
-              <Input value={""} onChange={() => {}} placeholder="Enter age" />
+              <Input value={form.age} onChange={(e) => set("age", e.target.value)} placeholder="Enter age" />
             </Field>
 
             <Field label="Civil Status" required>
-              <Select value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)}>
-                <option value="">Enter civil status</option>
-                {CIVIL_STATUSES.map((c) => (
-                  <option key={c} value={c} className="capitalize">
-                    {c}
-                  </option>
-                ))}
-              </Select>
+              <Input value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)} placeholder="Enter civil status" />
             </Field>
 
             <Field label="Blood Type" required>
-              <Select value={form.blood_type} onChange={(e) => set("blood_type", e.target.value)}>
-                <option value="">Enter blood type</option>
-                {BLOOD_TYPES.map((b) => (
-                  <option key={b} value={b}>
-                    {b}
-                  </option>
-                ))}
-              </Select>
+              <Input value={form.blood_type} onChange={(e) => set("blood_type", e.target.value)} placeholder="Enter blood type" />
             </Field>
 
             <Field label="Occupation" required>
@@ -193,7 +197,10 @@ export function RegisterPatient({ loadData, onRegistered }) {
                   <span className="ht-portal-mini-check">✓</span>
                   <span>About Patient Portal</span>
                 </div>
-                <p className="ht-portal-info-text">The patient will use this email address to sign in and view their health information, appointments, and medical records.</p>
+                <p className="ht-portal-info-text">
+                  The patient will use this email address to sign in and view their health information,
+                  appointments, and medical records.
+                </p>
               </div>
             </div>
 
@@ -203,18 +210,38 @@ export function RegisterPatient({ loadData, onRegistered }) {
                 <span className="ht-portal-status ht-portal-status-inactive">Inactive</span>
               </div>
 
-              <Field label="Email Address (optional)">
+              <label className="ht-portal-field">
+                <span>Email Address <span style={{ color: "var(--color-danger)" }}>*</span></span>
                 <Input
                   type="email"
                   value={form.portal_email}
                   onChange={(e) => {
                     set("portal_email", e.target.value);
+                    setPortalEmailError(null);
                   }}
                   placeholder="Enter email address (used for portal login)"
                 />
-              </Field>
+                {portalEmailError && (
+                  <span className="ht-portal-email-alert" role="alert">
+                    {portalEmailError}
+                  </span>
+                )}
+              </label>
 
-              <p className="ht-muted text-sm">If provided, the patient can sign in with this email address and the default password <strong>password</strong>.</p>
+              <label className="ht-portal-checkbox" style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginTop: "0.75rem" }}>
+                <input
+                  type="checkbox"
+                  checked={sendLoginCredentials}
+                  onChange={(e) => setSendLoginCredentials(e.target.checked)}
+                />
+                <span>Send login credentials to this email address</span>
+              </label>
+
+              {sendLoginCredentials && (
+                <p className="ht-muted text-sm" style={{ marginTop: "0.5rem" }}>
+                  The patient will receive an email with login instructions.
+                </p>
+              )}
             </div>
           </div>
         </div>
