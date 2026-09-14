@@ -1043,7 +1043,7 @@
 
     .ht-portal-layout {
         display: grid;
-        grid-template-columns: 180px minmax(0, 1fr);
+        grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
         gap: 0.75rem 1.35rem;
         align-items: start;
     }
@@ -1052,13 +1052,15 @@
         display: grid;
         gap: 0.4rem;
         padding: 0;
+        width: 100%;
     }
 
     .ht-portal-info-block {
         border: 1px solid rgba(15, 107, 95, 0.2);
         border-radius: 10px;
         background: rgba(15, 107, 95, 0.04);
-        padding: 0.6rem 0.7rem 0.55rem;
+        padding: 0.75rem 0.8rem 0.7rem;
+        min-height: 110px;
     }
 
     .ht-portal-info-title {
@@ -1085,10 +1087,10 @@
 
     .ht-portal-info-text {
         margin: 0;
-        line-height: 1.4;
+        line-height: 1.45;
         color: #4a534f;
         font-size: 0.64rem;
-        max-width: 12.5rem;
+        max-width: 14.5rem;
     }
 
     .ht-portal-status-row {
