@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { User, MapPin, PhoneCall } from "lucide-react";
 import { api } from "../../../lib/axios";
@@ -13,10 +13,11 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const [, setSearchParams] = useSearchParams();
   const [form, setForm] = useState({
     full_name: "",
-    sex: "not specified",
+    sex: "",
     birthdate: "",
-    civil_status: "not specified",
-    blood_type: "not specified",
+    age: "",
+    civil_status: "",
+    blood_type: "",
     occupation: "",
     barangay_id_number: "",
     contact_number: "",
@@ -31,9 +32,14 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const ageValue = useMemo(() => {
-    if (!form.birthdate) return "";
-    return `${calculateAge(form.birthdate)} years old`;
+  useEffect(() => {
+    if (!form.birthdate) {
+      setForm((f) => ({ ...f, age: "" }));
+      return;
+    }
+
+    const nextAge = String(calculateAge(form.birthdate));
+    setForm((f) => ({ ...f, age: f.age && f.age !== nextAge ? f.age : nextAge }));
   }, [form.birthdate]);
 
   function set(key, value) {
@@ -83,6 +89,10 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.full_name} onChange={(e) => set("full_name", e.target.value)} placeholder="Enter full name" />
             </Field>
 
+            <Field label="Sex" required>
+              <Input value={form.sex} onChange={(e) => set("sex", e.target.value)} placeholder="Enter sex" />
+            </Field>
+
             <Field label="Date of Birth" required>
               <Input
                 type="date"
@@ -93,7 +103,15 @@ export function RegisterPatient({ loadData, onRegistered }) {
             </Field>
 
             <Field label="Age" required>
-              <Input value={ageValue} readOnly placeholder="Age will be filled automatically" />
+              <Input value={form.age} onChange={(e) => set("age", e.target.value)} placeholder="Enter age" />
+            </Field>
+
+            <Field label="Civil Status" required>
+              <Input value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)} placeholder="Enter civil status" />
+            </Field>
+
+            <Field label="Blood Type" required>
+              <Input value={form.blood_type} onChange={(e) => set("blood_type", e.target.value)} placeholder="Enter blood type" />
             </Field>
 
             <Field label="Occupation" required>
