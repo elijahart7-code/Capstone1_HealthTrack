@@ -62,7 +62,7 @@ export const RECORD_TYPES = {
     singular: "Allergy",
     table: "allergies",
     dateField: "recorded_at",
-    dateLabel: "Date recorded",
+    dateLabel: "Date Recorded",
     fields: {
       medication_allergies: { label: "Medication Allergies", type: "textarea", required: true, primary: true },
       food_allergies: { label: "Food Allergies", type: "textarea", required: true, column: true },
