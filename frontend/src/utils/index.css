@@ -15,7 +15,7 @@
 |
 */
 
-@theme {
+:root {
     --color-parchment: #f6f1e8;
     --color-parchment-deep: #e8e0d1;
     --color-surface: #ffffff;
