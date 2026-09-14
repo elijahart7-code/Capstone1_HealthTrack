@@ -51,10 +51,10 @@ export const RECORD_TYPES = {
     fields: {
       past_illnesses: { label: "Past Illnesses", type: "textarea", required: true, primary: true },
       chronic_conditions: { label: "Chronic Conditions", type: "textarea", required: true, column: true },
-      past_surgeries: { label: "Past surgeries", type: "textarea", required: true, column: true },
-      previous_hospitalizations: { label: "Previous hospitalizations", type: "textarea", required: true, column: true },
+      past_surgeries: { label: "Past Surgeries", type: "textarea", required: true, column: true },
+      previous_hospitalizations: { label: "Previous Hospitalizations", type: "textarea", required: true, column: true },
       family_medical_history: { label: "Family Medical History", type: "textarea", required: true, column: true },
-      immunization_status: { label: "Immunization status", type: "text", required: true, column: true },
+      immunization_status: { label: "Immunization Status", type: "text", required: true, column: true },
     },
   },
   allergies: {
