@@ -33,7 +33,7 @@ export function Patients({ patients, loadData }) {
 
     return [...list].sort((a, b) => {
       if (sortBy === "newest") return new Date(b.created_at) - new Date(a.created_at);
-      if (sortBy === "birthdate") return new Date(a.birthdate) - new Date(b.birthdate);
+      if (sortBy === "last_name_desc") return b.last_name.localeCompare(a.last_name);
       return a.last_name.localeCompare(b.last_name);
     });
   }, [patients, search, sortBy]);
@@ -81,8 +81,8 @@ export function Patients({ patients, loadData }) {
           <Field label="Sort by">
             <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
               <option value="last_name">Surname (A-Z)</option>
+              <option value="last_name_desc">Surname (Z-A)</option>
               <option value="newest">Recently registered</option>
-              <option value="birthdate">Date of birth</option>
             </Select>
           </Field>
         </div>
