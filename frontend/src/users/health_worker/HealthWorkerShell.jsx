@@ -15,16 +15,26 @@ export function HealthWorkerShell() {
   const [dashboard, setDashboard] = useState(null);
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [dashboardRes, patientsRes] = await Promise.all([
-      api.get("/health-worker/dashboard"),
-      api.get("/patients"),
-    ]);
-    setDashboard(dashboardRes.data);
-    setPatients(patientsRes.data.patients);
-    setLoading(false);
+    setError(null);
+
+    try {
+      const [dashboardRes, patientsRes] = await Promise.all([
+        api.get("/health-worker/dashboard"),
+        api.get("/patients"),
+      ]);
+
+      setDashboard(dashboardRes.data);
+      setPatients(patientsRes.data.patients);
+    } catch (err) {
+      console.error("[HealthWorkerShell] Failed to load dashboard data:", err);
+      setError(err?.response?.data?.error || "Unable to load the dashboard right now. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -49,8 +59,16 @@ export function HealthWorkerShell() {
       </header>
 
       <main className="ht-content">
-        {loading || !dashboard ? (
+        {loading ? (
           <p className="ht-muted text-sm">Loading...</p>
+        ) : error ? (
+          <div className="ht-panel">
+            <h2 className="ht-section-title-wrap">Unable to load dashboard</h2>
+            <p className="ht-muted" style={{ marginTop: "0.5rem" }}>{error}</p>
+            <button className="ht-button" style={{ marginTop: "1rem" }} onClick={loadData}>
+              Try again
+            </button>
+          </div>
         ) : page === "patients" ? (
           <Patients patients={patients} loadData={loadData} />
         ) : page === "register-patient" ? (
