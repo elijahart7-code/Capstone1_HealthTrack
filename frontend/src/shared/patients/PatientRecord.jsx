@@ -252,6 +252,7 @@ export function PatientRecord({
   onClick={deletePatient}
   className="ht-delete-patient-button"
 >
+  <Trash2 size={16} />
   Delete Patient
 </button>
             </>
