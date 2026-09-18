@@ -17,7 +17,7 @@ export async function registerPatient(req, res) {
 
   const b = req.body;
   const required = [
-    "full_name", "sex", "birthdate", "civil_status", "blood_type",
+    "first_name", "last_name", "sex", "birthdate", "civil_status", "blood_type",
     "occupation", "barangay_id_number", "contact_number", "address",
     "emergency_contact_name", "emergency_contact_number",
   ];
@@ -27,10 +27,10 @@ export async function registerPatient(req, res) {
     }
   }
 
-  const nameParts = b.full_name.trim().split(/\s+/);
-  const firstName = nameParts.shift() ?? "";
-  const lastName = nameParts.length > 0 ? nameParts.pop() : firstName;
-  const middleName = nameParts.length > 0 ? nameParts.join(" ") : null;
+  const firstName = b.first_name.trim();
+  const middleName = b.middle_name?.trim() || null;
+  const lastName = b.last_name.trim();
+  const fullName = `${firstName}${middleName ? ` ${middleName}` : ""} ${lastName}`;
 
   const patientId = await generatePatientId();
 
@@ -43,7 +43,7 @@ export async function registerPatient(req, res) {
     const password = await bcrypt.hash("password", 10);
     await sql`
       INSERT INTO users (user_id, name, email, password, role)
-      VALUES (${userId}, ${b.full_name.trim()}, ${b.portal_email}, ${password}, 'patient')
+      VALUES (${userId}, ${fullName}, ${b.portal_email}, ${password}, 'patient')
     `;
   }
 

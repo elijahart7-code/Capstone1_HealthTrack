@@ -12,7 +12,9 @@ import { calculateAge } from "../../../utils/calculateAge";
 export function RegisterPatient({ loadData, onRegistered }) {
   const [, setSearchParams] = useSearchParams();
   const [form, setForm] = useState({
-    full_name: "",
+    first_name: "",
+    middle_name: "",
+    last_name: "",
     sex: "",
     birthdate: "",
     age: "",
@@ -93,8 +95,16 @@ export function RegisterPatient({ loadData, onRegistered }) {
             Personal Information
           </h2>
           <div className="ht-form-grid ht-form-grid-3">
-            <Field label="Full Name" required>
-              <Input value={form.full_name} onChange={(e) => set("full_name", e.target.value)} placeholder="Enter full name" />
+            <Field label="First Name" required>
+              <Input value={form.first_name} onChange={(e) => set("first_name", e.target.value)} placeholder="Enter first name" />
+            </Field>
+
+            <Field label="Middle Name">
+              <Input value={form.middle_name} onChange={(e) => set("middle_name", e.target.value)} placeholder="Enter middle name" />
+            </Field>
+
+            <Field label="Last Name" required>
+              <Input value={form.last_name} onChange={(e) => set("last_name", e.target.value)} placeholder="Enter last name" />
             </Field>
 
             <Field label="Sex" required>
