@@ -31,7 +31,12 @@ export async function getAllPatients(req, res) {
 
 /** GET /api/patients/:patientId -- one patient's demographic record. */
 export async function getPatient(req, res) {
-  const rows = await sql`SELECT * FROM patients WHERE patient_id = ${req.params.patientId}`;
+  const rows = await sql`
+    SELECT p.*, u.email, u.created_at AS account_created_at
+    FROM patients p
+    LEFT JOIN users u ON u.user_id = p.user_id
+    WHERE p.patient_id = ${req.params.patientId}
+  `;
   const patient = rows[0];
 
   if (!patient) return res.status(404).json({ error: "Patient not found." });
