@@ -235,7 +235,6 @@ export function PatientRecord({
           </div>
 
         </div>
-
          <div className="ht-patient-actions">
           <button
             type="button"
