@@ -241,13 +241,22 @@ export function PatientRecord({
             type="button"
             onClick={onBack}
             className="ht-back-button"
+            style={{
+              width: "150px",
+              height: "40px",
+              padding: "0",
+            }}
           >
             <ArrowLeft size={16} />
             Back to patients
           </button>
           {isAdmin && (
             <>
-              <button type="button" onClick={deletePatient} className="ht-delete-button">
+              <button type="button" onClick={deletePatient} className="ht-delete-button" style={{
+                width: "150px",
+                height: "40px",
+                padding: "0",
+              }}>
                 Delete Patient
               </button>
             </>
