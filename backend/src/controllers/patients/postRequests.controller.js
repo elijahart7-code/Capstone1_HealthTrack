@@ -17,7 +17,7 @@ export async function registerPatient(req, res) {
 
   const b = req.body;
   const required = [
-    "full_name", "sex", "birthdate", "civil_status", "blood_type",
+    "first_name", "last_name", "sex", "birthdate", "civil_status", "blood_type",
     "occupation", "barangay_id_number", "contact_number", "address",
     "emergency_contact_name", "emergency_contact_number",
   ];
@@ -27,10 +27,10 @@ export async function registerPatient(req, res) {
     }
   }
 
-  const nameParts = b.full_name.trim().split(/\s+/);
-  const firstName = nameParts.shift() ?? "";
-  const lastName = nameParts.length > 0 ? nameParts.pop() : firstName;
-  const middleName = nameParts.length > 0 ? nameParts.join(" ") : null;
+  const firstName = b.first_name.trim();
+  const middleName = b.middle_name?.trim() || null;
+  const lastName = b.last_name.trim();
+  const fullName = `${firstName}${middleName ? ` ${middleName}` : ""} ${lastName}`;
 
   const patientId = await generatePatientId();
 
@@ -43,7 +43,7 @@ export async function registerPatient(req, res) {
     const password = await bcrypt.hash("password", 10);
     await sql`
       INSERT INTO users (user_id, name, email, password, role)
-      VALUES (${userId}, ${b.full_name.trim()}, ${b.portal_email}, ${password}, 'patient')
+      VALUES (${userId}, ${fullName}, ${b.portal_email}, ${password}, 'patient')
     `;
   }
 
@@ -102,7 +102,12 @@ export async function createPortalAccount(req, res) {
     return res.status(403).json({ error: "Only an admin may create a portal account." });
   }
 
-  const patientRows = await sql`SELECT * FROM patients WHERE patient_id = ${req.params.patientId}`;
+  const patientRows = await sql`
+    SELECT p.*, u.email, u.created_at AS account_created_at
+    FROM patients p
+    LEFT JOIN users u ON u.user_id = p.user_id
+    WHERE p.patient_id = ${req.params.patientId}
+  `;
   const patient = patientRows[0];
   if (!patient) return res.status(404).json({ error: "Patient not found." });
 
@@ -126,8 +131,17 @@ export async function createPortalAccount(req, res) {
     VALUES (${userId}, ${fullName}, ${email}, ${defaultPassword}, 'patient')
   `;
 
+  await sql`
+    UPDATE patients
+    SET user_id = ${userId}, updated_at = NOW()
+    WHERE patient_id = ${req.params.patientId}
+  `;
+
   const updated = await sql`
-    UPDATE patients SET user_id = ${userId}, updated_at = NOW() WHERE patient_id = ${req.params.patientId} RETURNING *
+    SELECT p.*, u.email, u.created_at AS account_created_at
+    FROM patients p
+    JOIN users u ON u.user_id = p.user_id
+    WHERE p.patient_id = ${req.params.patientId}
   `;
 
   return res.status(201).json({

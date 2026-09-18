@@ -4,6 +4,15 @@ import "dotenv/config";
  * Single place every other file reads environment variables from.
  * Centralizes config values used across the server.
  */
+const defaultCorsOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+];
+
 export const ENV = {
   PORT: process.env.PORT || 5000,
   NODE_ENV: process.env.NODE_ENV || "development",
@@ -14,5 +23,5 @@ export const ENV = {
   CENTRE_BARANGAY: process.env.HEALTHTRACK_BARANGAY || "Mambog I",
   CENTRE_MUNICIPALITY: process.env.HEALTHTRACK_MUNICIPALITY || "Bacoor",
   CENTRE_PROVINCE: process.env.HEALTHTRACK_PROVINCE || "Cavite",
-  CORS_ORIGINS: process.env.CORS_ORIGINS?.split(",").map((origin) => origin.trim()) || [],
+  CORS_ORIGINS: process.env.CORS_ORIGINS?.split(",").map((origin) => origin.trim()) || defaultCorsOrigins,
 };

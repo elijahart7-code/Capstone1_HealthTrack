@@ -15,26 +15,30 @@ export function HealthWorkerShell() {
   const [dashboard, setDashboard] = useState(null);
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loadError, setLoadError] = useState(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    setError(null);
+    setLoadError(null);
 
-    try {
-      const [dashboardRes, patientsRes] = await Promise.all([
-        api.get("/health-worker/dashboard"),
-        api.get("/patients"),
-      ]);
+    const [dashboardResult, patientsResult] = await Promise.allSettled([
+      api.get("/health-worker/dashboard"),
+      api.get("/patients"),
+    ]);
 
-      setDashboard(dashboardRes.data);
-      setPatients(patientsRes.data.patients);
-    } catch (err) {
-      console.error("[HealthWorkerShell] Failed to load dashboard data:", err);
-      setError(err?.response?.data?.error || "Unable to load the dashboard right now. Please try again.");
-    } finally {
-      setLoading(false);
+    if (dashboardResult.status === "fulfilled") {
+      setDashboard(dashboardResult.value.data);
     }
+    if (patientsResult.status === "fulfilled") {
+      setPatients(patientsResult.value.data.patients || []);
+    } else {
+      setLoadError(
+        patientsResult.reason?.response?.data?.error ||
+          "Could not load the patient list."
+      );
+    }
+
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -59,16 +63,13 @@ export function HealthWorkerShell() {
       </header>
 
       <main className="ht-content">
-        {loading ? (
-          <p className="ht-muted text-sm">Loading...</p>
-        ) : error ? (
+        {loadError && (page !== "patients" || patients.length === 0) ? (
           <div className="ht-panel">
-            <h2 className="ht-section-title-wrap">Unable to load dashboard</h2>
-            <p className="ht-muted" style={{ marginTop: "0.5rem" }}>{error}</p>
-            <button className="ht-button" style={{ marginTop: "1rem" }} onClick={loadData}>
-              Try again
-            </button>
+            <p className="ht-muted text-sm">{loadError}</p>
+            <button className="ht-button" onClick={loadData}>Try again</button>
           </div>
+        ) : loading || (!dashboard && page !== "patients") ? (
+          <p className="ht-muted text-sm">Loading...</p>
         ) : page === "patients" ? (
           <Patients patients={patients} loadData={loadData} />
         ) : page === "register-patient" ? (

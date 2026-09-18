@@ -510,12 +510,10 @@
         white-space: nowrap;
     }
 
-    .ht-table tbody tr:nth-child(even) {
-        background: rgba(242, 237, 228, 0.4);
-    }
-
+    .ht-table tbody tr,
+    .ht-table tbody tr:nth-child(even),
     .ht-table tbody tr:hover {
-        background: rgba(15, 107, 95, 0.04);
+        background: #ffffff;
     }
 
     .ht-action-button {
@@ -1046,7 +1044,7 @@
 
     .ht-portal-layout {
         display: grid;
-        grid-template-columns: 180px minmax(0, 1fr);
+        grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
         gap: 0.75rem 1.35rem;
         align-items: start;
     }
@@ -1055,13 +1053,15 @@
         display: grid;
         gap: 0.4rem;
         padding: 0;
+        width: 100%;
     }
 
     .ht-portal-info-block {
         border: 1px solid rgba(15, 107, 95, 0.2);
         border-radius: 10px;
         background: rgba(15, 107, 95, 0.04);
-        padding: 0.6rem 0.7rem 0.55rem;
+        padding: 0.75rem 0.8rem 0.7rem;
+        min-height: 110px;
     }
 
     .ht-portal-info-title {
@@ -1088,10 +1088,10 @@
 
     .ht-portal-info-text {
         margin: 0;
-        line-height: 1.4;
+        line-height: 1.45;
         color: #4a534f;
         font-size: 0.64rem;
-        max-width: 12.5rem;
+        max-width: 14.5rem;
     }
 
     .ht-portal-status-row {
@@ -1123,6 +1123,23 @@
         gap: 0.3rem;
         padding-top: 0;
         align-content: start;
+    }
+
+    .ht-portal-field {
+        display: grid;
+        gap: 0.18rem;
+        font-size: 0.68rem;
+    }
+
+    .ht-portal-email-alert {
+        display: block;
+        padding: 0.45rem 0.6rem;
+        border: 1px solid rgba(178, 69, 62, 0.2);
+        border-radius: 7px;
+        background: #fff7f6;
+        color: var(--color-danger);
+        font-size: 0.72rem;
+        line-height: 1.35;
     }
 
     .ht-portal-form .ht-field {
@@ -1235,7 +1252,7 @@
         place-items: center;
         min-height: 100vh;
         padding: 1.5rem 1rem;
-        background: #F2FAF6;
+        background: #ffffff;
     }
 
     .ht-auth-wrap {
@@ -1252,6 +1269,9 @@
         padding: 0;
         border-radius: 16px;
         overflow: hidden;
+        background: #ffffff;
+        border: 1px solid rgba(15, 107, 95, 0.14);
+        box-shadow: 0 10px 24px rgba(15, 20, 16, 0.04);
     }
 
     .ht-auth-footer {
@@ -1319,7 +1339,7 @@
         padding: 0.75rem 0.45rem;
         border: 1px solid rgba(31, 36, 33, 0.14);
         border-radius: 12px;
-        background: #f7faf7;
+        background: #ffffff;
         color: var(--color-ink-soft);
         cursor: pointer;
         text-align: center;
@@ -1332,9 +1352,10 @@
     }
 
     .ht-account-card.is-selected {
-        border-color: rgba(15, 107, 95, 0.45);
-        background: rgba(15, 107, 95, 0.04);
+        border-color: rgba(15, 107, 95, 0.5);
+        background: rgba(15, 107, 95, 0.08);
         box-shadow: 0 0 0 2px rgba(15, 107, 95, 0.08);
+        color: var(--color-ink);
     }
 
     .ht-account-icon {

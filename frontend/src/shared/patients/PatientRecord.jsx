@@ -23,6 +23,7 @@ import {
   Flag,
   User,
   Pencil,
+  Trash2,
 } from "lucide-react";
 
 export function PatientRecord({
@@ -247,9 +248,14 @@ export function PatientRecord({
           </button>
           {isAdmin && (
             <>
-              <button type="button" onClick={deletePatient} className="ht-delete-button">
-                Delete Patient
-              </button>
+              <button
+  type="button"
+  onClick={deletePatient}
+  className="ht-delete-patient-button"
+>
+  <Trash2 size={16} />
+  Delete Patient
+</button>
             </>
           )}
         </div>
@@ -947,7 +953,7 @@ export function PatientRecord({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
 
   height: 40px;
   padding: 0 16px;
@@ -1225,16 +1231,29 @@ export function PatientRecord({
           cursor: pointer;
         }
 
-        .ht-delete-button {
-          padding: 7px 10px;
-          border: 1px solid #ddb5b5;
-          border-radius: 6px;
-          background: #fffafa;
-          color: #a45151;
-          font-size: 10px;
-          font-weight: 700;
-          cursor: pointer;
-        }
+        .ht-delete-patient-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  width: 150px;
+  height: 40px;
+  padding: 0 16px;
+
+  border: 1px solid #ddb5b5;
+  border-radius: 7px;
+
+  background: #fffafa;
+  color: #a45151;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+  white-space: nowrap;
+}
 
         /* FORMS */
 
