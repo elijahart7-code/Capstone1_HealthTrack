@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { User, MapPin, PhoneCall } from "lucide-react";
 import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { Field, Input, Textarea } from "../../../components/ui/Input";
-import { calculateAge } from "../../../utils/calculateAge";
 
 /**
  * Registers a patient and creates their portal login from the required email.
@@ -35,16 +34,6 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const [portalEmailError, setPortalEmailError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [sendLoginCredentials, setSendLoginCredentials] = useState(true);
-
-  useEffect(() => {
-    if (!form.birthdate) {
-      setForm((f) => ({ ...f, age: "" }));
-      return;
-    }
-
-    const nextAge = String(calculateAge(form.birthdate));
-    setForm((f) => ({ ...f, age: f.age && f.age !== nextAge ? f.age : nextAge }));
-  }, [form.birthdate]);
 
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
