@@ -1190,8 +1190,8 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         }
 
         .ht-assessment-icon {
-          width: 27px;
-          height: 27px;
+          width: 35px;
+          height: 35px;
           display: flex;
           align-items: center;
           justify-content: center;
