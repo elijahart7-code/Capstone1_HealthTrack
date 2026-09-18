@@ -763,7 +763,7 @@ export function PatientRecord({
 
         .ht-patient-page {
           min-height: 100vh;
-          background: #a6eec3;
+          background: #8cf5b6;
           color: #18231e;
           font-family: Inter, system-ui, -apple-system,
             BlinkMacSystemFont, "Segoe UI", sans-serif;
