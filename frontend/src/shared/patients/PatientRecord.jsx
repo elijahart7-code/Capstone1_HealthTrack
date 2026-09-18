@@ -952,7 +952,7 @@ export function PatientRecord({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 8px;
 
   height: 40px;
   padding: 0 16px;
