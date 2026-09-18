@@ -949,7 +949,6 @@ export function PatientRecord({
   justify-content: center;
   gap: 7px;
 
-  width: 170px;
   height: 40px;
   padding: 0 16px;
 
