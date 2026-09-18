@@ -969,6 +969,33 @@ export function PatientRecord({
 .ht-back-button:hover {
   background: #f4f8f6;
 }
+  /* Delete Patients */
+.ht-delete-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  height: 40px;
+  padding: 0 16px;
+
+  border: 1px solid #b8c9c0;
+  border-radius: 7px;
+
+  background: white;
+  color: #40534a;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ht-delete-button:hover {
+  background: #f4f8f6;
+}
         
 
         /* MAIN */
