@@ -23,6 +23,7 @@ import {
   Flag,
   User,
   Pencil,
+  Trash2,
 } from "lucide-react";
 
 export function PatientRecord({
