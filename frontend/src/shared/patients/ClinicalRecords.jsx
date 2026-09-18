@@ -348,10 +348,6 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         </div>
 
         <div className="ht-health-assessment-actions">
-          <span className="ht-health-count">
-            {records.length} total
-          </span>
-
           {canManage && (
             <button
               type="button"
@@ -928,8 +924,8 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
           align-items: center;
           justify-content: center;
           gap: 7px;
-          min-height: 38px;
-          padding: 0 14px;
+          min-height: 34px;
+          padding: 0 12px;
           border: 1px solid #aebdb5;
           border-radius: 7px;
           background: #f9fcfa;
@@ -1182,7 +1178,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
         .ht-assessment-row {
           display: grid;
-          grid-template-columns: 34px 95px 18px minmax(0, 1fr);
+          grid-template-columns: 42px 95px 18px minmax(0, 1fr);
           align-items: center;
           min-height: 48px;
           border-bottom: 1px solid #edf1ef;
@@ -1342,7 +1338,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
           }
 
           .ht-assessment-row {
-            grid-template-columns: 32px 85px 14px minmax(0, 1fr);
+            grid-template-columns: 38px 85px 14px minmax(0, 1fr);
             font-size: 11px;
           }
 
