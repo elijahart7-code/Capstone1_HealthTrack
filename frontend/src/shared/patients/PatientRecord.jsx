@@ -1235,11 +1235,11 @@ export function PatientRecord({
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 12px;
 
   width: 150px;
   height: 40px;
   padding: 0 16px;
-  gap: 8px;
 
   border: 1px solid #ddb5b5;
   border-radius: 7px;
