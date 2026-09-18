@@ -1239,6 +1239,7 @@ export function PatientRecord({
   width: 150px;
   height: 40px;
   padding: 0 16px;
+  gap: 8px;
 
   border: 1px solid #ddb5b5;
   border-radius: 7px;
