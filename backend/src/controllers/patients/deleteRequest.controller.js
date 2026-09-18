@@ -43,6 +43,14 @@ export async function deletePatient(req, res) {
     return res.status(403).json({ error: "Only an admin may remove a patient." });
   }
 
+  const patientRows = await sql`
+    SELECT patient_id, user_id
+    FROM patients
+    WHERE patient_id = ${req.params.patientId}
+  `;
+  const patient = patientRows[0];
+  if (!patient) return res.status(404).json({ error: "Patient not found." });
+
   for (const table of [
     "appointments",
     "health_assessments",
@@ -60,6 +68,14 @@ export async function deletePatient(req, res) {
   );
 
   if (rows.length === 0) return res.status(404).json({ error: "Patient not found." });
+
+  if (patient.user_id) {
+    await sql`
+      DELETE FROM users
+      WHERE user_id = ${patient.user_id}
+        AND role = 'patient'
+    `;
+  }
 
   return res.status(200).json({ message: "Patient removed." });
 }
