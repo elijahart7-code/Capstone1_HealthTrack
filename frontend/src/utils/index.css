@@ -2482,5 +2482,96 @@
   margin: 0 !important;
   padding: 0 !important;
 }
+/* =====================================================
+   PATIENT METRIC CARDS
+   ===================================================== */
+
+.patient-metric-card {
+    display: flex !important;
+    flex-direction: column !important;
+
+    min-height: 190px !important;
+    padding: 18px !important;
+
+    background: #ffffff !important;
+    border: 1px solid rgba(13, 74, 62, 0.08) !important;
+    border-radius: 18px !important;
+
+    box-shadow: 0 4px 16px rgba(15, 40, 35, 0.05) !important;
+}
+
+/* ICON + TITLE */
+.patient-metric-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+
+    gap: 11px !important;
+    width: 100% !important;
+}
+
+.patient-metric-title-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+
+    border-radius: 13px !important;
+
+    background: #e5f4ee !important;
+    color: #08755f !important;
+}
+
+.patient-metric-header h3 {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #16332f !important;
+    font-size: 1rem !important;
+    font-weight: 750 !important;
+    line-height: 1.25 !important;
+}
+
+/* DESCRIPTION */
+.patient-metric-description {
+    margin: 13px 2px 16px !important;
+
+    color: #71817e !important;
+
+    font-size: 0.84rem !important;
+    line-height: 1.45 !important;
+}
+
+/* VIEW ONLY BUTTON */
+.patient-view-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 8px !important;
+
+    width: 100% !important;
+    min-height: 42px !important;
+
+    margin-top: auto !important;
+
+    border: 1px solid rgba(13, 117, 95, 0.12) !important;
+    border-radius: 11px !important;
+
+    background: #e7f5ef !important;
+    color: #176b59 !important;
+
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+
+    cursor: default !important;
+}
+
+.patient-view-button svg {
+    flex-shrink: 0 !important;
+}
     
 }
