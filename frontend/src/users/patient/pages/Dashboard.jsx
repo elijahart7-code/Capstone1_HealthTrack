@@ -240,9 +240,10 @@ function PatientMetricCard({ icon, title }) {
   return (
     <div className="patient-metric-card">
 
-      <div className="patient-metric-top">
+      {/* ICON + TITLE ON SAME LINE */}
+      <div className="patient-metric-header">
 
-        <div className="patient-metric-icon">
+        <div className="patient-metric-title-icon">
           {icon}
         </div>
 
@@ -250,6 +251,7 @@ function PatientMetricCard({ icon, title }) {
 
       </div>
 
+      {/* VIEW ONLY BUTTON */}
       <button
         type="button"
         className="patient-view-button"
@@ -261,7 +263,6 @@ function PatientMetricCard({ icon, title }) {
     </div>
   );
 }
-
 
 /* EMERGENCY CONTACT CARD */
 function ContactCard({
