@@ -18,17 +18,18 @@ export function AdminShell() {
 
   const [dashboard, setDashboard] = useState(null);
   const [patients, setPatients] = useState([]);
+  const [showArchived, setShowArchived] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (archived = showArchived) => {
     setLoading(true);
     setLoadError(null);
 
     const [dashboardResult, patientsResult, appointmentsResult] = await Promise.allSettled([
         api.get("/admin/dashboard"),
-        api.get("/patients"),
+        api.get(`/patients${archived ? "?archived=true" : ""}`),
         api.get("/admin/appointments"),
       ]);
 
@@ -54,7 +55,7 @@ export function AdminShell() {
     }
 
     setLoading(false);
-  }, []);
+  }, [showArchived]);
 
   useEffect(() => {
     loadData();
@@ -81,7 +82,12 @@ export function AdminShell() {
         ) : loading || !dashboard ? (
           <p className="ht-muted text-sm">Loading...</p>
         ) : page === "patients" ? (
-          <Patients patients={patients} loadData={loadData} />
+          <Patients
+            patients={patients}
+            loadData={loadData}
+            showArchived={showArchived}
+            onArchivedChange={setShowArchived}
+          />
         ) : page === "appointments" ? (
           <Appointments appointments={appointments} loadData={loadData} />
         ) : (

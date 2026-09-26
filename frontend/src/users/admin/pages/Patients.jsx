@@ -9,7 +9,7 @@ import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 import { PatientRecord } from "../../../shared/patients/PatientRecord";
 
 /** Patient list screen for the admin role. */
-export function Patients({ patients, loadData }) {
+export function Patients({ patients, loadData, showArchived, onArchivedChange }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedId = searchParams.get("patientId");
 
@@ -31,6 +31,17 @@ export function Patients({ patients, loadData }) {
       await loadData();
     } catch (err) {
       setArchiveError(err?.response?.data?.error || "Could not archive this patient.");
+    }
+
+    async function restorePatient(patient) {
+      if (!window.confirm(`Restore ${patient.full_name} to the active patient list?`)) return;
+      setArchiveError("");
+      try {
+        await api.post(`/patients/${patient.patient_id}/restore`);
+        await loadData(true);
+      } catch (err) {
+        setArchiveError(err?.response?.data?.error || "Could not restore this patient.");
+      }
     }
   }
 
@@ -61,7 +72,7 @@ export function Patients({ patients, loadData }) {
 
   useEffect(() => {
     setPage(1);
-  }, [search, sortBy]);
+  }, [search, sortBy, showArchived]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -112,6 +123,14 @@ export function Patients({ patients, loadData }) {
               <option value="birthdate">Date of birth</option>
             </Select>
           </div>
+          <label className="ht-archive-filter">
+            <input
+              type="checkbox"
+              checked={showArchived}
+              onChange={(event) => onArchivedChange(event.target.checked)}
+            />
+            Show archived patients
+          </label>
         </div>
 
         {visible.length === 0 ? (
@@ -153,14 +172,24 @@ export function Patients({ patients, loadData }) {
                           </span>
                           Open / Modify Record
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => archivePatient(p)}
-                          className="ht-archive-row-action"
-                        >
-                          <Archive size={15} strokeWidth={2} />
-                          Archive
-                        </button>
+                        {showArchived ? (
+                          <button
+                            type="button"
+                            onClick={() => restorePatient(p)}
+                            className="ht-restore-row-action"
+                          >
+                            Restore
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => archivePatient(p)}
+                            className="ht-archive-row-action"
+                          >
+                            <Archive size={15} strokeWidth={2} />
+                            Archive
+                          </button>
+                        )}
                       </div>
                     </Td>
                   </tr>
