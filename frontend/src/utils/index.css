@@ -1773,10 +1773,6 @@
         font-weight: 800;
         line-height: 1;
     }
-    .patient-health-summary{
-        grid-template-columns: auto 1fr;
-        align-items: center;
-    }
 
     .patient-view-button {
         display: inline-flex;
