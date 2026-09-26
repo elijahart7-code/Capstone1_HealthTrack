@@ -297,3 +297,42 @@ function ContactCard({
     </div>
   );
 }
+
+
+/* HEALTH TIP CARD */
+function PatientMetricCard({
+  icon,
+  title,
+  description,
+}) {
+  return (
+    <div className="patient-metric-card">
+
+      {/* TITLE */}
+      <div className="patient-metric-header">
+
+        <div className="patient-metric-title-icon">
+          {icon}
+        </div>
+
+        <h3>{title}</h3>
+
+      </div>
+
+      {/* DESCRIPTION */}
+      <p className="patient-metric-description">
+        {description}
+      </p>
+
+      {/* VIEW ONLY */}
+      <button
+        type="button"
+        className="patient-view-button"
+      >
+        <Eye size={18} strokeWidth={1.8} />
+        View Only
+      </button>
+
+    </div>
+  );
+}
