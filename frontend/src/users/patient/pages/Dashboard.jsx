@@ -133,18 +133,6 @@ export function Dashboard({ dashboard }) {
     </div>
 
   </div>
-
-  <button
-    type="button"
-    onClick={() =>
-      setSearchParams({ page: "health-information" })
-    }
-    className="patient-summary-button"
-  >
-    View My Health Information
-    <ArrowRight size={19} />
-  </button>
-
 </section>
 
       {/* EMERGENCY CONTACT */}
