@@ -16,6 +16,7 @@ import {
   Apple,
   PersonStanding,
   Moon,
+  UserRound,
 } from "lucide-react";
 
 export function Dashboard({ dashboard }) {
@@ -75,7 +76,7 @@ export function Dashboard({ dashboard }) {
       {/* PATIENT WELCOME */}
       <section className="patient-welcome-simple">
         <div className="patient-welcome-icon">
-          <User size={40} strokeWidth={1.8} />
+          <UserRound size={40} strokeWidth={1.8} />
         </div>
 
         <div>
