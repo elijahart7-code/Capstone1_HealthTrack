@@ -337,7 +337,6 @@ function PatientMetricCard({
 
       </div>
 
-
       <div className="patient-metric-detail">
 
         <div className="patient-metric-detail-icon">
@@ -349,17 +348,6 @@ function PatientMetricCard({
         </span>
 
       </div>
-
-
-      <button
-        type="button"
-        className="patient-view-button"
-      >
-        View Details
-        <ArrowRight size={18} />
-      </button>
-
-    </div>
   );
 }
 
