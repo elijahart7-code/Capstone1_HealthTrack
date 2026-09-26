@@ -112,36 +112,40 @@ export function Dashboard({ dashboard }) {
       </div>
 
       {/* HEALTH INFORMATION */}
-      <section className="patient-panel patient-health-summary">
+      <section className="patient-health-summary">
 
-        <div className="patient-health-copy">
+  <div className="patient-health-heading">
 
-          <div className="patient-panel-icon" aria-hidden="true">
-            <FileText size={24} strokeWidth={1.10} />
-          </div>
+    <div className="patient-health-summary-icon">
+      <FileText size={31} strokeWidth={1.8} />
+    </div>
 
-          <h2>Your Health Information</h2>
+    <div className="patient-health-copy">
 
-          <p>
-            Your Personal Information, Vital Signs, Health Assessment,
-            Midwife Notes, Medical Histories and Allergies are all
-            recorded by the Midwife and shown in one place.
-          </p>
+      <h2>Your Health Information</h2>
 
-          <button
-            type="button"
-            onClick={() =>
-              setSearchParams({ page: "health-information" })
-            }
-            className="patient-summary-button"
-          >
-            View My Health Information
-            <ArrowRight size={18} strokeWidth={1.9} />
-          </button>
+      <p>
+        Your Personal Information, Vital Signs, Health Assessment,
+        Midwife Notes, Medical Histories and Allergies are all
+        recorded by the Midwife and shown in one place.
+      </p>
 
-        </div>
+    </div>
 
-      </section>
+  </div>
+
+  <button
+    type="button"
+    onClick={() =>
+      setSearchParams({ page: "health-information" })
+    }
+    className="patient-summary-button"
+  >
+    View My Health Information
+    <ArrowRight size={19} />
+  </button>
+
+</section>
 
       {/* EMERGENCY CONTACT */}
       <section className="patient-panel">
