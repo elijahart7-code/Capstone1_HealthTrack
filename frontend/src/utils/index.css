@@ -2359,7 +2359,8 @@
         }
 
         .patient-health-summary {
-            grid-template-columns: 1fr;
+            grid-template-columns: auto 1fr;
+            align-items: center;
         }
     }
 
