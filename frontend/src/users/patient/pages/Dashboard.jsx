@@ -87,30 +87,53 @@ export function Dashboard({ dashboard }) {
       </section>
 
       {/* QUICK INFORMATION CARDS */}
-      <div className="patient-metric-grid">
+      <div className="patient-info-grid">
 
-        <PatientMetricCard
-        icon={<CalendarDays size={25} strokewidth={1.8}/>}
-        title="Upcoming Appointment"
-        description="Check you next schedule visit."
-        />
-        <PatientMetricCard
-        icon={<HeartPulse size={25} strokeWidth={1.8} />}
-        title="Updated Vital Signs"
-        description="View your latest health measurements."
-        />
-        <PatientMetricCard
-        icon={<ClipboardList size={25} strokeWidth={1.8} />}
-        title="Health Assessment"
-        description="View your latest health assessment."
-        />
-        <PatientMetricCard
-        icon={<ShieldAlert size={25} strokeWidth={1.8} />}
-        title="Known Allergies"
-        description="View your recorded allergies"
-        />
+  <PatientInfoCard
+    type="appointment"
+    icon={
+      <CalendarDays
+        size={27}
+        strokeWidth={1.8}
+      />
+    }
+    title="Upcoming Appointment"
+  />
 
-      </div>
+  <PatientInfoCard
+    type="vitals"
+    icon={
+      <HeartPulse
+        size={27}
+        strokeWidth={1.8}
+      />
+    }
+    title="Updated Vital Signs"
+  />
+
+  <PatientInfoCard
+    type="assessment"
+    icon={
+      <ClipboardList
+        size={27}
+        strokeWidth={1.8}
+      />
+    }
+    title="Health Assessment"
+  />
+
+  <PatientInfoCard
+    type="allergies"
+    icon={
+      <ShieldAlert
+        size={27}
+        strokeWidth={1.8}
+      />
+    }
+    title="Known Allergies"
+  />
+
+</div>
 
       {/* HEALTH INFORMATION */}
       <section className="patient-panel patient-health-summary">
