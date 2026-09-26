@@ -318,25 +318,20 @@ function PatientMetricCard({
   title,
   detailIcon,
   detail,
-}) {
+}) 
+{
   return (
     <div className={`patient-metric-card patient-metric-${type}`}>
-
       <div className="patient-metric-header">
-
         <div className="patient-metric-title-icon">
           {icon}
         </div>
-
         <h3>{title}</h3>
-
         <ArrowRight
           className="patient-metric-arrow"
           size={21}
         />
-
       </div>
-
       <div className="patient-metric-detail">
 
         <div className="patient-metric-detail-icon">
@@ -346,63 +341,7 @@ function PatientMetricCard({
         <span>
           {detail}
         </span>
-
+        </div>
       </div>
-  );
-}
-
-
-/* =========================================================
-   EMERGENCY CONTACT CARD
-========================================================= */
-
-function ContactCard({
-  type,
-  icon,
-  title,
-  line1,
-  line2,
-}) {
-  return (
-    <div className={`patient-contact-card patient-contact-${type}`}>
-
-      <div className="patient-contact-icon">
-        {icon}
-      </div>
-
-      <div className="patient-contact-body">
-
-        <h3>{title}</h3>
-
-        <p>{line1}</p>
-
-        <span>{line2}</span>
-
-      </div>
-
-    </div>
-  );
-}
-
-
-/* =========================================================
-   HEALTH TIP CARD
-========================================================= */
-
-function TipItem({
-  type,
-  icon,
-  text,
-}) {
-  return (
-    <div className={`patient-tip-item patient-tip-${type}`}>
-
-      <div className="patient-tip-icon">
-        {icon}
-      </div>
-
-      <span>{text}</span>
-
-    </div>
   );
 }
