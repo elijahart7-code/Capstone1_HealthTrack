@@ -102,9 +102,7 @@ export function Dashboard({ dashboard }) {
           icon={<CalendarDays />}
           title={
             <>
-              Upcoming
-              <br />
-              Appointment
+              Upcoming Appointment
             </>
           }
           iconClass="appointment"
