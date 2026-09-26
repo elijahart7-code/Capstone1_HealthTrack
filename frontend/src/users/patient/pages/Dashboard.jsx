@@ -52,133 +52,160 @@ export function Dashboard({ dashboard }) {
   return (
     <div className="patient-dashboard-shell">
 
-      {/* PAGE HEADER */}
-      <section className="ht-page-header">
-        <div>
+      {/* ================= PAGE HEADER ================= */}
+      <section className="patient-dashboard-header">
+
+        <div className="patient-dashboard-header-copy">
           <h1>Patient Dashboard</h1>
+
           <p>
             View your health information and medical records.
           </p>
         </div>
 
         <button
-  type="button"
-  onClick={() =>
-    setSearchParams({ page: "health-information" })
-  }
-  className="patient-summary-button"
->
-  View My Health Information
-  <ArrowRight size={18} strokeWidth={1.9} />
-</button>
+          type="button"
+          onClick={() =>
+            setSearchParams({ page: "health-information" })
+          }
+          className="patient-summary-button"
+        >
+          View Health Information
+          <ArrowRight size={19} strokeWidth={2} />
+        </button>
+
       </section>
 
-      {/* PATIENT WELCOME */}
+
+      {/* ================= WELCOME ================= */}
       <section className="patient-welcome-simple">
+
         <div className="patient-welcome-icon">
-          <UserRound size={40} strokeWidth={1.8} />
+          <UserRound size={39} strokeWidth={1.8} />
         </div>
 
         <div>
           <h2>Welcome, {patientName}!</h2>
+
           <p>
             Your records at Barangay Health Center of Mambog I.
           </p>
         </div>
+
       </section>
 
-      {/* QUICK INFORMATION CARDS */}
+
+      {/* ================= QUICK INFORMATION ================= */}
       <div className="patient-metric-grid">
 
         <PatientMetricCard
-          icon={<CalendarDays size={25} strokeWidth={1.10} />}
-          title="Upcoming Appointment"
+          icon={<CalendarDays />}
+          title={
+            <>
+              Upcoming
+              <br />
+              Appointment
+            </>
+          }
+          iconClass="appointment"
         />
 
         <PatientMetricCard
-          icon={<HeartPulse size={25} strokeWidth={1.10} />}
+          icon={<HeartPulse />}
           title="Updated Vital Signs"
+          iconClass="vitals"
         />
 
         <PatientMetricCard
-          icon={<ClipboardList size={25} strokeWidth={1.10} />}
+          icon={<ClipboardList />}
           title="Health Assessment"
+          iconClass="assessment"
         />
 
         <PatientMetricCard
-          icon={<ShieldAlert size={25} strokeWidth={1.10} />}
+          icon={<ShieldAlert />}
           title="Known Allergies"
+          iconClass="allergies"
         />
 
       </div>
 
-      {/* HEALTH INFORMATION */}
+
+      {/* ================= HEALTH INFORMATION ================= */}
       <section className="patient-health-summary">
 
-  <div className="patient-health-heading" >
+        <div className="patient-health-heading">
 
-    <div className="patient-health-summary-icon">
-      <FileText size={31} strokeWidth={1.8} />
-    </div>
+          <div className="patient-health-summary-icon">
+            <FileText size={34} strokeWidth={1.8} />
+          </div>
 
-    <div className="patient-health-copy">
+          <div className="patient-health-copy">
 
-      <h2>Your Health Information</h2>
+            <h2>Your Health Information</h2>
 
-      <p>
-        Your Personal Information, Vital Signs, Health Assessment,
-        Midwife Notes, Medical Histories and Allergies are all
-        recorded by the Midwife and shown in one place.
-      </p>
+            <p>
+              Your Personal Information, Vital Signs, Health Assessment,
+              Midwife Notes, Medical Histories and Allergies are all
+              recorded by the Midwife and shown in one place.
+            </p>
 
-    </div>
+          </div>
 
-  </div>
-</section>
+        </div>
 
-      {/* EMERGENCY CONTACT */}
+      </section>
+
+
+      {/* ================= EMERGENCY CONTACT ================= */}
       <section className="patient-panel">
 
         <div className="patient-section-header">
 
           <div className="patient-panel-icon patient-panel-icon-small">
-            <ShieldAlert size={19} strokeWidth={1.9} />
+            <ShieldAlert size={20} strokeWidth={1.9} />
           </div>
 
           <div>
             <h2>Emergency Contact</h2>
+
             <p>
-              Important contacts and information in case of emergency
+              Important contacts and information in case of emergency.
             </p>
           </div>
 
         </div>
 
+
         <div className="patient-emergency-grid">
 
           <ContactCard
-            icon={<User size={21} strokeWidth={1.8} />}
+            icon={<User size={22} />}
+            iconClass="blue"
             title="Barangay Mambog I"
             line1="Brgy. Mambog I, Bacoor, Cavite"
             line2="(046) 123-4567"
           />
 
           <ContactCard
-            icon={<Building2 size={21} strokeWidth={1.8} />}
+            icon={<Building2 size={22} />}
+            iconClass="blue"
             title="City Government of Bacoor"
             line1="Bacoor City Hall, Bacoor, Cavite"
             line2="(046) 417-3000"
           />
 
           <ContactCard
-            icon={<Phone size={21} strokeWidth={1.8} />}
+            icon={<Phone size={22} />}
+            iconClass="blue"
             title="Emergency Hotline"
             line1="(046) 123-4567"
             line2="24/7 Available"
           />
 
           <ContactCard
-            icon={<Clock3 size={21} strokeWidth={1.8} />}
+            icon={<Clock3 size={22} />}
+            iconClass="blue"
             title="Office Hours"
             line1="Mon - Fri: 8:00 AM - 5:00 PM"
             line2="Closed on weekends and holidays"
@@ -188,13 +215,14 @@ export function Dashboard({ dashboard }) {
 
       </section>
 
-      {/* HEALTH TIPS */}
+
+      {/* ================= HEALTH TIPS ================= */}
       <section className="patient-panel patient-health-tips">
 
         <div className="patient-tips-heading">
 
           <div className="patient-panel-icon patient-panel-icon-small">
-            <Lightbulb size={19} strokeWidth={1.9} />
+            <Lightbulb size={20} strokeWidth={1.9} />
           </div>
 
           <div>
@@ -204,26 +232,31 @@ export function Dashboard({ dashboard }) {
 
         </div>
 
+
         <div className="patient-tip-grid">
 
           <TipItem
-            icon={<Droplets size={22} strokeWidth={1.8} />}
+            icon={<Droplets />}
             text="Drink plenty of water daily."
+            type="water"
           />
 
           <TipItem
-            icon={<Apple size={22} strokeWidth={1.8} />}
+            icon={<Apple />}
             text="Eat balanced and healthy meals."
+            type="food"
           />
 
           <TipItem
-            icon={<PersonStanding size={22} strokeWidth={1.8} />}
+            icon={<PersonStanding />}
             text="Stay active and exercise."
+            type="activity"
           />
 
           <TipItem
-            icon={<Moon size={22} strokeWidth={1.8} />}
+            icon={<Moon />}
             text="Get enough rest and sleep well."
+            type="sleep"
           />
 
         </div>
@@ -235,38 +268,58 @@ export function Dashboard({ dashboard }) {
 }
 
 
-/* QUICK INFORMATION CARD */
-function PatientMetricCard({ icon, title }) {
+/* =====================================================
+   QUICK INFORMATION CARD
+   ===================================================== */
+
+function PatientMetricCard({
+  icon,
+  title,
+  iconClass,
+}) {
   return (
     <div className="patient-metric-card">
 
-      {/* ICON + TITLE ON SAME LINE */}
       <div className="patient-metric-header">
 
-        <div className="patient-metric-title-icon">
+        <div
+          className={`patient-metric-title-icon ${iconClass}`}
+        >
           {icon}
         </div>
 
         <h3>{title}</h3>
 
+        <ArrowRight
+          className="patient-metric-arrow"
+          size={20}
+          strokeWidth={1.8}
+        />
+
       </div>
 
-      {/* VIEW ONLY BUTTON */}
+      <div className="patient-metric-space" />
+
       <button
         type="button"
         className="patient-view-button"
       >
-        <Eye size={19} strokeWidth={1.8} />
-        View Only
+        View Details
+        <ArrowRight size={17} strokeWidth={2} />
       </button>
 
     </div>
   );
 }
 
-/* EMERGENCY CONTACT CARD */
+
+/* =====================================================
+   EMERGENCY CONTACT CARD
+   ===================================================== */
+
 function ContactCard({
   icon,
+  iconClass,
   title,
   line1,
   line2,
@@ -274,7 +327,7 @@ function ContactCard({
   return (
     <div className="patient-contact-card">
 
-      <div className="patient-contact-icon">
+      <div className={`patient-contact-icon ${iconClass}`}>
         {icon}
       </div>
 
@@ -293,10 +346,17 @@ function ContactCard({
 }
 
 
-/* HEALTH TIP CARD */
-function TipItem({ icon, text }) {
+/* =====================================================
+   HEALTH TIP
+   ===================================================== */
+
+function TipItem({
+  icon,
+  text,
+  type,
+}) {
   return (
-    <div className="patient-tip-item">
+    <div className={`patient-tip-item ${type}`}>
 
       <div className="patient-tip-icon">
         {icon}
