@@ -2,17 +2,17 @@ import { sql } from "../../config/db.js";
 
 /** GET /api/health-worker/dashboard. */
 export async function getDashboard(_req, res) {
-  const [{ count: patientCount }] = await sql`SELECT COUNT(*)::int AS count FROM patients`;
+  const [{ count: patientCount }] = await sql`SELECT COUNT(*)::int AS count FROM patients WHERE archived_at IS NULL`;
 
   const [{ count: registeredThisMonth }] = await sql`
-    SELECT COUNT(*)::int AS count FROM patients WHERE created_at >= date_trunc('month', NOW())
+    SELECT COUNT(*)::int AS count FROM patients WHERE archived_at IS NULL AND created_at >= date_trunc('month', NOW())
   `;
 
   const [{ count: withoutPortalLogin }] = await sql`
-    SELECT COUNT(*)::int AS count FROM patients WHERE user_id IS NULL
+    SELECT COUNT(*)::int AS count FROM patients WHERE archived_at IS NULL AND user_id IS NULL
   `;
 
-  const recentPatients = await sql`SELECT * FROM patients ORDER BY created_at DESC`;
+  const recentPatients = await sql`SELECT * FROM patients WHERE archived_at IS NULL ORDER BY created_at DESC`;
 
   return res.status(200).json({
     message: "Dashboard retrieved.",

@@ -33,49 +33,43 @@ export async function deleteClinicalRecord(req, res) {
   return res.status(200).json({ message: `${definition.singular} removed.` });
 }
 
-/**
- * DELETE /api/patients/:patientId -- destroys the patient and dependent
- * records. Explicit child deletes support production schemas whose legacy
- * foreign keys do not have ON DELETE CASCADE.
- */
-export async function deletePatient(req, res) {
+/** POST /api/patients/:patientId/archive -- archives without deleting history. */
+export async function archivePatient(req, res) {
   if (!PatientPolicy.delete(req.user)) {
     return res.status(403).json({ error: "Only an admin may remove a patient." });
   }
 
   const patientRows = await sql`
-    SELECT patient_id, user_id
+    SELECT patient_id
     FROM patients
-    WHERE patient_id = ${req.params.patientId}
+    WHERE patient_id = ${req.params.patientId} AND archived_at IS NULL
   `;
   const patient = patientRows[0];
   if (!patient) return res.status(404).json({ error: "Patient not found." });
 
-  for (const table of [
-    "appointments",
-    "health_assessments",
-    "vital_signs",
-    "midwife_notes",
-    "medical_histories",
-    "allergies",
-  ]) {
-    await sql.query(`DELETE FROM ${table} WHERE patient_id = $1`, [req.params.patientId]);
-  }
-
   const rows = await sql.query(
-    "DELETE FROM patients WHERE patient_id = $1 RETURNING patient_id",
-    [req.params.patientId]
+    "UPDATE patients SET archived_at = NOW(), archived_by = $1, updated_at = NOW() WHERE patient_id = $2 AND archived_at IS NULL RETURNING patient_id, archived_at",
+    [req.user.user_id, req.params.patientId]
   );
 
   if (rows.length === 0) return res.status(404).json({ error: "Patient not found." });
 
-  if (patient.user_id) {
-    await sql`
-      DELETE FROM users
-      WHERE user_id = ${patient.user_id}
-        AND role = 'patient'
-    `;
+  return res.status(200).json({ message: "Patient archived.", patient: rows[0] });
+}
+
+/** POST /api/patients/:patientId/restore -- makes an archived patient active again. */
+export async function restorePatient(req, res) {
+  if (!PatientPolicy.delete(req.user)) {
+    return res.status(403).json({ error: "Only an admin may restore a patient." });
   }
 
-  return res.status(200).json({ message: "Patient removed." });
+  const rows = await sql`
+    UPDATE patients
+    SET archived_at = NULL, archived_by = NULL, updated_at = NOW()
+    WHERE patient_id = ${req.params.patientId} AND archived_at IS NOT NULL
+    RETURNING *
+  `;
+
+  if (rows.length === 0) return res.status(404).json({ error: "Archived patient not found." });
+  return res.status(200).json({ message: "Patient restored.", patient: rows[0] });
 }

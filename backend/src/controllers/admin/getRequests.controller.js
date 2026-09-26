@@ -2,7 +2,7 @@ import { sql } from "../../config/db.js";
 
 /** GET /api/admin/dashboard -- admin dashboard. */
 export async function getDashboard(_req, res) {
-  const [{ count: patientCount }] = await sql`SELECT COUNT(*)::int AS count FROM patients`;
+  const [{ count: patientCount }] = await sql`SELECT COUNT(*)::int AS count FROM patients WHERE archived_at IS NULL`;
 
   const [{ count: appointmentsToday }] = await sql`
     SELECT COUNT(*)::int AS count FROM appointments
@@ -21,7 +21,7 @@ export async function getDashboard(_req, res) {
     ORDER BY a.scheduled_at ASC
   `;
 
-  const recentPatients = await sql`SELECT * FROM patients ORDER BY created_at DESC LIMIT 5`;
+  const recentPatients = await sql`SELECT * FROM patients WHERE archived_at IS NULL ORDER BY created_at DESC LIMIT 5`;
 
   return res.status(200).json({
     message: "Dashboard retrieved.",

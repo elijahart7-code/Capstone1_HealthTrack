@@ -13,7 +13,7 @@ import {
   registerPatient,
 } from "../controllers/patients/postRequests.controller.js";
 import { updateClinicalRecord, updatePatient } from "../controllers/patients/updateRequests.controller.js";
-import { deleteClinicalRecord, deletePatient } from "../controllers/patients/deleteRequest.controller.js";
+import { archivePatient, deleteClinicalRecord, restorePatient } from "../controllers/patients/deleteRequest.controller.js";
 
 /**
  * Shared by admin and health worker roles. The route group handles the
@@ -27,7 +27,8 @@ router.get("/", getAllPatients);
 router.post("/", registerPatient);
 router.get("/:patientId", getPatient);
 router.patch("/:patientId", updatePatient);
-router.delete("/:patientId", deletePatient);
+router.post("/:patientId/archive", archivePatient);
+router.post("/:patientId/restore", restorePatient);
 
 router.get("/:patientId/appointments", getPatientAppointments);
 router.post("/:patientId/appointments", createAppointment);

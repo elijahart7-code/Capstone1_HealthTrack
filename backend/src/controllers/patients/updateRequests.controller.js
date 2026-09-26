@@ -52,7 +52,7 @@ export async function updatePatient(req, res) {
   params.push(req.params.patientId);
 
   const rows = await sql.query(
-    `UPDATE patients SET ${assignments}, updated_at = NOW() WHERE patient_id = $${params.length} RETURNING *`,
+    `UPDATE patients SET ${assignments}, updated_at = NOW() WHERE patient_id = $${params.length} AND archived_at IS NULL RETURNING *`,
     params
   );
 

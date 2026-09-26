@@ -24,7 +24,7 @@ export async function getAllPatients(req, res) {
     return res.status(403).json({ error: "You do not have access to the patient registry." });
   }
 
-  const patients = await sql`SELECT * FROM patients ORDER BY last_name ASC, first_name ASC`;
+  const patients = await sql`SELECT * FROM patients WHERE archived_at IS NULL ORDER BY last_name ASC, first_name ASC`;
 
   return res.status(200).json({ message: "Patients retrieved.", patients: patients.map(withComputed) });
 }
@@ -49,7 +49,7 @@ export async function getPatient(req, res) {
 
 /** GET /api/patients/:patientId/appointments -- newest first, like Record::render(). */
 export async function getPatientAppointments(req, res) {
-  const rows = await sql`SELECT * FROM patients WHERE patient_id = ${req.params.patientId}`;
+  const rows = await sql`SELECT * FROM patients WHERE patient_id = ${req.params.patientId} AND archived_at IS NULL`;
   const patient = rows[0];
   if (!patient) return res.status(404).json({ error: "Patient not found." });
   if (!PatientPolicy.view(req.user, patient)) {
@@ -77,7 +77,7 @@ export async function getClinicalRecords(req, res) {
 
   if (!isRecordType(type)) return res.status(404).json({ error: "Unknown record type." });
 
-  const patientRows = await sql`SELECT * FROM patients WHERE patient_id = ${patientId}`;
+  const patientRows = await sql`SELECT * FROM patients WHERE patient_id = ${patientId} AND archived_at IS NULL`;
   const patient = patientRows[0];
   if (!patient) return res.status(404).json({ error: "Patient not found." });
   if (!(req.user.role === "admin" || req.user.role === "health_worker" || patient.user_id === req.user.user_id)) {

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { Eye, Search, Users } from "lucide-react";
+import { Archive, Eye, Search, Users } from "lucide-react";
 import { useSearchParams } from "react-router";
+import { api } from "../../../lib/axios";
 import { calculateAge } from "../../../utils/calculateAge";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { Input, Select } from "../../../components/ui/Input";
@@ -15,7 +16,23 @@ export function Patients({ patients, loadData }) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("last_name");
   const [page, setPage] = useState(1);
+  const [archiveError, setArchiveError] = useState("");
   const pageSize = 10;
+
+  async function archivePatient(patient) {
+    const confirmed = window.confirm(
+      `Are you sure you want to archive ${patient.full_name}? Their clinical history will be preserved, but they will be hidden from active patient lists.`
+    );
+    if (!confirmed) return;
+
+    setArchiveError("");
+    try {
+      await api.post(`/patients/${patient.patient_id}/archive`);
+      await loadData();
+    } catch (err) {
+      setArchiveError(err?.response?.data?.error || "Could not archive this patient.");
+    }
+  }
 
   const visible = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -71,6 +88,7 @@ export function Patients({ patients, loadData }) {
       </PageHeader>
 
       <div className="ht-panel ht-patient-panel">
+        {archiveError && <div className="ht-login-alert ht-login-alert-error">{archiveError}</div>}
         <div className="ht-patient-toolbar">
           <div className="ht-toolbar-field">
             <label className="ht-toolbar-label">Search</label>
@@ -124,16 +142,26 @@ export function Patients({ patients, loadData }) {
                       {p.user_id ? <span className="ht-status-badge ht-status-badge-active">Active</span> : <span className="ht-status-badge ht-status-badge-inactive">Inactive</span>}
                     </Td>
                     <Td>
-                      <button
-                        type="button"
-                        onClick={() => setSearchParams({ page: "patients", patientId: p.patient_id })}
-                        className="ht-record-action"
-                      >
-                        <span className="ht-record-action-icon">
-                          <Eye size={15} strokeWidth={2} />
-                        </span>
-                        Open / Modify Record
-                      </button>
+                      <div className="ht-patient-row-actions">
+                        <button
+                          type="button"
+                          onClick={() => setSearchParams({ page: "patients", patientId: p.patient_id })}
+                          className="ht-record-action"
+                        >
+                          <span className="ht-record-action-icon">
+                            <Eye size={15} strokeWidth={2} />
+                          </span>
+                          Open / Modify Record
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => archivePatient(p)}
+                          className="ht-archive-row-action"
+                        >
+                          <Archive size={15} strokeWidth={2} />
+                          Archive
+                        </button>
+                      </div>
                     </Td>
                   </tr>
                 ))}
