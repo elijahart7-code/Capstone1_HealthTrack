@@ -1542,6 +1542,906 @@
         margin: 0 auto;
         padding: 0.25rem 0 0;
     }
+    /* =========================================================
+   PATIENT DASHBOARD - REFERENCE DESIGN
+   ========================================================= */
+
+.patient-dashboard-shell {
+    display: grid;
+    gap: 1rem;
+    width: min(100%, 1370px);
+    margin: 0 auto;
+    padding: 0.25rem 0 1.5rem;
+}
+
+
+/* =========================================================
+   PATIENT DASHBOARD HEADER
+   ========================================================= */
+
+.patient-dashboard-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+
+    min-height: 120px;
+    padding: 1.25rem 1.6rem;
+
+    background: #ffffff;
+    border: 1px solid rgba(12, 79, 70, 0.07);
+    border-radius: 18px;
+
+    box-shadow: 0 4px 18px rgba(15, 29, 26, 0.04);
+
+    overflow: hidden;
+}
+
+.patient-dashboard-header::after {
+    content: "";
+    position: absolute;
+    right: 5%;
+    bottom: -65px;
+
+    width: 230px;
+    height: 150px;
+
+    border-radius: 50%;
+
+    background: rgba(224, 243, 235, 0.55);
+
+    transform: rotate(-20deg);
+}
+
+.patient-dashboard-header-copy {
+    position: relative;
+    z-index: 1;
+}
+
+.patient-dashboard-header-copy h1 {
+    margin: 0;
+
+    color: #064f43;
+
+    font-family: "Inter", sans-serif;
+    font-size: clamp(2rem, 3vw, 2.7rem);
+    font-weight: 800;
+
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+}
+
+.patient-dashboard-header-copy p {
+    margin: 0.35rem 0 0;
+
+    color: #65736f;
+
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.patient-header-health-button {
+    position: relative;
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.55rem;
+
+    min-height: 54px;
+
+    padding: 0.85rem 1.25rem;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #08755f;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.patient-header-health-button:hover {
+    background: #065c4c;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   WELCOME SECTION
+   ========================================================= */
+
+.patient-welcome-banner {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 1rem;
+
+    min-height: 86px;
+
+    padding: 0.95rem 1.35rem;
+
+    background: linear-gradient(
+        90deg,
+        #e7f6ef 0%,
+        #eefaf5 60%,
+        #e4f4ed 100%
+    );
+
+    border: 1px solid rgba(12, 79, 70, 0.06);
+    border-radius: 18px;
+
+    box-shadow: 0 4px 18px rgba(15, 29, 26, 0.035);
+
+    overflow: hidden;
+}
+
+.patient-welcome-banner::after {
+    content: "";
+
+    position: absolute;
+    right: -30px;
+    bottom: -70px;
+
+    width: 230px;
+    height: 170px;
+
+    border-radius: 50%;
+
+    background: rgba(208, 235, 224, 0.45);
+
+    transform: rotate(-20deg);
+}
+
+.patient-profile-circle {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    place-items: center;
+
+    width: 62px;
+    height: 62px;
+
+    flex: 0 0 62px;
+
+    border-radius: 50%;
+
+    background: #d9f0e6;
+    color: #08755f;
+}
+
+.patient-profile-circle svg {
+    width: 39px;
+    height: 39px;
+}
+
+.patient-welcome-copy {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+
+    gap: 0.25rem;
+}
+
+.patient-welcome-copy h2 {
+    margin: 0;
+
+    color: #17302b;
+
+    font-family: "Inter", sans-serif;
+    font-size: 1.45rem;
+    font-weight: 800;
+
+    line-height: 1.15;
+}
+
+.patient-welcome-copy p {
+    margin: 0;
+
+    color: #63716d;
+
+    font-size: 0.94rem;
+}
+
+
+/* =========================================================
+   FOUR INFORMATION CARDS
+   ========================================================= */
+
+.patient-metric-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 1rem;
+}
+
+.patient-metric-card {
+    display: grid;
+
+    grid-template-rows:
+        auto
+        1fr
+        auto;
+
+    gap: 0.8rem;
+
+    min-height: 240px;
+
+    padding: 1rem;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(12, 79, 70, 0.07);
+    border-radius: 18px;
+
+    box-shadow: 0 4px 18px rgba(15, 29, 26, 0.045);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.patient-metric-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 25px rgba(15, 29, 26, 0.08);
+}
+
+
+/* TOP OF CARD */
+
+.patient-metric-header {
+    display: flex;
+    align-items: center;
+
+    gap: 0.7rem;
+
+    min-height: 48px;
+}
+
+.patient-metric-title-icon {
+    display: grid;
+    place-items: center;
+
+    width: 50px;
+    height: 50px;
+
+    flex: 0 0 50px;
+
+    border-radius: 13px;
+}
+
+.patient-metric-title-icon svg {
+    width: 28px;
+    height: 28px;
+
+    stroke-width: 1.8;
+}
+
+.patient-metric-header h3 {
+    flex: 1;
+
+    margin: 0;
+
+    color: #172b28;
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 1rem;
+    font-weight: 800;
+
+    line-height: 1.25;
+}
+
+.patient-metric-arrow {
+    color: #6c7774;
+
+    flex-shrink: 0;
+}
+
+
+/* DIFFERENT CARD COLORS */
+
+.patient-metric-appointment
+.patient-metric-title-icon {
+    background: #e2f4ed;
+    color: #08755f;
+}
+
+.patient-metric-vitals
+.patient-metric-title-icon {
+    background: #fde4e7;
+    color: #e33f52;
+}
+
+.patient-metric-assessment
+.patient-metric-title-icon {
+    background: #e4effc;
+    color: #2475c9;
+}
+
+.patient-metric-allergies
+.patient-metric-title-icon {
+    background: #fff0d8;
+    color: #ed9417;
+}
+
+
+/* DETAIL AREA */
+
+.patient-metric-detail {
+    display: flex;
+    align-items: center;
+
+    gap: 0.75rem;
+
+    min-height: 72px;
+}
+
+.patient-metric-detail-icon {
+    display: grid;
+    place-items: center;
+
+    width: 52px;
+    height: 52px;
+
+    flex: 0 0 52px;
+
+    border-radius: 12px;
+}
+
+.patient-metric-detail-icon svg {
+    width: 28px;
+    height: 28px;
+
+    stroke-width: 1.7;
+}
+
+.patient-metric-detail span {
+    color: #697572;
+
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+
+/* DETAIL COLORS */
+
+.patient-metric-appointment .patient-metric-detail-icon {
+    background: #edf8f4;
+    color: #6b8880;
+}
+
+.patient-metric-vitals .patient-metric-detail-icon {
+    background: #fff0f1;
+    color: #e33f52;
+}
+
+.patient-metric-assessment .patient-metric-detail-icon {
+    background: #edf5fd;
+    color: #5491d0;
+}
+
+.patient-metric-allergies .patient-metric-detail-icon {
+    background: #fff6e9;
+    color: #eda13b;
+}
+
+
+/* VIEW DETAILS */
+
+.patient-view-button {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.5rem;
+
+    width: 100%;
+    min-height: 43px;
+
+    padding: 0.65rem 0.75rem;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #e1f3ec;
+    color: #08755f;
+
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.patient-view-button:hover {
+    background: #cde9dc;
+    transform: translateY(-1px);
+}
+
+.patient-view-button svg {
+    width: 18px;
+    height: 18px;
+
+    stroke-width: 2;
+}
+
+
+/* =========================================================
+   YOUR HEALTH INFORMATION
+   ========================================================= */
+
+.patient-health-summary {
+    display: grid;
+
+    grid-template-columns: auto minmax(0, 1fr) auto;
+
+    align-items: center;
+
+    gap: 1rem;
+
+    min-height: 122px;
+
+    padding: 1rem 1.35rem;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(12, 79, 70, 0.07);
+    border-radius: 18px;
+
+    box-shadow: 0 4px 18px rgba(15, 29, 26, 0.045);
+}
+
+.patient-health-summary-icon {
+    display: grid;
+    place-items: center;
+
+    width: 62px;
+    height: 62px;
+
+    border-radius: 14px;
+
+    background: #dff2e9;
+    color: #08755f;
+}
+
+.patient-health-summary-icon svg {
+    width: 34px;
+    height: 34px;
+}
+
+.patient-health-copy {
+    display: grid;
+    gap: 0.3rem;
+}
+
+.patient-health-copy h2 {
+    margin: 0;
+
+    color: #17302b;
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 1.35rem;
+    font-weight: 800;
+}
+
+.patient-health-copy p {
+    margin: 0;
+
+    max-width: 850px;
+
+    color: #687572;
+
+    font-size: 0.86rem;
+    line-height: 1.5;
+}
+
+.patient-summary-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.5rem;
+
+    min-height: 51px;
+
+    padding: 0.8rem 1.15rem;
+
+    border: none;
+    border-radius: 11px;
+
+    background: #08755f;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.patient-summary-button:hover {
+    background: #065c4c;
+}
+
+.patient-summary-button svg {
+    width: 18px;
+    height: 18px;
+}
+
+
+/* =========================================================
+   GENERAL PANELS
+   ========================================================= */
+
+.patient-panel {
+    padding: 1rem 1.25rem 1.15rem;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(12, 79, 70, 0.07);
+    border-radius: 18px;
+
+    box-shadow: 0 4px 18px rgba(15, 29, 26, 0.045);
+}
+
+
+/* =========================================================
+   SECTION HEADERS
+   ========================================================= */
+
+.patient-section-header,
+.patient-tips-heading {
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.75rem;
+
+    margin-bottom: 0.75rem;
+}
+
+.patient-panel-icon-small {
+    display: grid;
+    place-items: center;
+
+    width: 44px;
+    height: 44px;
+
+    flex: 0 0 44px;
+
+    border-radius: 12px;
+
+    background: #e0f3eb;
+    color: #08755f;
+}
+
+.patient-panel-icon-small svg {
+    width: 22px;
+    height: 22px;
+}
+
+.patient-section-header h2,
+.patient-tips-heading h2 {
+    margin: 0;
+
+    color: #17302b;
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.patient-section-header p,
+.patient-tips-heading p {
+    margin: 0.15rem 0 0;
+
+    color: #687572;
+
+    font-size: 0.82rem;
+}
+
+
+/* =========================================================
+   EMERGENCY CONTACTS
+   ========================================================= */
+
+.patient-emergency-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 0.8rem;
+}
+
+.patient-contact-card {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 0.7rem;
+
+    min-height: 96px;
+
+    padding: 0.75rem;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(12, 79, 70, 0.11);
+
+    border-radius: 13px;
+}
+
+.patient-contact-icon {
+    display: grid;
+    place-items: center;
+
+    width: 45px;
+    height: 45px;
+
+    flex: 0 0 45px;
+
+    border-radius: 11px;
+
+    background: #eaf4fd;
+    color: #1769b0;
+}
+
+.patient-contact-icon svg {
+    width: 25px;
+    height: 25px;
+
+    stroke-width: 1.8;
+}
+
+.patient-contact-body {
+    display: grid;
+
+    gap: 0.15rem;
+
+    min-width: 0;
+}
+
+.patient-contact-body h3 {
+    margin: 0;
+
+    color: #263632;
+
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.patient-contact-body p,
+.patient-contact-body span {
+    margin: 0;
+
+    color: #687572;
+
+    font-size: 0.72rem;
+
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   HEALTH TIPS
+   ========================================================= */
+
+.patient-health-tips {
+    padding-bottom: 1rem;
+}
+
+.patient-tip-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 0.8rem;
+}
+
+.patient-tip-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.75rem;
+
+    min-height: 72px;
+
+    padding: 0.75rem 1rem;
+
+    border-radius: 12px;
+
+    text-align: left;
+}
+
+.patient-tip-icon {
+    display: grid;
+    place-items: center;
+
+    width: 45px;
+    height: 45px;
+
+    flex: 0 0 45px;
+
+    border-radius: 10px;
+}
+
+.patient-tip-icon svg {
+    width: 27px;
+    height: 27px;
+
+    stroke-width: 1.8;
+}
+
+.patient-tip-item span {
+    color: #28413a;
+
+    font-size: 0.78rem;
+    font-weight: 700;
+
+    line-height: 1.35;
+}
+
+
+/* TIP COLORS */
+
+.patient-tip-water {
+    background: #eaf4fd;
+}
+
+.patient-tip-water .patient-tip-icon {
+    color: #0875c1;
+}
+
+.patient-tip-food {
+    background: #fdecef;
+}
+
+.patient-tip-food .patient-tip-icon {
+    color: #e33f52;
+}
+
+.patient-tip-exercise {
+    background: #e9f7f1;
+}
+
+.patient-tip-exercise .patient-tip-icon {
+    color: #08755f;
+}
+
+.patient-tip-sleep {
+    background: #f1edfc;
+}
+
+.patient-tip-sleep .patient-tip-icon {
+    color: #8065c4;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1050px) {
+
+    .patient-metric-grid,
+    .patient-emergency-grid,
+    .patient-tip-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .patient-health-summary {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .patient-summary-button {
+        grid-column: 2;
+        justify-self: start;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .patient-dashboard-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .patient-header-health-button {
+        width: 100%;
+    }
+
+    .patient-welcome-banner {
+        padding: 1rem;
+    }
+
+    .patient-metric-grid,
+    .patient-emergency-grid,
+    .patient-tip-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-health-summary {
+        grid-template-columns: auto 1fr;
+    }
+
+    .patient-summary-button {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    .patient-dashboard-header-copy h1 {
+        font-size: 2rem;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .patient-dashboard-shell {
+        gap: 0.8rem;
+    }
+
+    .patient-dashboard-header,
+    .patient-welcome-banner,
+    .patient-panel,
+    .patient-health-summary {
+        border-radius: 14px;
+    }
+
+    .patient-welcome-copy h2 {
+        font-size: 1.2rem;
+    }
+
+    .patient-welcome-copy p {
+        font-size: 0.8rem;
+    }
+
+    .patient-profile-circle {
+        width: 54px;
+        height: 54px;
+        flex-basis: 54px;
+    }
+
+    .patient-profile-circle svg {
+        width: 34px;
+        height: 34px;
+    }
 
     .patient-healthinfo-page {
         display: grid;
