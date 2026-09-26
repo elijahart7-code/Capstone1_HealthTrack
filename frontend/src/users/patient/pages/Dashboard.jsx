@@ -100,11 +100,7 @@ export function Dashboard({ dashboard }) {
 
         <PatientMetricCard
           icon={<CalendarDays />}
-          title={
-            <>
-              Upcoming Appointment
-            </>
-          }
+          title="Upcoming Appointment"
           iconClass="appointment"
         />
 
