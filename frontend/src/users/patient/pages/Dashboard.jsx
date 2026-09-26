@@ -99,28 +99,32 @@ export function Dashboard({ dashboard }) {
       <div className="patient-metric-grid">
 
         <PatientMetricCard
-          icon={<CalendarDays />}
-          title="Upcoming Appointment"
-          iconClass="appointment"
-        />
+  icon={<CalendarDays size={25} strokeWidth={1.6} />}
+  title="Upcoming Appointment"
+  description="Check your scheduled visits and upcoming appointments."
+  onClick={() => setSearchParams({ page: "appointments" })}
+/>
 
-        <PatientMetricCard
-          icon={<HeartPulse />}
-          title="Updated Vital Signs"
-          iconClass="vitals"
-        />
+<PatientMetricCard
+  icon={<HeartPulse size={25} strokeWidth={1.6} />}
+  title="Updated Vital Signs"
+  description="View your latest recorded vital signs."
+  onClick={() => setSearchParams({ page: "vital-signs" })}
+/>
 
-        <PatientMetricCard
-          icon={<ClipboardList />}
-          title="Health Assessment"
-          iconClass="assessment"
-        />
+<PatientMetricCard
+  icon={<ClipboardList size={25} strokeWidth={1.6} />}
+  title="Health Assessment"
+  description="Review your latest health assessment."
+  onClick={() => setSearchParams({ page: "health-assessment" })}
+/>
 
-        <PatientMetricCard
-          icon={<ShieldAlert />}
-          title="Known Allergies"
-          iconClass="allergies"
-        />
+<PatientMetricCard
+  icon={<ShieldAlert size={25} strokeWidth={1.6} />}
+  title="Known Allergies"
+  description="View your recorded allergies and sensitivities."
+  onClick={() => setSearchParams({ page: "allergies" })}
+/>
 
       </div>
 
@@ -270,6 +274,8 @@ function PatientMetricCard({
   icon,
   title,
   iconClass,
+  description,
+  onClick,
 }) {
   return (
     <div className="patient-metric-card">
@@ -291,6 +297,7 @@ function PatientMetricCard({
       <button
         type="button"
         className="patient-view-button"
+        onClick={onClick}
       >
         View Only
         <Eye size={17} strokeWidth={2} />
