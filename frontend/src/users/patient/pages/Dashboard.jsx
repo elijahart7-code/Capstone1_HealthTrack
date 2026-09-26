@@ -284,12 +284,6 @@ function PatientMetricCard({
 
         <h3>{title}</h3>
 
-        <ArrowRight
-          className="patient-metric-arrow"
-          size={20}
-          strokeWidth={1.8}
-        />
-
       </div>
 
       <div className="patient-metric-space" />
@@ -298,8 +292,8 @@ function PatientMetricCard({
         type="button"
         className="patient-view-button"
       >
-        View Details
-        <ArrowRight size={17} strokeWidth={2} />
+        View Only
+        <Eye size={17} strokeWidth={2} />
       </button>
 
     </div>
