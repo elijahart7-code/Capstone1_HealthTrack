@@ -243,28 +243,26 @@ export function Dashboard({ dashboard }) {
 
 
 /* QUICK INFORMATION CARD */
-function PatientMetricCard({ icon, title }) {
+function PatientMetricCard({ icon, title, description }) {
   return (
     <div className="patient-metric-card">
-
-      <div className="patient-metric-top">
-
-        <div className="patient-metric-icon">
-          {icon}
-        </div>
-
-        <h3>{title}</h3>
-
+      <div className="patient-metric-card">
+        {icon}
       </div>
-
-      <button
-        type="button"
-        className="patient-view-button"
-      >
-        <Eye size={19} strokeWidth={1.8} />
-        View Only
-      </button>
-
+      <div className="patient-metric-content">
+        <span className="patient-metric-label">
+          HEALTH INFORMATION
+        </span>
+        <h3>{title}</h3>
+        <p>{description}</p>
+    </div>
+    <div className="patient-metric-divider">
+    </div>
+    <button type="button"
+    className="patient-view-button">
+      <span>View Only</span>
+      <ArrowRight size={17} strokeidth={2}/>
+    </button>
     </div>
   );
 }
