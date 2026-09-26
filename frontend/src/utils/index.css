@@ -2482,4 +2482,81 @@
   margin: 0 !important;
   padding: 0 !important;
 }
+/* =====================================================
+   PATIENT METRIC CARDS - FINAL LAYOUT
+   ===================================================== */
+
+.patient-metric-card {
+    display: flex !important;
+    flex-direction: column !important;
+
+    min-height: 190px !important;
+    padding: 18px !important;
+
+    box-sizing: border-box !important;
+}
+
+/* ICON + TITLE BESIDE EACH OTHER */
+.patient-metric-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    gap: 12px !important;
+}
+
+.patient-metric-title-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+
+    flex: 0 0 48px !important;
+
+    border-radius: 13px !important;
+}
+
+.patient-metric-header h3 {
+    display: block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    flex: 1 !important;
+
+    line-height: 1.25 !important;
+}
+
+/* DESCRIPTION */
+.patient-metric-description {
+    display: block !important;
+
+    margin: 10px 0 14px !important;
+
+    color: #667875 !important;
+
+    font-size: 0.82rem !important;
+    line-height: 1.45 !important;
+}
+
+/* VIEW ONLY BUTTON */
+.patient-view-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 8px !important;
+
+    width: 100% !important;
+
+    margin-top: auto !important;
+}
+
+.patient-view-button svg {
+    flex-shrink: 0 !important;
+}
 }
