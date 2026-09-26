@@ -261,7 +261,7 @@ function PatientMetricCard({ icon, title, description }) {
     <button type="button"
     className="patient-view-button">
       <span>View Only</span>
-      <ArrowRight size={17} strokeidth={2}/>
+      <Eye size={10} strokeidth={2}/>
     </button>
     </div>
   );
