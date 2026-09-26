@@ -2411,6 +2411,41 @@
         .ht-topbar-inner {
             padding-bottom: 0.9rem;
         }
+        /* HEALTH INFORMATION - ICON BESIDE TITLE */
+
+.patient-health-heading {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+    flex: 1 !important;
+}
+
+.patient-health-summary-icon {
+    display: grid !important;
+    place-items: center !important;
+    width: 62px !important;
+    height: 62px !important;
+    min-width: 62px !important;
+    flex: 0 0 62px !important;
+    border-radius: 14px !important;
+    background: #dff2e9 !important;
+    color: #08755f !important;
+}
+
+.patient-health-copy {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.3rem !important;
+    flex: 1 !important;
+}
+
+.patient-health-copy h2 {
+    margin: 0 !important;
+}
+
+.patient-health-copy p {
+    margin: 0 !important;
+}
     }
     
 }
