@@ -294,38 +294,15 @@ function ContactCard({
 
 
 /* HEALTH TIP CARD */
-function PatientMetricCard({
-  icon,
-  title,
-  description,
-}) {
+function TipItem({ icon, text }) {
   return (
-    <div className="patient-metric-card">
+    <div className="patient-tip-item">
 
-      {/* TITLE */}
-      <div className="patient-metric-header">
-
-        <div className="patient-metric-title-icon">
-          {icon}
-        </div>
-
-        <h3>{title}</h3>
-
+      <div className="patient-tip-icon">
+        {icon}
       </div>
 
-      {/* DESCRIPTION */}
-      <p className="patient-metric-description">
-        {description}
-      </p>
-
-      {/* VIEW ONLY */}
-      <button
-        type="button"
-        className="patient-view-button"
-      >
-        <Eye size={18} strokeWidth={1.8} />
-        View Only
-      </button>
+      <span>{text}</span>
 
     </div>
   );
