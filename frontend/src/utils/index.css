@@ -2419,6 +2419,7 @@
     flex-direction: row !important;
     align-items: center !important;
     gap: 1rem !important;
+    flex: 0 0 auto !important;
 }
 
 .patient-health-summary-icon {
