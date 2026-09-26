@@ -113,6 +113,8 @@ const TABLES = [
       emergency_contact_name    VARCHAR(255),
       emergency_contact_number  VARCHAR(20),
       emergency_contact_relationship VARCHAR(100),
+      archived_at               TIMESTAMP,
+      archived_by               VARCHAR(255) REFERENCES users(user_id),
       created_at                TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at                TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )`,
@@ -136,6 +138,8 @@ const TABLES = [
       emergency_contact_name: "VARCHAR(255)",
       emergency_contact_number: "VARCHAR(20)",
       emergency_contact_relationship: "VARCHAR(100)",
+      archived_at: "TIMESTAMP",
+      archived_by: "VARCHAR(255) REFERENCES users(user_id)",
       created_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
       updated_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
     },
@@ -376,6 +380,9 @@ export async function connectNeon() {
     await sql`ALTER TABLE patients ADD COLUMN IF NOT EXISTS nationality VARCHAR(100)`;
     await sql`ALTER TABLE patients ADD COLUMN IF NOT EXISTS place_of_birth VARCHAR(255)`;
     await sql`ALTER TABLE patients ADD COLUMN IF NOT EXISTS emergency_contact_relationship VARCHAR(100)`;
+    await sql`ALTER TABLE patients ADD COLUMN IF NOT EXISTS archived_at TIMESTAMP`;
+    await sql`ALTER TABLE patients ADD COLUMN IF NOT EXISTS archived_by VARCHAR(255) REFERENCES users(user_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS patients_active_name_idx ON patients (last_name, first_name) WHERE archived_at IS NULL`;
     await sql`ALTER TABLE patients DROP COLUMN IF EXISTS philhealth_number`;
 
     await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS blood_pressure VARCHAR(20)`;

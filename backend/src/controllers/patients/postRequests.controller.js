@@ -73,7 +73,7 @@ export async function createAppointment(req, res) {
     return res.status(403).json({ error: "Only an admin may schedule appointments." });
   }
 
-  const patientRows = await sql`SELECT patient_id FROM patients WHERE patient_id = ${req.params.patientId}`;
+  const patientRows = await sql`SELECT patient_id FROM patients WHERE patient_id = ${req.params.patientId} AND archived_at IS NULL`;
   if (patientRows.length === 0) return res.status(404).json({ error: "Patient not found." });
 
   const { scheduledAt, reason, notes, status } = req.body;
@@ -106,7 +106,7 @@ export async function createPortalAccount(req, res) {
     SELECT p.*, u.email, u.created_at AS account_created_at
     FROM patients p
     LEFT JOIN users u ON u.user_id = p.user_id
-    WHERE p.patient_id = ${req.params.patientId}
+    WHERE p.patient_id = ${req.params.patientId} AND p.archived_at IS NULL
   `;
   const patient = patientRows[0];
   if (!patient) return res.status(404).json({ error: "Patient not found." });
@@ -162,7 +162,7 @@ export async function createClinicalRecord(req, res) {
     return res.status(403).json({ error: "Only an admin may add clinical records." });
   }
 
-  const patientRows = await sql`SELECT patient_id FROM patients WHERE patient_id = ${patientId}`;
+  const patientRows = await sql`SELECT patient_id FROM patients WHERE patient_id = ${patientId} AND archived_at IS NULL`;
   if (patientRows.length === 0) return res.status(404).json({ error: "Patient not found." });
 
   const definition = RECORD_TYPES[type];

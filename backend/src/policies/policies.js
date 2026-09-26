@@ -29,7 +29,7 @@ export const PatientPolicy = {
 
   update: (user) => isAdmin(user),
 
-  /** Deleting a patient destroys their clinical history -- midwife only. */
+  /** Archiving/restoring a patient is restricted to admins. */
   delete: (user) => isAdmin(user),
 };
 

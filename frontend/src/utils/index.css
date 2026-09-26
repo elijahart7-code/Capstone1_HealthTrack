@@ -861,6 +861,38 @@
         color: var(--color-brand-strong);
     }
 
+    .ht-patient-row-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        flex-wrap: wrap;
+    }
+
+    .ht-archive-row-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.38rem;
+        min-height: 32px;
+        padding: 0.38rem 0.7rem;
+        border: 1px solid #ddb5b5;
+        border-radius: 9px;
+        background: #fffafa;
+        color: #a45151;
+        font-size: 0.7rem;
+        font-weight: 600;
+        line-height: 1.2;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .ht-archive-row-action:hover,
+    .ht-archive-row-action:focus-visible {
+        background: #fff0f0;
+        outline: none;
+    }
+
     .ht-pagination {
         display: flex;
         justify-content: center;

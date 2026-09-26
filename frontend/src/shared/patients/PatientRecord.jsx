@@ -23,7 +23,7 @@ import {
   Flag,
   User,
   Pencil,
-  Trash2,
+  Archive,
 } from "lucide-react";
 
 export function PatientRecord({
@@ -152,15 +152,15 @@ export function PatientRecord({
     }
   }
 
-  async function deletePatient() {
-    if (!confirm("Delete this patient and all of their clinical history? This cannot be undone.")) return;
+  async function archivePatient() {
+    if (!confirm("Archive this patient? Their clinical history will be preserved and they will be hidden from active patient lists.")) return;
     setDeleteError(null);
     try {
-      await api.delete(`/patients/${patientId}`);
+      await api.post(`/patients/${patientId}/archive`);
       onPatientUpdated?.();
       onBack();
     } catch (err) {
-      setDeleteError(err?.response?.data?.error || "Could not delete this patient.");
+      setDeleteError(err?.response?.data?.error || "Could not archive this patient.");
     }
   }
 
@@ -250,11 +250,11 @@ export function PatientRecord({
             <>
               <button
   type="button"
-  onClick={deletePatient}
+  onClick={archivePatient}
   className="ht-delete-patient-button"
 >
-  <Trash2 size={16} />
-  Delete Patient
+  <Archive size={16} />
+  Archive Patient
 </button>
             </>
           )}
