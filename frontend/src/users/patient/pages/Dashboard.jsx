@@ -90,23 +90,24 @@ export function Dashboard({ dashboard }) {
       <div className="patient-metric-grid">
 
         <PatientMetricCard
-          icon={<CalendarDays size={25} strokeWidth={1.10} />}
-          title="Upcoming Appointment"
+        icon={<CalendarDays size={25} strokewidth={1.8}/>}
+        title="Upcoming Appointment"
+        description="Check you next schedule visit."
         />
-
         <PatientMetricCard
-          icon={<HeartPulse size={25} strokeWidth={1.10} />}
-          title="Updated Vital Signs"
+        icon={<HeartPulse size={25} strokeWidth={1.8} />}
+        title="Updated Vital Signs"
+        description="View your latest health measurements."
         />
-
         <PatientMetricCard
-          icon={<ClipboardList size={25} strokeWidth={1.10} />}
-          title="Health Assessment"
+        icon={<ClipboardList size={25} strokeWidth={1.8} />}
+        title="Health Assessment"
+        description="View your latest health assessment."
         />
-
         <PatientMetricCard
-          icon={<ShieldAlert size={25} strokeWidth={1.10} />}
-          title="Known Allergies"
+        icon={<ShieldAlert size={25} strokeWidth={1.8} />}
+        title="Known Allergies"
+        description="View your recorded allergies"
         />
 
       </div>
