@@ -117,7 +117,7 @@ export function Dashboard({ dashboard }) {
         <div className="patient-health-copy">
 
           <div className="patient-panel-icon" aria-hidden="true">
-            <FileText size={31} strokeWidth={1.8} />
+            <FileText size={24} strokeWidth={1.10} />
           </div>
 
           <h2>Your Health Information</h2>
