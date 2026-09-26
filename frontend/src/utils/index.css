@@ -276,6 +276,28 @@
         font-weight: 800;
         color: var(--color-brand-strong);
     }
+    .patient-metric-header {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+.patient-metric-title-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 50px !important;
+  height: 50px !important;
+  min-width: 50px !important;
+  flex-shrink: 0 !important;
+}
+
+.patient-metric-header h3 {
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
     .ht-recent-panel {
         padding-bottom: 0.75rem;
