@@ -75,7 +75,7 @@ export function Dashboard({ dashboard }) {
       {/* PATIENT WELCOME */}
       <section className="patient-welcome-simple">
         <div className="patient-welcome-icon">
-          <User size={25} strokeWidth={1.8} />
+          <User size={40} strokeWidth={1.8} />
         </div>
 
         <div>
