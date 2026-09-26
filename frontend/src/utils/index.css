@@ -2483,5 +2483,828 @@
   padding: 0 !important;
 }
 
-    
+    /* =========================================================
+   HEALTH TRACK PATIENT DASHBOARD
+   REFERENCE DESIGN
+   ========================================================= */
+
+
+/* =========================================================
+   DASHBOARD HEADER
+   ========================================================= */
+
+.patient-dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    min-height: 108px;
+
+    padding: 22px 28px;
+
+    background: #ffffff;
+
+    border: 1px solid rgba(12, 79, 70, 0.08);
+
+    border-radius: 18px;
+
+    box-shadow: 0 4px 18px rgba(15, 29, 26, 0.035);
+
+    overflow: hidden;
+}
+
+.patient-dashboard-header-copy {
+    min-width: 0;
+}
+
+.patient-dashboard-header h1 {
+    margin: 0 0 6px;
+
+    font-family: var(--font-sans);
+
+    font-size: 2rem;
+
+    font-weight: 800;
+
+    line-height: 1.1;
+
+    letter-spacing: -0.035em;
+
+    color: #073f35;
+}
+
+.patient-dashboard-header p {
+    margin: 0;
+
+    color: #667875;
+
+    font-size: 0.9rem;
+
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   VIEW HEALTH INFORMATION BUTTON
+   ========================================================= */
+
+.patient-summary-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    flex-shrink: 0;
+
+    min-height: 48px;
+
+    padding: 0.75rem 1.25rem;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #08755f;
+
+    color: #ffffff;
+
+    font-family: var(--font-sans);
+
+    font-size: 0.85rem;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.patient-summary-button:hover {
+    background: #075c4b;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   WELCOME SECTION
+   ========================================================= */
+
+.patient-welcome-simple {
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    min-height: 82px;
+
+    margin: 0 !important;
+
+    padding: 14px 20px;
+
+    background: #eaf7f1;
+
+    border: 1px solid rgba(12, 79, 70, 0.05);
+
+    border-radius: 18px;
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.patient-welcome-simple::after {
+    content: "";
+
+    position: absolute;
+
+    right: -35px;
+    bottom: -60px;
+
+    width: 180px;
+    height: 150px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.patient-welcome-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 58px;
+    height: 58px;
+
+    flex: 0 0 58px;
+
+    border-radius: 14px;
+
+    background: #d9f1e7;
+
+    color: #08755f;
+
+    position: relative;
+
+    z-index: 1;
+}
+
+.patient-welcome-simple > div:last-child {
+    position: relative;
+
+    z-index: 1;
+}
+
+.patient-welcome-simple h2 {
+    margin: 0 0 4px !important;
+
+    color: #073f35;
+
+    font-family: var(--font-sans);
+
+    font-size: 1.25rem;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+}
+
+.patient-welcome-simple p {
+    margin: 0 !important;
+
+    color: #667875;
+
+    font-size: 0.82rem;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   QUICK INFORMATION GRID
+   ========================================================= */
+
+.patient-metric-grid {
+    display: grid !important;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+
+    gap: 14px !important;
+
+    width: 100%;
+
+    margin: 0 !important;
+}
+
+
+/* =========================================================
+   QUICK INFORMATION CARD
+   ========================================================= */
+
+.patient-metric-card {
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    min-width: 0;
+
+    min-height: 242px !important;
+
+    padding: 17px !important;
+
+    box-sizing: border-box;
+
+    background: #ffffff !important;
+
+    border: 1px solid rgba(12, 79, 70, 0.08) !important;
+
+    border-radius: 16px !important;
+
+    box-shadow: 0 4px 16px rgba(15, 29, 26, 0.035) !important;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.patient-metric-header {
+    display: flex !important;
+
+    align-items: center !important;
+
+    flex-direction: row !important;
+
+    width: 100% !important;
+
+    gap: 11px !important;
+
+    margin: 0 !important;
+}
+
+
+/* =========================================================
+   CARD ICON
+   ========================================================= */
+
+.patient-metric-title-icon {
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 48px !important;
+    height: 48px !important;
+
+    min-width: 48px !important;
+
+    flex: 0 0 48px !important;
+
+    border-radius: 12px !important;
+}
+
+.patient-metric-title-icon svg {
+    width: 25px !important;
+    height: 25px !important;
+
+    fill: none !important;
+
+    stroke-width: 1.8 !important;
+}
+
+
+/* GREEN — APPOINTMENT */
+
+.patient-metric-title-icon.appointment {
+    background: #e3f5ed !important;
+
+    color: #08755f !important;
+}
+
+
+/* RED — VITAL SIGNS */
+
+.patient-metric-title-icon.vitals {
+    background: #ffe7eb !important;
+
+    color: #dc4d62 !important;
+}
+
+
+/* BLUE — ASSESSMENT */
+
+.patient-metric-title-icon.assessment {
+    background: #e5f0ff !important;
+
+    color: #1266b1 !important;
+}
+
+
+/* ORANGE — ALLERGIES */
+
+.patient-metric-title-icon.allergies {
+    background: #fff0d9 !important;
+
+    color: #d98b22 !important;
+}
+
+
+/* =========================================================
+   CARD TITLE
+   ========================================================= */
+
+.patient-metric-header h3 {
+    display: block !important;
+
+    flex: 1 !important;
+
+    min-width: 0;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    color: #172d2a !important;
+
+    font-family: var(--font-sans) !important;
+
+    font-size: 0.9rem !important;
+
+    font-weight: 800 !important;
+
+    line-height: 1.3 !important;
+}
+
+
+/* =========================================================
+   SMALL ARROW BESIDE TITLE
+   ========================================================= */
+
+.patient-metric-arrow {
+    flex-shrink: 0;
+
+    color: #6d7d79;
+
+    margin-left: auto;
+}
+
+
+/* =========================================================
+   EMPTY CARD AREA
+   ========================================================= */
+
+.patient-metric-space {
+    flex: 1;
+
+    min-height: 75px;
+}
+
+
+/* =========================================================
+   VIEW DETAILS BUTTON
+   ========================================================= */
+
+.patient-view-button {
+    display: flex !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    gap: 8px !important;
+
+    width: 100% !important;
+
+    min-height: 46px !important;
+
+    margin-top: auto !important;
+
+    padding: 10px 12px !important;
+
+    border: 1px solid rgba(13, 74, 62, 0.08) !important;
+
+    border-radius: 9px !important;
+
+    background: #e4f5ee !important;
+
+    color: #075b4b !important;
+
+    font-family: var(--font-sans) !important;
+
+    font-size: 0.8rem !important;
+
+    font-weight: 800 !important;
+
+    cursor: default !important;
+
+    transition: background 0.2s ease;
+}
+
+.patient-view-button:hover {
+    background: #d8eee6 !important;
+}
+
+.patient-view-button svg {
+    width: 17px !important;
+    height: 17px !important;
+
+    color: currentColor !important;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
+   YOUR HEALTH INFORMATION
+   ========================================================= */
+
+.patient-health-summary {
+    display: block !important;
+
+    padding: 18px 22px !important;
+
+    background: #ffffff !important;
+
+    border: 1px solid rgba(12, 79, 70, 0.08) !important;
+
+    border-radius: 16px !important;
+
+    box-shadow: 0 4px 16px rgba(15, 29, 26, 0.035) !important;
+}
+
+.patient-health-heading {
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 16px !important;
+
+    width: 100% !important;
+}
+
+.patient-health-summary-icon {
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 62px !important;
+    height: 62px !important;
+
+    min-width: 62px !important;
+
+    flex: 0 0 62px !important;
+
+    border-radius: 13px !important;
+
+    background: #e0f4eb !important;
+
+    color: #08755f !important;
+}
+
+.patient-health-copy {
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    gap: 4px !important;
+
+    flex: 1 !important;
+
+    min-width: 0 !important;
+}
+
+.patient-health-copy h2 {
+    margin: 0 !important;
+
+    color: #073f35 !important;
+
+    font-family: var(--font-sans) !important;
+
+    font-size: 1.15rem !important;
+
+    font-weight: 800 !important;
+}
+
+.patient-health-copy p {
+    margin: 0 !important;
+
+    color: #667875 !important;
+
+    font-size: 0.78rem !important;
+
+    line-height: 1.5 !important;
+}
+
+
+/* =========================================================
+   EMERGENCY CONTACT
+   ========================================================= */
+
+.patient-panel {
+    padding: 17px 20px 19px !important;
+
+    background: #ffffff !important;
+
+    border: 1px solid rgba(12, 79, 70, 0.08) !important;
+
+    border-radius: 16px !important;
+
+    box-shadow: 0 4px 16px rgba(15, 29, 26, 0.035) !important;
+}
+
+.patient-section-header,
+.patient-tips-heading {
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 12px !important;
+
+    margin-bottom: 12px !important;
+}
+
+.patient-panel-icon-small {
+    width: 40px !important;
+    height: 40px !important;
+
+    min-width: 40px !important;
+
+    border-radius: 11px !important;
+
+    background: #e4f5ee !important;
+
+    color: #08755f !important;
+}
+
+.patient-section-header h2,
+.patient-tips-heading h2 {
+    margin: 0 !important;
+
+    color: #17312d !important;
+
+    font-family: var(--font-sans) !important;
+
+    font-size: 1rem !important;
+
+    font-weight: 800 !important;
+}
+
+.patient-section-header p,
+.patient-tips-heading p {
+    margin: 2px 0 0 !important;
+
+    color: #75827f !important;
+
+    font-size: 0.72rem !important;
+}
+
+
+/* =========================================================
+   EMERGENCY CONTACT GRID
+   ========================================================= */
+
+.patient-emergency-grid {
+    display: grid !important;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+
+    gap: 12px !important;
+}
+
+.patient-contact-card {
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 12px !important;
+
+    min-width: 0;
+
+    min-height: 82px;
+
+    padding: 11px !important;
+
+    background: #ffffff !important;
+
+    border: 1px solid rgba(12, 79, 70, 0.09) !important;
+
+    border-radius: 12px !important;
+}
+
+.patient-contact-icon {
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 45px !important;
+    height: 45px !important;
+
+    min-width: 45px !important;
+
+    border-radius: 11px !important;
+
+    background: #e7f0ff !important;
+
+    color: #1266b1 !important;
+}
+
+.patient-contact-body {
+    min-width: 0;
+}
+
+.patient-contact-body h3 {
+    margin: 0 0 3px !important;
+
+    color: #243532 !important;
+
+    font-size: 0.73rem !important;
+
+    font-weight: 800 !important;
+
+    line-height: 1.3 !important;
+}
+
+.patient-contact-body p {
+    margin: 0 !important;
+
+    color: #77827f !important;
+
+    font-size: 0.63rem !important;
+
+    line-height: 1.4 !important;
+}
+
+.patient-contact-body span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #77827f;
+
+    font-size: 0.63rem;
+}
+
+
+/* =========================================================
+   HEALTH TIPS
+   ========================================================= */
+
+.patient-tip-grid {
+    display: grid !important;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+
+    gap: 12px !important;
+}
+
+.patient-tip-item {
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 11px !important;
+
+    min-height: 62px;
+
+    padding: 9px 13px !important;
+
+    border-radius: 11px !important;
+
+    font-size: 0.72rem !important;
+
+    font-weight: 700 !important;
+}
+
+.patient-tip-icon {
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 39px !important;
+    height: 39px !important;
+
+    min-width: 39px !important;
+
+    border-radius: 10px !important;
+}
+
+.patient-tip-icon svg {
+    width: 23px !important;
+    height: 23px !important;
+}
+
+
+/* WATER */
+
+.patient-tip-item.water {
+    background: #e8f2ff !important;
+
+    color: #244e77 !important;
+}
+
+.patient-tip-item.water .patient-tip-icon {
+    color: #1475d1 !important;
+}
+
+
+/* FOOD */
+
+.patient-tip-item.food {
+    background: #fff0f2 !important;
+
+    color: #5d3c42 !important;
+}
+
+.patient-tip-item.food .patient-tip-icon {
+    color: #e53950 !important;
+}
+
+
+/* ACTIVITY */
+
+.patient-tip-item.activity {
+    background: #e8f7ef !important;
+
+    color: #315c48 !important;
+}
+
+.patient-tip-item.activity .patient-tip-icon {
+    color: #159467 !important;
+}
+
+
+/* SLEEP */
+
+.patient-tip-item.sleep {
+    background: #f0edff !important;
+
+    color: #4d4770 !important;
+}
+
+.patient-tip-item.sleep .patient-tip-icon {
+    color: #7163c8 !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 980px) {
+
+    .patient-metric-grid,
+    .patient-emergency-grid,
+    .patient-tip-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+}
+
+@media (max-width: 640px) {
+
+    .patient-dashboard-header {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        padding: 20px;
+    }
+
+    .patient-summary-button {
+        width: 100%;
+    }
+
+    .patient-metric-grid,
+    .patient-emergency-grid,
+    .patient-tip-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .patient-health-heading {
+        align-items: flex-start !important;
+    }
+
+    .patient-health-summary-icon {
+        width: 50px !important;
+        height: 50px !important;
+
+        min-width: 50px !important;
+        flex-basis: 50px !important;
+    }
+
+}
 }
