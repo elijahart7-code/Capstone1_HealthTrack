@@ -118,7 +118,6 @@ export function Dashboard({ dashboard }) {
 
     <div className="patient-health-summary-icon">
       <FileText size={31} strokeWidth={1.8} />
-      <User size={25} strokeWidth={1.8} />
     </div>
 
     <div className="patient-health-copy">
