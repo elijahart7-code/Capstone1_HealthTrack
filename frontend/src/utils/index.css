@@ -1718,74 +1718,164 @@
         stroke-linejoin: round;
     }
 
-    .patient-metric-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1rem;
-    }
+    /* =========================================
+   PATIENT DASHBOARD INFORMATION CARDS
+   ========================================= */
 
-    .patient-metric-card {
-        display: grid;
-        align-content: space-between;
-        gap: 1rem;
-        min-height: 170px;
-        padding: 1rem 1rem 0.9rem;
-        background: #fff;
-    }
+.patient-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin: 24px 0;
+}
 
-    .patient-metric-icon {
-        display: grid;
-        place-items: center;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: rgba(13, 74, 62, 0.08);
-        color: #0d4a3e;
-    }
+.patient-metric-card {
+  background: #ffffff;
+  border: 1px solid #e5eeea;
+  border-radius: 16px;
+  padding: 22px;
+  min-height: 235px;
 
-    .patient-metric-icon svg {
-        width: 24px;
-        height: 24px;
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 1.8;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-    }
+  display: flex;
+  flex-direction: column;
 
-    .patient-metric-card h3 {
-        margin: 0;
-        color: #1f2a2c;
-        font-size: 1rem;
-        line-height: 1.3;
-        font-weight: 700;
-    }
+  box-shadow: 0 4px 14px rgba(20, 70, 55, 0.06);
 
-    .patient-metric-card p {
-        margin: 0;
-        color: #0d4a3e;
-        font-size: 1.9rem;
-        font-weight: 800;
-        line-height: 1;
-    }
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
 
-    .patient-view-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.45rem;
-        width: 100%;
-        min-height: 40px;
-        padding: 0.6rem 0.75rem;
-        border: 1px solid rgba(13, 74, 62, 0.18);
-        border-radius: 10px;
-        background: rgba(13, 74, 62, 0.06);
-        color: #0d4a3e;
-        font-size: 0.9rem;
-        font-weight: 700;
-        cursor: pointer;
-        font-family: inherit;
-    }
+.patient-metric-card:hover {
+  transform: translateY(-3px);
+  border-color: #b9ddd2;
+  box-shadow: 0 8px 22px rgba(20, 70, 55, 0.10);
+}
+
+
+/* ICON */
+
+.patient-metric-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: #e5f4ee;
+  color: #006b57;
+
+  margin-bottom: 18px;
+}
+
+
+/* CARD CONTENT */
+
+.patient-metric-content {
+  flex: 1;
+}
+
+.patient-metric-label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #6b817a;
+
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.patient-metric-content h3 {
+  margin: 0;
+
+  color: #18352d;
+
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.patient-metric-content p {
+  margin: 9px 0 0;
+
+  color: #71817c;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+/* DIVIDER */
+
+.patient-metric-divider {
+  height: 1px;
+  width: 100%;
+
+  background: #e8efec;
+
+  margin: 18px 0 14px;
+}
+
+
+/* BUTTON */
+
+.patient-view-button {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px 12px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #f1f8f5;
+  color: #006b57;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.patient-view-button:hover {
+  background: #006b57;
+  color: #ffffff;
+}
+
+.patient-view-button svg {
+  transition: transform 0.2s ease;
+}
+
+.patient-view-button:hover svg {
+  transform: translateX(3px);
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+  .patient-metric-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .patient-metric-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
     .patient-panel {
         padding: 1.1rem 1.25rem 1.25rem;
