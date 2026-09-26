@@ -2483,43 +2483,74 @@
   padding: 0 !important;
 }
 /* =====================================================
-   PATIENT METRIC CARDS - FINAL LAYOUT
+   PATIENT METRIC CARDS
    ===================================================== */
 
+.patient-metric-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+    width: 100% !important;
+}
+
+/* CARD */
 .patient-metric-card {
     display: flex !important;
     flex-direction: column !important;
+    min-width: 0 !important;
+    min-height: 205px !important;
 
-    min-height: 190px !important;
     padding: 18px !important;
 
     box-sizing: border-box !important;
+
+    background: #ffffff !important;
+    border: 1px solid rgba(12, 79, 70, 0.10) !important;
+    border-radius: 16px !important;
+
+    box-shadow: 0 4px 14px rgba(15, 29, 26, 0.035) !important;
 }
 
-/* ICON + TITLE BESIDE EACH OTHER */
+/* ICON + TITLE */
 .patient-metric-header {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
 
+    gap: 11px !important;
     width: 100% !important;
-    gap: 12px !important;
+
+    margin: 0 !important;
 }
 
+/* ICON */
 .patient-metric-title-icon {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
 
-    width: 48px !important;
-    height: 48px !important;
-    min-width: 48px !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
 
-    flex: 0 0 48px !important;
+    flex: 0 0 42px !important;
 
-    border-radius: 13px !important;
+    border-radius: 11px !important;
+
+    background: #e8f5ef !important;
+    color: #0d4a3e !important;
 }
 
+/* ICON SIZE */
+.patient-metric-title-icon svg {
+    width: 22px !important;
+    height: 22px !important;
+
+    color: #0d4a3e !important;
+    stroke-width: 1.8 !important;
+}
+
+/* TITLE */
 .patient-metric-header h3 {
     display: block !important;
 
@@ -2527,20 +2558,31 @@
     padding: 0 !important;
 
     flex: 1 !important;
+    min-width: 0 !important;
 
-    line-height: 1.25 !important;
+    color: #1f2a2c !important;
+
+    font-family: var(--font-sans) !important;
+    font-size: 0.94rem !important;
+    font-weight: 750 !important;
+
+    line-height: 1.3 !important;
 }
 
 /* DESCRIPTION */
 .patient-metric-description {
     display: block !important;
 
-    margin: 10px 0 14px !important;
+    margin: 13px 0 18px !important;
+    padding: 0 !important;
 
     color: #667875 !important;
 
-    font-size: 0.82rem !important;
-    line-height: 1.45 !important;
+    font-family: var(--font-sans) !important;
+    font-size: 0.78rem !important;
+    font-weight: 400 !important;
+
+    line-height: 1.5 !important;
 }
 
 /* VIEW ONLY BUTTON */
@@ -2549,14 +2591,56 @@
     align-items: center !important;
     justify-content: center !important;
 
-    gap: 8px !important;
+    gap: 7px !important;
 
     width: 100% !important;
+    min-height: 38px !important;
 
     margin-top: auto !important;
+    padding: 8px 12px !important;
+
+    box-sizing: border-box !important;
+
+    border: 1px solid rgba(13, 74, 62, 0.18) !important;
+    border-radius: 9px !important;
+
+    background: #f4f8f6 !important;
+    color: #0d4a3e !important;
+
+    font-family: var(--font-sans) !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+
+    cursor: default !important;
+
+    transition: background 0.2s ease, border-color 0.2s ease !important;
 }
 
+/* EYE ICON */
 .patient-view-button svg {
+    width: 16px !important;
+    height: 16px !important;
+
     flex-shrink: 0 !important;
+
+    color: #0d4a3e !important;
+    stroke-width: 1.8 !important;
 }
+
+/* MOBILE / TABLET */
+@media (max-width: 980px) {
+
+    .patient-metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+}
+
+/* PHONE */
+@media (max-width: 640px) {
+
+    .patient-metric-grid {
+        grid-template-columns: 1fr !important;
+    }
+
 }
