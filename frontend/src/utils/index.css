@@ -2510,5 +2510,8 @@
 
     flex: 0 0 auto !important;
 }
+.patient-metric-header{
+    white-space: nowrap !important;
+}
     
 }
