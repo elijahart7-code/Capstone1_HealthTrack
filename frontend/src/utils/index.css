@@ -1861,6 +1861,7 @@
 
     .patient-summary-button {
         display: inline-flex;
+        flex: 0 0 auto !important;
         align-items: center;
         justify-content: center;
         gap: 0.5rem;
