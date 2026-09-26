@@ -1542,6 +1542,30 @@
         margin: 0 auto;
         padding: 0.25rem 0 0;
     }
+    .patient-header-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 14px 22px;
+  border: none;
+  border-radius: 10px;
+
+  background: #006b57;
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.patient-header-button:hover {
+  background: #005544;
+  transform: translateY(-1px);
+}
 
     .patient-healthinfo-page {
         display: grid;
