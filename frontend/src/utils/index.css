@@ -2845,20 +2845,6 @@
     line-height: 1.3 !important;
 }
 
-
-/* =========================================================
-   SMALL ARROW BESIDE TITLE
-   ========================================================= */
-
-.patient-metric-arrow {
-    flex-shrink: 0;
-
-    color: #6d7d79;
-
-    margin-left: auto;
-}
-
-
 /* =========================================================
    EMPTY CARD AREA
    ========================================================= */
@@ -2866,7 +2852,7 @@
 .patient-metric-space {
     flex: 1;
 
-    min-height: 75px;
+    min-height: 50px;
 }
 
 
