@@ -1564,6 +1564,27 @@
         background: #005544;
         transform: translateY(-1px);
     }
+    .patient-welcome-simple{
+        display: flex;
+        align-Items: center;
+        gap: 14px;
+        margin: 20px;
+    }
+    .patient-welcome-icon{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .patient-welcome-simple h2{
+        margin: 0 0 4px;
+        fornt-size: 18px;
+        font-weight: 600;
+    }
+    .patient-welcome-simple p{
+        margin: 0;
+        font-size: 14px;
+    }
 
     .patient-healthinfo-page {
         display: grid;
