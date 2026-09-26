@@ -1876,6 +1876,7 @@
         cursor: pointer;
         text-decoration: none;
         font-family: inherit;
+        flex: 0 0 auto !important;
     }
 
     .patient-health-illustration {
