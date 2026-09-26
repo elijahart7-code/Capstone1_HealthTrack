@@ -1,5 +1,22 @@
 import { useSearchParams } from "react-router";
-import {User,CalendarDays,HeartPulse,ClipboardList,ShieldAlert,ArrowRight,Eye,FileText,Building2,Phone,Clock3,Lightbulb,Droplets,Apple,PersonStanding,Moon,} from "lucide-react";
+import {
+  User,
+  CalendarDays,
+  HeartPulse,
+  ClipboardList,
+  ShieldAlert,
+  ArrowRight,
+  Eye,
+  FileText,
+  Building2,
+  Phone,
+  Clock3,
+  Lightbulb,
+  Droplets,
+  Apple,
+  PersonStanding,
+  Moon,
+} from "lucide-react";
 
 export function Dashboard({ dashboard }) {
   const [, setSearchParams] = useSearchParams();
@@ -10,6 +27,9 @@ export function Dashboard({ dashboard }) {
         <section className="ht-page-header">
           <div>
             <h1>No patient record found</h1>
+            <p>
+              Your patient record is not linked to your account yet.
+            </p>
           </div>
         </section>
 
@@ -31,30 +51,39 @@ export function Dashboard({ dashboard }) {
   return (
     <div className="patient-dashboard-shell">
 
-      {/* WELCOME SECTION /}
-      <section className="patient-welcome-banner">
-        <div className="patient-profile-circle" aria-hidden="true">
-          <User size={42} strokeWidth={2} />
-        </div>
-
-        <div className="patient-welcome-copy">
-          <h1>Welcome, {patientName}</h1>
+      {/* PAGE HEADER */}
+      <section className="ht-page-header">
+        <div>
+          <h1>Patient Dashboard</h1>
           <p>
-            Your records at Barangay Health Center of Mambog I.
+            View your health information and medical records.
           </p>
         </div>
 
         <button
           type="button"
-          className="patient-portal-button"
+          className="patient-header-button"
+          onClick={() =>
+            setSearchParams({ page: "health-information" })
+          }
         >
-          Patient Portal
-          <ArrowRight
-            size={18}
-            strokeWidth={1.9}
-            style={{ transform: "rotate(-45deg)" }}
-          />
+          View Health Information
+          <ArrowRight size={18} strokeWidth={1.9} />
         </button>
+      </section>
+
+      {/* PATIENT WELCOME */}
+      <section className="patient-welcome-simple">
+        <div className="patient-welcome-icon">
+          <User size={25} strokeWidth={1.8} />
+        </div>
+
+        <div>
+          <h2>Welcome, {patientName}!</h2>
+          <p>
+            Your records at Barangay Health Center of Mambog I.
+          </p>
+        </div>
       </section>
 
       {/* QUICK INFORMATION CARDS */}
@@ -110,7 +139,6 @@ export function Dashboard({ dashboard }) {
             <ArrowRight size={18} strokeWidth={1.9} />
           </button>
 
-        
         </div>
 
       </section>
@@ -160,7 +188,7 @@ export function Dashboard({ dashboard }) {
             icon={<Clock3 size={21} strokeWidth={1.8} />}
             title="Office Hours"
             line1="Mon - Fri: 8:00 AM - 5:00 PM"
-            line2="(Closed on weekends and holidays)"
+            line2="Closed on weekends and holidays"
           />
 
         </div>
@@ -220,14 +248,19 @@ function PatientMetricCard({ icon, title }) {
     <div className="patient-metric-card">
 
       <div className="patient-metric-top">
+
         <div className="patient-metric-icon">
           {icon}
         </div>
 
         <h3>{title}</h3>
+
       </div>
 
-      <button type="button" className="patient-view-button">
+      <button
+        type="button"
+        className="patient-view-button"
+      >
         <Eye size={19} strokeWidth={1.8} />
         View Only
       </button>
@@ -252,9 +285,13 @@ function ContactCard({
       </div>
 
       <div className="patient-contact-body">
+
         <h3>{title}</h3>
+
         <p>{line1}</p>
+
         <span>{line2}</span>
+
       </div>
 
     </div>
