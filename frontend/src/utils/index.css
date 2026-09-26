@@ -2411,41 +2411,6 @@
         .ht-topbar-inner {
             padding-bottom: 0.9rem;
         }
-        .patient-health-heading {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    flex: 1;
-}
-
-.patient-health-summary-icon {
-    display: grid;
-    place-items: center;
-
-    width: 62px;
-    height: 62px;
-
-    flex: 0 0 62px;
-
-    border-radius: 14px;
-
-    background: #dff2e9;
-    color: #08755f;
-}
-
-.patient-health-copy {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-}
-
-.patient-health-copy h2 {
-    margin: 0;
-}
-
-.patient-health-copy p {
-    margin: 0;
-}
     }
     
 }
