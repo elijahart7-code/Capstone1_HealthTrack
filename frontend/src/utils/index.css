@@ -1620,6 +1620,30 @@
         background: #F2FAF6;
         transform: rotate(-18deg);
     }
+    .patient-welcome-simple {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.patient-welcome-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.patient-welcome-simple h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.patient-welcome-simple p {
+  margin: 0;
+  font-size: 14px;
+}
 
     .patient-profile-circle {
         position: relative;
