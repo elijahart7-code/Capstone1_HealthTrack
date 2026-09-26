@@ -1722,157 +1722,163 @@
    PATIENT DASHBOARD INFORMATION CARDS
    ========================================= */
 
-.patient-metric-grid {
+/* =========================================
+   PATIENT INFORMATION CARDS
+   ========================================= */
+
+.patient-info-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  margin: 24px 0;
+  gap: 16px;
+  margin-bottom: 18px;
 }
 
-.patient-metric-card {
-  background: #ffffff;
-  border: 1px solid #e5eeea;
-  border-radius: 16px;
-  padding: 22px;
-  min-height: 235px;
+.patient-info-card {
+  height: 245px;
+  min-width: 0;
 
   display: flex;
   flex-direction: column;
 
-  box-shadow: 0 4px 14px rgba(20, 70, 55, 0.06);
+  padding: 16px;
 
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
+  background: #ffffff;
+
+  border: 1px solid #e5eeea;
+  border-radius: 17px;
+
+  box-shadow: 0 4px 14px rgba(20, 70, 55, 0.05);
+
+  box-sizing: border-box;
 }
 
-.patient-metric-card:hover {
-  transform: translateY(-3px);
-  border-color: #b9ddd2;
-  box-shadow: 0 8px 22px rgba(20, 70, 55, 0.10);
+
+/* CARD HEADER */
+
+.patient-card-top {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 12px;
 }
 
 
 /* ICON */
 
-.patient-metric-icon {
-  width: 48px;
-  height: 48px;
+.patient-card-icon {
+  width: 52px;
+  height: 52px;
+
+  flex-shrink: 0;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 12px;
-
-  background: #e5f4ee;
-  color: #006b57;
-
-  margin-bottom: 18px;
+  border-radius: 13px;
 }
 
 
-/* CARD CONTENT */
+/* DIFFERENT ICON COLORS */
 
-.patient-metric-content {
+.patient-info-card.appointment .patient-card-icon {
+  background: #dff4eb;
+  color: #08745d;
+}
+
+.patient-info-card.vitals .patient-card-icon {
+  background: #ffe3e6;
+  color: #ed3f52;
+}
+
+.patient-info-card.assessment .patient-card-icon {
+  background: #dcecff;
+  color: #2472c5;
+}
+
+.patient-info-card.allergies .patient-card-icon {
+  background: #fff0d8;
+  color: #ee9411;
+}
+
+
+/* TITLE */
+
+.patient-card-top h3 {
+  flex: 1;
+
+  margin: 0;
+
+  color: #163c34;
+
+  font-size: 16px;
+  line-height: 1.25;
+
+  font-weight: 700;
+}
+
+
+/* ARROW */
+
+.patient-card-arrow {
+  flex-shrink: 0;
+
+  color: #71827c;
+}
+
+
+/* EMPTY SPACE */
+
+.patient-card-space {
   flex: 1;
 }
 
-.patient-metric-label {
-  display: block;
 
-  margin-bottom: 7px;
+/* VIEW DETAILS BUTTON */
 
-  color: #6b817a;
-
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.patient-metric-content h3 {
-  margin: 0;
-
-  color: #18352d;
-
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1.3;
-}
-
-.patient-metric-content p {
-  margin: 9px 0 0;
-
-  color: #71817c;
-
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-
-/* DIVIDER */
-
-.patient-metric-divider {
-  height: 1px;
+.patient-details-button {
   width: 100%;
-
-  background: #e8efec;
-
-  margin: 18px 0 14px;
-}
-
-
-/* BUTTON */
-
-.patient-view-button {
-  width: 100%;
+  height: 45px;
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 
-  padding: 10px 12px;
+  gap: 12px;
 
   border: none;
   border-radius: 9px;
 
-  background: #f1f8f5;
+  background: #e7f6f0;
+
   color: #006b57;
 
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
 
   cursor: pointer;
 
-  transition: all 0.2s ease;
+  transition: background 0.2s ease;
 }
 
-.patient-view-button:hover {
+.patient-details-button:hover {
   background: #006b57;
   color: #ffffff;
-}
-
-.patient-view-button svg {
-  transition: transform 0.2s ease;
-}
-
-.patient-view-button:hover svg {
-  transform: translateX(3px);
 }
 
 
 /* RESPONSIVE */
 
-@media (max-width: 1000px) {
-  .patient-metric-grid {
+@media (max-width: 1100px) {
+  .patient-info-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 600px) {
-  .patient-metric-grid {
+@media (max-width: 650px) {
+  .patient-info-grid {
     grid-template-columns: 1fr;
   }
 }
