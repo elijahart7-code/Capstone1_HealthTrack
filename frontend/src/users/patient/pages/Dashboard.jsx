@@ -240,10 +240,11 @@ export function Dashboard({ dashboard }) {
 
 
 /* QUICK INFORMATION CARD */
-function PatientMetricCard({ icon, title, description }) {
+function PatientMetricCard({ icon, title }) {
   return (
     <div className="patient-metric-card">
 
+      {/* ICON + TITLE ON SAME LINE */}
       <div className="patient-metric-header">
 
         <div className="patient-metric-title-icon">
@@ -254,15 +255,12 @@ function PatientMetricCard({ icon, title, description }) {
 
       </div>
 
-      <p className="patient-metric-description">
-        {description}
-      </p>
-
+      {/* VIEW ONLY BUTTON */}
       <button
         type="button"
         className="patient-view-button"
       >
-        <Eye size={18} strokeWidth={1.8} />
+        <Eye size={19} strokeWidth={1.8} />
         View Only
       </button>
 
