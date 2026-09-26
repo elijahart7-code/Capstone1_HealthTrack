@@ -1535,36 +1535,6 @@
 
     /* --- Patient portal ------------------------------------------------ */
 
-    /* FIX: METRIC CARD TITLE + ICON HORIZONTAL */
-.patient-metric-header {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    width: 100% !important;
-    gap: 0.7rem !important;
-}
-
-.patient-metric-title-icon {
-    display: grid !important;
-    place-items: center !important;
-    width: 50px !important;
-    height: 50px !important;
-    min-width: 50px !important;
-    flex: 0 0 50px !important;
-}
-
-.patient-metric-header h3 {
-    display: block !important;
-    flex: 1 !important;
-    margin: 0 !important;
-    line-height: 1.25 !important;
-}
-
-.patient-metric-arrow {
-    display: block !important;
-    margin-left: auto !important;
-    flex-shrink: 0 !important;
-}
     .patient-dashboard-shell {
         display: grid;
         gap: 1.25rem;
