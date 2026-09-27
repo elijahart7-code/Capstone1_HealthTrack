@@ -64,7 +64,6 @@ export function HealthInformation({ healthInfo }) {
   const navItems = [
     { key: "appointments", label: "Appointments" },
     { key: "patient-information", label: "Patient Information" },
-    { key: "vital-signs", label: recordTypes["vital-signs"]?.label || "Vital Signs" },
   ];
 
   return (
