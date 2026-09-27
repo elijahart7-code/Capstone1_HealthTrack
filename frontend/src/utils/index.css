@@ -846,9 +846,23 @@
     }
 
     .ht-archive-row-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 40px;
+        height: 40px;
+        padding: 0 16px;
         border: 1px solid #ddb5b5;
+        border-radius: 7px;
         background: #fffafa;
         color: #a45151;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     .ht-patient-panel tbody td:last-child {
