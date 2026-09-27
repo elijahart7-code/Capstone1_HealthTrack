@@ -7,32 +7,33 @@ import { homeRouteForRole, saveSession } from "../lib/auth";
 function AccountRoleIcon({ role }) {
   if (role === "patient") {
     return (
-      <svg viewBox="0 0 30 30" aria-hidden="true">
-        <circle cx="15" cy="8" r="4.2" />
-        <path d="M4.5 26v-1.4c0-6 4.5-10.1 10.5-10.1s10.5 4.1 10.5 10.1V26" />
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M21 19c0-9 4-15 11-15s11 6 11 15v7c0 10-5 16-11 16s-11-6-11-16z" />
+        <path d="M21 20c5 0 10-2 15-7 2 4 4 6 7 7M10 61v-4c0-8 5-13 13-15l9 6 9-6c8 2 13 7 13 15v4" />
+        <path d="M32 50c-3-4-8 0-4 4l4 4 4-4c4-4-1-8-4-4z" />
       </svg>
     );
   }
 
   if (role === "admin") {
     return (
-      <svg viewBox="0 0 30 30" aria-hidden="true">
-        <path d="M11.3 6V4.8c0-2.2 1.4-3.6 3.7-3.6s3.7 1.4 3.7 3.6V6" />
-        <path d="M10.5 6h9l-1 2.1h-7z" />
-        <path d="M10.7 10c0-2.7 1.6-4.2 4.3-4.2s4.3 1.5 4.3 4.2v2.8c0 3.3-1.8 5.3-4.3 5.3s-4.3-2-4.3-5.3z" />
-        <path d="m10.5 17.5-3 1.1c-3.2 1.2-5 4.4-5.5 7.8L1.8 29h26.4l-.2-2.6c-.5-3.4-2.3-6.6-5.5-7.8l-3-1.1-5 5z" />
-        <path d="m11.5 18.5 3.5 4 3.5-4M8 20v4c0 2 1 3 2.5 3m11.5-7v4c0 1.2-.5 2.2-1.5 2.7" />
-        <path d="M23.5 21v4m-2-2h4" />
+      <svg viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M20 15V9c0-4 5-6 12-6s12 2 12 6v6l-5-2H25z" />
+        <path d="M32 6v8m-4-4h8" />
+        <path d="M22 17c0-7 4-11 10-11s10 4 10 11v9c0 9-4 14-10 14s-10-5-10-14z" />
+        <path d="M18 24h4m20 0h4M12 61l2-13c1-6 5-9 12-11l6 7 6-7c7 2 11 5 12 11l2 13H12z" />
+        <path d="m25 39 7 9 7-9M20 43v11m24-11v11M46 48v7m-3.5-3.5h7" />
       </svg>
     );
   }
 
   return (
-    <svg viewBox="0 0 30 30" aria-hidden="true">
-      <path d="M11 10c0-4.2 1.6-6.8 4-6.8s4 2.6 4 6.8v3c0 3.2-1.6 5.4-4 5.4s-4-2.2-4-5.4z" />
-      <path d="M11.1 10.5c2.8.4 5.8.3 7.8-1.1" />
-      <path d="m11 18-3 1c-3.8 1.2-5.7 4.3-6.2 8.5L1.5 29h27l-.3-1.5c-.5-4.2-2.4-7.3-6.2-8.5l-3-1-3 2-3-2z" />
-      <path d="M23 21v4m-2-2h4M7 24v4" />
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="14" cy="20" r="7" />
+      <circle cx="32" cy="15" r="9" />
+      <circle cx="50" cy="20" r="7" />
+      <path d="M6 31c-3 1-5 4-5 8v6h14M58 31c3 1 5 4 5 8v6H49M23 30c-5 2-8 6-8 12v7h34v-7c0-6-3-10-8-12" />
+      <path d="M28 5V2m-4 3h8M32 37v9m-4.5-4.5h9" />
     </svg>
   );
 }
