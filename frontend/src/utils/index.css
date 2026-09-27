@@ -823,7 +823,6 @@
     }
 
     .ht-record-action,
-    .ht-archive-row-action,
     .ht-restore-row-action {
         display: inline-flex;
         align-items: center;
@@ -846,6 +845,12 @@
         transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
+    .ht-archive-row-action {
+        border: 1px solid #ddb5b5;
+        background: #fffafa;
+        color: #a45151;
+    }
+
     .ht-patient-panel tbody td:last-child {
         text-align: center;
         vertical-align: middle;
@@ -853,12 +858,19 @@
 
     .ht-record-action:hover,
     .ht-record-action:focus-visible,
-    .ht-archive-row-action:hover,
-    .ht-archive-row-action:focus-visible,
     .ht-restore-row-action:hover,
     .ht-restore-row-action:focus-visible {
         background: rgba(15, 107, 95, 0.06);
         border-color: rgba(15, 107, 95, 0.5);
+        outline: none;
+        transform: translateY(-1px);
+    }
+
+    .ht-archive-row-action:hover,
+    .ht-archive-row-action:focus-visible {
+        background: #fff1f1;
+        border-color: #d59a9a;
+        color: #8f3d3d;
         outline: none;
         transform: translateY(-1px);
     }
@@ -873,6 +885,10 @@
     .ht-archive-row-action svg,
     .ht-restore-row-action svg {
         flex-shrink: 0;
+    }
+
+    .ht-archive-row-action svg {
+        color: #a45151;
     }
 
     .ht-pagination {
