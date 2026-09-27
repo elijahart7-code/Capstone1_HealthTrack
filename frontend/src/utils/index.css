@@ -321,6 +321,24 @@
         outline: none;
     }
 
+    .ht-admin-shell .ht-recent-item,
+    .ht-admin-shell .ht-recent-item:hover,
+    .ht-admin-shell .ht-recent-item:focus-visible {
+        background: #F2FAF7;
+    }
+
+    .ht-admin-shell .ht-recent-panel .ht-button-full {
+        background: #0f6b5f;
+        border-color: #0f6b5f;
+        color: #ffffff;
+    }
+
+    .ht-admin-shell .ht-recent-panel .ht-button-full:hover,
+    .ht-admin-shell .ht-recent-panel .ht-button-full:focus-visible {
+        background: #0c4f46;
+        border-color: #0c4f46;
+    }
+
     .ht-recent-name {
         display: block;
         font-weight: 600;
@@ -514,6 +532,21 @@
     }
 
     /* --- Tables ------------------------------------------------------- */
+
+    .ht-admin-shell {
+        min-height: 100vh;
+        background: #F2FAF7;
+    }
+
+    .ht-admin-shell .ht-topbar,
+    .ht-admin-shell .ht-table,
+    .ht-admin-shell .ht-table th,
+    .ht-admin-shell .ht-table td,
+    .ht-admin-shell .ht-table tbody tr,
+    .ht-admin-shell .ht-table tbody tr:nth-child(even),
+    .ht-admin-shell .ht-table tbody tr:hover {
+        background: #F2FAF7;
+    }
 
     .ht-table {
         width: 100%;
