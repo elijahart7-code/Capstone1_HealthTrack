@@ -1454,7 +1454,7 @@
         font-size: clamp(1.8rem, 2vw, 2.25rem);
         line-height: 1.2;
         letter-spacing: -0.05em;
-        color: var(--color-ink);
+        color: #01341e;
         font-weight: 800;
     }
 
@@ -1477,6 +1477,7 @@
     .ht-select-account p {
         margin: 0 0 0.8rem;
         text-align: center;
+        font-family: var(--font-sans);
         font-size: 0.9rem;
         font-weight: 700;
         color: var(--color-ink-soft);
@@ -1570,6 +1571,7 @@
         display: grid;
         gap: 0.45rem;
         color: var(--color-ink-soft);
+        font-family: var(--font-sans);
         font-size: 0.8rem;
         font-weight: 700;
     }
@@ -1596,6 +1598,7 @@
     .ht-input-wrap .ht-input {
         padding: 0.82rem 0.9rem 0.82rem 2.7rem;
         border: 1px solid rgba(31, 36, 33, 0.18);
+        font-family: var(--font-sans);
         font-size: 0.92rem;
     }
 
@@ -1646,6 +1649,7 @@
         width: 100%;
         padding: 0.82rem 1rem;
         background: linear-gradient(180deg, var(--color-brand) 0%, var(--color-brand-strong) 100%);
+        font-family: var(--font-sans);
         font-size: 0.95rem;
         margin-top: 0.25rem;
     }
@@ -1665,6 +1669,7 @@
         margin-top: 0.25rem;
         text-align: center;
         color: var(--color-brand-strong);
+        font-family: var(--font-sans);
         font-size: 0.82rem;
         font-weight: 600;
         text-decoration: none;

@@ -44,7 +44,7 @@ function AccountRoleIcon({ role }) {
  */
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [accountType, setAccountType] = useState("patient");
+  const [accountType, setAccountType] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -54,6 +54,10 @@ export default function LoginPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
+    if (!accountType) {
+      setError("Select your account type to continue.");
+      return;
+    }
     setLoading(true);
     try {
       const { data } = await api.post("/auth/login", { email, password, accountType });
