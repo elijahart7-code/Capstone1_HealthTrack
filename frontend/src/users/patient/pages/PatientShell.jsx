@@ -5,6 +5,7 @@ import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { Dashboard } from "../pages/Dashboard";
 import { HealthInformation } from "../pages/HealthInformation";
+import { Upcoming Appointment } from "../pages/UpcomingAppointment";
 
 export function PatientShell() {
   const [searchParams] = useSearchParams();
