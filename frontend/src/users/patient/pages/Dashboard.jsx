@@ -220,7 +220,7 @@ export function Dashboard({ dashboard }) {
         <div className="patient-tips-heading">
 
           <div className="patient-panel-icon patient-panel-icon-small">
-            <Lightbulb size={20} strokeWidth={1.9} />
+            <Lightbulb size={39} strokeWidth={1.8} />
           </div>
 
           <div>
