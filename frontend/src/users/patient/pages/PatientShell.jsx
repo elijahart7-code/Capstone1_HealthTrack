@@ -5,10 +5,6 @@ import { SideBar } from "../components/SideBar";
 import { Header } from "../components/Header";
 import { Dashboard } from "../pages/Dashboard";
 import { HealthInformation } from "../pages/HealthInformation";
-import { UpcomingAppointment } from "../pages/UpcomingAppointment";
-import { VitalSigns } from "../pages/VitalSigns";
-import { HealthAssessment } from"../pages/HealthAssessment";
-import { KnownAllergies } from"../pages/Allergies";
 
 export function PatientShell() {
   const [searchParams] = useSearchParams();
@@ -48,22 +44,14 @@ export function PatientShell() {
       </header>
 
       <main className="ht-content">
-  {loading ? (
-    <p>Loading...</p>
-  ) : page === "health-information" ? (
-    <HealthInformation healthInfo={healthInfo} />
-  ) : page === "upcoming-appointments" ? (
-    <UpcomingAppointment />
-  ) : page === "vital-signs" ? (
-    <VitalSigns />
-  ) : page === "health-assessment" ? (
-    <HealthAssessment />
-  ) : page === "known-allergies" ? (
-    <KnownAllergies />
-  ) : (
-    <Dashboard dashboard={dashboard} />
-  )}
-</main>
+        {loading || !dashboard || !healthInfo ? (
+          <p className="ht-muted text-sm">Loading...</p>
+        ) : page === "health-information" ? (
+          <HealthInformation healthInfo={healthInfo} />
+        ) : (
+          <Dashboard dashboard={dashboard} />
+        )}
+      </main>
     </>
   );
 }
