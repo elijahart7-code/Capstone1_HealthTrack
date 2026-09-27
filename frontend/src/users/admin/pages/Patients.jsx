@@ -170,7 +170,7 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                         <span className="ht-record-action-icon">
                           <Eye size={15} strokeWidth={2} />
                         </span>
-                        Open / Modify Record
+                        Open / Modify
                       </button>
                     </Td>
                     <Td>

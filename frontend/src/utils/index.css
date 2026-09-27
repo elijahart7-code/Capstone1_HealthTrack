@@ -812,6 +812,11 @@
         border-radius: 12px 12px 0 0;
     }
 
+    .ht-patient-panel .ht-table th,
+    .ht-patient-panel .ht-table td {
+        width: 14.2857%;
+    }
+
     .ht-status-badge {
         display: inline-flex;
         align-items: center;
