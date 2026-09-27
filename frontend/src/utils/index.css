@@ -735,6 +735,55 @@
         flex: 0 0 auto;
     }
 
+    .ht-archive-filter {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin-top: 0.25rem;
+        color: #1d2d28;
+        font-size: 0.98rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .ht-archive-filter input {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 1.5px solid rgba(15, 107, 95, 0.45);
+        border-radius: 5px;
+        background: #fff;
+        display: grid;
+        place-items: center;
+        margin: 0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .ht-archive-filter input:checked {
+        background: #0f6b5f;
+        border-color: #0f6b5f;
+    }
+
+    .ht-archive-filter input:checked::after {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 1px;
+        width: 5px;
+        height: 10px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    .ht-archive-filter input:hover {
+        border-color: #0f6b5f;
+        box-shadow: 0 0 0 3px rgba(15, 107, 95, 0.08);
+    }
+
     .ht-search-input {
         min-height: 42px;
         padding-left: 0;
