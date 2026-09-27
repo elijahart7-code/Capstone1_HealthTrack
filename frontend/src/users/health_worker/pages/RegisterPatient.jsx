@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router";
 import { User, MapPin, PhoneCall } from "lucide-react";
 import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
-import { Field, Input, Textarea } from "../../../components/ui/Input";
+import { Field, Input, Select, Textarea } from "../../../components/ui/Input";
 
 /**
  * Registers a patient and creates their portal login from the required email.
@@ -97,7 +97,13 @@ export function RegisterPatient({ loadData, onRegistered }) {
             </Field>
 
             <Field label="Sex" required>
-              <Input value={form.sex} onChange={(e) => set("sex", e.target.value)} placeholder="Enter sex" />
+              <Select value={form.sex} onChange={(e) => set("sex", e.target.value)} required>
+                <option value="">Select sex</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </Select>
             </Field>
 
             <Field label="Date of Birth" required>
@@ -114,11 +120,28 @@ export function RegisterPatient({ loadData, onRegistered }) {
             </Field>
 
             <Field label="Civil Status" required>
-              <Input value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)} placeholder="Enter civil status" />
+              <Select value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)} required>
+                <option value="">Select civil status</option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Widowed">Widowed</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Separated">Separated</option>
+              </Select>
             </Field>
 
             <Field label="Blood Type" required>
-              <Input value={form.blood_type} onChange={(e) => set("blood_type", e.target.value)} placeholder="Enter blood type" />
+              <Select value={form.blood_type} onChange={(e) => set("blood_type", e.target.value)} required>
+                <option value="">Select blood type</option>
+                <option value="A+">A+</option>
+                <option value="A-">A−</option>
+                <option value="B+">B+</option>
+                <option value="B-">B−</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB−</option>
+                <option value="O+">O+</option>
+                <option value="O-">O−</option>
+              </Select>
             </Field>
 
             <Field label="Occupation" required>
