@@ -35,12 +35,7 @@ export function HealthInformation({ healthInfo }) {
 
   const { patient, recordTypes, records, appointments } = healthInfo;
   const patientName = `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`.replace(/\s+/g, " ").trim();
-  const requestedSection = searchParams.get("section") || "appointments";
-  const section = requestedSection === "appointments" ||
-    requestedSection === "patient-information" ||
-    Object.prototype.hasOwnProperty.call(recordTypes, requestedSection)
-    ? requestedSection
-    : "appointments";
+  const section = searchParams.get("section") || "appointments";
 
   const selectSection = (key) => {
     setSearchParams((currentParams) => {
