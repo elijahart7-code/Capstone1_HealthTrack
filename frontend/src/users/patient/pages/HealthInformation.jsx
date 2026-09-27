@@ -36,13 +36,27 @@ export function HealthInformation({ healthInfo }) {
 
   const { patient, recordTypes, records, appointments } = healthInfo;
   const patientName = `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`.replace(/\s+/g, " ").trim();
-  const section = searchParams.get("section") || "appointments";
+  const requestedSection = searchParams.get("section");
+  const section = requestedSection && (
+    requestedSection === "appointments" ||
+    requestedSection === "patient-information" ||
+    Object.prototype.hasOwnProperty.call(recordTypes, requestedSection)
+  ) ? requestedSection : null;
 
   const selectSection = (key) => {
     setSearchParams((currentParams) => {
       const nextParams = new URLSearchParams(currentParams);
       nextParams.set("page", "health-information");
       nextParams.set("section", key);
+      return nextParams;
+    });
+  };
+
+  const showOverview = () => {
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams);
+      nextParams.set("page", "health-information");
+      nextParams.delete("section");
       return nextParams;
     });
   };
@@ -57,7 +71,11 @@ export function HealthInformation({ healthInfo }) {
     <div className="patient-healthinfo-page">
       <aside className="patient-healthinfo-sidebar">
         <nav className="patient-healthinfo-nav" aria-label="Health information navigation">
-          <button className="patient-sidebar-item">
+          <button
+            type="button"
+            onClick={showOverview}
+            className={`patient-sidebar-item ${section === null ? "is-active" : ""}`}
+          >
             <span className="patient-sidebar-icon">
               <Home size={18} strokeWidth={1.8} />
             </span>
@@ -102,7 +120,7 @@ export function HealthInformation({ healthInfo }) {
           </span>
         </section>
 
-        <section className="patient-healthinfo-card">
+        {(!section || section === "appointments") && <section className="patient-healthinfo-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
@@ -144,9 +162,9 @@ export function HealthInformation({ healthInfo }) {
             )}
 
             <div className="patient-table-footer">Showing 1 to {appointments.length} of {appointments.length} appointments</div>
-        </section>
+        </section>}
 
-        <section className="patient-healthinfo-card">
+        {(!section || section === "patient-information") && <section className="patient-healthinfo-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
@@ -169,16 +187,18 @@ export function HealthInformation({ healthInfo }) {
               <InfoField label="Blood Type" value={patient.blood_type} />
               <InfoField label="Civil Status" value={patient.civil_status} />
             </div>
-        </section>
+        </section>}
 
         {Object.entries(recordTypes).map(
           ([key, definition]) => (
-            <RecordSection
-              key={key}
-              definition={definition}
-              records={records[key] || []}
-              onViewAll={() => selectSection(key)}
-            />
+            (!section || section === key) && (
+              <RecordSection
+                key={key}
+                definition={definition}
+                records={records[key] || []}
+                onViewAll={() => selectSection(key)}
+              />
+            )
           )
         )}
       </main>
