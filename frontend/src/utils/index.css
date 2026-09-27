@@ -228,9 +228,9 @@
 
     .ht-pill-date {
         padding: 0.625rem 0.875rem;
-        background: rgba(15, 107, 95, 0.08);
-        border-color: rgba(15, 107, 95, 0.14);
-        color: var(--color-brand-strong);
+        background: #0f6b5f;
+        border-color: #0f6b5f;
+        color: #ffffff;
     }
 
     .ht-pill-warm { color: var(--color-brand-warm); }
