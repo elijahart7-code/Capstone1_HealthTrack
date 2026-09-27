@@ -138,7 +138,7 @@ export function Appointments({ appointments, loadData }) {
                           <span className="ht-record-action-icon">
                             <Eye size={15} strokeWidth={2} />
                           </span>
-                          Open/Modify
+                          Open / Modify
                         </button>
                       </Td>
                     </tr>

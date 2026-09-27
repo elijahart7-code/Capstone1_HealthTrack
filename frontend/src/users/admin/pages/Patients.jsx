@@ -141,9 +141,9 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
               <thead>
                 <tr>
                   <Th>Name</Th>
-                  <Th>Sex</Th>
-                  <Th>Contact Number</Th>
                   <Th>Age</Th>
+                  <Th>Contact Number</Th>
+                  <Th>Sex</Th>
                   <Th>Portal Account</Th>
                   <Th>Patient Records</Th>
                   <Th>Action</Th>
