@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router";
-import { Home, Calendar, User, Activity, Lock, HelpCircle, FileText } from "lucide-react";
+import { Home, Calendar, User, Activity, Lock, FileText } from "lucide-react";
 
 const SECTION_ICONS = {
   appointments: Calendar,
@@ -82,13 +82,6 @@ export function HealthInformation({ healthInfo }) {
           })}
         </nav>
 
-        <div className="patient-help-card">
-          <div className="patient-help-icon">
-            <HelpCircle size={24} strokeWidth={1.8} />
-          </div>
-          <h3>Need help?</h3>
-          <p>Contact your admin or health worker for assistance.</p>
-        </div>
       </aside>
 
       <main className="patient-healthinfo-main">
