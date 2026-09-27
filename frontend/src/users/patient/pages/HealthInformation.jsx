@@ -4,6 +4,7 @@ import { Home, Calendar, User, Activity, Lock, FileText } from "lucide-react";
 const SECTION_ICONS = {
   appointments: Calendar,
   "patient-information": User,
+  "vital-signs": Activity,
   "midwife-notes": FileText,
   "medical-history": FileText,
   allergies: Activity,
@@ -49,7 +50,7 @@ export function HealthInformation({ healthInfo }) {
   const navItems = [
     { key: "appointments", label: "Appointments" },
     { key: "patient-information", label: "Patient Information" },
-    ...Object.entries(recordTypes).map(([key, def]) => ({ key, label: def.label })),
+    { key: "vital-signs", label: recordTypes["vital-signs"]?.label || "Vital Signs" },
   ];
 
   return (
@@ -101,8 +102,7 @@ export function HealthInformation({ healthInfo }) {
           </span>
         </section>
 
-        {section === "appointments" && (
-          <section className="patient-healthinfo-card">
+        <section className="patient-healthinfo-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
@@ -111,6 +111,9 @@ export function HealthInformation({ healthInfo }) {
                 <h2>Appointments</h2>
               </div>
               <span className="patient-card-total">{appointments.length} total</span>
+              <button type="button" className="patient-view-button" onClick={() => selectSection("appointments")}>
+                View All
+              </button>
             </div>
 
             {appointments.length === 0 ? (
@@ -141,11 +144,9 @@ export function HealthInformation({ healthInfo }) {
             )}
 
             <div className="patient-table-footer">Showing 1 to {appointments.length} of {appointments.length} appointments</div>
-          </section>
-        )}
+        </section>
 
-        {section === "patient-information" && (
-          <section className="patient-healthinfo-card">
+        <section className="patient-healthinfo-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
@@ -153,6 +154,9 @@ export function HealthInformation({ healthInfo }) {
                 </span>
                 <h2>Patient Information</h2>
               </div>
+              <button type="button" className="patient-view-button" onClick={() => selectSection("patient-information")}>
+                View All
+              </button>
             </div>
 
             <div className="patient-information-grid">
@@ -165,14 +169,18 @@ export function HealthInformation({ healthInfo }) {
               <InfoField label="Blood Type" value={patient.blood_type} />
               <InfoField label="Civil Status" value={patient.civil_status} />
             </div>
-          </section>
-        )}
+        </section>
 
         {Object.entries(recordTypes).map(
-          ([key, definition]) =>
-            section === key && (
-              <RecordSection key={key} definition={definition} records={records[key]} />
-            )
+          ([key, definition]) => (
+            <RecordSection
+              key={key}
+              sectionKey={key}
+              definition={definition}
+              records={records[key] || []}
+              onViewAll={() => selectSection(key)}
+            />
+          )
         )}
       </main>
     </div>
@@ -188,7 +196,7 @@ function InfoField({ label, value, wide }) {
   );
 }
 
-function RecordSection({ definition, records }) {
+function RecordSection({ sectionKey, definition, records, onViewAll }) {
   const columnFields = Object.entries(definition.fields).filter(([, f]) => f.column || f.primary);
 
   return (
@@ -201,6 +209,9 @@ function RecordSection({ definition, records }) {
           <h2>{definition.label}</h2>
         </div>
         <span className="patient-card-total">{records.length} total</span>
+        <button type="button" className="patient-view-button" onClick={onViewAll}>
+          View All
+        </button>
       </div>
 
       {records.length === 0 ? (
