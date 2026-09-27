@@ -269,6 +269,7 @@
     .ht-metric h3 {
         margin: 0 0 0.375rem;
         color: #000000;
+        font-family: var(--font-display);
         font-size: 0.8rem;
         font-weight: 700;
     }
@@ -478,6 +479,10 @@
         color: var(--color-brand-strong);
         font-size: 0.9rem;
         padding: 0.8rem 1rem;
+    }
+
+    .ht-recent-panel .ht-button {
+        font-family: var(--font-sans);
     }
 
     .ht-button-full:hover {
@@ -1143,6 +1148,7 @@
     .ht-user-meta {
         display: grid;
         text-align: right;
+        font-family: "Inter", sans-serif;
     }
 
     .ht-user-name {
@@ -1169,6 +1175,7 @@
         color: #000;
         font-weight: 700;
         font-size: 0.8rem;
+        font-family: var(--font-sans);
         cursor: pointer;
     }
 
