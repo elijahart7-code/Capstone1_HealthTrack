@@ -841,6 +841,13 @@
         vertical-align: middle;
     }
 
+    .ht-patient-panel th:nth-child(6),
+    .ht-patient-panel td:nth-child(6),
+    .ht-patient-panel th:nth-child(7),
+    .ht-patient-panel td:nth-child(7) {
+        text-align: center;
+    }
+
     .ht-record-action,
     .ht-restore-row-action {
         display: inline-flex;
