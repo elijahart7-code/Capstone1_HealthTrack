@@ -808,30 +808,9 @@
 
     .ht-patient-panel .ht-table {
         width: 100%;
-        table-layout: fixed;
+        table-layout: auto;
         border-radius: 12px 12px 0 0;
     }
-
-    .ht-patient-panel .ht-table th:nth-child(1),
-    .ht-patient-panel .ht-table td:nth-child(1) { width: 20%; }
-
-    .ht-patient-panel .ht-table th:nth-child(2),
-    .ht-patient-panel .ht-table td:nth-child(2) { width: 8%; }
-
-    .ht-patient-panel .ht-table th:nth-child(3),
-    .ht-patient-panel .ht-table td:nth-child(3) { width: 17%; }
-
-    .ht-patient-panel .ht-table th:nth-child(4),
-    .ht-patient-panel .ht-table td:nth-child(4) { width: 8%; }
-
-    .ht-patient-panel .ht-table th:nth-child(5),
-    .ht-patient-panel .ht-table td:nth-child(5) { width: 15%; }
-
-    .ht-patient-panel .ht-table th:nth-child(6),
-    .ht-patient-panel .ht-table td:nth-child(6) { width: 17%; }
-
-    .ht-patient-panel .ht-table th:nth-child(7),
-    .ht-patient-panel .ht-table td:nth-child(7) { width: 15%; }
 
     .ht-status-badge {
         display: inline-flex;
