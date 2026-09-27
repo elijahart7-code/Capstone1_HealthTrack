@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router";
 import { Home, Calendar, User, Activity, Lock, HelpCircle, FileText } from "lucide-react";
 
 const SECTION_ICONS = {
@@ -18,7 +19,55 @@ const SECTION_ICONS = {
  * covers every record type we actually have, so that footer is dropped.
  */
 export function HealthInformation({ healthInfo }) {
-  const [section, setSection] = useState("appointments");
+  const [searchParams] = useSearchParams();
+
+  const requestedSection = searchParams.get("section");
+
+  const [searchParams] = useSearchParams();
+
+const requestedSection = searchParams.get("section");
+
+const [section, setSection] = useState("appointments");
+
+useEffect(() => {
+  if (!requestedSection) {
+    setSection("appointments");
+    return;
+  }
+
+  if (
+    requestedSection === "appointments" ||
+    requestedSection === "patient-information"
+  ) {
+    setSection(requestedSection);
+    return;
+  }
+
+  const matchingRecord = Object.entries(recordTypes).find(
+    ([key, definition]) => {
+      const target = requestedSection
+        .toLowerCase()
+        .replace(/[-_\s]/g, "");
+
+      const keyName = key
+        .toLowerCase()
+        .replace(/[-_\s]/g, "");
+
+      const labelName = (definition.label || "")
+        .toLowerCase()
+        .replace(/[-_\s]/g, "");
+
+      return (
+        keyName.includes(target) ||
+        labelName.includes(target) ||
+        target.includes(keyName) ||
+        target.includes(labelName)
+      );
+    }
+  );
+
+  setSection(matchingRecord ? matchingRecord[0] : requestedSection);
+}, [requestedSection, recordTypes]);
 
   if (!healthInfo.patient) {
     return (
@@ -34,6 +83,7 @@ export function HealthInformation({ healthInfo }) {
   }
 
   const { patient, recordTypes, records, appointments } = healthInfo;
+  console.log("recordTypes:", recordTypes);
   const patientName = `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`.replace(/\s+/g, " ").trim();
 
   const navItems = [
@@ -41,6 +91,20 @@ export function HealthInformation({ healthInfo }) {
     { key: "patient-information", label: "Patient Information" },
     ...Object.entries(recordTypes).map(([key, def]) => ({ key, label: def.label })),
   ];
+  const findRecordKey = (searchText) => {
+  const entry = Object.entries(recordTypes).find(([key, definition]) => {
+    const keyText = key.toLowerCase().replace(/[-_\s]/g, "");
+    const labelText = (definition.label || "")
+      .toLowerCase()
+      .replace(/[-_\s]/g, "");
+
+    const target = searchText.toLowerCase().replace(/[-_\s]/g, "");
+
+    return keyText.includes(target) || labelText.includes(target);
+  });
+
+  return entry ? entry[0] : null;
+};
 
   return (
     <div className="patient-healthinfo-page">
