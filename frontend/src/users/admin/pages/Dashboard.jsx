@@ -17,8 +17,8 @@ export function Dashboard({ dashboard }) {
   return (
     <div className="grid gap-4">
       <PageHeader title="Admin Dashboard" subtitle="Barangay Health Center of Mambog I">
-        <span className="ht-pill ht-pill-date">
-          <CalendarDays size={16} strokeWidth={1.8} />
+        <span className="ht-pill ht-pill-count">
+          <CalendarDays size={18} strokeWidth={2} />
           {today}
         </span>
       </PageHeader>

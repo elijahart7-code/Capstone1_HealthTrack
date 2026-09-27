@@ -966,6 +966,15 @@
         transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
+    .ht-patient-panel .ht-record-action,
+    .ht-patient-panel .ht-archive-row-action {
+        box-sizing: border-box;
+        width: 128px;
+        height: 40px;
+        min-height: 40px;
+        padding: 0 0.65rem;
+    }
+
     .ht-patient-panel tbody td:last-child {
         text-align: center;
         vertical-align: middle;
