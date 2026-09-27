@@ -98,11 +98,10 @@ export function RegisterPatient({ loadData, onRegistered }) {
 
             <Field label="Sex" required>
               <Select value={form.sex} onChange={(e) => set("sex", e.target.value)} required>
-                <option value="">Select sex</option>
+                <option value="" disabled>Select sex</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
                 <option value="Other">Other</option>
-                <option value="Prefer not to say">Prefer not to say</option>
               </Select>
             </Field>
 
@@ -116,12 +115,17 @@ export function RegisterPatient({ loadData, onRegistered }) {
             </Field>
 
             <Field label="Age" required>
-              <Input value={form.age} onChange={(e) => set("age", e.target.value)} placeholder="Enter age" />
+              <Select value={form.age} onChange={(e) => set("age", e.target.value)} required>
+                <option value="" disabled>Select age</option>
+                {Array.from({ length: 121 }, (_, age) => (
+                  <option key={age} value={age}>{age}</option>
+                ))}
+              </Select>
             </Field>
 
             <Field label="Civil Status" required>
               <Select value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)} required>
-                <option value="">Select civil status</option>
+                <option value="" disabled>Select civil status</option>
                 <option value="Single">Single</option>
                 <option value="Married">Married</option>
                 <option value="Widowed">Widowed</option>
@@ -132,7 +136,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
 
             <Field label="Blood Type" required>
               <Select value={form.blood_type} onChange={(e) => set("blood_type", e.target.value)} required>
-                <option value="">Select blood type</option>
+                <option value="" disabled>Select blood type</option>
                 <option value="A+">A+</option>
                 <option value="A-">A−</option>
                 <option value="B+">B+</option>
@@ -144,8 +148,8 @@ export function RegisterPatient({ loadData, onRegistered }) {
               </Select>
             </Field>
 
-            <Field label="Occupation" required>
-              <Input value={form.occupation} onChange={(e) => set("occupation", e.target.value)} placeholder="Enter occupation" />
+            <Field label="Nationality">
+              <Input value={form.nationality} onChange={(e) => set("nationality", e.target.value)} placeholder="Enter nationality" />
             </Field>
 
             <Field label="Contact Number" required>
@@ -156,11 +160,11 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.barangay_id_number} onChange={(e) => set("barangay_id_number", e.target.value)} placeholder="Enter barangay ID number" />
             </Field>
 
-            <Field label="Nationality">
-              <Input value={form.nationality} onChange={(e) => set("nationality", e.target.value)} placeholder="Enter nationality" />
+            <Field label="Occupation" required>
+              <Input value={form.occupation} onChange={(e) => set("occupation", e.target.value)} placeholder="Enter occupation" />
             </Field>
 
-            <Field label="Place of Birth">
+            <Field label="Place of Birth" className="ht-place-of-birth-field">
               <Input value={form.place_of_birth} onChange={(e) => set("place_of_birth", e.target.value)} placeholder="Enter place of birth" />
             </Field>
           </div>
