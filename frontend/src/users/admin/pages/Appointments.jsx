@@ -83,6 +83,13 @@ export function Appointments({ appointments, loadData }) {
         ) : (
           <>
             <Table>
+              <colgroup>
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
+              </colgroup>
               <thead>
                 <tr>
                   <Th>Date & Time</Th>

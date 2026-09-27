@@ -24,8 +24,8 @@ export function Dashboard({ dashboard }) {
       </PageHeader>
 
       <div className="ht-metric-grid">
+        <StatCard label="Today's Appointment" value={dashboard.appointmentsToday} tone="brand" icon={CalendarDays} />
         <StatCard label="Registered Patients" value={dashboard.patientCount} tone="brand" icon={Users} />
-        <StatCard label="Appointments Today" value={dashboard.appointmentsToday} tone="brand" icon={CalendarDays} />
         <StatCard label="Upcoming Appointments" value={dashboard.upcomingCount} tone="brand" icon={Clock3} />
       </div>
 

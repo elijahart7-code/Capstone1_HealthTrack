@@ -141,9 +141,9 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
               <thead>
                 <tr>
                   <Th>Name</Th>
-                  <Th>Sex</Th>
-                  <Th>Contact Number</Th>
                   <Th>Age</Th>
+                  <Th>Contact Number</Th>
+                  <Th>Sex</Th>
                   <Th>Portal Account</Th>
                   <Th>Patient Records</Th>
                   <Th>Action</Th>
@@ -155,9 +155,9 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                     <Td className="font-bold" style={{ color: "#1f2421" }}>
                       {p.full_name}
                     </Td>
-                    <Td className="capitalize">{p.sex}</Td>
-                    <Td>{p.contact_number || "--"}</Td>
                     <Td>{calculateAge(p.birthdate)}</Td>
+                    <Td>{p.contact_number || "--"}</Td>
+                    <Td className="capitalize">{p.sex}</Td>
                     <Td>
                       {p.user_id ? <span className="ht-status-badge ht-status-badge-active">Active</span> : <span className="ht-status-badge ht-status-badge-inactive">Inactive</span>}
                     </Td>
