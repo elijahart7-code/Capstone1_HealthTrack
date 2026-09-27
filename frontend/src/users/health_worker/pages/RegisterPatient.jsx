@@ -149,7 +149,34 @@ export function RegisterPatient({ loadData, onRegistered }) {
             </Field>
 
             <Field label="Nationality">
-              <Input value={form.nationality} onChange={(e) => set("nationality", e.target.value)} placeholder="Enter nationality" />
+              <Select value={form.nationality} onChange={(e) => set("nationality", e.target.value)}>
+                <option value="" disabled>Select nationality</option>
+                <option value="Filipino">Filipino</option>
+                <option value="American">American</option>
+                <option value="Chinese">Chinese</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Korean">Korean</option>
+                <option value="Singaporean">Singaporean</option>
+                <option value="Malaysian">Malaysian</option>
+                <option value="Indonesian">Indonesian</option>
+                <option value="Indian">Indian</option>
+                <option value="British">British</option>
+                <option value="Canadian">Canadian</option>
+                <option value="Australian">Australian</option>
+                <option value="Taiwanese">Taiwanese</option>
+                <option value="Hong Konger">Hong Konger</option>
+                <option value="German">German</option>
+                <option value="French">French</option>
+                <option value="Italian">Italian</option>
+                <option value="Spanish">Spanish</option>
+                <option value="New Zealander">New Zealander</option>
+                <option value="Swiss">Swiss</option>
+                <option value="Dutch">Dutch</option>
+                <option value="Vietnamese">Vietnamese</option>
+                <option value="Thai">Thai</option>
+                <option value="Emirati">Emirati</option>
+                <option value="Other / Not Listed">Other / Not Listed</option>
+              </Select>
             </Field>
 
             <Field label="Contact Number" required>
