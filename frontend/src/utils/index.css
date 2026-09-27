@@ -822,7 +822,9 @@
         vertical-align: middle;
     }
 
-    .ht-record-action {
+    .ht-record-action,
+    .ht-archive-row-action,
+    .ht-restore-row-action {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -841,6 +843,7 @@
         cursor: pointer;
         margin: 0 auto;
         white-space: nowrap;
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     .ht-patient-panel tbody td:last-child {
@@ -849,9 +852,15 @@
     }
 
     .ht-record-action:hover,
-    .ht-record-action:focus-visible {
+    .ht-record-action:focus-visible,
+    .ht-archive-row-action:hover,
+    .ht-archive-row-action:focus-visible,
+    .ht-restore-row-action:hover,
+    .ht-restore-row-action:focus-visible {
         background: rgba(15, 107, 95, 0.06);
+        border-color: rgba(15, 107, 95, 0.5);
         outline: none;
+        transform: translateY(-1px);
     }
 
     .ht-record-action-icon {
@@ -859,6 +868,11 @@
         align-items: center;
         justify-content: center;
         color: var(--color-brand-strong);
+    }
+
+    .ht-archive-row-action svg,
+    .ht-restore-row-action svg {
+        flex-shrink: 0;
     }
 
     .ht-pagination {
