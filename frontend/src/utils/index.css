@@ -728,6 +728,7 @@
 
     .ht-archive-filter input {
         appearance: none;
+        -webkit-appearance: none;
         width: 18px;
         height: 18px;
         border: 1.5px solid rgba(15, 107, 95, 0.45);
@@ -738,6 +739,7 @@
         margin: 0;
         cursor: pointer;
         transition: all 0.2s ease;
+        position: relative;
     }
 
     .ht-archive-filter input:checked {
@@ -747,11 +749,14 @@
 
     .ht-archive-filter input:checked::after {
         content: "";
-        width: 8px;
-        height: 8px;
-        border-radius: 2px;
-        background: #fff;
-        transform: scale(1);
+        position: absolute;
+        left: 5px;
+        top: 1px;
+        width: 5px;
+        height: 10px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
     }
 
     .ht-archive-filter input:hover {
