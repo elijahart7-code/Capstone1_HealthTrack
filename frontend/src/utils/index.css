@@ -807,15 +807,14 @@
     }
 
     .ht-patient-panel .ht-table {
-        width: 1463px;
-        min-width: 1463px;
+        width: 100%;
         table-layout: fixed;
         border-radius: 12px 12px 0 0;
     }
 
     .ht-patient-panel .ht-table th,
     .ht-patient-panel .ht-table td {
-        width: 209px;
+        width: 14.2857%;
     }
 
     .ht-status-badge {
