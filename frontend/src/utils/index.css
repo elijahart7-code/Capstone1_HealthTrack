@@ -829,16 +829,35 @@
         vertical-align: middle;
     }
 
+    .ht-patient-panel tbody td {
+        padding-top: 0.8rem;
+        padding-bottom: 0.8rem;
+        vertical-align: middle;
+    }
+
+    .ht-patient-panel thead th {
+        padding-top: 0.9rem;
+        padding-bottom: 0.9rem;
+        vertical-align: middle;
+    }
+
+    .ht-patient-panel th:nth-child(6),
+    .ht-patient-panel td:nth-child(6),
+    .ht-patient-panel th:nth-child(7),
+    .ht-patient-panel td:nth-child(7) {
+        text-align: center;
+    }
+
     .ht-record-action,
     .ht-restore-row-action {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 0.38rem;
-        min-height: 32px;
+        min-height: 36px;
         width: auto;
         max-width: 100%;
-        padding: 0.38rem 0.7rem;
+        padding: 0.45rem 0.8rem;
         border: 1px solid rgba(15, 107, 95, 0.35);
         border-radius: 9px;
         background: rgba(255, 255, 255, 0.7);

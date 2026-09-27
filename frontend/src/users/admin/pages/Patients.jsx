@@ -145,6 +145,7 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                   <Th>Sex</Th>
                   <Th>Contact</Th>
                   <Th>Portal Account</Th>
+                  <Th>Record</Th>
                   <Th>Action</Th>
                 </tr>
               </thead>
@@ -161,36 +162,36 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                       {p.user_id ? <span className="ht-status-badge ht-status-badge-active">Active</span> : <span className="ht-status-badge ht-status-badge-inactive">Inactive</span>}
                     </Td>
                     <Td>
-                      <div className="ht-patient-row-actions">
+                      <button
+                        type="button"
+                        onClick={() => setSearchParams({ page: "patients", patientId: p.patient_id })}
+                        className="ht-record-action"
+                      >
+                        <span className="ht-record-action-icon">
+                          <Eye size={15} strokeWidth={2} />
+                        </span>
+                        Open / Modify Record
+                      </button>
+                    </Td>
+                    <Td>
+                      {showArchived ? (
                         <button
                           type="button"
-                          onClick={() => setSearchParams({ page: "patients", patientId: p.patient_id })}
-                          className="ht-record-action"
+                          onClick={() => restorePatient(p)}
+                          className="ht-restore-row-action"
                         >
-                          <span className="ht-record-action-icon">
-                            <Eye size={15} strokeWidth={2} />
-                          </span>
-                          Open / Modify Record
+                          Restore
                         </button>
-                        {showArchived ? (
-                          <button
-                            type="button"
-                            onClick={() => restorePatient(p)}
-                            className="ht-restore-row-action"
-                          >
-                            Restore
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => archivePatient(p)}
-                            className="ht-archive-row-action"
-                          >
-                            <Archive size={15} strokeWidth={2} />
-                            Archive
-                          </button>
-                        )}
-                      </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => archivePatient(p)}
+                          className="ht-archive-row-action"
+                        >
+                          <Archive size={15} strokeWidth={2} />
+                          Archive
+                        </button>
+                      )}
                     </Td>
                   </tr>
                 ))}
