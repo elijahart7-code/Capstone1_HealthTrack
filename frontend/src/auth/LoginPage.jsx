@@ -1,8 +1,41 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Mail, Lock, Eye, EyeOff, User, UserRoundCog, Users, LogIn } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
 import { api } from "../lib/axios";
 import { homeRouteForRole, saveSession } from "../lib/auth";
+
+function AccountRoleIcon({ role }) {
+  if (role === "patient") {
+    return (
+      <svg viewBox="0 0 30 30" aria-hidden="true">
+        <circle cx="15" cy="8" r="4.2" />
+        <path d="M4.5 26v-1.4c0-6 4.5-10.1 10.5-10.1s10.5 4.1 10.5 10.1V26" />
+      </svg>
+    );
+  }
+
+  if (role === "admin") {
+    return (
+      <svg viewBox="0 0 30 30" aria-hidden="true">
+        <path d="M11.3 6V4.8c0-2.2 1.4-3.6 3.7-3.6s3.7 1.4 3.7 3.6V6" />
+        <path d="M10.5 6h9l-1 2.1h-7z" />
+        <path d="M10.7 10c0-2.7 1.6-4.2 4.3-4.2s4.3 1.5 4.3 4.2v2.8c0 3.3-1.8 5.3-4.3 5.3s-4.3-2-4.3-5.3z" />
+        <path d="m10.5 17.5-3 1.1c-3.2 1.2-5 4.4-5.5 7.8L1.8 29h26.4l-.2-2.6c-.5-3.4-2.3-6.6-5.5-7.8l-3-1.1-5 5z" />
+        <path d="m11.5 18.5 3.5 4 3.5-4M8 20v4c0 2 1 3 2.5 3m11.5-7v4c0 1.2-.5 2.2-1.5 2.7" />
+        <path d="M23.5 21v4m-2-2h4" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 30 30" aria-hidden="true">
+      <path d="M11 10c0-4.2 1.6-6.8 4-6.8s4 2.6 4 6.8v3c0 3.2-1.6 5.4-4 5.4s-4-2.2-4-5.4z" />
+      <path d="M11.1 10.5c2.8.4 5.8.3 7.8-1.1" />
+      <path d="m11 18-3 1c-3.8 1.2-5.7 4.3-6.2 8.5L1.5 29h27l-.3-1.5c-.5-4.2-2.4-7.3-6.2-8.5l-3-1-3 2-3-2z" />
+      <path d="M23 21v4m-2-2h4M7 24v4" />
+    </svg>
+  );
+}
 
 /**
  * Login screen for the app. The selected account type is sent to the backend
@@ -33,9 +66,9 @@ export default function LoginPage() {
   }
 
   const accounts = [
-    { key: "patient", label: "Patient", icon: User },
-    { key: "admin", label: "Admin", icon: UserRoundCog },
-    { key: "health_worker", label: "HealthWorker", icon: Users },
+    { key: "patient", label: "Patient", icon: "patient" },
+    { key: "admin", label: "Admin", icon: "admin" },
+    { key: "health_worker", label: "Health Worker", icon: "health_worker" },
   ];
 
   return (
@@ -62,7 +95,6 @@ export default function LoginPage() {
               <p>Select your account type</p>
               <div className="ht-account-grid">
                 {accounts.map((account) => {
-                  const Icon = account.icon;
                   const selected = accountType === account.key;
                   return (
                     <button
@@ -73,7 +105,7 @@ export default function LoginPage() {
                       onClick={() => setAccountType(account.key)}
                     >
                       <span className="ht-account-icon" aria-hidden="true">
-                        <Icon size={30} strokeWidth={1.7} />
+                        <AccountRoleIcon role={account.icon} />
                       </span>
                       <span>{account.label}</span>
                     </button>

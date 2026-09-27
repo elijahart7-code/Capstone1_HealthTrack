@@ -1450,7 +1450,7 @@
 
     .ht-login-header h1 {
         margin: 0;
-        font-family: var(--font-sans);
+        font-family: "Inter", sans-serif;
         font-size: clamp(1.8rem, 2vw, 2.25rem);
         line-height: 1.2;
         letter-spacing: -0.05em;
@@ -1538,6 +1538,7 @@
     }
 
     .ht-account-card span:last-child {
+        font-family: var(--font-display);
         font-size: 0.9rem;
         font-weight: 700;
         line-height: 1.25;
