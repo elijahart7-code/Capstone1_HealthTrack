@@ -102,28 +102,28 @@ export function Dashboard({ dashboard }) {
   icon={<CalendarDays size={25} strokeWidth={1.6} />}
   title="Upcoming Appointment"
   description="Check your scheduled visits and upcoming appointments."
-  onClick={() => setSearchParams({ page: "appointments" })}
+  onClick={() => setSearchParams({ page: "health-information", section: "appointments" })}
 />
 
 <PatientMetricCard
   icon={<HeartPulse size={25} strokeWidth={1.6} />}
   title="Updated Vital Signs"
   description="View your latest recorded vital signs."
-  onClick={() => setSearchParams({ page: "vital-signs" })}
+  onClick={() => setSearchParams({ page: "health-information", section: "vital-signs" })}
 />
 
 <PatientMetricCard
   icon={<ClipboardList size={25} strokeWidth={1.6} />}
   title="Health Assessment"
   description="Review your latest health assessment."
-  onClick={() => setSearchParams({ page: "health-assessment" })}
+  onClick={() => setSearchParams({ page: "health-information", section: "health-assessment" })}
 />
 
 <PatientMetricCard
   icon={<ShieldAlert size={25} strokeWidth={1.6} />}
   title="Known Allergies"
   description="View your recorded allergies and sensitivities."
-  onClick={() => setSearchParams({ page: "allergies" })}
+  onClick={() => setSearchParams({ page: "health-information", section: "allergies" })}
 />
 
       </div>
