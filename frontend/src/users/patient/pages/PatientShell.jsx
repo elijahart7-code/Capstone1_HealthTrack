@@ -6,7 +6,7 @@ import { Header } from "../components/Header";
 import { Dashboard } from "../pages/Dashboard";
 import { HealthInformation } from "../pages/HealthInformation";
 import { UpcomingAppointment } from "../pages/UpcomingAppointment";
-import { UpdatedVitalSigns } from "../pages/VitalSigns";
+import { VitalSigns } from "../pages/VitalSigns";
 import { HealthAssessment } from"../pages/HealthAssessment";
 import { KnownAllergies } from"../pages/Allergies";
 
