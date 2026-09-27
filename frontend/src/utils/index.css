@@ -2992,6 +2992,12 @@
     line-height: 1.5 !important;
 }
 
+.patient-dashboard-shell .patient-health-summary,
+.patient-dashboard-shell .patient-health-tips {
+    background: #eaf7f1 !important;
+    border-color: rgba(12, 79, 70, 0.05) !important;
+}
+
 
 /* =========================================================
    EMERGENCY CONTACT
