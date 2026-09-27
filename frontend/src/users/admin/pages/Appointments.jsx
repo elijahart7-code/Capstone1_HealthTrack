@@ -96,7 +96,7 @@ export function Appointments({ appointments, loadData }) {
                   <Th>Patient</Th>
                   <Th>Reason</Th>
                   <Th>Status</Th>
-                  <Th>Action</Th>
+                  <Th>Patient Records</Th>
                 </tr>
               </thead>
               <tbody>
@@ -138,7 +138,7 @@ export function Appointments({ appointments, loadData }) {
                           <span className="ht-record-action-icon">
                             <Eye size={15} strokeWidth={2} />
                           </span>
-                          Open / Modify Record
+                          Open/Modify
                         </button>
                       </Td>
                     </tr>

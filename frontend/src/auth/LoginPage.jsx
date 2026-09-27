@@ -90,7 +90,7 @@ export default function LoginPage() {
         <div className="ht-auth-card">
           <div className="ht-login-panel">
             <div className="ht-login-header">
-              <h1>Welcome to HealthTrack!\</h1>
+              <h1>Welcome to HealthTrack!</h1>
               <p>Sign in to access your account.</p>
             </div>
 
