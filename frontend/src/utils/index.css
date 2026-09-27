@@ -663,7 +663,9 @@
     .ht-pill-count {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.55rem;
+        min-height: 42px;
         padding: 0.7rem 1rem;
         background: rgba(15, 107, 95, 0.08);
         border: 1px solid rgba(15, 107, 95, 0.14);
@@ -671,6 +673,7 @@
         color: var(--color-brand-strong);
         font-size: 1rem;
         font-weight: 700;
+        box-shadow: 0 2px 6px rgba(15, 107, 95, 0.08);
     }
 
     .ht-patient-panel {
@@ -826,7 +829,8 @@
         vertical-align: middle;
     }
 
-    .ht-record-action {
+    .ht-record-action,
+    .ht-restore-row-action {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -845,6 +849,27 @@
         cursor: pointer;
         margin: 0 auto;
         white-space: nowrap;
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .ht-archive-row-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 40px;
+        height: 40px;
+        padding: 0 16px;
+        border: 1px solid #ddb5b5;
+        border-radius: 7px;
+        background: #fffafa;
+        color: #a45151;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
     .ht-patient-panel tbody td:last-child {
@@ -853,9 +878,22 @@
     }
 
     .ht-record-action:hover,
-    .ht-record-action:focus-visible {
+    .ht-record-action:focus-visible,
+    .ht-restore-row-action:hover,
+    .ht-restore-row-action:focus-visible {
         background: rgba(15, 107, 95, 0.06);
+        border-color: rgba(15, 107, 95, 0.5);
         outline: none;
+        transform: translateY(-1px);
+    }
+
+    .ht-archive-row-action:hover,
+    .ht-archive-row-action:focus-visible {
+        background: #fff1f1;
+        border-color: #d59a9a;
+        color: #8f3d3d;
+        outline: none;
+        transform: translateY(-1px);
     }
 
     .ht-record-action-icon {
@@ -863,6 +901,15 @@
         align-items: center;
         justify-content: center;
         color: var(--color-brand-strong);
+    }
+
+    .ht-archive-row-action svg,
+    .ht-restore-row-action svg {
+        flex-shrink: 0;
+    }
+
+    .ht-archive-row-action svg {
+        color: #a45151;
     }
 
     .ht-pagination {
