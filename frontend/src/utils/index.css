@@ -383,6 +383,26 @@
         box-shadow: 0 0 0 3px rgba(15, 107, 95, 0.1);
     }
 
+    .ht-date-input-wrap {
+        position: relative;
+    }
+
+    .ht-date-input-empty {
+        color: transparent;
+    }
+
+    .ht-date-placeholder {
+        position: absolute;
+        top: 50%;
+        left: 0.75rem;
+        color: var(--color-ink);
+        font-size: 0.8125rem;
+        font-weight: 400;
+        line-height: 1;
+        pointer-events: none;
+        transform: translateY(-50%);
+    }
+
     .ht-form-grid .ht-field {
         min-width: 0;
     }

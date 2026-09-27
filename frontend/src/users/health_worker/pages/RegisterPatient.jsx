@@ -88,8 +88,8 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.first_name} onChange={(e) => set("first_name", e.target.value)} placeholder="Enter first name" />
             </Field>
 
-            <Field label="Middle Name">
-              <Input value={form.middle_name} onChange={(e) => set("middle_name", e.target.value)} placeholder="Enter middle name" />
+            <Field label="Middle Name" required>
+              <Input value={form.middle_name} onChange={(e) => set("middle_name", e.target.value)} placeholder="Enter middle name" required />
             </Field>
 
             <Field label="Last Name" required>
@@ -106,12 +106,17 @@ export function RegisterPatient({ loadData, onRegistered }) {
             </Field>
 
             <Field label="Date of Birth" required>
-              <Input
-                type="date"
-                value={form.birthdate}
-                onChange={(e) => set("birthdate", e.target.value)}
-                max={new Date().toISOString().slice(0, 10)}
-              />
+              <div className="ht-date-input-wrap">
+                <Input
+                  type="date"
+                  lang="en-GB"
+                  className={!form.birthdate ? "ht-date-input-empty" : undefined}
+                  value={form.birthdate}
+                  onChange={(e) => set("birthdate", e.target.value)}
+                  max={new Date().toISOString().slice(0, 10)}
+                />
+                {!form.birthdate && <span className="ht-date-placeholder" aria-hidden="true">dd/mm/yyyy</span>}
+              </div>
             </Field>
 
             <Field label="Age" required>
@@ -127,10 +132,16 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Select value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)} required>
                 <option value="" disabled>Select civil status</option>
                 <option value="Single">Single</option>
+                <option value="In a relationship">In a relationship</option>
+                <option value="Engaged">Engaged</option>
                 <option value="Married">Married</option>
-                <option value="Widowed">Widowed</option>
-                <option value="Divorced">Divorced</option>
+                <option value="In a civil union">In a civil union</option>
+                <option value="In a domestic partnership">In a domestic partnership</option>
+                <option value="In an open relationship">In an open relationship</option>
+                <option value="It's complicated">It's complicated</option>
                 <option value="Separated">Separated</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Widowed">Widowed</option>
               </Select>
             </Field>
 
@@ -148,8 +159,8 @@ export function RegisterPatient({ loadData, onRegistered }) {
               </Select>
             </Field>
 
-            <Field label="Nationality">
-              <Select value={form.nationality} onChange={(e) => set("nationality", e.target.value)}>
+            <Field label="Nationality" required>
+              <Select value={form.nationality} onChange={(e) => set("nationality", e.target.value)} required>
                 <option value="" disabled>Select nationality</option>
                 <option value="Filipino">Filipino</option>
                 <option value="American">American</option>
