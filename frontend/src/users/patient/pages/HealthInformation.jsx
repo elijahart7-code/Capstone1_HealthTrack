@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useSearchParams } from "react-router";
 import { Home, Calendar, User, Activity, Lock, HelpCircle, FileText } from "lucide-react";
 
 const SECTION_ICONS = {
@@ -18,7 +18,7 @@ const SECTION_ICONS = {
  * covers every record type we actually have, so that footer is dropped.
  */
 export function HealthInformation({ healthInfo }) {
-  const [section, setSection] = useState("appointments");
+  const [searchParams, setSearchParams] = useSearchParams();
 
   if (!healthInfo.patient) {
     return (
@@ -35,6 +35,21 @@ export function HealthInformation({ healthInfo }) {
 
   const { patient, recordTypes, records, appointments } = healthInfo;
   const patientName = `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`.replace(/\s+/g, " ").trim();
+  const requestedSection = searchParams.get("section") || "appointments";
+  const section = requestedSection === "appointments" ||
+    requestedSection === "patient-information" ||
+    Object.prototype.hasOwnProperty.call(recordTypes, requestedSection)
+    ? requestedSection
+    : "appointments";
+
+  const selectSection = (key) => {
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams);
+      nextParams.set("page", "health-information");
+      nextParams.set("section", key);
+      return nextParams;
+    });
+  };
 
   const navItems = [
     { key: "appointments", label: "Appointments" },
@@ -60,7 +75,7 @@ export function HealthInformation({ healthInfo }) {
             return (
               <button
                 key={item.key}
-                onClick={() => setSection(item.key)}
+                onClick={() => selectSection(item.key)}
                 className={`patient-sidebar-item ${section === item.key ? "is-active" : ""}`}
               >
                 <span className="patient-sidebar-icon">
