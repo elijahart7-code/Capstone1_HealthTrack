@@ -175,7 +175,6 @@ export function HealthInformation({ healthInfo }) {
           ([key, definition]) => (
             <RecordSection
               key={key}
-              sectionKey={key}
               definition={definition}
               records={records[key] || []}
               onViewAll={() => selectSection(key)}
@@ -196,7 +195,7 @@ function InfoField({ label, value, wide }) {
   );
 }
 
-function RecordSection({ sectionKey, definition, records, onViewAll }) {
+function RecordSection({ definition, records, onViewAll }) {
   const columnFields = Object.entries(definition.fields).filter(([, f]) => f.column || f.primary);
 
   return (
