@@ -659,7 +659,9 @@
     .ht-pill-count {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.55rem;
+        min-height: 42px;
         padding: 0.7rem 1rem;
         background: rgba(15, 107, 95, 0.08);
         border: 1px solid rgba(15, 107, 95, 0.14);
@@ -667,6 +669,7 @@
         color: var(--color-brand-strong);
         font-size: 1rem;
         font-weight: 700;
+        box-shadow: 0 2px 6px rgba(15, 107, 95, 0.08);
     }
 
     .ht-patient-panel {
