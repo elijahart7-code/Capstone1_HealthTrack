@@ -734,23 +734,27 @@ export function PatientRecord({
                           </Td>
 
                           <Td>
-                            <Select
-                              aria-label={`Update status for ${appointment.reason}`}
-                              value={appointment.status}
-                              className={`ht-status-select ht-status-select-${appointment.status}`}
-                              onChange={(event) =>
-                                updateAppointmentStatus(
-                                  appointment.appointment_id,
-                                  event.target.value
-                                )
-                              }
-                            >
-                              {APPOINTMENT_STATUSES.map((statusOption) => (
-                                <option key={statusOption} value={statusOption}>
-                                  {statusOption.charAt(0).toUpperCase() + statusOption.slice(1)}
-                                </option>
-                              ))}
-                            </Select>
+                            {isAdmin ? (
+                              <Select
+                                aria-label={`Update status for ${appointment.reason}`}
+                                value={appointment.status}
+                                className={`ht-status-select ht-status-select-${appointment.status}`}
+                                onChange={(event) =>
+                                  updateAppointmentStatus(
+                                    appointment.appointment_id,
+                                    event.target.value
+                                  )
+                                }
+                              >
+                                {APPOINTMENT_STATUSES.map((statusOption) => (
+                                  <option key={statusOption} value={statusOption}>
+                                    {statusOption.charAt(0).toUpperCase() + statusOption.slice(1)}
+                                  </option>
+                                ))}
+                              </Select>
+                            ) : (
+                              <Badge>{appointment.status}</Badge>
+                            )}
                           </Td>
 
                           {isAdmin && (
