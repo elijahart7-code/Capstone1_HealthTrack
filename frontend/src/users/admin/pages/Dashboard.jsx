@@ -74,7 +74,7 @@ export function Dashboard({ dashboard, loadData }) {
                         aria-label={`Update status for ${a.last_name}, ${a.first_name}`}
                         value={a.status}
                         onChange={(event) => updateStatus(a.appointment_id, event.target.value)}
-                        className="ht-status-select"
+                        className={`ht-status-select ht-status-select-${a.status}`}
                       >
                         {STATUSES.map((status) => (
                           <option key={status} value={status}>
