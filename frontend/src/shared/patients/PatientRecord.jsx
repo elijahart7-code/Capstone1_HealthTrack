@@ -24,6 +24,7 @@ import {
   User,
   Pencil,
   Archive,
+  ArchiveRestore,
 } from "lucide-react";
 
 export function PatientRecord({
@@ -162,6 +163,18 @@ export function PatientRecord({
     } catch (err) {
       setDeleteError(err?.response?.data?.error || "Could not archive this patient.");
     }
+
+    async function restorePatient() {
+      if (!confirm("Restore this patient? Their record will return to the active patient list and become available for updates again.")) return;
+      setDeleteError(null);
+      try {
+        await api.post(`/patients/${patientId}/restore`);
+        onPatientUpdated?.();
+        onBack();
+      } catch (err) {
+        setDeleteError(err?.response?.data?.error || "Could not restore this patient.");
+      }
+    }
   }
 
   if (loading) {
@@ -248,14 +261,25 @@ export function PatientRecord({
           </button>
           {isAdmin && (
             <>
-              <button
-  type="button"
-  onClick={archivePatient}
-  className="ht-delete-patient-button"
->
-  <Archive size={16} />
-  Archive Patient
-</button>
+              {patient.archived_at ? (
+                <button
+                  type="button"
+                  onClick={restorePatient}
+                  className="ht-delete-patient-button"
+                >
+                  <ArchiveRestore size={16} />
+                  Restore Patient
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={archivePatient}
+                  className="ht-delete-patient-button"
+                >
+                  <Archive size={16} />
+                  Archive Patient
+                </button>
+              )}
             </>
           )}
         </div>
