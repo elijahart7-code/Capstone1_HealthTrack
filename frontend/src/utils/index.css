@@ -897,13 +897,20 @@
         padding: 0.35rem 1.5rem 0.35rem 0.6rem;
         border: none;
         border-radius: 8px;
-        background-position: calc(100% - 8px) 50%;
-        background-size: 5px 5px;
+        background-position: calc(100% - 13px) calc(50% - 2px), calc(100% - 8px) calc(50% - 2px);
+        background-size: 5px 5px, 5px 5px;
         background-repeat: no-repeat;
         font-size: 0.72rem;
         font-weight: 700;
         line-height: 1;
+        cursor: pointer;
+        user-select: none;
         appearance: none;
+    }
+
+    .ht-status-select:focus-visible {
+        outline: 2px solid var(--color-brand);
+        outline-offset: 2px;
     }
 
     .ht-status-select-pending {
