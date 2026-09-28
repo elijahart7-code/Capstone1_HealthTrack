@@ -890,6 +890,46 @@
         color: #c0362c;
     }
 
+    .ht-status-select {
+        width: auto;
+        min-width: 86px;
+        min-height: 29px;
+        padding: 0.35rem 1.5rem 0.35rem 0.6rem;
+        border: none;
+        border-radius: 8px;
+        background-position: calc(100% - 8px) 50%;
+        background-size: 5px 5px;
+        background-repeat: no-repeat;
+        font-size: 0.72rem;
+        font-weight: 700;
+        line-height: 1;
+        appearance: none;
+    }
+
+    .ht-status-select-pending {
+        background-color: rgba(178, 69, 62, 0.08);
+        background-image: linear-gradient(45deg, transparent 50%, var(--color-danger) 50%), linear-gradient(135deg, var(--color-danger) 50%, transparent 50%);
+        color: var(--color-danger);
+    }
+
+    .ht-status-select-confirmed {
+        background-color: rgba(15, 107, 95, 0.08);
+        background-image: linear-gradient(45deg, transparent 50%, var(--color-brand-strong) 50%), linear-gradient(135deg, var(--color-brand-strong) 50%, transparent 50%);
+        color: var(--color-brand-strong);
+    }
+
+    .ht-status-select-completed {
+        background-color: rgba(51, 102, 153, 0.08);
+        background-image: linear-gradient(45deg, transparent 50%, #3366cc 50%), linear-gradient(135deg, #3366cc 50%, transparent 50%);
+        color: #3366cc;
+    }
+
+    .ht-status-select-cancelled {
+        background-color: rgba(178, 69, 62, 0.12);
+        background-image: linear-gradient(45deg, transparent 50%, #c0362c 50%), linear-gradient(135deg, #c0362c 50%, transparent 50%);
+        color: #c0362c;
+    }
+
     .ht-appointments-panel {
         padding: 0.75rem 0.75rem 0.5rem;
     }
