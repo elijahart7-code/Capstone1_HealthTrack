@@ -32,17 +32,26 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
     } catch (err) {
       setArchiveError(err?.response?.data?.error || "Could not archive this patient.");
     }
+  }
 
-    async function restorePatient(patient) {
-      if (!window.confirm(`Restore ${patient.full_name} to the active patient list?`)) return;
-      setArchiveError("");
-      try {
-        await api.post(`/patients/${patient.patient_id}/restore`);
-        await loadData(true);
-      } catch (err) {
-        setArchiveError(err?.response?.data?.error || "Could not restore this patient.");
-      }
+  async function restorePatient(patient) {
+    if (!window.confirm(`Restore ${patient.full_name} to the active patient list?`)) return;
+    setArchiveError("");
+    try {
+      await api.post(`/patients/${patient.patient_id}/restore`);
+      await loadData(true);
+    } catch (err) {
+      setArchiveError(err?.response?.data?.error || "Could not restore this patient.");
     }
+  }
+
+  function openPatient(patient) {
+    if (showArchived) {
+      window.alert("You must unarchive this patient before opening or modifying their record.");
+      return;
+    }
+
+    setSearchParams({ page: "patients", patientId: patient.patient_id });
   }
 
   const visible = useMemo(() => {
@@ -164,7 +173,7 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                     <Td>
                       <button
                         type="button"
-                        onClick={() => setSearchParams({ page: "patients", patientId: p.patient_id })}
+                        onClick={() => openPatient(p)}
                         className="ht-record-action"
                       >
                         <span className="ht-record-action-icon">
