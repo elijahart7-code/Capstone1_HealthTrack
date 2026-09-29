@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Home, Calendar, User, Activity, Lock, HelpCircle, FileText } from "lucide-react";
+import { useSearchParams } from "react-router";
+import { Home, Calendar, User, Activity, Lock, FileText } from "lucide-react";
 
 const SECTION_ICONS = {
   appointments: Calendar,
   "patient-information": User,
+  "vital-signs": Activity,
   "midwife-notes": FileText,
   "medical-history": FileText,
   allergies: Activity,
@@ -18,7 +19,7 @@ const SECTION_ICONS = {
  * covers every record type we actually have, so that footer is dropped.
  */
 export function HealthInformation({ healthInfo }) {
-  const [section, setSection] = useState("appointments");
+  const [searchParams, setSearchParams] = useSearchParams();
 
   if (!healthInfo.patient) {
     return (
@@ -35,18 +36,45 @@ export function HealthInformation({ healthInfo }) {
 
   const { patient, recordTypes, records, appointments } = healthInfo;
   const patientName = `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`.replace(/\s+/g, " ").trim();
+  const requestedSection = searchParams.get("section");
+  const section = requestedSection && (
+    requestedSection === "appointments" ||
+    requestedSection === "patient-information" ||
+    Object.prototype.hasOwnProperty.call(recordTypes, requestedSection)
+  ) ? requestedSection : null;
+
+  const selectSection = (key) => {
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams);
+      nextParams.set("page", "health-information");
+      nextParams.set("section", key);
+      return nextParams;
+    });
+  };
+
+  const showOverview = () => {
+    setSearchParams((currentParams) => {
+      const nextParams = new URLSearchParams(currentParams);
+      nextParams.set("page", "health-information");
+      nextParams.delete("section");
+      return nextParams;
+    });
+  };
 
   const navItems = [
     { key: "appointments", label: "Appointments" },
     { key: "patient-information", label: "Patient Information" },
-    ...Object.entries(recordTypes).map(([key, def]) => ({ key, label: def.label })),
   ];
 
   return (
     <div className="patient-healthinfo-page">
       <aside className="patient-healthinfo-sidebar">
         <nav className="patient-healthinfo-nav" aria-label="Health information navigation">
-          <button className="patient-sidebar-item">
+          <button
+            type="button"
+            onClick={showOverview}
+            className={`patient-sidebar-item ${section === null ? "is-active" : ""}`}
+          >
             <span className="patient-sidebar-icon">
               <Home size={18} strokeWidth={1.8} />
             </span>
@@ -60,7 +88,7 @@ export function HealthInformation({ healthInfo }) {
             return (
               <button
                 key={item.key}
-                onClick={() => setSection(item.key)}
+                onClick={() => selectSection(item.key)}
                 className={`patient-sidebar-item ${section === item.key ? "is-active" : ""}`}
               >
                 <span className="patient-sidebar-icon">
@@ -72,13 +100,6 @@ export function HealthInformation({ healthInfo }) {
           })}
         </nav>
 
-        <div className="patient-help-card">
-          <div className="patient-help-icon">
-            <HelpCircle size={24} strokeWidth={1.8} />
-          </div>
-          <h3>Need help?</h3>
-          <p>Contact your admin or health worker for assistance.</p>
-        </div>
       </aside>
 
       <main className="patient-healthinfo-main">
@@ -98,8 +119,7 @@ export function HealthInformation({ healthInfo }) {
           </span>
         </section>
 
-        {section === "appointments" && (
-          <section className="patient-healthinfo-card">
+        {(!section || section === "appointments") && <section className="patient-healthinfo-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
@@ -108,6 +128,9 @@ export function HealthInformation({ healthInfo }) {
                 <h2>Appointments</h2>
               </div>
               <span className="patient-card-total">{appointments.length} total</span>
+              <button type="button" className="patient-view-button" onClick={() => selectSection("appointments")}>
+                View All
+              </button>
             </div>
 
             {appointments.length === 0 ? (
@@ -138,11 +161,9 @@ export function HealthInformation({ healthInfo }) {
             )}
 
             <div className="patient-table-footer">Showing 1 to {appointments.length} of {appointments.length} appointments</div>
-          </section>
-        )}
+        </section>}
 
-        {section === "patient-information" && (
-          <section className="patient-healthinfo-card">
+        {(!section || section === "patient-information") && <section className="patient-healthinfo-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
@@ -150,6 +171,9 @@ export function HealthInformation({ healthInfo }) {
                 </span>
                 <h2>Patient Information</h2>
               </div>
+              <button type="button" className="patient-view-button" onClick={() => selectSection("patient-information")}>
+                View All
+              </button>
             </div>
 
             <div className="patient-information-grid">
@@ -162,14 +186,19 @@ export function HealthInformation({ healthInfo }) {
               <InfoField label="Blood Type" value={patient.blood_type} />
               <InfoField label="Civil Status" value={patient.civil_status} />
             </div>
-          </section>
-        )}
+        </section>}
 
         {Object.entries(recordTypes).map(
-          ([key, definition]) =>
-            section === key && (
-              <RecordSection key={key} definition={definition} records={records[key]} />
+          ([key, definition]) => (
+            (!section || section === key) && (
+              <RecordSection
+                key={key}
+                definition={definition}
+                records={records[key] || []}
+                onViewAll={() => selectSection(key)}
+              />
             )
+          )
         )}
       </main>
     </div>
@@ -185,7 +214,7 @@ function InfoField({ label, value, wide }) {
   );
 }
 
-function RecordSection({ definition, records }) {
+function RecordSection({ definition, records, onViewAll }) {
   const columnFields = Object.entries(definition.fields).filter(([, f]) => f.column || f.primary);
 
   return (
@@ -198,6 +227,9 @@ function RecordSection({ definition, records }) {
           <h2>{definition.label}</h2>
         </div>
         <span className="patient-card-total">{records.length} total</span>
+        <button type="button" className="patient-view-button" onClick={onViewAll}>
+          View All
+        </button>
       </div>
 
       {records.length === 0 ? (
