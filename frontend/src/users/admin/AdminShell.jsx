@@ -91,7 +91,7 @@ export function AdminShell() {
         ) : page === "appointments" ? (
           <Appointments appointments={appointments} loadData={loadData} />
         ) : (
-          <Dashboard dashboard={dashboard} />
+          <Dashboard dashboard={dashboard} loadData={loadData} />
         )}
       </main>
     </div>

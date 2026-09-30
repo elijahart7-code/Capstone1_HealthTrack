@@ -1,11 +1,15 @@
 import { useSearchParams } from "react-router";
 import { CalendarDays, Clock3, Eye, Users } from "lucide-react";
+import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { StatCard } from "../../../components/ui/Card";
-import { EmptyState, Table, Th, Td, Badge } from "../../../components/ui/Table";
+import { Select } from "../../../components/ui/Input";
+import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
+
+const STATUSES = ["pending", "confirmed", "completed", "cancelled"];
 
 /** Admin dashboard. */
-export function Dashboard({ dashboard }) {
+export function Dashboard({ dashboard, loadData }) {
   const [, setSearchParams] = useSearchParams();
   const today = new Date().toLocaleDateString(undefined, {
     weekday: "long",
@@ -13,6 +17,11 @@ export function Dashboard({ dashboard }) {
     month: "long",
     year: "numeric",
   });
+
+  async function updateStatus(appointmentId, status) {
+    await api.patch(`/appointments/${appointmentId}/status`, { status });
+    await loadData();
+  }
 
   return (
     <div className="grid gap-4">
@@ -61,7 +70,18 @@ export function Dashboard({ dashboard }) {
                     </Td>
                     <Td>{a.reason}</Td>
                     <Td>
-                      <Badge>{a.status}</Badge>
+                      <Select
+                        aria-label={`Update status for ${a.last_name}, ${a.first_name}`}
+                        value={a.status}
+                        onChange={(event) => updateStatus(a.appointment_id, event.target.value)}
+                        className={`ht-status-select ht-status-select-${a.status}`}
+                      >
+                        {STATUSES.map((status) => (
+                          <option key={status} value={status}>
+                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                          </option>
+                        ))}
+                      </Select>
                     </Td>
                   </tr>
                 ))}
