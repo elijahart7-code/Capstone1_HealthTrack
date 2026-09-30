@@ -533,7 +533,8 @@
 
     /* --- Tables ------------------------------------------------------- */
 
-    .ht-admin-shell {
+    .ht-admin-shell,
+    .ht-healthworker-shell {
         min-height: 100vh;
         background: #F2FAF7;
     }
@@ -544,7 +545,14 @@
     .ht-admin-shell .ht-table td,
     .ht-admin-shell .ht-table tbody tr,
     .ht-admin-shell .ht-table tbody tr:nth-child(even),
-    .ht-admin-shell .ht-table tbody tr:hover {
+    .ht-admin-shell .ht-table tbody tr:hover,
+    .ht-healthworker-shell .ht-topbar,
+    .ht-healthworker-shell .ht-table,
+    .ht-healthworker-shell .ht-table th,
+    .ht-healthworker-shell .ht-table td,
+    .ht-healthworker-shell .ht-table tbody tr,
+    .ht-healthworker-shell .ht-table tbody tr:nth-child(even),
+    .ht-healthworker-shell .ht-table tbody tr:hover {
         background: #F2FAF7;
     }
 
