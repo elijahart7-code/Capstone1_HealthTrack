@@ -2685,15 +2685,16 @@
     }
 
     .patient-assessment-detail-list .patient-latest-detail-row {
-        grid-template-columns: 24px 160px minmax(0, 1fr);
+        grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
         align-items: stretch;
     }
 
     .patient-assessment-field-icon {
         display: grid;
         place-items: center;
-        padding: 0.55rem 0;
-        background: rgba(13, 74, 62, 0.045);
+        width: 20px;
+        height: 20px;
+        flex: 0 0 20px;
         color: #0f6b5f;
     }
 
@@ -2704,8 +2705,7 @@
     .patient-assessment-detail-list .patient-latest-detail-row dt {
         display: flex;
         align-items: center;
-        padding-left: 0.35rem;
-        white-space: nowrap;
+        gap: 0.55rem;
     }
 
     .patient-assessment-detail-list .patient-latest-detail-row dd {
@@ -3037,13 +3037,7 @@
         }
 
         .patient-assessment-detail-list .patient-latest-detail-row {
-            grid-template-columns: 22px 125px minmax(0, 1fr);
-        }
-
-        .patient-assessment-detail-list .patient-latest-detail-row dt,
-        .patient-assessment-detail-list .patient-latest-detail-row dd {
-            padding-top: 0.55rem;
-            padding-bottom: 0.55rem;
+            grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
         }
 
         .ht-user-wrap {
