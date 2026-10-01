@@ -2302,6 +2302,53 @@
         flex-shrink: 0;
     }
 
+    .patient-sidebar-chevron {
+        margin-left: auto;
+        transition: transform 0.18s ease;
+    }
+
+    .patient-sidebar-chevron.is-expanded {
+        transform: rotate(180deg);
+    }
+
+    .patient-sidebar-children {
+        display: grid;
+        gap: 0.15rem;
+        margin: -0.35rem 0 0.15rem 1.85rem;
+        padding-left: 0.45rem;
+        border-left: 1px solid rgba(13, 74, 62, 0.14);
+    }
+
+    .patient-sidebar-child {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        min-height: 30px;
+        padding: 0.35rem 0.45rem;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        color: #465653;
+        font: inherit;
+        font-size: 0.76rem;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .patient-sidebar-child:hover,
+    .patient-sidebar-child.is-active {
+        background: rgba(13, 74, 62, 0.07);
+        color: #0d4a3e;
+    }
+
+    .patient-sidebar-child-dot {
+        width: 5px;
+        height: 5px;
+        flex: 0 0 5px;
+        border-radius: 50%;
+        background: #73958b;
+    }
+
     .patient-sidebar-icon svg,
     .patient-help-icon svg,
     .patient-view-all-button svg,
@@ -2355,6 +2402,22 @@
         gap: 1rem;
     }
 
+    .patient-overview-heading h1 {
+        margin: 0;
+        color: #17312d;
+        font-family: var(--font-sans);
+        font-size: 1.8rem;
+        font-weight: 800;
+        line-height: 1.15;
+    }
+
+    .patient-overview-heading p {
+        margin: 0.2rem 0 0;
+        color: #667875;
+        font-size: 0.82rem;
+        line-height: 1.45;
+    }
+
     .patient-healthinfo-header-card {
         display: flex;
         align-items: center;
@@ -2403,6 +2466,170 @@
 
     .patient-healthinfo-card {
         padding: 1rem 1.1rem 0.9rem;
+    }
+
+    .patient-healthinfo-card.patient-latest-card {
+        overflow: hidden;
+        padding: 0;
+        background: #ffffff;
+        border-color: rgba(12, 79, 70, 0.08);
+    }
+
+    .patient-latest-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        min-height: 52px;
+        padding: 0.65rem 1rem;
+        background: #eaf7f1;
+    }
+
+    .patient-latest-title,
+    .patient-latest-date {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        min-width: 0;
+    }
+
+    .patient-latest-title h2 {
+        margin: 0;
+        color: #17312d;
+        font-family: var(--font-sans);
+        font-size: 0.98rem;
+        font-weight: 800;
+        line-height: 1.25;
+    }
+
+    .patient-latest-date {
+        color: #53615f;
+        font-size: 0.72rem;
+        text-align: right;
+    }
+
+    .patient-latest-card-content {
+        padding: 0.8rem 1rem 0.9rem;
+    }
+
+    .patient-latest-vitals .patient-latest-card-header,
+    .patient-latest-assessment .patient-latest-card-header {
+        background: #eaf7f1;
+        color: #159467;
+    }
+
+    .patient-latest-allergies .patient-latest-card-header {
+        background: #fff5df;
+        color: #d98b22;
+    }
+
+    .patient-latest-notes .patient-latest-card-header {
+        background: #fff0f2;
+        color: #dc4d62;
+    }
+
+    .patient-vital-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        border: 1px solid rgba(13, 74, 62, 0.08);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .patient-vital-item {
+        display: grid;
+        justify-items: center;
+        align-content: center;
+        gap: 0.3rem;
+        min-width: 0;
+        min-height: 104px;
+        padding: 0.65rem 0.45rem;
+        border-right: 1px solid rgba(13, 74, 62, 0.08);
+        border-bottom: 1px solid rgba(13, 74, 62, 0.08);
+        color: #159467;
+        text-align: center;
+    }
+
+    .patient-vital-item:nth-child(6n) {
+        border-right: 0;
+    }
+
+    .patient-vital-label {
+        color: #465653;
+        font-size: 0.68rem;
+        line-height: 1.3;
+    }
+
+    .patient-vital-item strong {
+        color: #1e2d2a;
+        font-size: 0.9rem;
+        line-height: 1.2;
+        overflow-wrap: anywhere;
+    }
+
+    .patient-vital-temperature,
+    .patient-vital-pain_score {
+        color: #dc4d62;
+    }
+
+    .patient-vital-height_cm,
+    .patient-vital-weight_kg,
+    .patient-vital-bmi {
+        color: #159467;
+    }
+
+    .patient-vital-oxygen_saturation {
+        color: #1266b1;
+    }
+
+    .patient-latest-detail-list {
+        margin: 0;
+        border: 1px solid rgba(13, 74, 62, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .patient-latest-detail-row {
+        display: grid;
+        grid-template-columns: minmax(130px, 0.28fr) minmax(0, 1fr);
+        border-bottom: 1px solid rgba(13, 74, 62, 0.08);
+    }
+
+    .patient-latest-detail-row:last-child {
+        border-bottom: 0;
+    }
+
+    .patient-latest-detail-row dt,
+    .patient-latest-detail-row dd {
+        min-width: 0;
+        margin: 0;
+        padding: 0.55rem 0.8rem;
+        color: #1e2d2a;
+        font-size: 0.76rem;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    .patient-latest-detail-row dt {
+        background: rgba(13, 74, 62, 0.045);
+        font-weight: 800;
+    }
+
+    .patient-latest-detail-row dd {
+        background: #ffffff;
+    }
+
+    .patient-latest-notes .patient-latest-note {
+        margin: 0;
+        padding: 0.7rem 0.8rem;
+        border: 1px solid rgba(220, 77, 98, 0.12);
+        border-radius: 9px;
+        background: #fff7f8;
+        color: #34423f;
+        font-size: 0.78rem;
+        line-height: 1.55;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
     }
 
     .patient-card-header {
@@ -2611,6 +2838,18 @@
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
+        .patient-vital-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .patient-vital-item:nth-child(6n) {
+            border-right: 1px solid rgba(13, 74, 62, 0.08);
+        }
+
+        .patient-vital-item:nth-child(3n) {
+            border-right: 0;
+        }
+
         .patient-health-summary {
             grid-template-columns: auto 1fr;
             align-items: center;
@@ -2654,6 +2893,31 @@
         .patient-emergency-grid,
         .patient-tip-grid {
             grid-template-columns: 1fr;
+        }
+
+        .patient-latest-card-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .patient-latest-date {
+            text-align: left;
+        }
+
+        .patient-vital-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .patient-vital-item:nth-child(3n) {
+            border-right: 1px solid rgba(13, 74, 62, 0.08);
+        }
+
+        .patient-vital-item:nth-child(2n) {
+            border-right: 0;
+        }
+
+        .patient-latest-detail-row {
+            grid-template-columns: minmax(100px, 0.38fr) minmax(0, 1fr);
         }
 
         .ht-user-wrap {
