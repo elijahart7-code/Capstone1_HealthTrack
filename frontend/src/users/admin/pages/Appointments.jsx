@@ -83,13 +83,20 @@ export function Appointments({ appointments, loadData }) {
         ) : (
           <>
             <Table>
+              <colgroup>
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
+              </colgroup>
               <thead>
                 <tr>
                   <Th>Date & Time</Th>
                   <Th>Patient</Th>
                   <Th>Reason</Th>
                   <Th>Status</Th>
-                  <Th>Action</Th>
+                  <Th>Patient Records</Th>
                 </tr>
               </thead>
               <tbody>
@@ -118,9 +125,18 @@ export function Appointments({ appointments, loadData }) {
                       </Td>
                       <Td>{a.reason}</Td>
                       <Td>
-                        <span className={`ht-status-badge ${STATUS_COLORS[a.status] || "ht-status-badge-pending"}`}>
-                          {a.status.charAt(0).toUpperCase() + a.status.slice(1)}
-                        </span>
+                        <Select
+                          aria-label={`Update status for ${a.last_name}, ${a.first_name}`}
+                          value={a.status}
+                          onChange={(event) => setStatus(a.appointment_id, event.target.value)}
+                          className={`ht-status-select ht-status-select-${a.status}`}
+                        >
+                          {STATUSES.map((status) => (
+                            <option key={status} value={status}>
+                              {status.charAt(0).toUpperCase() + status.slice(1)}
+                            </option>
+                          ))}
+                        </Select>
                       </Td>
                       <Td>
                         <button
@@ -131,7 +147,7 @@ export function Appointments({ appointments, loadData }) {
                           <span className="ht-record-action-icon">
                             <Eye size={15} strokeWidth={2} />
                           </span>
-                          Open / Modify Record
+                          Open / Modify
                         </button>
                       </Td>
                     </tr>

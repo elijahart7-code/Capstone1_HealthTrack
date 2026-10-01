@@ -1,3 +1,7 @@
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/inter/800.css";
 @import "tailwindcss";
 
 /*
@@ -147,6 +151,10 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
+    .ht-place-of-birth-field {
+        grid-column: 2;
+    }
+
     .ht-section-icon,
     .ht-section-icon svg {
         flex: 0 0 auto;
@@ -224,9 +232,9 @@
 
     .ht-pill-date {
         padding: 0.625rem 0.875rem;
-        background: rgba(15, 107, 95, 0.08);
-        border-color: rgba(15, 107, 95, 0.14);
-        color: var(--color-brand-strong);
+        background: #0f6b5f;
+        border-color: #0f6b5f;
+        color: #ffffff;
     }
 
     .ht-pill-warm { color: var(--color-brand-warm); }
@@ -265,7 +273,8 @@
     .ht-metric h3 {
         margin: 0 0 0.375rem;
         color: #000000;
-        font-size: 0.8rem;
+        font-family: var(--font-display);
+        font-size: 15px;
         font-weight: 700;
     }
 
@@ -310,6 +319,24 @@
         background: rgba(15, 107, 95, 0.1);
         border-color: rgba(15, 107, 95, 0.28);
         outline: none;
+    }
+
+    .ht-admin-shell .ht-recent-item,
+    .ht-admin-shell .ht-recent-item:hover,
+    .ht-admin-shell .ht-recent-item:focus-visible {
+        background: #F2FAF7;
+    }
+
+    .ht-admin-shell .ht-recent-panel .ht-button-full {
+        background: #0f6b5f;
+        border-color: #0f6b5f;
+        color: #ffffff;
+    }
+
+    .ht-admin-shell .ht-recent-panel .ht-button-full:hover,
+    .ht-admin-shell .ht-recent-panel .ht-button-full:focus-visible {
+        background: #0c4f46;
+        border-color: #0c4f46;
     }
 
     .ht-recent-name {
@@ -377,6 +404,26 @@
         outline: none;
         border-color: var(--color-brand);
         box-shadow: 0 0 0 3px rgba(15, 107, 95, 0.1);
+    }
+
+    .ht-date-input-wrap {
+        position: relative;
+    }
+
+    .ht-date-input-empty {
+        color: transparent;
+    }
+
+    .ht-date-placeholder {
+        position: absolute;
+        top: 50%;
+        left: 0.75rem;
+        color: var(--color-ink);
+        font-size: 0.8125rem;
+        font-weight: 400;
+        line-height: 1;
+        pointer-events: none;
+        transform: translateY(-50%);
     }
 
     .ht-form-grid .ht-field {
@@ -456,6 +503,10 @@
         padding: 0.8rem 1rem;
     }
 
+    .ht-recent-panel .ht-button {
+        font-family: var(--font-sans);
+    }
+
     .ht-button-full:hover {
         background: rgba(15, 107, 95, 0.06);
     }
@@ -481,6 +532,29 @@
     }
 
     /* --- Tables ------------------------------------------------------- */
+
+    .ht-admin-shell,
+    .ht-healthworker-shell {
+        min-height: 100vh;
+        background: #F2FAF7;
+    }
+
+    .ht-admin-shell .ht-topbar,
+    .ht-admin-shell .ht-table,
+    .ht-admin-shell .ht-table th,
+    .ht-admin-shell .ht-table td,
+    .ht-admin-shell .ht-table tbody tr,
+    .ht-admin-shell .ht-table tbody tr:nth-child(even),
+    .ht-admin-shell .ht-table tbody tr:hover,
+    .ht-healthworker-shell .ht-topbar,
+    .ht-healthworker-shell .ht-table,
+    .ht-healthworker-shell .ht-table th,
+    .ht-healthworker-shell .ht-table td,
+    .ht-healthworker-shell .ht-table tbody tr,
+    .ht-healthworker-shell .ht-table tbody tr:nth-child(even),
+    .ht-healthworker-shell .ht-table tbody tr:hover {
+        background: #F2FAF7;
+    }
 
     .ht-table {
         width: 100%;
@@ -659,14 +733,17 @@
     .ht-pill-count {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.55rem;
+        min-height: 42px;
         padding: 0.7rem 1rem;
-        background: rgba(15, 107, 95, 0.08);
-        border: 1px solid rgba(15, 107, 95, 0.14);
+        background: #0f6b5f;
+        border: 1px solid #0f6b5f;
         border-radius: 12px;
-        color: var(--color-brand-strong);
+        color: #ffffff;
         font-size: 1rem;
         font-weight: 700;
+        box-shadow: 0 2px 6px rgba(15, 107, 95, 0.12);
     }
 
     .ht-patient-panel {
@@ -708,6 +785,55 @@
         flex: 0 0 auto;
     }
 
+    .ht-archive-filter {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin-top: 0.25rem;
+        color: #1d2d28;
+        font-size: 0.98rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .ht-archive-filter input {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 1.5px solid rgba(15, 107, 95, 0.45);
+        border-radius: 5px;
+        background: #fff;
+        display: grid;
+        place-items: center;
+        margin: 0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .ht-archive-filter input:checked {
+        background: #0f6b5f;
+        border-color: #0f6b5f;
+    }
+
+    .ht-archive-filter input:checked::after {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 1px;
+        width: 5px;
+        height: 10px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    .ht-archive-filter input:hover {
+        border-color: #0f6b5f;
+        box-shadow: 0 0 0 3px rgba(15, 107, 95, 0.08);
+    }
+
     .ht-search-input {
         min-height: 42px;
         padding-left: 0;
@@ -732,7 +858,7 @@
 
     .ht-patient-panel .ht-table {
         width: 100%;
-        table-layout: fixed;
+        table-layout: auto;
         border-radius: 12px 12px 0 0;
     }
 
@@ -769,6 +895,53 @@
 
     .ht-status-badge-cancelled {
         background: rgba(178, 69, 62, 0.12);
+        color: #c0362c;
+    }
+
+    .ht-status-select {
+        width: auto;
+        min-width: 86px;
+        min-height: 29px;
+        padding: 0.35rem 1.5rem 0.35rem 0.6rem;
+        border: none;
+        border-radius: 8px;
+        background-position: calc(100% - 13px) calc(50% - 2px), calc(100% - 8px) calc(50% - 2px);
+        background-size: 5px 5px, 5px 5px;
+        background-repeat: no-repeat;
+        font-size: 0.72rem;
+        font-weight: 700;
+        line-height: 1;
+        cursor: pointer;
+        user-select: none;
+        appearance: none;
+    }
+
+    .ht-status-select:focus-visible {
+        outline: 2px solid var(--color-brand);
+        outline-offset: 2px;
+    }
+
+    .ht-status-select-pending {
+        background-color: rgba(178, 69, 62, 0.08);
+        background-image: linear-gradient(45deg, transparent 50%, var(--color-danger) 50%), linear-gradient(135deg, var(--color-danger) 50%, transparent 50%);
+        color: var(--color-danger);
+    }
+
+    .ht-status-select-confirmed {
+        background-color: rgba(15, 107, 95, 0.08);
+        background-image: linear-gradient(45deg, transparent 50%, var(--color-brand-strong) 50%), linear-gradient(135deg, var(--color-brand-strong) 50%, transparent 50%);
+        color: var(--color-brand-strong);
+    }
+
+    .ht-status-select-completed {
+        background-color: rgba(51, 102, 153, 0.08);
+        background-image: linear-gradient(45deg, transparent 50%, #3366cc 50%), linear-gradient(135deg, #3366cc 50%, transparent 50%);
+        color: #3366cc;
+    }
+
+    .ht-status-select-cancelled {
+        background-color: rgba(178, 69, 62, 0.12);
+        background-image: linear-gradient(45deg, transparent 50%, #c0362c 50%), linear-gradient(135deg, #c0362c 50%, transparent 50%);
         color: #c0362c;
     }
 
@@ -822,15 +995,35 @@
         vertical-align: middle;
     }
 
-    .ht-record-action {
+    .ht-patient-panel tbody td {
+        padding-top: 0.8rem;
+        padding-bottom: 0.8rem;
+        vertical-align: middle;
+    }
+
+    .ht-patient-panel thead th {
+        padding-top: 0.9rem;
+        padding-bottom: 0.9rem;
+        vertical-align: middle;
+    }
+
+    .ht-patient-panel th:nth-child(6),
+    .ht-patient-panel td:nth-child(6),
+    .ht-patient-panel th:nth-child(7),
+    .ht-patient-panel td:nth-child(7) {
+        text-align: center;
+    }
+
+    .ht-record-action,
+    .ht-restore-row-action {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 0.38rem;
-        min-height: 32px;
+        min-height: 36px;
         width: auto;
         max-width: 100%;
-        padding: 0.38rem 0.7rem;
+        padding: 0.45rem 0.8rem;
         border: 1px solid rgba(15, 107, 95, 0.35);
         border-radius: 9px;
         background: rgba(255, 255, 255, 0.7);
@@ -841,6 +1034,36 @@
         cursor: pointer;
         margin: 0 auto;
         white-space: nowrap;
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .ht-archive-row-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 40px;
+        height: 40px;
+        padding: 0 16px;
+        border: 1px solid #ddb5b5;
+        border-radius: 7px;
+        background: #fffafa;
+        color: #a45151;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .ht-patient-panel .ht-record-action,
+    .ht-patient-panel .ht-archive-row-action {
+        box-sizing: border-box;
+        width: 128px;
+        height: 40px;
+        min-height: 40px;
+        padding: 0 0.65rem;
     }
 
     .ht-patient-panel tbody td:last-child {
@@ -849,9 +1072,22 @@
     }
 
     .ht-record-action:hover,
-    .ht-record-action:focus-visible {
+    .ht-record-action:focus-visible,
+    .ht-restore-row-action:hover,
+    .ht-restore-row-action:focus-visible {
         background: rgba(15, 107, 95, 0.06);
+        border-color: rgba(15, 107, 95, 0.5);
         outline: none;
+        transform: translateY(-1px);
+    }
+
+    .ht-archive-row-action:hover,
+    .ht-archive-row-action:focus-visible {
+        background: #fff1f1;
+        border-color: #d59a9a;
+        color: #8f3d3d;
+        outline: none;
+        transform: translateY(-1px);
     }
 
     .ht-record-action-icon {
@@ -859,6 +1095,15 @@
         align-items: center;
         justify-content: center;
         color: var(--color-brand-strong);
+    }
+
+    .ht-archive-row-action svg,
+    .ht-restore-row-action svg {
+        flex-shrink: 0;
+    }
+
+    .ht-archive-row-action svg {
+        color: #a45151;
     }
 
     .ht-pagination {
@@ -995,6 +1240,7 @@
     .ht-user-meta {
         display: grid;
         text-align: right;
+        font-family: "Inter", sans-serif;
     }
 
     .ht-user-name {
@@ -1021,6 +1267,7 @@
         color: #000;
         font-weight: 700;
         font-size: 0.8rem;
+        font-family: var(--font-sans);
         cursor: pointer;
     }
 
@@ -1291,11 +1538,11 @@
 
     .ht-login-header h1 {
         margin: 0;
-        font-family: var(--font-sans);
+        font-family: "Inter", sans-serif;
         font-size: clamp(1.8rem, 2vw, 2.25rem);
         line-height: 1.2;
         letter-spacing: -0.05em;
-        color: var(--color-ink);
+        color: #01341e;
         font-weight: 800;
     }
 
@@ -1318,6 +1565,7 @@
     .ht-select-account p {
         margin: 0 0 0.8rem;
         text-align: center;
+        font-family: var(--font-sans);
         font-size: 0.9rem;
         font-weight: 700;
         color: var(--color-ink-soft);
@@ -1369,16 +1617,17 @@
     }
 
     .ht-account-icon svg {
-        width: 30px;
-        height: 30px;
+        width: 34px;
+        height: 34px;
         fill: none;
         stroke: currentColor;
-        stroke-width: 1.7;
+        stroke-width: 3.2;
         stroke-linecap: round;
         stroke-linejoin: round;
     }
 
     .ht-account-card span:last-child {
+        font-family: var(--font-display);
         font-size: 0.9rem;
         font-weight: 700;
         line-height: 1.25;
@@ -1410,6 +1659,7 @@
         display: grid;
         gap: 0.45rem;
         color: var(--color-ink-soft);
+        font-family: var(--font-sans);
         font-size: 0.8rem;
         font-weight: 700;
     }
@@ -1436,6 +1686,7 @@
     .ht-input-wrap .ht-input {
         padding: 0.82rem 0.9rem 0.82rem 2.7rem;
         border: 1px solid rgba(31, 36, 33, 0.18);
+        font-family: var(--font-sans);
         font-size: 0.92rem;
     }
 
@@ -1486,6 +1737,7 @@
         width: 100%;
         padding: 0.82rem 1rem;
         background: linear-gradient(180deg, var(--color-brand) 0%, var(--color-brand-strong) 100%);
+        font-family: var(--font-sans);
         font-size: 0.95rem;
         margin-top: 0.25rem;
     }
@@ -1505,6 +1757,7 @@
         margin-top: 0.25rem;
         text-align: center;
         color: var(--color-brand-strong);
+        font-family: var(--font-sans);
         font-size: 0.82rem;
         font-weight: 600;
         text-decoration: none;

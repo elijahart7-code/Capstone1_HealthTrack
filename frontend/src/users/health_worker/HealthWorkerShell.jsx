@@ -50,7 +50,7 @@ export function HealthWorkerShell() {
   }
 
   return (
-    <>
+    <div className="ht-healthworker-shell">
       <header className="ht-topbar">
         <div className="ht-topbar-inner">
           <button className="ht-brand" onClick={() => navigate("/health_worker")}>
@@ -78,6 +78,6 @@ export function HealthWorkerShell() {
           <Dashboard dashboard={dashboard} onRegisterClick={() => setSearchParams({ page: "register-patient" })} />
         )}
       </main>
-    </>
+    </div>
   );
 }

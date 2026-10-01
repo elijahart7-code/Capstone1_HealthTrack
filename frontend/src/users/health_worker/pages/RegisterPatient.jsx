@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router";
 import { User, MapPin, PhoneCall } from "lucide-react";
 import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
-import { Field, Input, Textarea } from "../../../components/ui/Input";
+import { Field, Input, Select, Textarea } from "../../../components/ui/Input";
 
 /**
  * Registers a patient and creates their portal login from the required email.
@@ -88,8 +88,8 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.first_name} onChange={(e) => set("first_name", e.target.value)} placeholder="Enter first name" />
             </Field>
 
-            <Field label="Middle Name">
-              <Input value={form.middle_name} onChange={(e) => set("middle_name", e.target.value)} placeholder="Enter middle name" />
+            <Field label="Middle Name" required>
+              <Input value={form.middle_name} onChange={(e) => set("middle_name", e.target.value)} placeholder="Enter middle name" required />
             </Field>
 
             <Field label="Last Name" required>
@@ -97,32 +97,97 @@ export function RegisterPatient({ loadData, onRegistered }) {
             </Field>
 
             <Field label="Sex" required>
-              <Input value={form.sex} onChange={(e) => set("sex", e.target.value)} placeholder="Enter sex" />
+              <Select value={form.sex} onChange={(e) => set("sex", e.target.value)} required>
+                <option value="" disabled>Select sex</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </Select>
             </Field>
 
             <Field label="Date of Birth" required>
-              <Input
-                type="date"
-                value={form.birthdate}
-                onChange={(e) => set("birthdate", e.target.value)}
-                max={new Date().toISOString().slice(0, 10)}
-              />
+              <div className="ht-date-input-wrap">
+                <Input
+                  type="date"
+                  lang="en-GB"
+                  className={!form.birthdate ? "ht-date-input-empty" : undefined}
+                  value={form.birthdate}
+                  onChange={(e) => set("birthdate", e.target.value)}
+                  max={new Date().toISOString().slice(0, 10)}
+                />
+                {!form.birthdate && <span className="ht-date-placeholder" aria-hidden="true">dd/mm/yyyy</span>}
+              </div>
             </Field>
 
             <Field label="Age" required>
-              <Input value={form.age} onChange={(e) => set("age", e.target.value)} placeholder="Enter age" />
+              <Select value={form.age} onChange={(e) => set("age", e.target.value)} required>
+                <option value="" disabled>Select age</option>
+                {Array.from({ length: 121 }, (_, age) => (
+                  <option key={age} value={age}>{age}</option>
+                ))}
+              </Select>
             </Field>
 
             <Field label="Civil Status" required>
-              <Input value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)} placeholder="Enter civil status" />
+              <Select value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)} required>
+                <option value="" disabled>Select civil status</option>
+                <option value="Single">Single</option>
+                <option value="In a relationship">In a relationship</option>
+                <option value="Engaged">Engaged</option>
+                <option value="Married">Married</option>
+                <option value="In a civil union">In a civil union</option>
+                <option value="In a domestic partnership">In a domestic partnership</option>
+                <option value="In an open relationship">In an open relationship</option>
+                <option value="It's complicated">It's complicated</option>
+                <option value="Separated">Separated</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Widowed">Widowed</option>
+              </Select>
             </Field>
 
             <Field label="Blood Type" required>
-              <Input value={form.blood_type} onChange={(e) => set("blood_type", e.target.value)} placeholder="Enter blood type" />
+              <Select value={form.blood_type} onChange={(e) => set("blood_type", e.target.value)} required>
+                <option value="" disabled>Select blood type</option>
+                <option value="A+">A+</option>
+                <option value="A-">A−</option>
+                <option value="B+">B+</option>
+                <option value="B-">B−</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB−</option>
+                <option value="O+">O+</option>
+                <option value="O-">O−</option>
+              </Select>
             </Field>
 
-            <Field label="Occupation" required>
-              <Input value={form.occupation} onChange={(e) => set("occupation", e.target.value)} placeholder="Enter occupation" />
+            <Field label="Nationality" required>
+              <Select value={form.nationality} onChange={(e) => set("nationality", e.target.value)} required>
+                <option value="" disabled>Select nationality</option>
+                <option value="Filipino">Filipino</option>
+                <option value="American">American</option>
+                <option value="Chinese">Chinese</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Korean">Korean</option>
+                <option value="Singaporean">Singaporean</option>
+                <option value="Malaysian">Malaysian</option>
+                <option value="Indonesian">Indonesian</option>
+                <option value="Indian">Indian</option>
+                <option value="British">British</option>
+                <option value="Canadian">Canadian</option>
+                <option value="Australian">Australian</option>
+                <option value="Taiwanese">Taiwanese</option>
+                <option value="Hong Konger">Hong Konger</option>
+                <option value="German">German</option>
+                <option value="French">French</option>
+                <option value="Italian">Italian</option>
+                <option value="Spanish">Spanish</option>
+                <option value="New Zealander">New Zealander</option>
+                <option value="Swiss">Swiss</option>
+                <option value="Dutch">Dutch</option>
+                <option value="Vietnamese">Vietnamese</option>
+                <option value="Thai">Thai</option>
+                <option value="Emirati">Emirati</option>
+                <option value="Other / Not Listed">Other / Not Listed</option>
+              </Select>
             </Field>
 
             <Field label="Contact Number" required>
@@ -133,11 +198,11 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.barangay_id_number} onChange={(e) => set("barangay_id_number", e.target.value)} placeholder="Enter barangay ID number" />
             </Field>
 
-            <Field label="Nationality">
-              <Input value={form.nationality} onChange={(e) => set("nationality", e.target.value)} placeholder="Enter nationality" />
+            <Field label="Occupation" required>
+              <Input value={form.occupation} onChange={(e) => set("occupation", e.target.value)} placeholder="Enter occupation" />
             </Field>
 
-            <Field label="Place of Birth">
+            <Field label="Place of Birth" className="ht-place-of-birth-field">
               <Input value={form.place_of_birth} onChange={(e) => set("place_of_birth", e.target.value)} placeholder="Enter place of birth" />
             </Field>
           </div>

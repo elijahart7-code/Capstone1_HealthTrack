@@ -62,7 +62,7 @@ export function AdminShell() {
   }, [loadData]);
 
   return (
-    <>
+    <div className="ht-admin-shell">
       <header className="ht-topbar">
         <div className="ht-topbar-inner">
           <button className="ht-brand" onClick={() => navigate("/admin")}>
@@ -91,9 +91,9 @@ export function AdminShell() {
         ) : page === "appointments" ? (
           <Appointments appointments={appointments} loadData={loadData} />
         ) : (
-          <Dashboard dashboard={dashboard} />
+          <Dashboard dashboard={dashboard} loadData={loadData} />
         )}
       </main>
-    </>
+    </div>
   );
 }

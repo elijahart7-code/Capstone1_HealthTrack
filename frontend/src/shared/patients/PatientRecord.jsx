@@ -24,7 +24,10 @@ import {
   User,
   Pencil,
   Archive,
+  ArchiveRestore,
 } from "lucide-react";
+
+const APPOINTMENT_STATUSES = ["pending", "confirmed", "completed", "cancelled"];
 
 export function PatientRecord({
   patientId,
@@ -123,6 +126,15 @@ export function PatientRecord({
     onPatientUpdated?.();
   }
 
+  async function updateAppointmentStatus(appointmentId, nextStatus) {
+    await api.patch(`/appointments/${appointmentId}/status`, {
+      status: nextStatus,
+    });
+
+    load();
+    onPatientUpdated?.();
+  }
+
   async function createPortalAccount() {
     setAccountError(null);
 
@@ -161,6 +173,18 @@ export function PatientRecord({
       onBack();
     } catch (err) {
       setDeleteError(err?.response?.data?.error || "Could not archive this patient.");
+    }
+
+    async function restorePatient() {
+      if (!confirm("Restore this patient? Their record will return to the active patient list and become available for updates again.")) return;
+      setDeleteError(null);
+      try {
+        await api.post(`/patients/${patientId}/restore`);
+        onPatientUpdated?.();
+        onBack();
+      } catch (err) {
+        setDeleteError(err?.response?.data?.error || "Could not restore this patient.");
+      }
     }
   }
 
@@ -248,14 +272,25 @@ export function PatientRecord({
           </button>
           {isAdmin && (
             <>
-              <button
-  type="button"
-  onClick={archivePatient}
-  className="ht-delete-patient-button"
->
-  <Archive size={16} />
-  Archive Patient
-</button>
+              {patient.archived_at ? (
+                <button
+                  type="button"
+                  onClick={restorePatient}
+                  className="ht-delete-patient-button"
+                >
+                  <ArchiveRestore size={16} />
+                  Restore Patient
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={archivePatient}
+                  className="ht-delete-patient-button"
+                >
+                  <Archive size={16} />
+                  Archive Patient
+                </button>
+              )}
             </>
           )}
         </div>
@@ -699,9 +734,27 @@ export function PatientRecord({
                           </Td>
 
                           <Td>
-                            <Badge>
-                              {appointment.status}
-                            </Badge>
+                            {isAdmin ? (
+                              <Select
+                                aria-label={`Update status for ${appointment.reason}`}
+                                value={appointment.status}
+                                className={`ht-status-select ht-status-select-${appointment.status}`}
+                                onChange={(event) =>
+                                  updateAppointmentStatus(
+                                    appointment.appointment_id,
+                                    event.target.value
+                                  )
+                                }
+                              >
+                                {APPOINTMENT_STATUSES.map((statusOption) => (
+                                  <option key={statusOption} value={statusOption}>
+                                    {statusOption.charAt(0).toUpperCase() + statusOption.slice(1)}
+                                  </option>
+                                ))}
+                              </Select>
+                            ) : (
+                              <Badge>{appointment.status}</Badge>
+                            )}
                           </Td>
 
                           {isAdmin && (
@@ -917,6 +970,20 @@ export function PatientRecord({
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.ht-archive-action-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.ht-archive-action-label {
+  color: #8a6a39;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 /* Edit Information button */
@@ -1235,24 +1302,30 @@ export function PatientRecord({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
 
-  width: 150px;
-  height: 40px;
+  width: 180px;
+  height: 42px;
   padding: 0 16px;
 
-  border: 1px solid #ddb5b5;
-  border-radius: 7px;
+  border: 1px solid #e4b26b;
+  border-radius: 8px;
 
-  background: #fffafa;
-  color: #a45151;
+  background: #fff7ed;
+  color: #b86d16;
 
   font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
 
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: inset 0 0 0 1px rgba(184, 109, 22, 0.04);
+}
+
+.ht-delete-patient-button:hover {
+  background: #fff0dc;
+  border-color: #d9993a;
 }
 
         /* FORMS */
