@@ -357,6 +357,10 @@ function getRecordFields(definition, record, keys) {
 }
 
 function LatestRecordCard({ title, icon: Icon, type, definition, record, children }) {
+  const headerDate = type === "notes"
+    ? formatRecordDateTime(record?.created_at)
+    : formatRecordDate(record?.[definition.dateField]);
+
   return (
     <section className={`patient-healthinfo-card patient-latest-card patient-latest-${type}`}>
       <header className="patient-latest-card-header">
@@ -364,10 +368,10 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, childre
           <Icon size={22} strokeWidth={2} />
           <h2>{title}</h2>
         </div>
-        {type !== "allergies" && type !== "notes" && record && formatRecordDate(record[definition.dateField]) && (
+        {type !== "allergies" && record && headerDate && (
           <div className="patient-latest-date">
             <Calendar size={16} strokeWidth={1.8} />
-            <span>{type === "assessment" ? "Assessment date:" : "Recorded on:"} {formatRecordDate(record[definition.dateField])}</span>
+            <span>{type === "assessment" ? "Assessment date:" : "Recorded on:"} {headerDate}</span>
           </div>
         )}
       </header>
@@ -470,7 +474,6 @@ function LatestMidwifeNotes({ definition, record }) {
     : [];
   const consultationDate = formatRecordDate(record?.[definition.dateField]);
   const recordedBy = record?.created_by_name || record?.created_by;
-  const recordedOn = formatRecordDateTime(record?.created_at);
 
   return (
     <LatestRecordCard title="Latest Midwife Notes" icon={FileText} type="notes" definition={definition} record={record}>
@@ -497,10 +500,6 @@ function LatestMidwifeNotes({ definition, record }) {
               </ul>
             ) : <p>No midwife notes recorded yet.</p>}
           </section>
-          <div className="patient-midwife-note-recorded">
-            <Calendar size={16} strokeWidth={1.8} aria-hidden="true" />
-            <span>Recorded on {recordedOn || "Not recorded"}</span>
-          </div>
         </div>
       </div>
     </LatestRecordCard>
