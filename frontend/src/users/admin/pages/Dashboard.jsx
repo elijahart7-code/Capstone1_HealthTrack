@@ -39,7 +39,7 @@ export function Dashboard({ dashboard, loadData }) {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-        <div className="ht-panel">
+        <div className="ht-panel ht-dashboard-schedule">
           <h2>Today's Schedule</h2>
 
           {dashboard.todaysAppointments.length === 0 ? (
