@@ -1,5 +1,18 @@
 import { useSearchParams } from "react-router";
-import { Home, Calendar, User, Activity, Lock, FileText } from "lucide-react";
+import {
+  Home,
+  Calendar,
+  User,
+  Activity,
+  Lock,
+  FileText,
+  ChevronDown,
+  HeartPulse,
+  Stethoscope,
+  Droplets,
+  ClipboardList,
+  TriangleAlert,
+} from "lucide-react";
 
 const SECTION_ICONS = {
   appointments: Calendar,
@@ -36,18 +49,12 @@ export function HealthInformation({ healthInfo }) {
 
   const { patient, recordTypes, records, appointments } = healthInfo;
   const patientName = `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`.replace(/\s+/g, " ").trim();
-  const assessmentDefinition = recordTypes["health-assessment"];
-  const assessmentRecords = records["health-assessment"] || [];
-  let latestAssessment = null;
-  let latestAssessmentTime = -Infinity;
-
-  for (const record of assessmentRecords) {
-    const assessmentTime = Date.parse(record[assessmentDefinition.dateField]);
-    if (Number.isFinite(assessmentTime) && assessmentTime > latestAssessmentTime) {
-      latestAssessment = record;
-      latestAssessmentTime = assessmentTime;
-    }
-  }
+  const latestRecords = Object.fromEntries(
+    ["vital-signs", "health-assessment", "allergies", "midwife-notes"].map((key) => [
+      key,
+      getLatestRecord(records[key] || [], recordTypes[key]?.dateField),
+    ])
+  );
 
   const requestedSection = searchParams.get("section");
   const section = requestedSection && (
@@ -74,11 +81,6 @@ export function HealthInformation({ healthInfo }) {
     });
   };
 
-  const navItems = [
-    { key: "appointments", label: "Appointments" },
-    { key: "patient-information", label: "Patient Information" },
-  ];
-
   return (
     <div className="patient-healthinfo-page">
       <aside className="patient-healthinfo-sidebar">
@@ -96,37 +98,40 @@ export function HealthInformation({ healthInfo }) {
 
           <div className="patient-sidebar-label">MY HEALTH INFORMATION</div>
 
-          {navItems.map((item) => {
-            const Icon = SECTION_ICONS[item.key] || FileText;
-            return (
-              <button
-                key={item.key}
-                onClick={() => selectSection(item.key)}
-                className={`patient-sidebar-item ${section === item.key ? "is-active" : ""}`}
-              >
-                <span className="patient-sidebar-icon">
-                  <Icon size={18} strokeWidth={1.8} />
-                </span>
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
+          <SidebarItem icon={Calendar} label="Appointments" active={section === "appointments"} onClick={() => selectSection("appointments")} />
+          <SidebarItem icon={User} label="Patient Information" active={section === "patient-information"} onClick={() => selectSection("patient-information")} />
+          <SidebarItem
+            icon={Stethoscope}
+            label="Health Assessment"
+            active={section === "health-assessment"}
+            expanded={["vital-signs", "midwife-notes", "allergies"].includes(section)}
+            onClick={() => selectSection("health-assessment")}
+          />
+          <div className="patient-sidebar-children">
+            <SidebarChild label="Vital Signs" active={section === "vital-signs"} onClick={() => selectSection("vital-signs")} />
+            <SidebarChild label="Midwife Notes" active={section === "midwife-notes"} onClick={() => selectSection("midwife-notes")} />
+            <SidebarChild label="Allergies" active={section === "allergies"} onClick={() => selectSection("allergies")} />
+          </div>
+          <SidebarItem icon={FileText} label="Medical History" active={section === "medical-history"} onClick={() => selectSection("medical-history")} />
         </nav>
 
       </aside>
 
       <main className="patient-healthinfo-main">
-        {section === null && (
-          <RecordSection
-            definition={assessmentDefinition}
-            records={latestAssessment ? [latestAssessment] : []}
-            title="Latest Health Assessment"
-            emptyMessage="No health assessment recorded yet."
-            showTotal={false}
-          />
-        )}
+        {section === null ? (
+          <>
+            <header className="patient-overview-heading">
+              <h1>Overview</h1>
+              <p>Your latest health information from your most recent checkup.</p>
+            </header>
+            <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} />
+            <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} />
+            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} />
+            <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} />
+          </>
+        ) : (
+          <>
 
-        {section !== null && (
         <section className="patient-healthinfo-header-card">
           <div className="patient-healthinfo-header-copy">
             <div className="patient-panel-icon patient-panel-icon-large">
@@ -142,7 +147,6 @@ export function HealthInformation({ healthInfo }) {
             Read Only
           </span>
         </section>
-        )}
 
         {section === "appointments" && <section className="patient-healthinfo-card">
             <div className="patient-card-header">
@@ -213,17 +217,15 @@ export function HealthInformation({ healthInfo }) {
             </div>
         </section>}
 
-        {Object.entries(recordTypes).map(
-          ([key, definition]) => (
-            section === key && (
-              <RecordSection
-                key={key}
-                definition={definition}
-                records={records[key] || []}
-                onViewAll={() => selectSection(key)}
-              />
-            )
-          )
+        {Object.entries(recordTypes).map(([key, definition]) => section === key && (
+          <RecordSection
+            key={key}
+            definition={definition}
+            records={records[key] || []}
+            onViewAll={() => selectSection(key)}
+          />
+        ))}
+          </>
         )}
       </main>
     </div>
@@ -236,6 +238,169 @@ function InfoField({ label, value, wide }) {
       <span className="patient-info-label">{label}</span>
       <span className="patient-info-value">{value || "Not provided"}</span>
     </div>
+  );
+}
+
+function SidebarItem({ icon: Icon, label, active, expanded, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`patient-sidebar-item ${active ? "is-active" : ""}`}
+      aria-current={active ? "page" : undefined}
+      aria-expanded={expanded}
+    >
+      <span className="patient-sidebar-icon"><Icon size={18} strokeWidth={1.8} /></span>
+      <span>{label}</span>
+      {expanded !== undefined && <ChevronDown className={`patient-sidebar-chevron ${expanded ? "is-expanded" : ""}`} size={16} />}
+    </button>
+  );
+}
+
+function SidebarChild({ label, active, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`patient-sidebar-child ${active ? "is-active" : ""}`}
+      aria-current={active ? "page" : undefined}
+    >
+      <span className="patient-sidebar-child-dot" />
+      <span>{label}</span>
+    </button>
+  );
+}
+
+function getLatestRecord(records, dateField) {
+  if (!dateField || records.length === 0) return null;
+
+  return records.reduce((latest, record) => {
+    const recordTime = Date.parse(record[dateField]);
+    const latestTime = latest ? Date.parse(latest[dateField]) : -Infinity;
+    return Number.isFinite(recordTime) && (!Number.isFinite(latestTime) || recordTime > latestTime)
+      ? record
+      : latest;
+  }, null) || records[0];
+}
+
+function formatRecordDate(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+}
+
+function getRecordFields(definition, record, keys) {
+  if (!definition || !record) return [];
+  return keys
+    .filter((key) => record[key] !== null && record[key] !== undefined && record[key] !== "")
+    .map((key) => {
+      const field = definition.fields[key];
+      const rawValue = record[key];
+      return {
+        key,
+        label: field?.label || key,
+        value: field?.type === "select" ? field.options?.[rawValue] || rawValue : rawValue,
+      };
+    });
+}
+
+function LatestRecordCard({ title, icon: Icon, type, definition, record, children }) {
+  return (
+    <section className={`patient-healthinfo-card patient-latest-card patient-latest-${type}`}>
+      <header className="patient-latest-card-header">
+        <div className="patient-latest-title">
+          <Icon size={22} strokeWidth={2} />
+          <h2>{title}</h2>
+        </div>
+        {record && formatRecordDate(record[definition.dateField]) && (
+          <div className="patient-latest-date">
+            <Calendar size={16} strokeWidth={1.8} />
+            <span>{type === "assessment" ? "Assessment date:" : "Recorded on:"} {formatRecordDate(record[definition.dateField])}</span>
+          </div>
+        )}
+      </header>
+      <div className="patient-latest-card-content">
+        {record ? children : <div className="patient-empty-state">No {definition.label.toLowerCase()} recorded yet.</div>}
+      </div>
+    </section>
+  );
+}
+
+function LatestVitalSigns({ definition, record }) {
+  const fields = getRecordFields(definition, record, Object.keys(definition?.fields || {}));
+  const vitalIcons = {
+    blood_pressure: HeartPulse,
+    temperature: Activity,
+    pulse_rate: HeartPulse,
+    respiratory_rate: Activity,
+    height_cm: User,
+    weight_kg: Activity,
+    bmi: Activity,
+    oxygen_saturation: Droplets,
+    pain_score: HeartPulse,
+  };
+
+  return (
+    <LatestRecordCard title="Latest Vital Signs" icon={Activity} type="vitals" definition={definition} record={record}>
+      {fields.length > 0 ? (
+        <div className="patient-vital-grid">
+          {fields.map(({ key, label, value }) => {
+            const Icon = vitalIcons[key] || Activity;
+            return (
+              <div className={`patient-vital-item patient-vital-${key}`} key={key}>
+                <Icon size={24} strokeWidth={1.8} />
+                <span className="patient-vital-label">{label}</span>
+                <strong>{value}</strong>
+              </div>
+            );
+          })}
+        </div>
+      ) : <div className="patient-empty-state">No vital signs recorded yet.</div>}
+    </LatestRecordCard>
+  );
+}
+
+function LatestHealthAssessment({ definition, record }) {
+  const fields = getRecordFields(definition, record, ["condition", "description", "status", "medication", "remarks"]);
+
+  return (
+    <LatestRecordCard title="Latest Health Assessment" icon={ClipboardList} type="assessment" definition={definition} record={record}>
+      {fields.length > 0 ? <RecordDetailRows fields={fields} /> : <div className="patient-empty-state">No health assessment recorded yet.</div>}
+    </LatestRecordCard>
+  );
+}
+
+function LatestAllergies({ definition, record }) {
+  const fields = getRecordFields(definition, record, Object.keys(definition?.fields || {}));
+
+  return (
+    <LatestRecordCard title="Latest Allergies" icon={TriangleAlert} type="allergies" definition={definition} record={record}>
+      {fields.length > 0 ? <RecordDetailRows fields={fields} /> : <div className="patient-empty-state">No allergies recorded yet.</div>}
+    </LatestRecordCard>
+  );
+}
+
+function LatestMidwifeNotes({ definition, record }) {
+  const note = record?.notes;
+
+  return (
+    <LatestRecordCard title="Latest Midwife Notes" icon={FileText} type="notes" definition={definition} record={record}>
+      {note ? <p className="patient-latest-note">{note}</p> : <div className="patient-empty-state">No midwife notes recorded yet.</div>}
+    </LatestRecordCard>
+  );
+}
+
+function RecordDetailRows({ fields }) {
+  return (
+    <dl className="patient-latest-detail-list">
+      {fields.map(({ key, label, value }) => (
+        <div className="patient-latest-detail-row" key={key}>
+          <dt>{key === "condition" ? "Condition / Illness" : label}</dt>
+          <dd>{key === "status" ? <span className="patient-status-pill">{value}</span> : value}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
