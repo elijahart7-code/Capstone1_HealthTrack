@@ -1014,6 +1014,25 @@
         vertical-align: middle;
     }
 
+    .ht-patient-appointment-remove {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 30px;
+        padding: 0 11px;
+        border: 1px solid #f3b7b7;
+        border-radius: 6px;
+        background: #fff3f3;
+        color: #9a0200;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .ht-patient-appointment-remove:hover {
+        background: #ffe8e8;
+    }
+
     .ht-appointments-panel tbody td:last-child {
         text-align: center;
         vertical-align: middle;
@@ -2754,7 +2773,7 @@
     .patient-assessment-detail-list .patient-latest-detail-row dt {
         display: flex;
         align-items: start;
-        grid-templates-columns: 24px 180px minmax(0, 1fr);
+        grid-template-columns: 24px 180px minmax(0, 1fr);
         column-gap: 12px;
     }
 

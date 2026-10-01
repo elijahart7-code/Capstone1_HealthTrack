@@ -764,7 +764,7 @@ export function PatientRecord({
                                     appointment.appointment_id
                                   )
                                 }
-                                className="ht-delete-button"
+                                className="ht-delete-button ht-patient-appointment-remove"
                               >
                                 Remove
                               </button>
