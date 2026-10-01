@@ -36,6 +36,19 @@ export function HealthInformation({ healthInfo }) {
 
   const { patient, recordTypes, records, appointments } = healthInfo;
   const patientName = `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`.replace(/\s+/g, " ").trim();
+  const assessmentDefinition = recordTypes["health-assessment"];
+  const assessmentRecords = records["health-assessment"] || [];
+  let latestAssessment = null;
+  let latestAssessmentTime = -Infinity;
+
+  for (const record of assessmentRecords) {
+    const assessmentTime = Date.parse(record[assessmentDefinition.dateField]);
+    if (Number.isFinite(assessmentTime) && assessmentTime > latestAssessmentTime) {
+      latestAssessment = record;
+      latestAssessmentTime = assessmentTime;
+    }
+  }
+
   const requestedSection = searchParams.get("section");
   const section = requestedSection && (
     requestedSection === "appointments" ||
@@ -103,6 +116,17 @@ export function HealthInformation({ healthInfo }) {
       </aside>
 
       <main className="patient-healthinfo-main">
+        {section === null && (
+          <RecordSection
+            definition={assessmentDefinition}
+            records={latestAssessment ? [latestAssessment] : []}
+            title="Latest Health Assessment"
+            emptyMessage="No health assessment recorded yet."
+            showTotal={false}
+          />
+        )}
+
+        {section !== null && (
         <section className="patient-healthinfo-header-card">
           <div className="patient-healthinfo-header-copy">
             <div className="patient-panel-icon patient-panel-icon-large">
@@ -118,8 +142,9 @@ export function HealthInformation({ healthInfo }) {
             Read Only
           </span>
         </section>
+        )}
 
-        {(!section || section === "appointments") && <section className="patient-healthinfo-card">
+        {section === "appointments" && <section className="patient-healthinfo-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
@@ -163,7 +188,7 @@ export function HealthInformation({ healthInfo }) {
             <div className="patient-table-footer">Showing 1 to {appointments.length} of {appointments.length} appointments</div>
         </section>}
 
-        {(!section || section === "patient-information") && <section className="patient-healthinfo-card">
+        {section === "patient-information" && <section className="patient-healthinfo-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
@@ -190,7 +215,7 @@ export function HealthInformation({ healthInfo }) {
 
         {Object.entries(recordTypes).map(
           ([key, definition]) => (
-            (!section || section === key) && (
+            section === key && (
               <RecordSection
                 key={key}
                 definition={definition}
@@ -214,7 +239,14 @@ function InfoField({ label, value, wide }) {
   );
 }
 
-function RecordSection({ definition, records, onViewAll }) {
+function RecordSection({
+  definition,
+  records,
+  title = definition.label,
+  emptyMessage,
+  showTotal = true,
+  onViewAll,
+}) {
   const columnFields = Object.entries(definition.fields).filter(([, f]) => f.column || f.primary);
 
   return (
@@ -224,16 +256,20 @@ function RecordSection({ definition, records, onViewAll }) {
           <span className="patient-panel-icon patient-panel-icon-small">
             <FileText size={18} strokeWidth={1.8} />
           </span>
-          <h2>{definition.label}</h2>
+            <h2>{title}</h2>
         </div>
-        <span className="patient-card-total">{records.length} total</span>
-        <button type="button" className="patient-view-button" onClick={onViewAll}>
-          View All
-        </button>
+          {showTotal && <span className="patient-card-total">{records.length} total</span>}
+          {onViewAll && (
+            <button type="button" className="patient-view-button" onClick={onViewAll}>
+              View All
+            </button>
+          )}
       </div>
 
       {records.length === 0 ? (
-        <div className="patient-empty-state">No {definition.label.toLowerCase()} recorded.</div>
+        <div className="patient-empty-state">
+          {emptyMessage || `No ${definition.label.toLowerCase()} recorded.`}
+        </div>
       ) : (
         <div className="patient-table-wrap">
           <table className="patient-health-table">
