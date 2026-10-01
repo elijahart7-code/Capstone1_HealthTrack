@@ -13,6 +13,10 @@ import {
   Droplets,
   ClipboardList,
   TriangleAlert,
+  Pill,
+  Utensils,
+  Leaf,
+  CircleAlert,
   CalendarDays,
   Clock3,
   UserRound,
@@ -360,7 +364,7 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, childre
           <Icon size={22} strokeWidth={2} />
           <h2>{title}</h2>
         </div>
-        {record && formatRecordDate(record[definition.dateField]) && (
+        {type !== "allergies" && record && formatRecordDate(record[definition.dateField]) && (
           <div className="patient-latest-date">
             <Calendar size={16} strokeWidth={1.8} />
             <span>{type === "assessment" ? "Assessment date:" : "Recorded on:"} {formatRecordDate(record[definition.dateField])}</span>
@@ -441,10 +445,20 @@ function LatestHealthAssessment({ definition, record }) {
 
 function LatestAllergies({ definition, record }) {
   const fields = getRecordFields(definition, record, Object.keys(definition?.fields || {}));
+  const fieldValues = Object.fromEntries(fields.map(({ key, value }) => [key, value]));
+  const rows = [
+    { key: "medication_allergies", label: "Drug Allergies", icon: Pill, value: fieldValues.medication_allergies },
+    { key: "food_allergies", label: "Food Allergies", icon: Utensils, value: fieldValues.food_allergies },
+    { key: "environmental_allergies", label: "Environmental Allergies", icon: Leaf, value: fieldValues.environmental_allergies },
+    { key: "reaction", label: "Reaction", icon: CircleAlert, value: fieldValues.reaction },
+    { key: "recorded_at", label: "Date Recorded", icon: Calendar, value: formatRecordDate(record?.[definition.dateField]) },
+    { key: "remarks", label: "Remarks", icon: MessageSquare, value: fieldValues.remarks },
+    { key: "recorded_by", label: "Recorded By", icon: User, value: record?.created_by_name || record?.created_by },
+  ];
 
   return (
     <LatestRecordCard title="Latest Allergies" icon={TriangleAlert} type="allergies" definition={definition} record={record}>
-      {fields.length > 0 ? <RecordDetailRows fields={fields} /> : <div className="patient-empty-state">No allergies recorded yet.</div>}
+      <AllergyDetailRows rows={rows} />
     </LatestRecordCard>
   );
 }
@@ -459,13 +473,17 @@ function LatestMidwifeNotes({ definition, record }) {
   );
 }
 
-function RecordDetailRows({ fields }) {
+function AllergyDetailRows({ rows }) {
   return (
-    <dl className="patient-latest-detail-list">
-      {fields.map(({ key, label, value }) => (
-        <div className="patient-latest-detail-row" key={key}>
-          <dt>{key === "condition" ? "Condition / Illness" : label}</dt>
-          <dd>{key === "status" ? <span className="patient-status-pill">{value}</span> : value}</dd>
+    <dl className="patient-allergy-detail-list">
+      {rows.map(({ key, label, icon: Icon, value }) => (
+        <div className="patient-allergy-detail-row" key={key}>
+          <span className="patient-allergy-detail-icon" aria-hidden="true">
+            <Icon size={17} strokeWidth={1.8} />
+          </span>
+          <dt>{label}</dt>
+          <span className="patient-allergy-detail-separator" aria-hidden="true">:</span>
+          <dd>{value || "Not recorded"}</dd>
         </div>
       ))}
     </dl>
