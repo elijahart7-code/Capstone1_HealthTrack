@@ -1269,9 +1269,9 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         }
 
         .ht-delete-button {
-          border: 1px solid #d9a7a7;
-          background: #fffafa;
-          color: #ad5b5b;
+          border: 1px solid #f3b7b7;
+          background: #fff3f3;
+          color: #9a0200;
         }
 
         .ht-edit-button:hover {
@@ -1279,7 +1279,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         }
 
         .ht-delete-button:hover {
-          background: #fff0f0;
+          background: #ffe8e8;
         }
 
         .ht-show-more {
