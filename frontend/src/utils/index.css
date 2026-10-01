@@ -2289,6 +2289,39 @@
         font-family: inherit;
     }
 
+    .patient-sidebar-item-row {
+        display: flex;
+        align-items: stretch;
+        min-width: 0;
+    }
+
+    .patient-sidebar-item-main {
+        flex: 1;
+        width: auto;
+        min-width: 0;
+    }
+
+    .patient-sidebar-toggle {
+        display: grid;
+        place-items: center;
+        flex: 0 0 42px;
+        width: 42px;
+        min-height: 42px;
+        margin-left: 0.15rem;
+        padding: 0;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: #1e2d2a;
+        cursor: pointer;
+    }
+
+    .patient-sidebar-toggle:hover,
+    .patient-sidebar-toggle:focus-visible {
+        background: rgba(13, 74, 62, 0.07);
+        outline: none;
+    }
+
     .patient-sidebar-item.is-active {
         background: rgba(13, 74, 62, 0.09);
         color: #0d4a3e;
@@ -2320,7 +2353,11 @@
     }
 
     .patient-sidebar-chevron.is-expanded {
-        transform: rotate(180deg);
+        transform: rotate(0deg);
+    }
+
+    .patient-sidebar-chevron.is-collapsed {
+        transform: rotate(-90deg);
     }
 
     .patient-sidebar-children {

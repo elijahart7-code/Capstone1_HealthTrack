@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   Home,
@@ -23,6 +24,8 @@ const SECTION_ICONS = {
   allergies: Activity,
 };
 
+const HEALTH_ASSESSMENT_CHILD_SECTIONS = ["vital-signs", "midwife-notes", "allergies"];
+
 /**
  * Port of resources/views/livewire/patient/health-information.blade.php --
  * the 250px sidebar of section links + main content column of read-only
@@ -33,6 +36,16 @@ const SECTION_ICONS = {
  */
 export function HealthInformation({ healthInfo }) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const currentSection = searchParams.get("section");
+  const [assessmentExpanded, setAssessmentExpanded] = useState(() =>
+    HEALTH_ASSESSMENT_CHILD_SECTIONS.includes(currentSection)
+  );
+
+  useEffect(() => {
+    if (HEALTH_ASSESSMENT_CHILD_SECTIONS.includes(currentSection)) {
+      setAssessmentExpanded(true);
+    }
+  }, [currentSection]);
 
   if (!healthInfo.patient) {
     return (
@@ -104,14 +117,20 @@ export function HealthInformation({ healthInfo }) {
             icon={Stethoscope}
             label="Health Assessment"
             active={section === "health-assessment"}
-            expanded={["vital-signs", "midwife-notes", "allergies"].includes(section)}
-            onClick={() => selectSection("health-assessment")}
+            expanded={assessmentExpanded}
+            onClick={() => {
+              setAssessmentExpanded(true);
+              selectSection("health-assessment");
+            }}
+            onToggle={() => setAssessmentExpanded((expanded) => !expanded)}
           />
-          <div className="patient-sidebar-children">
-            <SidebarChild label="Vital Signs" active={section === "vital-signs"} onClick={() => selectSection("vital-signs")} />
-            <SidebarChild label="Midwife Notes" active={section === "midwife-notes"} onClick={() => selectSection("midwife-notes")} />
-            <SidebarChild label="Allergies" active={section === "allergies"} onClick={() => selectSection("allergies")} />
-          </div>
+          {assessmentExpanded && (
+            <div className="patient-sidebar-children">
+              <SidebarChild label="Vital Signs" active={section === "vital-signs"} onClick={() => selectSection("vital-signs")} />
+              <SidebarChild label="Midwife Notes" active={section === "midwife-notes"} onClick={() => selectSection("midwife-notes")} />
+              <SidebarChild label="Allergies" active={section === "allergies"} onClick={() => selectSection("allergies")} />
+            </div>
+          )}
           <SidebarItem icon={FileText} label="Medical History" active={section === "medical-history"} onClick={() => selectSection("medical-history")} />
         </nav>
 
@@ -241,18 +260,41 @@ function InfoField({ label, value, wide }) {
   );
 }
 
-function SidebarItem({ icon: Icon, label, active, expanded, onClick }) {
+function SidebarItem({ icon: Icon, label, active, expanded, onClick, onToggle }) {
+  if (onToggle) {
+    return (
+      <div className="patient-sidebar-item-row">
+        <button
+          type="button"
+          onClick={onClick}
+          className={`patient-sidebar-item patient-sidebar-item-main ${active ? "is-active" : ""}`}
+          aria-current={active ? "page" : undefined}
+        >
+          <span className="patient-sidebar-icon"><Icon size={18} strokeWidth={1.8} /></span>
+          <span>{label}</span>
+        </button>
+        <button
+          type="button"
+          onClick={onToggle}
+          className="patient-sidebar-toggle"
+          aria-label={`${expanded ? "Collapse" : "Expand"} ${label}`}
+          aria-expanded={expanded}
+        >
+          <ChevronDown className={`patient-sidebar-chevron ${expanded ? "is-expanded" : "is-collapsed"}`} size={16} />
+        </button>
+      </div>
+    );
+  }
+
   return (
     <button
       type="button"
       onClick={onClick}
       className={`patient-sidebar-item ${active ? "is-active" : ""}`}
       aria-current={active ? "page" : undefined}
-      aria-expanded={expanded}
     >
       <span className="patient-sidebar-icon"><Icon size={18} strokeWidth={1.8} /></span>
       <span>{label}</span>
-      {expanded !== undefined && <ChevronDown className={`patient-sidebar-chevron ${expanded ? "is-expanded" : ""}`} size={16} />}
     </button>
   );
 }
