@@ -370,33 +370,42 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, childre
 }
 
 function LatestVitalSigns({ definition, record }) {
-  const fields = getRecordFields(definition, record, Object.keys(definition?.fields || {}));
-  const vitalIcons = {
-    blood_pressure: HeartPulse,
-    temperature: Activity,
-    pulse_rate: HeartPulse,
-    respiratory_rate: Activity,
-    height_cm: User,
-    weight_kg: Activity,
-    bmi: Activity,
-    oxygen_saturation: Droplets,
-    pain_score: HeartPulse,
-  };
+  const vitalRows = [
+    { key: "blood_pressure", label: "Blood Pressure", unit: "mmHg" },
+    { key: "heart_rate", label: "Heart Rate", unit: "bpm" },
+    { key: "temperature", label: "Temperature", unit: "°C" },
+    { key: "respiratory_rate", label: "Respiratory Rate", unit: "breaths/min" },
+    { key: "height_cm", label: "Height", unit: "cm" },
+    { key: "weight_kg", label: "Weight", unit: "kg" },
+    { key: "bmi", label: "BMI", unit: "kg/m²" },
+    { key: "pulse_rate", label: "Pulse Rate", unit: "bpm" },
+  ].filter(({ key }) => record?.[key] !== null && record?.[key] !== undefined && record?.[key] !== "");
+  const recordedDate = record ? formatRecordDate(record[definition.dateField]) : null;
 
   return (
     <LatestRecordCard title="Latest Vital Signs" icon={Activity} type="vitals" definition={definition} record={record}>
-      {fields.length > 0 ? (
-        <div className="patient-vital-grid">
-          {fields.map(({ key, label, value }) => {
-            const Icon = vitalIcons[key] || Activity;
-            return (
-              <div className={`patient-vital-item patient-vital-${key}`} key={key}>
-                <Icon size={24} strokeWidth={1.8} />
-                <span className="patient-vital-label">{label}</span>
-                <strong>{value}</strong>
-              </div>
-            );
-          })}
+      {vitalRows.length > 0 ? (
+        <div className="patient-table-wrap patient-vital-table-wrap">
+          <table className="patient-health-table patient-vital-table">
+            <thead>
+              <tr>
+                <th>Measurement</th>
+                <th>Result</th>
+                <th>Unit</th>
+                <th>Date Recorded</th>
+              </tr>
+            </thead>
+            <tbody>
+              {vitalRows.map(({ key, label, unit }) => (
+                <tr key={key}>
+                  <td>{label}</td>
+                  <td>{record[key]}</td>
+                  <td>{unit}</td>
+                  <td className="patient-date-cell">{recordedDate || "Not recorded"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : <div className="patient-empty-state">No vital signs recorded yet.</div>}
     </LatestRecordCard>
