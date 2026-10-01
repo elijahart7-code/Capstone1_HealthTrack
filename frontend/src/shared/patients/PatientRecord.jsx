@@ -568,7 +568,7 @@ export function PatientRecord({
 
 </div>
               {/* APPOINTMENTS */}
-              <div className="ht-content-card">
+              <div className="ht-content-card ht-patient-appointments">
 
                 <div className="ht-card-heading">
 
@@ -707,9 +707,7 @@ export function PatientRecord({
                         <Th>Status</Th>
 
                         {isAdmin && (
-                          <Th srOnly>
-                            Actions
-                          </Th>
+                          <Th>Action</Th>
                         )}
                       </tr>
                     </thead>
