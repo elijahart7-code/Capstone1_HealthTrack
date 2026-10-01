@@ -1846,7 +1846,7 @@
 
     .patient-healthinfo-page {
         display: grid;
-        grid-template-columns: 250px minmax(0, 1fr);
+        grid-template-columns: 300px minmax(0, 1fr);
         gap: 1rem;
         width: min(100%, 1180px);
         margin: 0 auto;
