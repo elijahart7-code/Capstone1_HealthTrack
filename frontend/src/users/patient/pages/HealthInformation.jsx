@@ -368,7 +368,7 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, childre
           <Icon size={22} strokeWidth={2} />
           <h2>{title}</h2>
         </div>
-        {type !== "allergies" && record && headerDate && (
+        {record && headerDate && (
           <div className="patient-latest-date">
             <Calendar size={16} strokeWidth={1.8} />
             <span>{type === "assessment" ? "Assessment date:" : "Recorded on:"} {headerDate}</span>
@@ -455,7 +455,6 @@ function LatestAllergies({ definition, record }) {
     { key: "food_allergies", label: "Food Allergies", icon: Utensils, value: fieldValues.food_allergies },
     { key: "environmental_allergies", label: "Environmental Allergies", icon: Leaf, value: fieldValues.environmental_allergies },
     { key: "reaction", label: "Reaction", icon: CircleAlert, value: fieldValues.reaction },
-    { key: "recorded_at", label: "Date Recorded", icon: Calendar, value: formatRecordDate(record?.[definition.dateField]) },
     { key: "remarks", label: "Remarks", icon: MessageSquare, value: fieldValues.remarks },
     { key: "recorded_by", label: "Recorded By", icon: User, value: record?.created_by_name || record?.created_by },
   ];
