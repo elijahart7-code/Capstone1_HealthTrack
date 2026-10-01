@@ -2732,14 +2732,29 @@
     }
 
     .patient-vital-table {
+        width: 100%;
         min-width: 640px;
+        table-layout: fixed;
     }
 
-    .patient-vital-table th:nth-child(3),
-    .patient-vital-table td:nth-child(3),
-    .patient-vital-table th:nth-child(4),
-    .patient-vital-table td:nth-child(4) {
-        white-space: nowrap;
+    .patient-vital-measurement-column {
+        width: 45%;
+    }
+
+    .patient-vital-result-column {
+        width: 25%;
+    }
+
+    .patient-vital-unit-column {
+        width: 30%;
+    }
+
+    .patient-vital-table th,
+    .patient-vital-table td {
+        height: 44px;
+        box-sizing: border-box;
+        text-align: left;
+        overflow-wrap: anywhere;
     }
 
     .patient-health-table th,
