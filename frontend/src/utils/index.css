@@ -2731,6 +2731,17 @@
         background: #fff;
     }
 
+    .patient-vital-table {
+        min-width: 640px;
+    }
+
+    .patient-vital-table th:nth-child(3),
+    .patient-vital-table td:nth-child(3),
+    .patient-vital-table th:nth-child(4),
+    .patient-vital-table td:nth-child(4) {
+        white-space: nowrap;
+    }
+
     .patient-health-table th,
     .patient-health-table td {
         padding: 0.75rem 0.85rem;
