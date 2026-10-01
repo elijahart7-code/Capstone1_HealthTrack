@@ -70,8 +70,8 @@ export function Appointments({ appointments, loadData }) {
           <div className="ht-toolbar-field ht-toolbar-field-filter">
             <label className="ht-toolbar-label">Show</label>
             <Select value={filter} onChange={(e) => setFilter(e.target.value)} className="ht-filter-select">
-              <option value="upcoming">Upcoming</option>
               <option value="today">Today</option>
+              <option value="upcoming">Upcoming</option>
               <option value="previous">Previous</option>
               <option value="all">All</option>
             </Select>
