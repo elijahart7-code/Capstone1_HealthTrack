@@ -380,19 +380,22 @@ function LatestVitalSigns({ definition, record }) {
     { key: "bmi", label: "BMI", unit: "kg/m²" },
     { key: "pulse_rate", label: "Pulse Rate", unit: "bpm" },
   ].filter(({ key }) => record?.[key] !== null && record?.[key] !== undefined && record?.[key] !== "");
-  const recordedDate = record ? formatRecordDate(record[definition.dateField]) : null;
 
   return (
     <LatestRecordCard title="Latest Vital Signs" icon={Activity} type="vitals" definition={definition} record={record}>
       {vitalRows.length > 0 ? (
         <div className="patient-table-wrap patient-vital-table-wrap">
           <table className="patient-health-table patient-vital-table">
+            <colgroup>
+              <col className="patient-vital-measurement-column" />
+              <col className="patient-vital-result-column" />
+              <col className="patient-vital-unit-column" />
+            </colgroup>
             <thead>
               <tr>
                 <th>Measurement</th>
                 <th>Result</th>
                 <th>Unit</th>
-                <th>Date Recorded</th>
               </tr>
             </thead>
             <tbody>
@@ -401,7 +404,6 @@ function LatestVitalSigns({ definition, record }) {
                   <td>{label}</td>
                   <td>{record[key]}</td>
                   <td>{unit}</td>
-                  <td className="patient-date-cell">{recordedDate || "Not recorded"}</td>
                 </tr>
               ))}
             </tbody>
