@@ -862,6 +862,14 @@
         border-radius: 12px 12px 0 0;
     }
 
+    .ht-patient-appointments .ht-table th:nth-child(3),
+    .ht-patient-appointments .ht-table td:nth-child(3),
+    .ht-patient-appointments .ht-table th:last-child,
+    .ht-patient-appointments .ht-table td:last-child {
+        text-align: center;
+        vertical-align: middle;
+    }
+
     .ht-status-badge {
         display: inline-flex;
         align-items: center;
