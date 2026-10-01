@@ -514,10 +514,12 @@ function AssessmentDetailRows({ fields, assessmentDate, recordedOn, recordedBy }
         const Icon = icons[key];
         return (
           <div className="patient-latest-detail-row" key={key}>
-            <span className="patient-assessment-field-icon" aria-hidden="true">
-              <Icon size={16} strokeWidth={1.8} />
-            </span>
-            <dt>{key === "condition" ? "Condition" : label}</dt>
+            <dt className="patient-assessment-field-label">
+              <span className="patient-assessment-field-icon" aria-hidden="true">
+                <Icon size={16} strokeWidth={1.8} />
+              </span>
+              <span>{key === "condition" ? "Condition" : label}</span>
+            </dt>
             <dd>{value ? (key === "status" ? <span className="patient-status-pill">{value}</span> : value) : "Not recorded"}</dd>
           </div>
         );
