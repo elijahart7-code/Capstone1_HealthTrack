@@ -2748,38 +2748,53 @@
         background: #ffffff;
     }
 
-    .patient-assessment-detail-list {
+    .patient-assessment-record-list {
         width: 100%;
+        margin: 0;
+        overflow: hidden;
+        border: 1px solid rgba(13, 74, 62, 0.1);
+        border-radius: 10px;
     }
 
-    .patient-assessment-detail-list .patient-latest-detail-row {
-        grid-template-columns: 220px minmax(0, 1fr);
-        align-items: stretch;
+    .patient-assessment-record-row {
+        display: grid;
+        grid-template-columns: 20px 180px 10px minmax(0, 1fr);
+        align-items: start;
+        column-gap: 0.55rem;
+        padding: 0.6rem 0.8rem;
+        border-bottom: 1px solid rgba(13, 74, 62, 0.08);
     }
 
-    .patient-assessment-field-icon {
+    .patient-assessment-record-row:last-child {
+        border-bottom: 0;
+    }
+
+    .patient-assessment-record-icon {
         display: grid;
         place-items: center;
         width: 20px;
-        height: 20px;
-        flex: 0 0 20px;
+        min-height: 1.1rem;
         color: #0f6b5f;
     }
 
-    .patient-assessment-field-icon svg {
-        display: block;
-    }
-
-    .patient-assessment-detail-list .patient-latest-detail-row dt {
-        display: flex;
-        align-items: start;
-        grid-template-columns: 24px 180px minmax(0, 1fr);
-        column-gap: 12px;
-    }
-
-    .patient-assessment-detail-list .patient-latest-detail-row dd {
+    .patient-assessment-record-row dt,
+    .patient-assessment-record-row dd,
+    .patient-assessment-record-separator {
         min-width: 0;
+        margin: 0;
+        color: #1e2d2a;
+        font-size: 0.76rem;
+        line-height: 1.45;
         overflow-wrap: anywhere;
+    }
+
+    .patient-assessment-record-row dt {
+        font-weight: 800;
+    }
+
+    .patient-assessment-record-separator {
+        color: #667875;
+        text-align: center;
     }
 
     .patient-latest-notes .patient-latest-note {
