@@ -2657,6 +2657,108 @@
         color: #dc4d62;
     }
 
+    .patient-midwife-note-layout {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 1fr);
+        gap: 0.9rem;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .patient-midwife-note-icon {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: rgba(220, 77, 98, 0.1);
+        color: #dc4d62;
+    }
+
+    .patient-midwife-note-body {
+        display: grid;
+        gap: 1rem;
+        min-width: 0;
+    }
+
+    .patient-midwife-note-meta {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        min-width: 0;
+    }
+
+    .patient-midwife-note-meta > div {
+        display: grid;
+        align-content: start;
+        gap: 0.25rem;
+        min-width: 0;
+    }
+
+    .patient-midwife-note-label {
+        color: #596764;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .patient-midwife-note-value {
+        color: #1e2d2a;
+        font-size: 0.82rem;
+        font-weight: 700;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    .patient-midwife-note-content {
+        min-width: 0;
+    }
+
+    .patient-midwife-note-content h3 {
+        margin: 0 0 0.35rem;
+        color: #1e2d2a;
+        font-size: 0.8rem;
+        font-weight: 800;
+    }
+
+    .patient-midwife-note-content ul {
+        display: grid;
+        gap: 0.35rem;
+        margin: 0;
+        padding-left: 1.2rem;
+        color: #34423f;
+        font-size: 0.78rem;
+        line-height: 1.55;
+    }
+
+    .patient-midwife-note-content li {
+        padding-left: 0.1rem;
+        overflow-wrap: anywhere;
+    }
+
+    .patient-midwife-note-content p {
+        margin: 0;
+        color: #596764;
+        font-size: 0.78rem;
+        line-height: 1.5;
+    }
+
+    .patient-midwife-note-recorded {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.45rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(13, 74, 62, 0.08);
+        color: #53615f;
+        font-size: 0.72rem;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    .patient-midwife-note-recorded svg {
+        flex: 0 0 16px;
+        color: #dc4d62;
+    }
+
     .patient-vital-grid {
         display: grid;
         grid-template-columns: repeat(6, minmax(0, 1fr));
