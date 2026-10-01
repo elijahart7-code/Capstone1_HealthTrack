@@ -2584,6 +2584,55 @@
         color: #d98b22;
     }
 
+    .patient-allergy-detail-list {
+        width: 100%;
+        margin: 0;
+        overflow: hidden;
+        border: 1px solid rgba(13, 74, 62, 0.1);
+        border-radius: 10px;
+    }
+
+    .patient-allergy-detail-row {
+        display: grid;
+        grid-template-columns: 20px minmax(0, 0.9fr) 10px minmax(0, 1.1fr);
+        align-items: start;
+        column-gap: 0.55rem;
+        padding: 0.6rem 0.8rem;
+        border-bottom: 1px solid rgba(13, 74, 62, 0.08);
+    }
+
+    .patient-allergy-detail-row:last-child {
+        border-bottom: 0;
+    }
+
+    .patient-allergy-detail-icon {
+        display: grid;
+        place-items: center;
+        width: 20px;
+        min-height: 1.1rem;
+        color: #d98b22;
+    }
+
+    .patient-allergy-detail-row dt,
+    .patient-allergy-detail-row dd,
+    .patient-allergy-detail-separator {
+        min-width: 0;
+        margin: 0;
+        color: #1e2d2a;
+        font-size: 0.76rem;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    .patient-allergy-detail-row dt {
+        font-weight: 800;
+    }
+
+    .patient-allergy-detail-separator {
+        color: #667875;
+        text-align: center;
+    }
+
     .patient-latest-notes .patient-latest-card-header {
         background: #fff0f2;
         color: #dc4d62;
