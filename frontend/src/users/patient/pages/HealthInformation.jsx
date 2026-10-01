@@ -364,7 +364,7 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, childre
           <Icon size={22} strokeWidth={2} />
           <h2>{title}</h2>
         </div>
-        {type !== "allergies" && record && formatRecordDate(record[definition.dateField]) && (
+        {type !== "allergies" && type !== "notes" && record && formatRecordDate(record[definition.dateField]) && (
           <div className="patient-latest-date">
             <Calendar size={16} strokeWidth={1.8} />
             <span>{type === "assessment" ? "Assessment date:" : "Recorded on:"} {formatRecordDate(record[definition.dateField])}</span>
@@ -465,10 +465,44 @@ function LatestAllergies({ definition, record }) {
 
 function LatestMidwifeNotes({ definition, record }) {
   const note = record?.notes;
+  const noteItems = note
+    ? note.split(/\r?\n/).map((item) => item.replace(/^\s*[-*•]\s*/, "").trim()).filter(Boolean)
+    : [];
+  const consultationDate = formatRecordDate(record?.[definition.dateField]);
+  const recordedBy = record?.created_by_name || record?.created_by;
+  const recordedOn = formatRecordDateTime(record?.created_at);
 
   return (
     <LatestRecordCard title="Latest Midwife Notes" icon={FileText} type="notes" definition={definition} record={record}>
-      {note ? <p className="patient-latest-note">{note}</p> : <div className="patient-empty-state">No midwife notes recorded yet.</div>}
+      <div className="patient-midwife-note-layout">
+        <span className="patient-midwife-note-icon" aria-hidden="true">
+          <FileText size={21} strokeWidth={1.8} />
+        </span>
+        <div className="patient-midwife-note-body">
+          <div className="patient-midwife-note-meta">
+            <div>
+              <span className="patient-midwife-note-label">Consultation Date</span>
+              <span className="patient-midwife-note-value">{consultationDate || "Not recorded"}</span>
+            </div>
+            <div>
+              <span className="patient-midwife-note-label">Recorded By</span>
+              <span className="patient-midwife-note-value">{recordedBy || "Not recorded"}</span>
+            </div>
+          </div>
+          <section className="patient-midwife-note-content" aria-label="Midwife notes">
+            <h3>Notes:</h3>
+            {noteItems.length > 0 ? (
+              <ul>
+                {noteItems.map((item, index) => <li key={`${index}-${item}`}>{item}</li>)}
+              </ul>
+            ) : <p>No midwife notes recorded yet.</p>}
+          </section>
+          <div className="patient-midwife-note-recorded">
+            <Calendar size={16} strokeWidth={1.8} aria-hidden="true" />
+            <span>Recorded on {recordedOn || "Not recorded"}</span>
+          </div>
+        </div>
+      </div>
     </LatestRecordCard>
   );
 }
