@@ -862,6 +862,19 @@
         border-radius: 12px 12px 0 0;
     }
 
+    .ht-patient-appointments {
+        border-top: 3px solid #9a0200;
+    }
+
+    .ht-patient-appointments .ht-card-heading h2 {
+        color: #9a0200;
+    }
+
+    .ht-patient-appointments .ht-table th {
+        background: #9a0200;
+        color: #ffffff;
+    }
+
     .ht-patient-appointments .ht-table th:nth-child(1),
     .ht-patient-appointments .ht-table td:nth-child(1),
     .ht-patient-appointments .ht-table th:nth-child(2),
