@@ -923,8 +923,8 @@
 
     .ht-status-select-pending {
         background-color: rgba(178, 69, 62, 0.08);
-        background-image: linear-gradient(45deg, transparent 50%, var(--color-danger) 50%), linear-gradient(135deg, var(--color-danger) 50%, transparent 50%);
-        color: var(--color-danger);
+        background-image: linear-gradient(45deg, transparent 50%, #ffa756 50%), linear-gradient(135deg, #ffa756 50%, transparent 50%);
+        color: #ffa756;
     }
 
     .ht-status-select-confirmed {
