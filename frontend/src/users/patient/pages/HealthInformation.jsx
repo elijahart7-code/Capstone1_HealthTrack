@@ -13,6 +13,11 @@ import {
   Droplets,
   ClipboardList,
   TriangleAlert,
+  CalendarDays,
+  Clock3,
+  UserRound,
+  MessageSquare,
+  CircleCheck,
 } from "lucide-react";
 
 const SECTION_ICONS = {
@@ -415,11 +420,21 @@ function LatestVitalSigns({ definition, record }) {
 }
 
 function LatestHealthAssessment({ definition, record }) {
-  const fields = getRecordFields(definition, record, ["condition", "description", "status", "medication", "remarks"]);
+  const fields = getRecordFields(definition, record, ["condition", "description", "status", "remarks"]);
+  const assessmentDate = record?.[definition.dateField];
+  const recordedOn = formatRecordDateTime(record?.created_at);
+  const recordedBy = record?.created_by_name || record?.created_by;
 
   return (
     <LatestRecordCard title="Latest Health Assessment" icon={ClipboardList} type="assessment" definition={definition} record={record}>
-      {fields.length > 0 ? <RecordDetailRows fields={fields} /> : <div className="patient-empty-state">No health assessment recorded yet.</div>}
+      {record ? (
+        <AssessmentDetailRows
+          fields={fields}
+          assessmentDate={assessmentDate}
+          recordedOn={recordedOn}
+          recordedBy={recordedBy}
+        />
+      ) : <div className="patient-empty-state">No health assessment recorded yet.</div>}
     </LatestRecordCard>
   );
 }
@@ -453,6 +468,60 @@ function RecordDetailRows({ fields }) {
           <dd>{key === "status" ? <span className="patient-status-pill">{value}</span> : value}</dd>
         </div>
       ))}
+    </dl>
+  );
+}
+
+function formatRecordDateTime(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function AssessmentDetailRows({ fields, assessmentDate, recordedOn, recordedBy }) {
+  const icons = {
+    condition: Stethoscope,
+    description: FileText,
+    assessmentDate: CalendarDays,
+    status: CircleCheck,
+    remarks: MessageSquare,
+    recordedOn: Clock3,
+    recordedBy: UserRound,
+  };
+  const details = [
+    ...fields.filter(({ key }) => key === "condition" || key === "description"),
+    {
+      key: "assessmentDate",
+      label: "Assessment Date",
+      value: formatRecordDate(assessmentDate),
+    },
+    ...fields.filter(({ key }) => key === "status"),
+    ...fields.filter(({ key }) => key === "remarks"),
+    ...(recordedOn ? [{ key: "recordedOn", label: "Recorded on", value: recordedOn }] : []),
+    ...(recordedBy ? [{ key: "recordedBy", label: "Recorded by", value: recordedBy }] : []),
+  ];
+
+  return (
+    <dl className="patient-latest-detail-list patient-assessment-detail-list">
+      {details.map(({ key, label, value }) => {
+        const Icon = icons[key];
+        return (
+          <div className="patient-latest-detail-row" key={key}>
+            <dt>
+              <Icon size={16} strokeWidth={1.8} />
+              <span>{key === "condition" ? "Condition" : label}</span>
+            </dt>
+            <dd>{value ? (key === "status" ? <span className="patient-status-pill">{value}</span> : value) : "Not recorded"}</dd>
+          </div>
+        );
+      })}
     </dl>
   );
 }
