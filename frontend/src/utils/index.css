@@ -2685,7 +2685,7 @@
     }
 
     .patient-assessment-detail-list .patient-latest-detail-row {
-        grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+        grid-template-columns: 220px minmax(0, 1fr);
         align-items: stretch;
     }
 
@@ -3034,10 +3034,6 @@
 
         .patient-vital-item:nth-child(2n) {
             border-right: 0;
-        }
-
-        .patient-assessment-detail-list .patient-latest-detail-row {
-            grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
         }
 
         .ht-user-wrap {
