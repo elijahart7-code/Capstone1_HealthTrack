@@ -504,44 +504,37 @@ function formatRecordDateTime(value) {
 }
 
 function AssessmentDetailRows({ fields, assessmentDate, recordedOn, recordedBy }) {
+  const fieldValues = Object.fromEntries(fields.map(({ key, value }) => [key, value]));
   const icons = {
     condition: Stethoscope,
     description: FileText,
-    assessmentDate: CalendarDays,
+    assessmentDate: Calendar,
     status: CircleCheck,
     remarks: MessageSquare,
     recordedOn: Clock3,
-    recordedBy: UserRound,
   };
-  const details = [
-    ...fields.filter(({ key }) => key === "condition" || key === "description"),
-    {
-      key: "assessmentDate",
-      label: "Assessment Date",
-      value: formatRecordDate(assessmentDate),
-    },
-    ...fields.filter(({ key }) => key === "status"),
-    ...fields.filter(({ key }) => key === "remarks"),
-    ...(recordedOn ? [{ key: "recordedOn", label: "Recorded on", value: recordedOn }] : []),
-    ...(recordedBy ? [{ key: "recordedBy", label: "Recorded by", value: recordedBy }] : []),
+  const rows = [
+    { key: "condition", label: "Condition", icon: icons.condition, value: fieldValues.condition },
+    { key: "description", label: "Description", icon: icons.description, value: fieldValues.description },
+    { key: "assessmentDate", label: "Assessment Date", icon: icons.assessmentDate, value: formatRecordDate(assessmentDate) },
+    { key: "status", label: "Status", icon: icons.status, value: fieldValues.status },
+    { key: "remarks", label: "Remarks", icon: icons.remarks, value: fieldValues.remarks },
+    { key: "recordedOn", label: "Recorded on", icon: icons.recordedOn, value: recordedOn },
+    { key: "recordedBy", label: "Recorded by", icon: User, value: recordedBy },
   ];
 
   return (
-    <dl className="patient-latest-detail-list patient-assessment-detail-list">
-      {details.map(({ key, label, value }) => {
-        const Icon = icons[key];
-        return (
-          <div className="patient-latest-detail-row" key={key}>
-            <dt className="patient-assessment-field-label">
-              <span className="patient-assessment-field-icon" aria-hidden="true">
-                <Icon size={16} strokeWidth={1.8} />
-              </span>
-              <span>{key === "condition" ? "Condition" : label}</span>
-            </dt>
-            <dd>{value ? (key === "status" ? <span className="patient-status-pill">{value}</span> : value) : "Not recorded"}</dd>
-          </div>
-        );
-      })}
+    <dl className="patient-assessment-record-list">
+      {rows.map(({ key, label, icon: Icon, value }) => (
+        <div className="patient-assessment-record-row" key={key}>
+          <span className="patient-assessment-record-icon" aria-hidden="true">
+            <Icon size={17} strokeWidth={1.8} />
+          </span>
+          <dt>{label}</dt>
+          <span className="patient-assessment-record-separator" aria-hidden="true">:</span>
+          <dd>{value ? (key === "status" ? <span className="patient-status-pill">{value}</span> : value) : "Not recorded"}</dd>
+        </div>
+      ))}
     </dl>
   );
 }
