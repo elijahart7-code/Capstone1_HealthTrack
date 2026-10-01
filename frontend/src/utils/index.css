@@ -2608,7 +2608,7 @@
 
     padding: 14px 20px;
 
-    background: #eaf7f1;
+    background: #FFFFFF;
 
     border: 1px solid rgba(12, 79, 70, 0.05);
 
@@ -2994,7 +2994,7 @@
 
 .patient-dashboard-shell .patient-health-summary,
 .patient-dashboard-shell .patient-health-tips {
-    background: #eaf7f1 !important;
+    background: #FFFFFF !important;
     border-color: rgba(12, 79, 70, 0.05) !important;
 }
 
