@@ -3131,9 +3131,15 @@
         overflow: hidden;
     }
 
+    .patient-information-card {
+        background: #ffffff;
+    }
+
     .patient-info-field {
         display: grid;
+        align-content: start;
         gap: 0.3rem;
+        min-width: 0;
         min-height: 86px;
         padding: 0.8rem 0.9rem;
         border-right: 1px solid rgba(13, 74, 62, 0.08);
@@ -3154,12 +3160,24 @@
     }
 
     .patient-info-label {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        min-width: 0;
         color: #596764;
         font-size: 0.72rem;
+        line-height: 1.35;
         font-weight: 700;
     }
 
+    .patient-info-label svg {
+        flex: 0 0 auto;
+        color: #0d8069;
+    }
+
     .patient-info-value {
+        min-width: 0;
+        overflow-wrap: anywhere;
         color: #1c2a2a;
         font-size: 0.86rem;
         font-weight: 700;
