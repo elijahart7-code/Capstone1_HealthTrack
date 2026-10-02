@@ -1178,12 +1178,13 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
         .ht-assessment-row {
           display: grid;
-          grid-template-columns: 42px minmax(120px, 150px) 18px minmax(0, 1fr);
+          grid-template-columns: 42px minmax(150px, 210px) 18px minmax(0, 1fr);
           align-items: center;
-          min-height: 56px;
+          min-height: 70px;
           border-bottom: 1px solid #edf1ef;
-          gap: 10px;
-          font-size: 13px;
+          gap: 18px;
+          padding: 10px 0;
+          font-size: 15px;
         }
 
         .ht-assessment-row:last-child {
@@ -1191,12 +1192,12 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         }
 
         .ht-assessment-icon {
-          width: 35px;
-          height: 35px;
+          width: 38px;
+          height: 38px;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 7px;
+          border-radius: 8px;
           background: #e9f3ed;
           color: #557c67;
         }
@@ -1204,7 +1205,9 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         .ht-assessment-label {
           font-weight: 700;
           color: #34423b;
-          line-height: 1.4;
+          line-height: 1.6;
+          padding-right: 8px;
+          font-size: 15px;
         }
 
         .ht-assessment-colon {
@@ -1214,9 +1217,11 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
         .ht-assessment-value {
           color: #3e4843;
-          line-height: 1.5;
+          line-height: 1.8;
           word-break: break-word;
           overflow-wrap: anywhere;
+          padding-right: 12px;
+          font-size: 15px;
         }
 
         .ht-status-active {
@@ -1237,9 +1242,9 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         .ht-assessment-meta {
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 8px;
           color: #68736e;
-          font-size: 10px;
+          font-size: 11px;
         }
 
         .ht-assessment-meta > div {
