@@ -288,6 +288,7 @@ export function HealthInformation({ healthInfo }) {
               definition={definition}
               records={records[key] || []}
               onViewAll={() => selectSection(key)}
+              className={key === "vital-signs" ? "patient-vitals-record-section" : ""}
             />
           )
         ))}
@@ -675,11 +676,12 @@ function RecordSection({
   emptyMessage,
   showTotal = true,
   onViewAll,
+  className = "",
 }) {
   const columnFields = Object.entries(definition.fields).filter(([, f]) => f.column || f.primary);
 
   return (
-    <section className="patient-healthinfo-card">
+    <section className={`patient-healthinfo-card ${className}`.trim()}>
       <div className="patient-card-header">
         <div className="patient-card-title">
           <span className="patient-panel-icon patient-panel-icon-small">
