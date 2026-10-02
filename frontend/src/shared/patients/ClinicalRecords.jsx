@@ -1173,16 +1173,17 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
         .ht-assessment-details {
           width: 100%;
-          padding: 7px 14px 10px;
+          padding: 10px 14px 12px;
         }
 
         .ht-assessment-row {
           display: grid;
-          grid-template-columns: 42px 95px 18px minmax(0, 1fr);
+          grid-template-columns: 42px minmax(120px, 150px) 18px minmax(0, 1fr);
           align-items: center;
-          min-height: 48px;
+          min-height: 56px;
           border-bottom: 1px solid #edf1ef;
-          font-size: 12px;
+          gap: 10px;
+          font-size: 13px;
         }
 
         .ht-assessment-row:last-child {
@@ -1203,6 +1204,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         .ht-assessment-label {
           font-weight: 700;
           color: #34423b;
+          line-height: 1.4;
         }
 
         .ht-assessment-colon {
@@ -1213,6 +1215,8 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         .ht-assessment-value {
           color: #3e4843;
           line-height: 1.5;
+          word-break: break-word;
+          overflow-wrap: anywhere;
         }
 
         .ht-status-active {
