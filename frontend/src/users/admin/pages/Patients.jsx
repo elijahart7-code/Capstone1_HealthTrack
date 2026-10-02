@@ -100,12 +100,7 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
 
   return (
     <div className="grid gap-4">
-      <PageHeader title="Patient Lists" subtitle="People registered at the Barangay Health Center of Mambog I.">
-        <span className="ht-pill ht-pill-count">
-          <Users size={18} strokeWidth={2} />
-          {patients.length} Registered
-        </span>
-      </PageHeader>
+      <PageHeader title="Patient Lists" subtitle="People registered at the Barangay Health Center of Mambog I." />
 
       <div className="ht-panel ht-patient-panel">
         {archiveError && <div className="ht-login-alert ht-login-alert-error">{archiveError}</div>}

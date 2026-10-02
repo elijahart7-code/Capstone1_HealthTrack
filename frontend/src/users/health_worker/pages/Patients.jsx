@@ -67,7 +67,6 @@ export function Patients({ patients, loadData }) {
   return (
     <div className="grid gap-4">
       <PageHeader title="Patients" subtitle="Everyone registered at the Barangay Health Center of Mambog I.">
-        <span className="ht-pill">{patients.length} registered</span>
         <button onClick={() => setSearchParams({ page: "register-patient" })} className="ht-button">
           Register Patient
         </button>
