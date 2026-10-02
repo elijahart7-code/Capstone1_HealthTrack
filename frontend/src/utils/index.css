@@ -3007,19 +3007,6 @@
         color: #0d8069;
     }
 
-    .patient-midwife-pagination {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        padding-top: 0.2rem;
-        color: #667875;
-        font-size: 0.8rem;
-    }
-
-    .patient-midwife-page-indicator {
-        white-space: nowrap;
-    }
-
     .patient-vital-grid {
         display: grid;
         grid-template-columns: repeat(6, minmax(0, 1fr));
