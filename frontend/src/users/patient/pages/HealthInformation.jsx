@@ -27,8 +27,6 @@ import {
   UsersRound,
   Syringe,
   ArrowRight,
-  ChevronLeft,
-  ChevronRight,
   Pencil,
   Briefcase,
   IdCard,
@@ -759,20 +757,7 @@ function VitalSignsSection({ definition, records, onViewAll }) {
   );
 }
 
-const MIDWIFE_NOTES_PAGE_SIZE = 2;
-
 function MidwifeNotesSection({ definition, records }) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.max(1, Math.ceil(records.length / MIDWIFE_NOTES_PAGE_SIZE));
-  const visibleRecords = records.slice(
-    (currentPage - 1) * MIDWIFE_NOTES_PAGE_SIZE,
-    currentPage * MIDWIFE_NOTES_PAGE_SIZE
-  );
-
-  useEffect(() => {
-    setCurrentPage((page) => Math.min(page, totalPages));
-  }, [totalPages]);
-
   return (
     <section className="patient-healthinfo-card patient-midwife-notes-section">
       <header className="patient-midwife-notes-heading">
@@ -784,9 +769,9 @@ function MidwifeNotesSection({ definition, records }) {
         <span className="patient-card-total">{records.length} total</span>
       </header>
 
-      {visibleRecords.length > 0 ? (
+      {records.length > 0 ? (
         <div className="patient-midwife-notes-list">
-          {visibleRecords.map((record) => (
+          {records.map((record) => (
             <MidwifeNoteCard key={record.record_id} definition={definition} record={record} />
           ))}
         </div>
@@ -795,25 +780,7 @@ function MidwifeNotesSection({ definition, records }) {
       )}
 
       <footer className="patient-midwife-pagination">
-        <span className="patient-midwife-page-indicator">Page {currentPage} of {totalPages}</span>
-        <div className="patient-midwife-page-controls">
-          <button
-            type="button"
-            onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeft size={17} strokeWidth={1.9} />
-            Previous Page
-          </button>
-          <button
-            type="button"
-            onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
-            disabled={currentPage === totalPages}
-          >
-            Next Page
-            <ChevronRight size={17} strokeWidth={1.9} />
-          </button>
-        </div>
+        <span className="patient-midwife-page-indicator">Page 1 of 1</span>
       </footer>
     </section>
   );
