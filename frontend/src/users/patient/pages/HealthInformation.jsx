@@ -461,6 +461,11 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, childre
 }
 
 function LatestAppointment({ appointment }) {
+  const scheduledDate = appointment ? new Date(appointment.scheduled_at) : null;
+  const statusLabel = appointment?.status
+    ? appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)
+    : "Status unavailable";
+
   return (
     <section className="patient-healthinfo-card patient-latest-appointment-card">
       <header className="patient-latest-card-header">
@@ -470,34 +475,39 @@ function LatestAppointment({ appointment }) {
           </span>
           <h2>Latest Appointment</h2>
         </div>
-        {appointment?.status && (
-          <span className={`patient-appointment-status is-${appointment.status.toLowerCase()}`}>
+        {appointment && (
+          <span className={`patient-appointment-status ${appointment.status ? `is-${appointment.status.toLowerCase()}` : ""}`}>
             <span className="patient-appointment-status-dot" aria-hidden="true" />
-            {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+            {statusLabel}
           </span>
         )}
       </header>
       {appointment ? (
         <div className="patient-latest-appointment-details">
           <div>
-            <span className="patient-latest-appointment-label">Date and time</span>
-            <strong>{new Date(appointment.scheduled_at).toLocaleString(undefined, {
+            <span className="patient-latest-appointment-label">Date</span>
+            <strong>{scheduledDate.toLocaleDateString(undefined, {
               year: "numeric",
               month: "long",
               day: "numeric",
+            })}</strong>
+          </div>
+          <div>
+            <span className="patient-latest-appointment-label">Time</span>
+            <strong>{scheduledDate.toLocaleTimeString(undefined, {
               hour: "numeric",
               minute: "2-digit",
             })}</strong>
           </div>
           <div>
-            <span className="patient-latest-appointment-label">Reason</span>
+            <span className="patient-latest-appointment-label">Reason for visit</span>
             <strong>{appointment.reason || "Not provided"}</strong>
           </div>
         </div>
       ) : (
         <div className="patient-latest-appointment-empty">
           <strong>No upcoming appointments</strong>
-          <p>You don't have any upcoming appointments at the moment.</p>
+          <p>You’re all caught up! No upcoming visits are scheduled at the moment.</p>
         </div>
       )}
     </section>
