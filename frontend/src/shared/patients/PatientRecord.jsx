@@ -207,7 +207,7 @@ export function PatientRecord({
   const sidebarItems = [
     {
       key: "general",
-      label: "Patient Information",
+      label: "General Information",
       icon: UserRound,
     },
     {
@@ -344,7 +344,7 @@ export function PatientRecord({
 
               <div className="ht-content-card">
 
-                <h2>Patient Information</h2>
+                <h2>General Information</h2>
 
                 <dl className="ht-detail-grid">
 
