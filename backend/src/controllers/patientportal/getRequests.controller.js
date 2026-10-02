@@ -3,7 +3,12 @@ import { calculateAge } from "../../utils/calculateAge.js";
 import { RECORD_TYPES } from "../../config/recordTypes.js";
 
 async function findMyPatient(userId) {
-  const rows = await sql`SELECT * FROM patients WHERE user_id = ${userId} AND archived_at IS NULL`;
+  const rows = await sql`
+    SELECT p.*, u.email, u.created_at AS account_created_at
+    FROM patients p
+    LEFT JOIN users u ON u.user_id = p.user_id
+    WHERE p.user_id = ${userId} AND p.archived_at IS NULL
+  `;
   return rows[0] ?? null;
 }
 
