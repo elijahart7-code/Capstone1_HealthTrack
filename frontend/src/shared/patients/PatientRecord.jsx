@@ -1277,28 +1277,38 @@ export function PatientRecord({
         /* ================= PORTAL ACCOUNT ================= */
 
         .ht-portal-card {
-          border: 1px solid #9eb7aa;
-          border-radius: 11px;
-          padding: 20px 28px;
+          width: 100%;
+          border: 1px solid #DDF3EA;
+          border-radius: 14px;
+          padding: 22px 26px;
+          background: #FFFFFF;
+          box-shadow: 0 4px 16px rgba(7, 59, 42, 0.045);
         }
         .ht-portal-card .ht-card-heading {
-          margin-bottom: 18px;
+          margin-bottom: 20px;
+        }
+        .ht-portal-card .ht-card-heading h2 {
+          color: #073B2A;
+          font-family: var(--font-sans);
+          font-size: 1.05rem;
+          font-weight: 800;
         }
         .ht-portal-info {
-          display: flex;
+          display: grid;
+          grid-template-columns: 112px minmax(0, 1fr);
           align-items: center;
-          gap: 35px;
-          min-height: 105px;
+          gap: 26px;
+          min-height: 112px;
         }
          /* Large account icon */
         .ht-portal-avatar {
           position: relative;
-          width: 92px;
-          height: 92px;
-          min-width: 92px;
+          width: 88px;
+          height: 88px;
+          min-width: 88px;
           border-radius: 50%;
-          background: #eaf7f0;
-          color: #3f725b;
+          background: #F2FAF6;
+          color: #0F513F;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1308,49 +1318,59 @@ export function PatientRecord({
           position: absolute;
           right: 2px;
           bottom: 4px;
-          width: 25px;
-          height: 25px;
+          width: 26px;
+          height: 26px;
           border-radius: 50%;
-          background: #24824f;
-          color: white;
+          background: #0F513F;
+          color: #FFFFFF;
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 14px;
           font-weight: 800;
-          border: 3px solid white;
+          border: 3px solid #FFFFFF;
         }
          /* Details */
         .ht-portal-details {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+          gap: 0;
+          min-width: 0;
         }
         .ht-portal-detail {
-          display: flex;
+          display: grid;
+          grid-template-columns: minmax(145px, 0.7fr) minmax(0, 1.3fr);
           align-items: center;
-          gap: 12px;
-          font-size: 12px;
+          gap: 18px;
+          min-height: 40px;
+          border-bottom: 1px solid #E6F2EC;
+          font-size: 0.82rem;
+        }
+        .ht-portal-detail:last-child {
+          border-bottom: 0;
         }
         .ht-portal-detail > span:first-child {
-          width: 135px;
-          color: #56645d;
+          color: #073B2A;
           font-weight: 700;
         }
         .ht-portal-detail strong {
-          color: #28352f;
+          min-width: 0;
+          color: #073B2A;
           font-weight: 600;
+          overflow-wrap: anywhere;
         }
             /* Active badge */
         .ht-account-status {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          padding: 5px 14px;
-          border-radius: 7px;
-          background: #e2f5e9;
-          color: #277548;
-          font-size: 11px;
+          justify-self: start;
+          padding: 5px 12px;
+          border: 1px solid #DDF3EA;
+          border-radius: 999px;
+          background: #F2FAF6;
+          color: #0F513F;
+          font-size: 0.75rem;
           font-weight: 700;
         }
         .ht-card-heading {
@@ -1577,6 +1597,25 @@ export function PatientRecord({
 
           .ht-detail-grid {
             grid-template-columns: 1fr;
+          }
+
+          .ht-portal-card {
+            padding: 18px;
+          }
+
+          .ht-portal-info {
+            grid-template-columns: 1fr;
+            justify-items: center;
+            gap: 18px;
+          }
+
+          .ht-portal-details {
+            width: 100%;
+          }
+
+          .ht-portal-detail {
+            grid-template-columns: minmax(115px, 0.8fr) minmax(0, 1.2fr);
+            gap: 12px;
           }
 
         }
