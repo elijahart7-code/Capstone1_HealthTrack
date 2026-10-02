@@ -4238,6 +4238,145 @@
     line-height: 1.4;
 }
 
+.patient-latest-appointment {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 16px;
+    min-width: 0;
+    padding: 18px 20px;
+    background: #ffffff;
+    border: 1px solid rgba(12, 79, 70, 0.09);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(15, 29, 26, 0.035);
+}
+
+.patient-latest-appointment-icon {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: #e3f5ed;
+    color: #08755f;
+}
+
+.patient-latest-appointment-copy {
+    display: grid;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.patient-latest-appointment-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.patient-latest-appointment-copy h2 {
+    margin: 0;
+    color: #073f35;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.patient-latest-appointment-details {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 0.75rem 1.5rem;
+    min-width: 0;
+}
+
+.patient-latest-appointment-details > div {
+    display: grid;
+    align-content: start;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.patient-latest-appointment-details span {
+    color: #667875;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.patient-latest-appointment-details strong {
+    color: #263b36;
+    font-size: 0.86rem;
+    font-weight: 700;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.patient-appointment-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: fit-content;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid rgba(13, 74, 62, 0.12);
+    border-radius: 999px;
+    background: #f2f8f5;
+    color: #40534d;
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.patient-appointment-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #75827f;
+}
+
+.patient-appointment-status.is-pending {
+    background: #fff7e8;
+    color: #845a16;
+}
+
+.patient-appointment-status.is-pending .patient-appointment-status-dot {
+    background: #d89522;
+}
+
+.patient-appointment-status.is-confirmed {
+    background: #eaf7f1;
+    color: #0d5f52;
+}
+
+.patient-appointment-status.is-confirmed .patient-appointment-status-dot {
+    background: #159467;
+}
+
+.patient-appointment-status.is-scheduled {
+    background: #edf4fb;
+    color: #355a7d;
+}
+
+.patient-appointment-status.is-scheduled .patient-appointment-status-dot {
+    background: #4f86b5;
+}
+
+.patient-latest-appointment-empty .patient-latest-appointment-copy {
+    gap: 0.35rem;
+}
+
+.patient-latest-appointment-empty .patient-latest-appointment-copy strong {
+    color: #263b36;
+    font-size: 0.86rem;
+}
+
+.patient-latest-appointment-empty .patient-latest-appointment-copy p {
+    margin: 0;
+    color: #667875;
+    font-size: 0.8rem;
+    line-height: 1.45;
+}
+
 
 /* =========================================================
    QUICK INFORMATION GRID
@@ -4846,6 +4985,15 @@
 
         min-width: 50px !important;
         flex-basis: 50px !important;
+    }
+
+    .patient-latest-appointment {
+        gap: 12px;
+        padding: 15px;
+    }
+
+    .patient-latest-appointment-details {
+        grid-template-columns: 1fr;
     }
 
 }
