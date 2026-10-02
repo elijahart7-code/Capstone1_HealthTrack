@@ -2844,19 +2844,27 @@
 
     .patient-midwife-note-recorded {
         display: flex;
-        align-items: flex-start;
-        gap: 0.45rem;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem 1rem;
         padding-top: 0.75rem;
         border-top: 1px solid rgba(13, 74, 62, 0.08);
-        color: #53615f;
+        color: #667875;
         font-size: 0.72rem;
         line-height: 1.45;
         overflow-wrap: anywhere;
     }
 
-    .patient-midwife-note-recorded svg {
+    .patient-midwife-note-recorded-date {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        min-width: 0;
+    }
+
+    .patient-midwife-note-recorded-date svg {
         flex: 0 0 16px;
-        color: #dc4d62;
+        color: #0d8069;
     }
 
     .patient-midwife-notes-section {
@@ -3003,8 +3011,9 @@
         padding: 0.75rem 0 0.85rem;
     }
 
-    .patient-midwife-note-card .patient-midwife-note-recorded svg {
-        color: #0d8069;
+    .patient-midwife-note-footer-label {
+        flex: 0 0 auto;
+        text-align: right;
     }
 
     .patient-vital-grid {
@@ -3769,6 +3778,10 @@
 
         .patient-midwife-note-card .patient-midwife-note-recorded {
             margin: 0 0.8rem;
+        }
+
+        .patient-midwife-note-recorded {
+            flex-wrap: wrap;
         }
 
         .patient-information-grid {
