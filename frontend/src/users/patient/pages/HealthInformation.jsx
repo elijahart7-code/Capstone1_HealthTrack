@@ -263,11 +263,11 @@ export function HealthInformation({ healthInfo }) {
 
         {section === "patient-information" && <section className="patient-healthinfo-card patient-portal-info-card">
           <div className="patient-portal-info-icon" aria-hidden="true">
-            <HeartPulse size={22} strokeWidth={1.8} />
+            <UserRound size={22} strokeWidth={1.8} />
           </div>
           <div className="patient-portal-info-copy">
             <h2>Patient Portal</h2>
-            <p>The patient portal allows patients to access their health information and communicate with their healthcare provider.</p>
+            <p>Access your personal health information and stay informed about your healthcare records.</p>
           </div>
           <button type="button" className="patient-portal-info-button" onClick={() => setSearchParams({ page: "dashboard" })}>
             Go to Patient Portal
