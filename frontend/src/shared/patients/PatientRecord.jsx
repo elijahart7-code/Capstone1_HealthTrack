@@ -1088,18 +1088,18 @@ export function PatientRecord({
 
         .ht-sidebar-item {
           width: 100%;
-          min-height: 54px;
+          min-height: 56px;
           display: flex;
           align-items: center;
-          gap: 11px;
-          padding: 8px 12px;
-          margin-bottom: 3px;
+          gap: 12px;
+          padding: 10px 12px;
+          margin-bottom: 4px;
           border: none;
           border-radius: 9px;
           background: transparent;
           color: #29352f;
           text-align: left;
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 650;
           cursor: pointer;
           transition: 0.18s ease;
@@ -1115,8 +1115,8 @@ export function PatientRecord({
         }
 
         .ht-sidebar-icon {
-          width: 31px;
-          height: 31px;
+          width: 34px;
+          height: 34px;
           display: flex;
           align-items: center;
           justify-content: center;
