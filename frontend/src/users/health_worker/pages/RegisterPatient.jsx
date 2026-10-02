@@ -242,11 +242,10 @@ export function RegisterPatient({ loadData, onRegistered }) {
                 <Select
                   value={selectedBirthLocation}
                   onChange={(e) => handleBirthLocationChange(e.target.value)}
-                  disabled={!selectedBirthRegion}
                   required
                 >
                   <option value="" disabled>
-                    {selectedBirthRegion ? "Select province/city/municipality" : "Select region first"}
+                    Select province/city/municipality
                   </option>
                   {birthLocationOptions.map((location) => (
                     <option key={location} value={location}>
