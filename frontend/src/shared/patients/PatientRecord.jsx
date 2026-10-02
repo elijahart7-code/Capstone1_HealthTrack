@@ -639,7 +639,7 @@ export function PatientRecord({
                     <div className="grid gap-3 sm:grid-cols-2">
 
                       <Field
-                        label="Date and time"
+                        label="Date and Time"
                         required
                       >
                         <Input
@@ -1161,18 +1161,20 @@ export function PatientRecord({
         }
 
         .ht-overview-header {
-          margin: 0 0 14px;
+          margin: 0 auto 14px;
+          text-align: center;
         }
 
         .ht-overview-header h2 {
           margin: 0;
           font-size: 24px;
           line-height: 1.2;
+          color: #000000;
         }
 
         .ht-overview-header p {
           margin: 5px 0 0;
-          color: #68766f;
+          color: #000000;
           font-size: 13px;
         }
 
