@@ -2899,6 +2899,70 @@
         text-align: center;
     }
 
+    .patient-healthinfo-card.patient-medical-history-card {
+        overflow: hidden;
+        padding: 0;
+        border: 1px solid rgba(12, 79, 70, 0.1);
+        border-radius: 12px;
+        background: #ffffff;
+    }
+
+    .patient-medical-history-card .patient-card-header {
+        margin: 0;
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid rgba(13, 74, 62, 0.08);
+    }
+
+    .patient-medical-history-list {
+        width: 100%;
+        margin: 0;
+    }
+
+    .patient-medical-history-row {
+        display: grid;
+        grid-template-columns: 20px minmax(150px, 0.8fr) 10px minmax(0, 1.2fr);
+        align-items: start;
+        column-gap: 0.65rem;
+        padding: 0.7rem 1rem;
+        border-bottom: 1px solid rgba(13, 74, 62, 0.08);
+    }
+
+    .patient-medical-history-row:last-child {
+        border-bottom: 0;
+    }
+
+    .patient-medical-history-icon {
+        display: grid;
+        place-items: start center;
+        min-height: 1.2rem;
+        color: #0f6b5f;
+    }
+
+    .patient-medical-history-row dt,
+    .patient-medical-history-row dd,
+    .patient-medical-history-separator {
+        min-width: 0;
+        margin: 0;
+        color: #1e2d2a;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+    }
+
+    .patient-medical-history-row dt {
+        font-weight: 700;
+    }
+
+    .patient-medical-history-separator {
+        color: #667875;
+        text-align: center;
+    }
+
+    .patient-medical-history-meta {
+        background: rgba(13, 74, 62, 0.025);
+    }
+
     .patient-latest-notes .patient-latest-note {
         margin: 0;
         padding: 0.7rem 0.8rem;
@@ -3163,6 +3227,22 @@
     }
 
     @media (max-width: 640px) {
+        .patient-medical-history-row {
+            grid-template-columns: 18px minmax(0, 0.9fr) 8px minmax(0, 1.1fr);
+            column-gap: 0.45rem;
+            padding: 0.65rem 0.75rem;
+        }
+
+        .patient-medical-history-row dt,
+        .patient-medical-history-row dd,
+        .patient-medical-history-separator {
+            font-size: 0.74rem;
+        }
+
+        .patient-medical-history-card .patient-card-header {
+            padding: 0.75rem;
+        }
+
         .patient-healthinfo-header-copy {
             flex-wrap: wrap;
         }
