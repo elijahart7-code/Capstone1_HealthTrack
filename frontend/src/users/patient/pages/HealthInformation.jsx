@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { getCurrentUser } from "../../../lib/auth";
 import {
   Home,
   Calendar,
@@ -82,7 +81,6 @@ export function HealthInformation({ healthInfo }) {
   }
 
   const patient = healthInfo.patient;
-  const currentUser = getCurrentUser();
   const recordTypes = healthInfo.recordTypes || {};
   const records = healthInfo.records || {};
   const appointments = healthInfo.appointments || [];
@@ -178,7 +176,6 @@ export function HealthInformation({ healthInfo }) {
               <h1>Patient Profile</h1>
               <p>Your latest health information from your most recent checkup.</p>
             </header>
-            <PatientPortalAccount patient={patient} currentUser={currentUser} />
             <LatestAppointment
               appointment={upcomingAppointment}
               hasAppointmentHistory={appointments.length > 0}
@@ -339,45 +336,6 @@ export function HealthInformation({ healthInfo }) {
         )}
       </main>
     </div>
-  );
-}
-
-function PatientPortalAccount({ patient, currentUser }) {
-  const accountCreatedAt = patient.account_created_at || patient.user_created_at;
-  const accountCreatedDate = accountCreatedAt && Number.isFinite(Date.parse(accountCreatedAt))
-    ? new Date(accountCreatedAt).toLocaleDateString(undefined, {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    })
-    : "--";
-
-  return (
-    <section className="patient-healthinfo-card patient-portal-account-card" aria-labelledby="patient-portal-account-title">
-      <h2 id="patient-portal-account-title">Patient Portal Account</h2>
-      <div className="patient-portal-account-content">
-        <div className="patient-portal-account-avatar" aria-label="Verified patient account">
-          <UserRound size={52} strokeWidth={1.6} aria-hidden="true" />
-          <span className="patient-portal-account-verified" aria-hidden="true">
-            <CircleCheck size={19} strokeWidth={2.4} />
-          </span>
-        </div>
-        <dl className="patient-portal-account-details">
-          <div>
-            <dt>Account Status:</dt>
-            <dd className="patient-portal-account-status">Active</dd>
-          </div>
-          <div>
-            <dt>Email Address:</dt>
-            <dd>{patient.email || patient.portal_email || currentUser?.email || "--"}</dd>
-          </div>
-          <div>
-            <dt>Account Created:</dt>
-            <dd>{accountCreatedDate}</dd>
-          </div>
-        </dl>
-      </div>
-    </section>
   );
 }
 
