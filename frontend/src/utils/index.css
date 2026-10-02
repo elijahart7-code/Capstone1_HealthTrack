@@ -2844,6 +2844,206 @@
         color: #dc4d62;
     }
 
+    .patient-midwife-notes-section {
+        display: grid;
+        gap: 1rem;
+        min-width: 0;
+        padding: 1rem 1.1rem;
+        background: #ffffff;
+    }
+
+    .patient-midwife-notes-heading {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        min-width: 0;
+    }
+
+    .patient-midwife-notes-heading-icon,
+    .patient-midwife-note-card-header .patient-midwife-note-icon {
+        position: relative;
+        display: grid;
+        place-items: center;
+        flex: 0 0 46px;
+        width: 46px;
+        height: 46px;
+        border-radius: 11px;
+        background: #dff4ec;
+        color: #0d5f52;
+    }
+
+    .patient-midwife-notes-heading-icon > svg:first-child,
+    .patient-midwife-note-card-header .patient-midwife-note-icon > svg:first-child {
+        width: 25px;
+        height: 25px;
+    }
+
+    .patient-midwife-notes-heading-icon > svg:last-child,
+    .patient-midwife-note-card-header .patient-midwife-note-icon > svg:last-child {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        width: 14px;
+        height: 14px;
+        padding: 1px;
+        border-radius: 4px;
+        background: #dff4ec;
+    }
+
+    .patient-midwife-notes-heading h2 {
+        flex: 1;
+        min-width: 0;
+        margin: 0;
+        color: #17312d;
+        font-family: var(--font-sans);
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+
+    .patient-midwife-notes-list {
+        display: grid;
+        gap: 0.85rem;
+        min-width: 0;
+    }
+
+    .patient-midwife-note-card {
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid rgba(13, 74, 62, 0.13);
+        border-radius: 11px;
+        background: #ffffff;
+    }
+
+    .patient-midwife-note-card-header {
+        display: grid;
+        grid-template-columns: 46px minmax(0, 1fr);
+        align-items: center;
+        gap: 0.9rem;
+        min-height: 88px;
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid rgba(13, 74, 62, 0.12);
+        background: #f0faf6;
+    }
+
+    .patient-midwife-note-card-header .patient-midwife-note-icon {
+        width: 46px;
+        height: 46px;
+        margin: 0;
+    }
+
+    .patient-midwife-note-card-header .patient-midwife-note-meta {
+        align-items: stretch;
+        gap: 0;
+    }
+
+    .patient-midwife-note-card-header .patient-midwife-note-meta > div {
+        gap: 0.3rem;
+        padding: 0 0.9rem;
+    }
+
+    .patient-midwife-note-card-header .patient-midwife-note-meta > div:first-child {
+        padding-left: 0;
+    }
+
+    .patient-midwife-note-card-header .patient-midwife-note-meta > div + div {
+        border-left: 1px solid rgba(13, 74, 62, 0.16);
+    }
+
+    .patient-midwife-note-card .patient-midwife-note-label {
+        color: #344b45;
+        font-size: 0.76rem;
+    }
+
+    .patient-midwife-note-card .patient-midwife-note-value {
+        color: #1e2d2a;
+        font-size: 0.84rem;
+    }
+
+    .patient-midwife-note-card .patient-midwife-note-content {
+        padding: 0.95rem 1rem 1rem;
+    }
+
+    .patient-midwife-note-card .patient-midwife-note-content h3 {
+        margin-bottom: 0.45rem;
+        font-size: 0.84rem;
+    }
+
+    .patient-midwife-note-card .patient-midwife-note-content ul,
+    .patient-midwife-note-card .patient-midwife-note-content p {
+        font-size: 0.84rem;
+        line-height: 1.55;
+    }
+
+    .patient-midwife-note-card .patient-midwife-note-content ul {
+        gap: 0.25rem;
+    }
+
+    .patient-midwife-note-plain-text {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .patient-midwife-note-card .patient-midwife-note-recorded {
+        margin: 0 1rem;
+        padding: 0.75rem 0 0.85rem;
+    }
+
+    .patient-midwife-note-card .patient-midwife-note-recorded svg {
+        color: #0d8069;
+    }
+
+    .patient-midwife-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem 1rem;
+        padding-top: 0.2rem;
+        color: #667875;
+        font-size: 0.8rem;
+    }
+
+    .patient-midwife-page-indicator {
+        white-space: nowrap;
+    }
+
+    .patient-midwife-page-controls {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.6rem;
+    }
+
+    .patient-midwife-page-controls button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        min-height: 38px;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid rgba(13, 74, 62, 0.2);
+        border-radius: 8px;
+        background: #ffffff;
+        color: #0d4a3e;
+        font: inherit;
+        font-size: 0.78rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .patient-midwife-page-controls button:hover:not(:disabled) {
+        background: #f0faf6;
+    }
+
+    .patient-midwife-page-controls button:disabled {
+        background: #f4f6f5;
+        color: #a0aaa7;
+        cursor: not-allowed;
+    }
+
+    .patient-midwife-page-controls button:focus-visible {
+        outline: 3px solid rgba(13, 128, 105, 0.22);
+        outline-offset: 2px;
+    }
+
     .patient-vital-grid {
         display: grid;
         grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -3556,6 +3756,68 @@
 
         .patient-healthinfo-header-copy {
             flex-wrap: wrap;
+        }
+
+        .patient-midwife-notes-section {
+            padding: 0.85rem;
+        }
+
+        .patient-midwife-notes-heading-icon {
+            flex-basis: 40px;
+            width: 40px;
+            height: 40px;
+        }
+
+        .patient-midwife-notes-heading h2 {
+            font-size: 1.05rem;
+        }
+
+        .patient-midwife-note-card-header {
+            grid-template-columns: 40px minmax(0, 1fr);
+            gap: 0.7rem;
+            padding: 0.8rem;
+        }
+
+        .patient-midwife-note-card-header .patient-midwife-note-icon {
+            flex-basis: 40px;
+            width: 40px;
+            height: 40px;
+        }
+
+        .patient-midwife-note-card-header .patient-midwife-note-meta {
+            grid-template-columns: 1fr;
+            gap: 0.65rem;
+        }
+
+        .patient-midwife-note-card-header .patient-midwife-note-meta > div,
+        .patient-midwife-note-card-header .patient-midwife-note-meta > div:first-child {
+            padding: 0;
+        }
+
+        .patient-midwife-note-card-header .patient-midwife-note-meta > div + div {
+            padding-top: 0.65rem;
+            border-top: 1px solid rgba(13, 74, 62, 0.14);
+            border-left: 0;
+        }
+
+        .patient-midwife-note-card .patient-midwife-note-content {
+            padding: 0.8rem;
+        }
+
+        .patient-midwife-note-card .patient-midwife-note-recorded {
+            margin: 0 0.8rem;
+        }
+
+        .patient-midwife-pagination {
+            flex-wrap: wrap;
+        }
+
+        .patient-midwife-page-controls {
+            width: 100%;
+        }
+
+        .patient-midwife-page-controls button {
+            flex: 1 1 auto;
         }
 
         .patient-information-grid {
