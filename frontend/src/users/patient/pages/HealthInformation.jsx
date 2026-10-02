@@ -27,7 +27,6 @@ import {
   UsersRound,
   Syringe,
   ArrowRight,
-  Monitor,
   Briefcase,
   IdCard,
   MapPin,
@@ -236,7 +235,7 @@ export function HealthInformation({ healthInfo }) {
             <div className="patient-table-footer">Showing 1 to {appointments.length} of {appointments.length} appointments</div>
         </section>}
 
-        {section === "patient-information" && <section className="patient-healthinfo-card patient-information-card">
+        {section === "patient-information" && <section className="patient-healthinfo-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
@@ -264,7 +263,7 @@ export function HealthInformation({ healthInfo }) {
 
         {section === "patient-information" && <section className="patient-healthinfo-card patient-portal-info-card">
           <div className="patient-portal-info-icon" aria-hidden="true">
-            <Monitor size={22} strokeWidth={1.8} />
+            <HeartPulse size={22} strokeWidth={1.8} />
           </div>
           <div className="patient-portal-info-copy">
             <h2>Patient Portal</h2>
