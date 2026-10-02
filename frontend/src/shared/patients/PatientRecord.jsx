@@ -113,15 +113,6 @@ export function PatientRecord({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId]);
 
-  useEffect(() => {
-    if (section === "appointments") {
-      document.getElementById("ht-patient-appointments")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  }, [section]);
-
   async function scheduleAppointment() {
     setApptError(null);
 
@@ -248,12 +239,6 @@ export function PatientRecord({
       icon: UserRound,
     },
     {
-      key: "appointments",
-      label: "Appointments",
-      icon: Calendar,
-      group: "Patient Information",
-    },
-    {
       key: "general",
       label: "General Information",
       icon: UserRound,
@@ -357,16 +342,15 @@ export function PatientRecord({
               section === item.key;
 
             return (
-              <div className="ht-sidebar-entry" key={item.key}>
-                {item.group && <div className="ht-sidebar-heading">{item.group}</div>}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSection(item.key);
-                    if (item.key === "profile") loadOverview();
-                  }}
-                  className={`ht-sidebar-item ${active ? "active" : ""}`}
-                >
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => {
+                  setSection(item.key);
+                  if (item.key === "profile") loadOverview();
+                }}
+                className={`ht-sidebar-item ${active ? "active" : ""}`}
+              >
 
                 <span className="ht-sidebar-icon">
                   <Icon size={18} />
@@ -376,8 +360,7 @@ export function PatientRecord({
                   {item.label}
                 </span>
 
-                </button>
-              </div>
+              </button>
             );
           })}
 
@@ -392,7 +375,7 @@ export function PatientRecord({
           )}
 
           {/* GENERAL / PATIENT INFORMATION */}
-          {(section === "general" || section === "appointments") && (
+          {section === "general" && (
             <div className="grid gap-4">
 
               <div className="ht-content-card">
@@ -621,7 +604,7 @@ export function PatientRecord({
 
 </div>
               {/* APPOINTMENTS */}
-              <div id="ht-patient-appointments" className="ht-content-card ht-patient-appointments">
+              <div className="ht-content-card ht-patient-appointments">
 
                 <div className="ht-card-heading">
 
@@ -840,7 +823,7 @@ export function PatientRecord({
 
 
           {/* CLINICAL RECORDS */}
-          {section !== "general" && section !== "appointments" && section !== "profile" && (
+          {section !== "general" && section !== "profile" && (
             <ClinicalRecords
               patientId={patientId}
               type={
@@ -1113,19 +1096,6 @@ export function PatientRecord({
           border-radius: 12px;
           padding: 10px;
           min-height: 430px;
-        }
-
-        .ht-sidebar-heading {
-          padding: 18px 12px 8px;
-          color: #66766d;
-          font-size: 10px;
-          font-weight: 800;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-        }
-
-        .ht-sidebar-entry:first-child + .ht-sidebar-entry .ht-sidebar-heading {
-          padding-top: 10px;
         }
 
         .ht-sidebar-item {
