@@ -27,9 +27,11 @@ import {
   UsersRound,
   Syringe,
   ArrowRight,
+  Monitor,
   Briefcase,
   IdCard,
   MapPin,
+  Phone,
   PhoneCall,
 } from "lucide-react";
 
@@ -65,7 +67,7 @@ export function HealthInformation({ healthInfo }) {
     }
   }, [currentSection]);
 
-  if (!healthInfo.patient) {
+  if (!healthInfo?.patient) {
     return (
       <div className="ht-panel">
         <div className="ht-empty">
@@ -78,8 +80,13 @@ export function HealthInformation({ healthInfo }) {
     );
   }
 
-  const { patient, recordTypes, records, appointments } = healthInfo;
-  const patientName = `${patient.first_name} ${patient.middle_name || ""} ${patient.last_name}`.replace(/\s+/g, " ").trim();
+  const patient = healthInfo.patient;
+  const recordTypes = healthInfo.recordTypes || {};
+  const records = healthInfo.records || {};
+  const appointments = healthInfo.appointments || [];
+  const patientName = [patient.first_name, patient.middle_name, patient.last_name]
+    .filter(Boolean)
+    .join(" ");
   const latestRecords = Object.fromEntries(
     ["vital-signs", "health-assessment", "allergies", "midwife-notes"].map((key) => [
       key,
@@ -229,7 +236,7 @@ export function HealthInformation({ healthInfo }) {
             <div className="patient-table-footer">Showing 1 to {appointments.length} of {appointments.length} appointments</div>
         </section>}
 
-        {section === "patient-information" && <section className="patient-healthinfo-card">
+        {section === "patient-information" && <section className="patient-healthinfo-card patient-information-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
@@ -257,7 +264,7 @@ export function HealthInformation({ healthInfo }) {
 
         {section === "patient-information" && <section className="patient-healthinfo-card patient-portal-info-card">
           <div className="patient-portal-info-icon" aria-hidden="true">
-            <HeartPulse size={22} strokeWidth={1.8} />
+            <Monitor size={22} strokeWidth={1.8} />
           </div>
           <div className="patient-portal-info-copy">
             <h2>Patient Portal</h2>
