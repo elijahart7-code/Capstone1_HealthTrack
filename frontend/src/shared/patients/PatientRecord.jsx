@@ -1239,14 +1239,16 @@ export function PatientRecord({
 
         .ht-detail-grid {
           display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 28px 45px;
+          grid-template-columns: repeat(3, minmax(220px, 1fr));
+          gap: 22px 30px;
         }
         .ht-detail-item {
           display: flex;
           align-items: flex-start;
           gap: 12px;
           min-width: 0;
+          width: 100%;
+          min-height: 64px;
         }
         .ht-detail-icon {
           width: 40px;
@@ -1261,24 +1263,28 @@ export function PatientRecord({
         }
         .ht-detail-content {
           min-width: 0;
+          width: 100%;
+          max-width: 220px;
         }
         .ht-detail-grid dt {
           margin-bottom: 5px;
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 700;
           color: #56645d;
+          line-height: 1.4;
         }
         .ht-detail-grid dd {
           margin: 0;
-          font-size: 13px;
+          font-size: 14px;
           color: #28352f;
-          line-height: 1.45;
+          line-height: 1.5;
+          word-break: break-word;
         }
         .ht-emergency-row {
           grid-column: 1 / -1;
           display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 28px 45px;
+          grid-template-columns: repeat(3, minmax(220px, 1fr));
+          gap: 22px 30px;
           border-top: 1px solid #dfeae4;
           padding-top: 24px;
         }
