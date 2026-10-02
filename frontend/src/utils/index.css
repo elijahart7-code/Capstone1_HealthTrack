@@ -2699,9 +2699,22 @@
         border-color: rgba(12, 79, 70, 0.1);
     }
 
+    .patient-healthinfo-main .patient-latest-appointment-card {
+        padding: 0.8rem 1rem;
+        border: 1px solid #e3eeea;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(15, 29, 26, 0.045);
+    }
+
     .patient-latest-appointment-card .patient-latest-card-header {
         min-height: 54px;
         background: #eaf7f1;
+    }
+
+    .patient-healthinfo-main .patient-latest-appointment-card .patient-latest-card-header {
+        min-height: 0;
+        padding: 0;
+        background: #ffffff;
     }
 
     .patient-appointment-icon {
@@ -2712,6 +2725,23 @@
         border-radius: 9px;
         background: #d9f1e7;
         color: #0d8069;
+    }
+
+    .patient-healthinfo-main .patient-appointment-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: #e3f5ed;
+        color: #08755f;
+    }
+
+    .patient-healthinfo-main .patient-latest-title h2 {
+        font-size: 0.96rem;
+    }
+
+    .patient-healthinfo-main .patient-appointment-status {
+        padding: 0.28rem 0.55rem;
+        font-size: 0.68rem;
     }
 
     .patient-appointment-status {
@@ -2764,9 +2794,15 @@
 
     .patient-latest-appointment-details {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.85rem 1.5rem;
-        padding: 0.9rem 1rem 1rem;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0.75fr) minmax(0, 1.35fr);
+        gap: 0.75rem 1.25rem;
+        padding: 0.75rem 0 0;
+    }
+
+    .patient-healthinfo-main .patient-latest-appointment-details {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0.75fr) minmax(0, 1.35fr);
+        gap: 0.75rem 1.25rem;
+        padding: 0.75rem 0 0;
     }
 
     .patient-latest-appointment-details > div {
@@ -2793,7 +2829,11 @@
     .patient-latest-appointment-empty {
         display: grid;
         gap: 0.25rem;
-        padding: 0.9rem 1rem 1rem;
+        padding: 0.75rem 0 0;
+    }
+
+    .patient-healthinfo-main .patient-latest-appointment-empty {
+        padding-top: 0.75rem;
     }
 
     .patient-latest-appointment-empty strong {
@@ -5117,4 +5157,16 @@
     }
 
 }
+}
+
+@media (max-width: 640px) {
+    .patient-healthinfo-main .patient-latest-appointment-card .patient-latest-card-header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .patient-healthinfo-main .patient-latest-appointment-details {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.65rem;
+    }
 }
