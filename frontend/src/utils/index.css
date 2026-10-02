@@ -3101,10 +3101,6 @@
         overflow-x: auto;
     }
 
-    .patient-vitals-record-section .patient-table-wrap {
-        border-radius: 10px;
-    }
-
     .patient-health-table {
         width: 100%;
         border-collapse: separate;
@@ -3115,41 +3111,147 @@
         background: #fff;
     }
 
-    .patient-vitals-record-section .patient-health-table {
-        width: 1200px;
-        min-width: 100%;
-        table-layout: fixed;
-        border-radius: 10px;
+    .patient-vitals-section {
+        display: grid;
+        gap: 0.9rem;
+        background: #ffffff;
     }
 
-    .patient-vitals-record-section .patient-health-table th,
-    .patient-vitals-record-section .patient-health-table td {
-        height: auto;
-        padding: 0.8rem 0.75rem;
+    .patient-vitals-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        min-width: 0;
+    }
+
+    .patient-vitals-heading .patient-card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        min-width: 0;
+    }
+
+    .patient-vitals-heading .patient-card-title h2 {
+        margin: 0;
+        color: #17312d;
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .patient-vitals-document-icon {
+        display: grid;
+        place-items: center;
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: #eaf7f1;
+        color: #0d8069;
+    }
+
+    .patient-vitals-view-all {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 38px;
+        padding: 0.55rem 0.8rem;
+        border: 1px solid rgba(13, 74, 62, 0.12);
+        border-radius: 9px;
+        background: #eaf7f1;
+        color: #0d4a3e;
+        font: inherit;
+        font-size: 0.8rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background 0.16s ease;
+    }
+
+    .patient-vitals-view-all:hover {
+        background: #dff1e9;
+    }
+
+    .patient-vitals-view-all:focus-visible {
+        outline: 3px solid rgba(13, 128, 105, 0.25);
+        outline-offset: 2px;
+    }
+
+    .patient-vitals-table-wrap {
+        overflow-x: auto;
+        border: 1px solid rgba(13, 74, 62, 0.12);
+        border-radius: 10px;
+        background: #ffffff;
+    }
+
+    .patient-vitals-table {
+        width: 100%;
+        min-width: 580px;
+        table-layout: fixed;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .patient-vitals-measurement-column {
+        width: 52%;
+    }
+
+    .patient-vitals-result-column {
+        width: 28%;
+    }
+
+    .patient-vitals-unit-column {
+        width: 20%;
+    }
+
+    .patient-vitals-table th,
+    .patient-vitals-table td {
+        padding: 0.7rem 0.85rem;
+        text-align: left;
+        vertical-align: middle;
         white-space: normal;
         overflow-wrap: anywhere;
-        vertical-align: middle;
-    }
-
-    .patient-vitals-record-section .patient-health-table th {
-        background: #eaf7f1;
-        color: #17483e;
         line-height: 1.4;
     }
 
-    .patient-vitals-record-section .patient-health-table tbody td {
+    .patient-vitals-section .patient-vitals-table th {
+        background: #eaf7f1;
+        color: #17483e;
+        font-weight: 800;
+    }
+
+    .patient-vitals-table tbody td {
         background: #ffffff;
+    }
+
+    .patient-vitals-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .patient-vitals-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem 1rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid rgba(13, 74, 62, 0.1);
+        color: #667875;
+        font-size: 0.76rem;
         line-height: 1.45;
     }
 
-    .patient-vitals-record-section .patient-health-table th:nth-child(-n+9),
-    .patient-vitals-record-section .patient-health-table td:nth-child(-n+9) {
-        width: 9.65%;
+    .patient-vitals-recorded-date {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        color: #0d4a3e;
+        font-weight: 700;
     }
 
-    .patient-vitals-record-section .patient-health-table th:nth-child(10),
-    .patient-vitals-record-section .patient-health-table td:nth-child(10) {
-        width: 13.15%;
+    .patient-vitals-recorded-date svg {
+        flex: 0 0 auto;
+        color: #0d8069;
     }
 
     .patient-vital-table {
