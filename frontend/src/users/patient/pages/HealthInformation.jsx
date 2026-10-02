@@ -241,7 +241,7 @@ export function HealthInformation({ healthInfo }) {
 
             <div className="patient-information-grid">
               <InfoField icon={User} label="Full Name" value={patientName} />
-              <InfoField icon={UserRound} label="Sex" value={patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null} />
+              <InfoField icon={UserRound} label="Sex" value={patient.sex} />
               <InfoField icon={CalendarDays} label="Date of Birth" value={patient.birthdate ? new Date(patient.birthdate).toLocaleDateString() : null} />
               <InfoField icon={Clock3} label="Age" value={patient.age != null ? `${patient.age} years old` : null} />
               <InfoField icon={MapPin} label="Address" value={patient.address} />
