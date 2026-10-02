@@ -513,6 +513,26 @@
     .ht-button:hover { background: var(--color-brand); }
     .ht-button:disabled { opacity: 0.55; cursor: not-allowed; }
 
+    .ht-current-date-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-height: 42px;
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        background: var(--color-brand-strong);
+        color: #fff;
+        font-size: 0.81rem;
+        font-weight: 700;
+        line-height: 1.2;
+        box-shadow: 0 1px 2px rgba(15, 107, 95, 0.14);
+    }
+
+    .ht-current-date-pill svg {
+        flex-shrink: 0;
+    }
+
     .ht-button-muted {
         background: rgba(255, 255, 255, 0.85);
         border-color: rgba(15, 107, 95, 0.42);

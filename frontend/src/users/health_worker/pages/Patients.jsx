@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Eye } from "lucide-react";
+import { CalendarDays, Eye } from "lucide-react";
 import { useSearchParams } from "react-router";
 import { calculateAge } from "../../../utils/calculateAge";
 import { PageHeader } from "../../../components/ui/PageHeader";
@@ -16,6 +16,12 @@ export function Patients({ patients, loadData }) {
   const [sortBy, setSortBy] = useState("last_name");
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const currentDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "2-digit",
+    year: "numeric",
+  });
 
   const visible = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -67,9 +73,10 @@ export function Patients({ patients, loadData }) {
   return (
     <div className="grid gap-4">
       <PageHeader title="Patients" subtitle="Everyone registered at the Barangay Health Center of Mambog I.">
-        <button onClick={() => setSearchParams({ page: "register-patient" })} className="ht-button">
-          Register Patient
-        </button>
+        <div className="ht-current-date-pill">
+          <CalendarDays size={16} strokeWidth={2} />
+          <span>{currentDate}</span>
+        </div>
       </PageHeader>
 
       <div className="ht-panel ht-healthworker-patients-panel">
