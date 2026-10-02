@@ -283,6 +283,13 @@ export function HealthInformation({ healthInfo }) {
               definition={definition}
               records={records[key] || []}
             />
+          ) : key === "health-assessment" ? (
+            <HealthAssessmentSection
+              key={key}
+              definition={definition}
+              records={records[key] || []}
+              onViewAll={() => selectSection(key)}
+            />
           ) : key === "vital-signs" ? (
             <VitalSignsSection
               key={key}
@@ -819,6 +826,66 @@ function AllergyRecordsSection({ definition, records, onViewAll }) {
         </>
       ) : (
         <div className="patient-empty-state">No allergies recorded.</div>
+      )}
+    </section>
+  );
+}
+
+function HealthAssessmentSection({ definition, records, onViewAll }) {
+  const latestRecord = getLatestRecord(records, "created_at");
+  const fields = Object.entries(definition.fields).filter(([, field]) => field.column || field.primary);
+
+  return (
+    <section className="patient-healthinfo-card patient-health-assessment-section">
+      <div className="patient-card-header">
+        <div className="patient-card-title">
+          <span className="patient-panel-icon patient-panel-icon-small">
+            <ClipboardList size={18} strokeWidth={1.8} />
+          </span>
+          <h2>{definition.label}</h2>
+        </div>
+        <span className="patient-card-total">{records.length} total</span>
+        <button type="button" className="patient-view-button" onClick={onViewAll}>
+          View All
+        </button>
+      </div>
+
+      {records.length > 0 ? (
+        <>
+          <div className="patient-table-wrap patient-health-assessment-table-wrap">
+            <table className="patient-health-table patient-health-assessment-table">
+              <thead>
+                <tr>
+                  {fields.map(([key, field]) => <th key={key}>{field.label}</th>)}
+                  <th>{definition.dateLabel}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {records.map((record) => (
+                  <tr key={record.record_id}>
+                    {fields.map(([key, field]) => {
+                      const value = record[key];
+                      const displayValue = field.type === "select" && value
+                        ? field.options?.[value] || value
+                        : value;
+                      return <td key={key}>{displayValue || "--"}</td>;
+                    })}
+                    <td>{formatRecordDate(record[definition.dateField]) || "--"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <footer className="patient-health-assessment-footer">
+            <span className="patient-health-assessment-recorded-date">
+              <CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" />
+              <span>Recorded on: {formatRecordDateTime(latestRecord?.created_at) || "Not recorded"}</span>
+            </span>
+            <span>Showing latest health assessment</span>
+          </footer>
+        </>
+      ) : (
+        <div className="patient-empty-state">No health assessment recorded.</div>
       )}
     </section>
   );
