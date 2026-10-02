@@ -371,7 +371,26 @@ export function PatientRecord({
         <main className="ht-patient-main">
 
           {section === "profile" && (
-            <PatientOverview records={overviewRecords} loading={overviewLoading} />
+            <PatientOverview records={overviewRecords} loading={overviewLoading}>
+              <PatientAppointments
+                isAdmin={isAdmin}
+                appointments={appointments}
+                showAppointmentForm={showAppointmentForm}
+                setShowAppointmentForm={setShowAppointmentForm}
+                apptError={apptError}
+                scheduledAt={scheduledAt}
+                setScheduledAt={setScheduledAt}
+                status={status}
+                setStatus={setStatus}
+                reason={reason}
+                setReason={setReason}
+                notes={notes}
+                setNotes={setNotes}
+                scheduleAppointment={scheduleAppointment}
+                updateAppointmentStatus={updateAppointmentStatus}
+                deleteAppointment={deleteAppointment}
+              />
+            </PatientOverview>
           )}
 
           {/* GENERAL / PATIENT INFORMATION */}
@@ -603,221 +622,6 @@ export function PatientRecord({
   )}
 
 </div>
-              {/* APPOINTMENTS */}
-              <div className="ht-content-card ht-patient-appointments">
-
-                <div className="ht-card-heading">
-
-                  <h2>Appointments</h2>
-
-                  {isAdmin && (
-                    <button
-                      onClick={() =>
-                        setShowAppointmentForm(
-                          (value) => !value
-                        )
-                      }
-                      className="ht-small-button"
-                    >
-                      {showAppointmentForm
-                        ? "Cancel"
-                        : "Schedule appointment"}
-                    </button>
-                  )}
-
-                </div>
-
-                {showAppointmentForm && (
-                  <div className="ht-form-box">
-
-                    {apptError && (
-                      <div className="ht-login-alert ht-login-alert-error">
-                        {apptError}
-                      </div>
-                    )}
-
-                    <div className="grid gap-3 sm:grid-cols-2">
-
-                      <Field
-                        label="Date and time"
-                        required
-                      >
-                        <Input
-                          type="datetime-local"
-                          value={scheduledAt}
-                          onChange={(e) =>
-                            setScheduledAt(
-                              e.target.value
-                            )
-                          }
-                        />
-                      </Field>
-
-                      <Field label="Status">
-                        <Select
-                          value={status}
-                          onChange={(e) =>
-                            setStatus(
-                              e.target.value
-                            )
-                          }
-                        >
-                          <option value="pending">
-                            Pending
-                          </option>
-
-                          <option value="confirmed">
-                            Confirmed
-                          </option>
-
-                          <option value="completed">
-                            Completed
-                          </option>
-
-                          <option value="cancelled">
-                            Cancelled
-                          </option>
-                        </Select>
-                      </Field>
-
-                    </div>
-
-                    <Field
-                      label="Reason"
-                      required
-                    >
-                      <Input
-                        value={reason}
-                        onChange={(e) =>
-                          setReason(e.target.value)
-                        }
-                        placeholder="e.g. Prenatal check-up"
-                      />
-                    </Field>
-
-                    <Field label="Notes">
-                      <Textarea
-                        value={notes}
-                        onChange={(e) =>
-                          setNotes(e.target.value)
-                        }
-                      />
-                    </Field>
-
-                    <div className="ht-form-buttons">
-
-                      <button
-                        onClick={
-                          scheduleAppointment
-                        }
-                        className="ht-primary-button"
-                      >
-                        Save appointment
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          setShowAppointmentForm(false)
-                        }
-                        className="ht-secondary-button"
-                      >
-                        Cancel
-                      </button>
-
-                    </div>
-
-                  </div>
-                )}
-
-                {appointments.length === 0 ? (
-                  <EmptyState>
-                    No appointments for this patient.
-                  </EmptyState>
-                ) : (
-                  <Table>
-
-                    <thead>
-                      <tr>
-                        <Th>Date and time</Th>
-                        <Th>Reason</Th>
-                        <Th>Status</Th>
-
-                        {isAdmin && (
-                          <Th>Action</Th>
-                        )}
-                      </tr>
-                    </thead>
-
-                    <tbody>
-
-                      {appointments.map((appointment) => (
-                        <tr
-                          key={
-                            appointment.appointment_id
-                          }
-                        >
-
-                          <Td>
-                            {new Date(
-                              appointment.scheduled_at
-                            ).toLocaleString()}
-                          </Td>
-
-                          <Td>
-                            {appointment.reason}
-                          </Td>
-
-                          <Td>
-                            {isAdmin ? (
-                              <Select
-                                aria-label={`Update status for ${appointment.reason}`}
-                                value={appointment.status}
-                                className={`ht-status-select ht-status-select-${appointment.status}`}
-                                onChange={(event) =>
-                                  updateAppointmentStatus(
-                                    appointment.appointment_id,
-                                    event.target.value
-                                  )
-                                }
-                              >
-                                {APPOINTMENT_STATUSES.map((statusOption) => (
-                                  <option key={statusOption} value={statusOption}>
-                                    {statusOption.charAt(0).toUpperCase() + statusOption.slice(1)}
-                                  </option>
-                                ))}
-                              </Select>
-                            ) : (
-                              <Badge>{appointment.status}</Badge>
-                            )}
-                          </Td>
-
-                          {isAdmin && (
-                            <Td>
-
-                              <button
-                                onClick={() =>
-                                  deleteAppointment(
-                                    appointment.appointment_id
-                                  )
-                                }
-                                className="ht-delete-button ht-patient-appointment-remove"
-                              >
-                                Remove
-                              </button>
-
-                            </Td>
-                          )}
-
-                        </tr>
-                      ))}
-
-                    </tbody>
-
-                  </Table>
-                )}
-
-              </div>
-
             </div>
           )}
 
@@ -1581,7 +1385,141 @@ function Detail({ icon, label, value }) {
   );
 }
 
-function PatientOverview({ records, loading }) {
+function PatientAppointments({
+  isAdmin,
+  appointments,
+  showAppointmentForm,
+  setShowAppointmentForm,
+  apptError,
+  scheduledAt,
+  setScheduledAt,
+  status,
+  setStatus,
+  reason,
+  setReason,
+  notes,
+  setNotes,
+  scheduleAppointment,
+  updateAppointmentStatus,
+  deleteAppointment,
+}) {
+  return (
+    <section className="ht-content-card ht-patient-appointments">
+      <div className="ht-card-heading">
+        <h2>Appointments</h2>
+        {isAdmin && (
+          <button
+            type="button"
+            onClick={() => setShowAppointmentForm((value) => !value)}
+            className="ht-small-button"
+          >
+            {showAppointmentForm ? "Cancel" : "Schedule appointment"}
+          </button>
+        )}
+      </div>
+
+      {showAppointmentForm && (
+        <div className="ht-form-box">
+          {apptError && <div className="ht-login-alert ht-login-alert-error">{apptError}</div>}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Date and time" required>
+              <Input
+                type="datetime-local"
+                value={scheduledAt}
+                onChange={(event) => setScheduledAt(event.target.value)}
+              />
+            </Field>
+            <Field label="Status">
+              <Select value={status} onChange={(event) => setStatus(event.target.value)}>
+                {APPOINTMENT_STATUSES.map((option) => (
+                  <option key={option} value={option}>
+                    {option.charAt(0).toUpperCase() + option.slice(1)}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+          </div>
+          <Field label="Reason" required>
+            <Input
+              value={reason}
+              onChange={(event) => setReason(event.target.value)}
+              placeholder="e.g. Prenatal check-up"
+            />
+          </Field>
+          <Field label="Notes">
+            <Textarea value={notes} onChange={(event) => setNotes(event.target.value)} />
+          </Field>
+          <div className="ht-form-buttons">
+            <button type="button" onClick={scheduleAppointment} className="ht-primary-button">
+              Save appointment
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowAppointmentForm(false)}
+              className="ht-secondary-button"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {appointments.length === 0 ? (
+        <EmptyState>No appointments for this patient.</EmptyState>
+      ) : (
+        <Table>
+          <thead>
+            <tr>
+              <Th>Date and time</Th>
+              <Th>Reason</Th>
+              <Th>Status</Th>
+              {isAdmin && <Th>Action</Th>}
+            </tr>
+          </thead>
+          <tbody>
+            {appointments.map((appointment) => (
+              <tr key={appointment.appointment_id}>
+                <Td>{new Date(appointment.scheduled_at).toLocaleString()}</Td>
+                <Td>{appointment.reason}</Td>
+                <Td>
+                  {isAdmin ? (
+                    <Select
+                      aria-label={`Update status for ${appointment.reason}`}
+                      value={appointment.status}
+                      className={`ht-status-select ht-status-select-${appointment.status}`}
+                      onChange={(event) => updateAppointmentStatus(appointment.appointment_id, event.target.value)}
+                    >
+                      {APPOINTMENT_STATUSES.map((option) => (
+                        <option key={option} value={option}>
+                          {option.charAt(0).toUpperCase() + option.slice(1)}
+                        </option>
+                      ))}
+                    </Select>
+                  ) : (
+                    <Badge>{appointment.status}</Badge>
+                  )}
+                </Td>
+                {isAdmin && (
+                  <Td>
+                    <button
+                      type="button"
+                      onClick={() => deleteAppointment(appointment.appointment_id)}
+                      className="ht-delete-button ht-patient-appointment-remove"
+                    >
+                      Remove
+                    </button>
+                  </Td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
+    </section>
+  );
+}
+
+function PatientOverview({ records, loading, children }) {
   return (
     <div className="ht-patient-overview">
       <header className="ht-overview-header">
@@ -1589,6 +1527,7 @@ function PatientOverview({ records, loading }) {
         <p>Summary of the patient's latest health information.</p>
       </header>
       <div className="ht-overview-stack">
+        {children}
         <OverviewRecordCard type="vital-signs" record={records["vital-signs"]} loading={loading} />
         <OverviewRecordCard type="health-assessment" record={records["health-assessment"]} loading={loading} />
         <OverviewRecordCard type="allergies" record={records.allergies} loading={loading} />
