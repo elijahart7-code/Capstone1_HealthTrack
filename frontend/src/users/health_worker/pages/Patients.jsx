@@ -72,7 +72,7 @@ export function Patients({ patients, loadData }) {
 
   return (
     <div className="grid gap-4">
-      <PageHeader title="Patients" subtitle="Everyone registered at the Barangay Health Center of Mambog I.">
+      <PageHeader title="Patients" subtitle="Everyone who registered at the Barangay Health Center of Mambog I.">
         <div className="ht-current-date-pill">
           <CalendarDays size={16} strokeWidth={2} />
           <span>{currentDate}</span>
