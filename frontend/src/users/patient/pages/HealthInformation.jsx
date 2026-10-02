@@ -84,6 +84,14 @@ export function HealthInformation({ healthInfo }) {
   const recordTypes = healthInfo.recordTypes || {};
   const records = healthInfo.records || {};
   const appointments = healthInfo.appointments || [];
+  const now = Date.now();
+  const upcomingAppointment = appointments
+    .filter((appointment) => {
+      const scheduledTime = Date.parse(appointment.scheduled_at);
+      const status = appointment.status?.toLowerCase();
+      return Number.isFinite(scheduledTime) && scheduledTime >= now && status !== "completed" && status !== "cancelled";
+    })
+    .sort((first, second) => Date.parse(first.scheduled_at) - Date.parse(second.scheduled_at))[0] || null;
   const patientName = [patient.first_name, patient.middle_name, patient.last_name]
     .filter(Boolean)
     .join(" ");
@@ -168,6 +176,7 @@ export function HealthInformation({ healthInfo }) {
               <h1>Overview</h1>
               <p>Your latest health information from your most recent checkup.</p>
             </header>
+            <LatestAppointment appointment={upcomingAppointment} />
             <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} />
             <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} />
             <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} />
@@ -447,6 +456,50 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, childre
       <div className="patient-latest-card-content">
         {record ? children : <div className="patient-empty-state">No {definition.label.toLowerCase()} recorded yet.</div>}
       </div>
+    </section>
+  );
+}
+
+function LatestAppointment({ appointment }) {
+  return (
+    <section className="patient-healthinfo-card patient-latest-appointment-card">
+      <header className="patient-latest-card-header">
+        <div className="patient-latest-title">
+          <span className="patient-appointment-icon" aria-hidden="true">
+            <CalendarDays size={20} strokeWidth={1.8} />
+          </span>
+          <h2>Latest Appointment</h2>
+        </div>
+        {appointment?.status && (
+          <span className={`patient-appointment-status is-${appointment.status.toLowerCase()}`}>
+            <span className="patient-appointment-status-dot" aria-hidden="true" />
+            {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
+          </span>
+        )}
+      </header>
+      {appointment ? (
+        <div className="patient-latest-appointment-details">
+          <div>
+            <span className="patient-latest-appointment-label">Date and time</span>
+            <strong>{new Date(appointment.scheduled_at).toLocaleString(undefined, {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+            })}</strong>
+          </div>
+          <div>
+            <span className="patient-latest-appointment-label">Reason</span>
+            <strong>{appointment.reason || "Not provided"}</strong>
+          </div>
+        </div>
+      ) : (
+        <div className="patient-latest-appointment-empty">
+          <strong>No upcoming appointments</strong>
+          <p>You don't have any upcoming appointments at the moment.</p>
+        </div>
+      )}
     </section>
   );
 }
