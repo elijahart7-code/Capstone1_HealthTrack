@@ -861,13 +861,13 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
       .ht-vital-label {
        margin-bottom: 5px;
-       font-size: 10px;
+       font-size: 12px;
        font-weight: 700;
        color: #53635b;
       }
 
       .ht-vital-value {
-       font-size: 13px;
+       font-size: 16px;
        font-weight: 600;
        color: #26352e;
        line-height: 1.4;
@@ -1113,8 +1113,8 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         .ht-midwife-meta-item {
           display: flex;
           flex-direction: column;
-          gap: 6px;
-          font-size: 12px;
+          gap: 8px;
+          font-size: 14px;
           color: #2e3f38;
         }
 
@@ -1129,7 +1129,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
         .ht-midwife-notes-block {
           margin-top: 18px;
-          font-size: 12px;
+          font-size: 14px;
           color: #2e3f38;
         }
 
@@ -1148,10 +1148,11 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         }
 
         .ht-midwife-notes-block li {
-          margin-bottom: 2px;
+          margin-bottom: 4px;
           color: #1d2d29;
           overflow-wrap: anywhere;
           word-break: break-word;
+          line-height: 1.7;
         }
 
         .ht-midwife-notes-actions {
