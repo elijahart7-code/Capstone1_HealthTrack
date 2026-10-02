@@ -2598,6 +2598,94 @@
         line-height: 1.45;
     }
 
+    .patient-healthinfo-main .patient-portal-account-card {
+        padding: 1.15rem 1.35rem 1.25rem;
+        border: 1px solid #DDF3EA;
+        border-radius: 12px;
+        background: #FFFFFF;
+        box-shadow: 0 3px 12px rgba(7, 59, 42, 0.035);
+    }
+
+    .patient-healthinfo-main .patient-portal-account-card > h2 {
+        margin: 0 0 1.2rem;
+        color: #073B2A;
+        font-family: var(--font-sans);
+        font-size: 1rem;
+        font-weight: 800;
+        line-height: 1.3;
+    }
+
+    .patient-portal-account-content {
+        display: grid;
+        grid-template-columns: 190px minmax(0, 1fr);
+        align-items: center;
+        gap: 1rem;
+        min-height: 118px;
+    }
+
+    .patient-portal-account-avatar {
+        position: relative;
+        display: grid;
+        place-items: center;
+        justify-self: center;
+        width: 76px;
+        height: 76px;
+        color: #073B2A;
+    }
+
+    .patient-portal-account-verified {
+        position: absolute;
+        right: -3px;
+        bottom: -2px;
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        border: 2px solid #FFFFFF;
+        border-radius: 50%;
+        background: #0F513F;
+        color: #FFFFFF;
+    }
+
+    .patient-portal-account-details {
+        display: grid;
+        gap: 0.1rem;
+        min-width: 0;
+        margin: 0;
+    }
+
+    .patient-portal-account-details > div {
+        display: grid;
+        grid-template-columns: minmax(190px, 0.72fr) minmax(0, 1.28fr);
+        align-items: center;
+        gap: 1rem;
+        min-height: 35px;
+    }
+
+    .patient-portal-account-details dt,
+    .patient-portal-account-details dd {
+        min-width: 0;
+        margin: 0;
+        font-size: 0.84rem;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    .patient-portal-account-details dt {
+        color: #073B2A;
+        font-weight: 700;
+    }
+
+    .patient-portal-account-details dd {
+        color: #073B2A;
+        font-weight: 500;
+    }
+
+    .patient-portal-account-details .patient-portal-account-status {
+        color: #0F513F;
+        font-weight: 700;
+    }
+
     .patient-healthinfo-header-card {
         display: flex;
         align-items: center;
@@ -5373,6 +5461,45 @@
 }
 
 @media (max-width: 640px) {
+    .patient-healthinfo-main .patient-portal-account-card {
+        padding: 1rem;
+    }
+
+    .patient-healthinfo-main .patient-portal-account-card > h2 {
+        margin-bottom: 0.75rem;
+    }
+
+    .patient-healthinfo-main .patient-portal-account-content {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.75rem;
+    }
+
+    .patient-healthinfo-main .patient-portal-account-avatar {
+        justify-self: start;
+        width: 58px;
+        height: 58px;
+    }
+
+    .patient-healthinfo-main .patient-portal-account-avatar > svg {
+        width: 42px;
+        height: 42px;
+    }
+
+    .patient-healthinfo-main .patient-portal-account-details {
+        width: 100%;
+    }
+
+    .patient-healthinfo-main .patient-portal-account-details > div {
+        grid-template-columns: minmax(112px, 0.78fr) minmax(0, 1.22fr);
+        gap: 0.65rem;
+        min-height: 38px;
+    }
+
+    .patient-healthinfo-main .patient-portal-account-details dt,
+    .patient-healthinfo-main .patient-portal-account-details dd {
+        font-size: 0.78rem;
+    }
+
     .patient-healthinfo-main .patient-latest-appointment-card .patient-latest-card-header {
         align-items: flex-start;
         flex-wrap: wrap;
