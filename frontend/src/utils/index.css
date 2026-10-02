@@ -5141,7 +5141,7 @@
     border-radius: 12px !important;
 }
 
-.patient-contact-icon {
+.patient-dashboard-shell .patient-contact-icon {
     display: flex !important;
 
     align-items: center !important;
@@ -5154,9 +5154,9 @@
 
     border-radius: 11px !important;
 
-    background: #e7f0ff !important;
+    background: #DDF3EA !important;
 
-    color: #1266b1 !important;
+    color: #0F513F !important;
 }
 
 .patient-contact-body {
@@ -5295,6 +5295,22 @@
 
 .patient-tip-item.sleep .patient-tip-icon {
     color: #7163c8 !important;
+}
+
+.patient-dashboard-shell .patient-health-tips .patient-tip-item.water,
+.patient-dashboard-shell .patient-health-tips .patient-tip-item.food,
+.patient-dashboard-shell .patient-health-tips .patient-tip-item.activity,
+.patient-dashboard-shell .patient-health-tips .patient-tip-item.sleep {
+    background: #F2FAF6 !important;
+    color: #0F513F !important;
+}
+
+.patient-dashboard-shell .patient-health-tips .patient-tip-item.water .patient-tip-icon,
+.patient-dashboard-shell .patient-health-tips .patient-tip-item.food .patient-tip-icon,
+.patient-dashboard-shell .patient-health-tips .patient-tip-item.activity .patient-tip-icon,
+.patient-dashboard-shell .patient-health-tips .patient-tip-item.sleep .patient-tip-icon {
+    background: #DDF3EA !important;
+    color: #0F513F !important;
 }
 
 
