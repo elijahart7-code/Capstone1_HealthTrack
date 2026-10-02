@@ -96,7 +96,6 @@ export function HealthInformation({ healthInfo }) {
   const requestedSection = searchParams.get("section");
   const section = requestedSection && (
     requestedSection === "appointments" ||
-    requestedSection === "patient-profile" ||
     requestedSection === "patient-information" ||
     Object.prototype.hasOwnProperty.call(recordTypes, requestedSection)
   ) ? requestedSection : null;
@@ -136,7 +135,6 @@ export function HealthInformation({ healthInfo }) {
 
           <div className="patient-sidebar-label">MY HEALTH INFORMATION</div>
 
-          <SidebarItem icon={UserRound} label="Patient Profile" active={section === "patient-profile"} onClick={() => selectSection("patient-profile")} />
           <SidebarItem icon={Calendar} label="Appointments" active={section === "appointments"} onClick={() => selectSection("appointments")} />
           <SidebarItem icon={User} label="General Information" active={section === "patient-information"} onClick={() => selectSection("patient-information")} />
           <SidebarItem
@@ -235,29 +233,6 @@ export function HealthInformation({ healthInfo }) {
             )}
 
             <div className="patient-table-footer">Showing 1 to {appointments.length} of {appointments.length} appointments</div>
-        </section>}
-
-        {section === "patient-profile" && <section className="patient-healthinfo-card patient-information-card">
-            <div className="patient-card-header">
-              <div className="patient-card-title">
-                <span className="patient-panel-icon patient-panel-icon-small">
-                  <UserRound size={18} strokeWidth={1.8} />
-                </span>
-                <h2>Patient Profile</h2>
-              </div>
-            </div>
-
-            <div className="patient-information-grid">
-              <InfoField icon={UserRound} label="Full Name" value={patientName} />
-              <InfoField icon={User} label="Sex" value={patient.sex} />
-              <InfoField icon={CalendarDays} label="Date of Birth" value={patient.birthdate ? new Date(patient.birthdate).toLocaleDateString() : null} />
-              <InfoField icon={Clock3} label="Age" value={patient.age != null ? `${patient.age} years old` : null} />
-              <InfoField icon={MapPin} label="Address" value={patient.address} />
-              <InfoField icon={Phone} label="Contact Number" value={patient.contact_number} />
-              <InfoField icon={UsersRound} label="Emergency Contact" value={patient.emergency_contact_name} />
-              <InfoField icon={PhoneCall} label="Emergency Contact Number" value={patient.emergency_contact_number} />
-              <InfoField icon={IdCard} label="Barangay ID Number" value={patient.barangay_id_number} />
-            </div>
         </section>}
 
         {section === "patient-information" && <section className="patient-healthinfo-card patient-information-card">
