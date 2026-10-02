@@ -4,6 +4,7 @@ import { User, MapPin, PhoneCall } from "lucide-react";
 import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { Field, Input, Select, Textarea } from "../../../components/ui/Input";
+import { PHILIPPINE_LOCATIONS, PHILIPPINE_REGIONS } from "../../../data/philippineLocations";
 
 /**
  * Registers a patient and creates their portal login from the required email.
@@ -34,15 +35,36 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const [portalEmailError, setPortalEmailError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [sendLoginCredentials, setSendLoginCredentials] = useState(true);
+  const [selectedBirthRegion, setSelectedBirthRegion] = useState("");
+  const [selectedBirthLocation, setSelectedBirthLocation] = useState("");
+
+  const birthLocationOptions = PHILIPPINE_LOCATIONS[selectedBirthRegion] || [];
 
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  function handleBirthRegionChange(region) {
+    setSelectedBirthRegion(region);
+    setSelectedBirthLocation("");
+    set("place_of_birth", "");
+  }
+
+  function handleBirthLocationChange(location) {
+    setSelectedBirthLocation(location);
+    set("place_of_birth", `${selectedBirthRegion} / ${location}`);
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
     setPortalEmailError(null);
+
+    if (!form.place_of_birth) {
+      setError("Please select the patient's place of birth.");
+      return;
+    }
+
     setSaving(true);
     try {
       const payload = {
@@ -202,8 +224,37 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.occupation} onChange={(e) => set("occupation", e.target.value)} placeholder="Enter occupation" />
             </Field>
 
-            <Field label="Place of Birth" className="ht-place-of-birth-field">
-              <Input value={form.place_of_birth} onChange={(e) => set("place_of_birth", e.target.value)} placeholder="Enter place of birth" />
+            <Field label="Place of Birth" required className="ht-place-of-birth-field">
+              <div className="grid gap-2">
+                <Select
+                  value={selectedBirthRegion}
+                  onChange={(e) => handleBirthRegionChange(e.target.value)}
+                  required
+                >
+                  <option value="" disabled>Select region</option>
+                  {PHILIPPINE_REGIONS.map((region) => (
+                    <option key={region} value={region}>
+                      {region}
+                    </option>
+                  ))}
+                </Select>
+
+                <Select
+                  value={selectedBirthLocation}
+                  onChange={(e) => handleBirthLocationChange(e.target.value)}
+                  disabled={!selectedBirthRegion}
+                  required
+                >
+                  <option value="" disabled>
+                    {selectedBirthRegion ? "Select province/city/municipality" : "Select region first"}
+                  </option>
+                  {birthLocationOptions.map((location) => (
+                    <option key={location} value={location}>
+                      {location}
+                    </option>
+                  ))}
+                </Select>
+              </div>
             </Field>
           </div>
         </div>
