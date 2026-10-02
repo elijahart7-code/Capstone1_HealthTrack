@@ -1012,7 +1012,7 @@ export function PatientRecord({
 
         .ht-overview-card-heading span {
           color: #596d61;
-          font-size: 11px;
+          font-size: 14px;
         }
 
         .ht-overview-table {
@@ -1027,7 +1027,7 @@ export function PatientRecord({
           border-bottom: 1px solid #e4ece7;
           text-align: left;
           vertical-align: top;
-          font-size: 12px;
+          font-size: 14px;
           line-height: 1.45;
           overflow-wrap: anywhere;
         }
@@ -1046,14 +1046,14 @@ export function PatientRecord({
         .ht-overview-empty {
           padding: 16px;
           color: #68766f;
-          font-size: 12px;
+          font-size: 13px;
         }
 
         .ht-overview-notes {
           margin: 0;
           padding: 13px 16px;
           color: #29352f;
-          font-size: 13px;
+          font-size: 14px;
           line-height: 1.6;
           white-space: pre-wrap;
           overflow-wrap: anywhere;
