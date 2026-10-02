@@ -2692,6 +2692,122 @@
         padding: 0.8rem 1rem 0.9rem;
     }
 
+    .patient-latest-appointment-card {
+        overflow: hidden;
+        padding: 0;
+        background: #ffffff;
+        border-color: rgba(12, 79, 70, 0.1);
+    }
+
+    .patient-latest-appointment-card .patient-latest-card-header {
+        min-height: 54px;
+        background: #eaf7f1;
+    }
+
+    .patient-appointment-icon {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: #d9f1e7;
+        color: #0d8069;
+    }
+
+    .patient-appointment-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.65rem;
+        border: 1px solid rgba(13, 74, 62, 0.12);
+        border-radius: 999px;
+        background: #ffffff;
+        color: #40534d;
+        font-size: 0.72rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .patient-appointment-status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #75827f;
+    }
+
+    .patient-appointment-status.is-pending {
+        color: #845a16;
+        background: #fff7e8;
+    }
+
+    .patient-appointment-status.is-pending .patient-appointment-status-dot {
+        background: #d89522;
+    }
+
+    .patient-appointment-status.is-confirmed {
+        color: #0d5f52;
+        background: #eaf7f1;
+    }
+
+    .patient-appointment-status.is-confirmed .patient-appointment-status-dot {
+        background: #159467;
+    }
+
+    .patient-appointment-status.is-scheduled {
+        color: #355a7d;
+        background: #edf4fb;
+    }
+
+    .patient-appointment-status.is-scheduled .patient-appointment-status-dot {
+        background: #4f86b5;
+    }
+
+    .patient-latest-appointment-details {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.85rem 1.5rem;
+        padding: 0.9rem 1rem 1rem;
+    }
+
+    .patient-latest-appointment-details > div {
+        display: grid;
+        align-content: start;
+        gap: 0.25rem;
+        min-width: 0;
+    }
+
+    .patient-latest-appointment-label {
+        color: #667875;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .patient-latest-appointment-details strong {
+        color: #263b36;
+        font-size: 0.84rem;
+        font-weight: 700;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    .patient-latest-appointment-empty {
+        display: grid;
+        gap: 0.25rem;
+        padding: 0.9rem 1rem 1rem;
+    }
+
+    .patient-latest-appointment-empty strong {
+        color: #263b36;
+        font-size: 0.86rem;
+    }
+
+    .patient-latest-appointment-empty p {
+        margin: 0;
+        color: #667875;
+        font-size: 0.8rem;
+        line-height: 1.45;
+    }
+
     .patient-latest-vitals .patient-latest-card-header,
     .patient-latest-assessment .patient-latest-card-header {
         background: #eaf7f1;
@@ -3936,6 +4052,10 @@
         .patient-latest-card-header {
             align-items: flex-start;
             flex-direction: column;
+        }
+
+        .patient-latest-appointment-details {
+            grid-template-columns: 1fr;
         }
 
         .patient-latest-date {
