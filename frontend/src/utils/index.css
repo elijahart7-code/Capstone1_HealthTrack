@@ -3010,8 +3010,7 @@
     .patient-midwife-pagination {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 0.8rem 1rem;
+        justify-content: flex-start;
         padding-top: 0.2rem;
         color: #667875;
         font-size: 0.8rem;
@@ -3019,44 +3018,6 @@
 
     .patient-midwife-page-indicator {
         white-space: nowrap;
-    }
-
-    .patient-midwife-page-controls {
-        display: flex;
-        justify-content: flex-end;
-        gap: 0.6rem;
-    }
-
-    .patient-midwife-page-controls button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        min-height: 38px;
-        padding: 0.5rem 0.75rem;
-        border: 1px solid rgba(13, 74, 62, 0.2);
-        border-radius: 8px;
-        background: #ffffff;
-        color: #0d4a3e;
-        font: inherit;
-        font-size: 0.78rem;
-        font-weight: 700;
-        cursor: pointer;
-    }
-
-    .patient-midwife-page-controls button:hover:not(:disabled) {
-        background: #f0faf6;
-    }
-
-    .patient-midwife-page-controls button:disabled {
-        background: #f4f6f5;
-        color: #a0aaa7;
-        cursor: not-allowed;
-    }
-
-    .patient-midwife-page-controls button:focus-visible {
-        outline: 3px solid rgba(13, 128, 105, 0.22);
-        outline-offset: 2px;
     }
 
     .patient-vital-grid {
@@ -3821,18 +3782,6 @@
 
         .patient-midwife-note-card .patient-midwife-note-recorded {
             margin: 0 0.8rem;
-        }
-
-        .patient-midwife-pagination {
-            flex-wrap: wrap;
-        }
-
-        .patient-midwife-page-controls {
-            width: 100%;
-        }
-
-        .patient-midwife-page-controls button {
-            flex: 1 1 auto;
         }
 
         .patient-information-grid {
