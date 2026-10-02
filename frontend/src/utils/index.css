@@ -3124,109 +3124,46 @@
 
     .patient-information-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.65rem;
-    }
-
-    .patient-information-card {
-        background: #ffffff;
-        border-color: rgba(13, 74, 62, 0.12);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0;
+        border: 1px solid rgba(13, 74, 62, 0.08);
+        border-radius: 14px;
+        overflow: hidden;
     }
 
     .patient-info-field {
         display: grid;
-        align-content: start;
-        gap: 0.45rem;
-        min-height: 88px;
+        gap: 0.3rem;
+        min-height: 86px;
         padding: 0.8rem 0.9rem;
-        border: 1px solid rgba(13, 74, 62, 0.1);
-        border-radius: 9px;
+        border-right: 1px solid rgba(13, 74, 62, 0.08);
+        border-bottom: 1px solid rgba(13, 74, 62, 0.08);
         background: #fff;
     }
 
+    .patient-info-field:nth-child(4n) {
+        border-right: none;
+    }
+
+    .patient-info-field:nth-last-child(-n+4) {
+        border-bottom: none;
+    }
+
+    .patient-info-field-wide {
+        grid-column: span 2;
+    }
+
     .patient-info-label {
-        display: flex;
-        align-items: center;
-        gap: 0.45rem;
-        min-width: 0;
         color: #596764;
         font-size: 0.72rem;
         font-weight: 700;
     }
 
-    .patient-info-label svg {
-        flex: 0 0 auto;
-        color: #0d8069;
-    }
-
     .patient-info-value {
-        overflow-wrap: anywhere;
         color: #1c2a2a;
         font-size: 0.86rem;
         font-weight: 700;
         line-height: 1.5;
-    }
-
-    .patient-portal-info-card {
-        display: grid;
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        align-items: center;
-        gap: 1rem;
-        background: #ffffff;
-        border-color: rgba(13, 74, 62, 0.12);
-    }
-
-    .patient-portal-info-icon {
-        display: grid;
-        place-items: center;
-        width: 46px;
-        height: 46px;
-        border-radius: 12px;
-        background: #e8f6ef;
-        color: #0d8069;
-    }
-
-    .patient-portal-info-copy h2 {
-        margin: 0;
-        color: #17483e;
-        font-size: 1rem;
-        font-weight: 800;
-    }
-
-    .patient-portal-info-copy p {
-        margin: 0.3rem 0 0;
-        color: #596764;
-        font-size: 0.84rem;
-        line-height: 1.5;
-    }
-
-    .patient-portal-info-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.55rem;
-        min-height: 42px;
-        padding: 0.65rem 0.9rem;
-        border: 1px solid #0d8069;
-        border-radius: 9px;
-        background: #0d8069;
-        color: #ffffff;
-        font: inherit;
-        font-size: 0.82rem;
-        font-weight: 700;
-        white-space: nowrap;
-        cursor: pointer;
-        transition: background 0.16s ease, border-color 0.16s ease;
-    }
-
-    .patient-portal-info-button:hover {
-        border-color: #096c59;
-        background: #096c59;
-    }
-
-    .patient-portal-info-button:focus-visible {
-        outline: 3px solid rgba(13, 128, 105, 0.25);
-        outline-offset: 2px;
     }
 
     .patient-empty-state {
@@ -3255,6 +3192,14 @@
 
         .patient-information-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .patient-info-field:nth-child(4n) {
+            border-right: 1px solid rgba(13, 74, 62, 0.08);
+        }
+
+        .patient-info-field:nth-child(2n) {
+            border-right: none;
         }
 
         .patient-metric-grid,
@@ -3303,17 +3248,16 @@
         }
 
         .patient-information-grid {
+            display: grid;
             grid-template-columns: 1fr;
         }
 
-        .patient-portal-info-card {
-            grid-template-columns: auto minmax(0, 1fr);
-            align-items: start;
-        }
-
-        .patient-portal-info-button {
-            grid-column: 1 / -1;
-            width: 100%;
+        .patient-info-field,
+        .patient-info-field-wide,
+        .patient-info-field:nth-child(2n),
+        .patient-info-field:nth-child(4n) {
+            grid-column: auto;
+            border-right: none;
         }
 
         .patient-sidebar-item {
