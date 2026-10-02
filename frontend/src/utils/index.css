@@ -2743,6 +2743,24 @@
         outline-offset: 3px;
     }
 
+    .patient-healthinfo-main .patient-appointment-history-link {
+        justify-self: center;
+        margin-top: 0.45rem;
+        padding: 0.42rem 0.72rem;
+        border: 1px solid #c5e5d7;
+        border-radius: 8px;
+        background: #e3f5ed;
+        color: #0d5f4d;
+        font-size: 0.73rem;
+        transition: background-color 140ms ease, border-color 140ms ease;
+    }
+
+    .patient-healthinfo-main .patient-appointment-history-link:hover {
+        border-color: #a9d8c4;
+        background: #d4eee2;
+        color: #0b5545;
+    }
+
     .patient-healthinfo-main .patient-appointment-panel {
         display: grid;
         grid-template-columns: 96px minmax(0, 1fr) minmax(220px, 0.82fr);
