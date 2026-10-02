@@ -529,6 +529,7 @@ function LatestAppointment({ appointment, hasAppointmentHistory, onViewAppointme
             <p>You're all caught up! No upcoming visits are scheduled at the moment.</p>
             {hasAppointmentHistory && (
               <button type="button" className="patient-appointment-link patient-appointment-history-link" onClick={onViewAppointments}>
+                <CalendarDays size={15} strokeWidth={1.8} aria-hidden="true" />
                 View Appointment History
                 <ArrowRight size={15} strokeWidth={1.8} aria-hidden="true" />
               </button>
