@@ -822,8 +822,11 @@ function MidwifeNoteCard({ definition, record }) {
         )}
       </div>
       <footer className="patient-midwife-note-recorded">
-        <CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" />
-        <span>Recorded on: {recordedAt || "Not recorded"}</span>
+        <span className="patient-midwife-note-recorded-date">
+          <CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" />
+          <span>Recorded on: {recordedAt || "Not recorded"}</span>
+        </span>
+        <span className="patient-midwife-note-footer-label">Showing latest midwife notes</span>
       </footer>
     </article>
   );
