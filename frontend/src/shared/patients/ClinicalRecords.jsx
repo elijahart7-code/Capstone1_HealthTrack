@@ -861,13 +861,13 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
       .ht-vital-label {
        margin-bottom: 5px;
-       font-size: 10px;
+       font-size: 12px;
        font-weight: 700;
        color: #53635b;
       }
 
       .ht-vital-value {
-       font-size: 13px;
+       font-size: 16px;
        font-weight: 600;
        color: #26352e;
        line-height: 1.4;
@@ -1113,8 +1113,8 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         .ht-midwife-meta-item {
           display: flex;
           flex-direction: column;
-          gap: 6px;
-          font-size: 12px;
+          gap: 8px;
+          font-size: 14px;
           color: #2e3f38;
         }
 
@@ -1129,7 +1129,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
         .ht-midwife-notes-block {
           margin-top: 18px;
-          font-size: 12px;
+          font-size: 14px;
           color: #2e3f38;
         }
 
@@ -1148,10 +1148,11 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         }
 
         .ht-midwife-notes-block li {
-          margin-bottom: 2px;
+          margin-bottom: 4px;
           color: #1d2d29;
           overflow-wrap: anywhere;
           word-break: break-word;
+          line-height: 1.7;
         }
 
         .ht-midwife-notes-actions {
@@ -1178,12 +1179,13 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
         .ht-assessment-row {
           display: grid;
-          grid-template-columns: 42px minmax(120px, 150px) 18px minmax(0, 1fr);
+          grid-template-columns: 42px minmax(150px, 210px) 18px minmax(0, 1fr);
           align-items: center;
-          min-height: 56px;
+          min-height: 70px;
           border-bottom: 1px solid #edf1ef;
-          gap: 10px;
-          font-size: 13px;
+          gap: 18px;
+          padding: 10px 0;
+          font-size: 15px;
         }
 
         .ht-assessment-row:last-child {
@@ -1191,12 +1193,12 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         }
 
         .ht-assessment-icon {
-          width: 35px;
-          height: 35px;
+          width: 38px;
+          height: 38px;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 7px;
+          border-radius: 8px;
           background: #e9f3ed;
           color: #557c67;
         }
@@ -1204,7 +1206,9 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         .ht-assessment-label {
           font-weight: 700;
           color: #34423b;
-          line-height: 1.4;
+          line-height: 1.6;
+          padding-right: 8px;
+          font-size: 15px;
         }
 
         .ht-assessment-colon {
@@ -1214,9 +1218,11 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
         .ht-assessment-value {
           color: #3e4843;
-          line-height: 1.5;
+          line-height: 1.8;
           word-break: break-word;
           overflow-wrap: anywhere;
+          padding-right: 12px;
+          font-size: 15px;
         }
 
         .ht-status-active {
@@ -1237,9 +1243,9 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         .ht-assessment-meta {
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 8px;
           color: #68736e;
-          font-size: 10px;
+          font-size: 11px;
         }
 
         .ht-assessment-meta > div {
