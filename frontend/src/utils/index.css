@@ -3124,7 +3124,7 @@
 
     .patient-information-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 0;
         border: 1px solid rgba(13, 74, 62, 0.08);
         border-radius: 14px;
@@ -3141,29 +3141,92 @@
         background: #fff;
     }
 
-    .patient-info-field:nth-child(4n) {
+    .patient-info-field:nth-child(3n) {
         border-right: none;
     }
 
-    .patient-info-field:nth-last-child(-n+4) {
+    .patient-info-field:nth-last-child(-n+3) {
         border-bottom: none;
     }
 
-    .patient-info-field-wide {
-        grid-column: span 2;
-    }
-
     .patient-info-label {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        min-width: 0;
         color: #596764;
         font-size: 0.72rem;
         font-weight: 700;
     }
 
+    .patient-info-label svg {
+        flex: 0 0 auto;
+        color: #0d6b58;
+    }
+
     .patient-info-value {
+        overflow-wrap: anywhere;
         color: #1c2a2a;
         font-size: 0.86rem;
         font-weight: 700;
         line-height: 1.5;
+    }
+
+    .patient-portal-info-card {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.9rem;
+    }
+
+    .patient-portal-info-icon {
+        display: grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: rgba(13, 74, 62, 0.09);
+        color: #0d4a3e;
+    }
+
+    .patient-portal-info-copy {
+        min-width: 0;
+    }
+
+    .patient-portal-info-copy h2 {
+        margin: 0;
+        color: #17312d;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .patient-portal-info-copy p {
+        margin: 0.25rem 0 0;
+        color: #53615f;
+        font-size: 0.82rem;
+        line-height: 1.5;
+    }
+
+    .patient-portal-info-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        min-height: 40px;
+        padding: 0.6rem 0.85rem;
+        border: 1px solid rgba(13, 74, 62, 0.18);
+        border-radius: 10px;
+        background: rgba(13, 74, 62, 0.06);
+        color: #0d4a3e;
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 700;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .patient-portal-info-button:hover {
+        background: rgba(13, 74, 62, 0.11);
     }
 
     .patient-empty-state {
@@ -3194,12 +3257,20 @@
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .patient-info-field:nth-child(4n) {
+        .patient-info-field:nth-child(3n) {
             border-right: 1px solid rgba(13, 74, 62, 0.08);
         }
 
         .patient-info-field:nth-child(2n) {
             border-right: none;
+        }
+
+        .patient-info-field:nth-last-child(-n+3) {
+            border-bottom: 1px solid rgba(13, 74, 62, 0.08);
+        }
+
+        .patient-info-field:nth-last-child(-n+2) {
+            border-bottom: none;
         }
 
         .patient-metric-grid,
@@ -3253,11 +3324,26 @@
         }
 
         .patient-info-field,
-        .patient-info-field-wide,
         .patient-info-field:nth-child(2n),
-        .patient-info-field:nth-child(4n) {
-            grid-column: auto;
+        .patient-info-field:nth-child(3n) {
             border-right: none;
+        }
+
+        .patient-info-field:nth-last-child(-n+2) {
+            border-bottom: 1px solid rgba(13, 74, 62, 0.08);
+        }
+
+        .patient-info-field:last-child {
+            border-bottom: none;
+        }
+
+        .patient-portal-info-card {
+            grid-template-columns: auto minmax(0, 1fr);
+        }
+
+        .patient-portal-info-button {
+            grid-column: 1 / -1;
+            width: 100%;
         }
 
         .patient-sidebar-item {
