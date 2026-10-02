@@ -48,13 +48,6 @@ export function Dashboard({ dashboard }) {
   }
 
   const patientName = dashboard.patient.first_name;
-  const now = Date.now();
-  const upcomingAppointment = (Array.isArray(dashboard.upcomingAppointments) ? dashboard.upcomingAppointments : [])
-    .filter((appointment) => {
-      const scheduledTime = Date.parse(appointment.scheduled_at);
-      return Number.isFinite(scheduledTime) && scheduledTime >= now;
-    })
-    .sort((first, second) => Date.parse(first.scheduled_at) - Date.parse(second.scheduled_at))[0] || null;
 
   return (
     <div className="patient-dashboard-shell">
@@ -100,9 +93,6 @@ export function Dashboard({ dashboard }) {
         </div>
 
       </section>
-
-
-      <LatestAppointment appointment={upcomingAppointment} />
 
 
       {/* ================= QUICK INFORMATION ================= */}
@@ -272,62 +262,6 @@ export function Dashboard({ dashboard }) {
       </section>
 
     </div>
-  );
-}
-
-
-function LatestAppointment({ appointment }) {
-  if (!appointment) {
-    return (
-      <section className="patient-latest-appointment patient-latest-appointment-empty">
-        <div className="patient-latest-appointment-icon" aria-hidden="true">
-          <CalendarDays size={22} strokeWidth={1.8} />
-        </div>
-        <div className="patient-latest-appointment-copy">
-          <h2>Latest Appointment</h2>
-          <strong>No upcoming appointments</strong>
-          <p>You don't have any upcoming appointments at the moment.</p>
-        </div>
-      </section>
-    );
-  }
-
-  const scheduledDate = new Date(appointment.scheduled_at);
-  const statusLabel = appointment.status
-    ? appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)
-    : "Status unavailable";
-
-  return (
-    <section className="patient-latest-appointment">
-      <div className="patient-latest-appointment-icon" aria-hidden="true">
-        <CalendarDays size={22} strokeWidth={1.8} />
-      </div>
-      <div className="patient-latest-appointment-copy">
-        <div className="patient-latest-appointment-title-row">
-          <h2>Latest Appointment</h2>
-          <span className={`patient-appointment-status ${appointment.status ? `is-${appointment.status.toLowerCase()}` : ""}`}>
-            <span className="patient-appointment-status-dot" />
-            {statusLabel}
-          </span>
-        </div>
-        <div className="patient-latest-appointment-details">
-          <div>
-            <span>Date and time</span>
-            <strong>{scheduledDate.toLocaleString(undefined, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "numeric",
-              minute: "2-digit",
-            })}</strong>
-          </div>
-          <div>
-            <span>Reason</span>
-            <strong>{appointment.reason || "Not specified"}</strong>
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }
 
