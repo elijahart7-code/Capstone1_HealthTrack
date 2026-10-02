@@ -139,7 +139,7 @@ export function HealthInformation({ healthInfo }) {
             <span className="patient-sidebar-icon">
               <Home size={18} strokeWidth={1.8} />
             </span>
-            <span>Overview</span>
+            <span>Patient Profile</span>
           </button>
 
           <div className="patient-sidebar-label">MY HEALTH INFORMATION</div>
@@ -173,7 +173,7 @@ export function HealthInformation({ healthInfo }) {
         {section === null ? (
           <>
             <header className="patient-overview-heading">
-              <h1>Overview</h1>
+              <h1>Patient Profile</h1>
               <p>Your latest health information from your most recent checkup.</p>
             </header>
             <LatestAppointment appointment={upcomingAppointment} />
