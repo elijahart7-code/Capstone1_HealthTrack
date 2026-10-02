@@ -410,6 +410,41 @@
         position: relative;
     }
 
+    .ht-date-input-wrap .ht-input {
+        padding-right: 2.5rem;
+    }
+
+    .ht-date-picker-hidden {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .ht-date-icon-button {
+        position: absolute;
+        top: 50%;
+        right: 0.5rem;
+        z-index: 3;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border: none;
+        background: transparent;
+        color: var(--color-ink-soft);
+        cursor: pointer;
+        transform: translateY(-50%);
+    }
+
+    .ht-date-icon {
+        pointer-events: none;
+    }
+
     .ht-date-input-empty {
         color: transparent;
     }
@@ -485,6 +520,17 @@
     }
 
     .ht-button-muted:hover { background: var(--color-surface-muted); }
+
+    .ht-button-strong-green {
+        background: var(--color-brand-strong);
+        border-color: var(--color-brand-strong);
+        color: #fff;
+    }
+
+    .ht-button-strong-green:hover {
+        background: var(--color-brand);
+        border-color: var(--color-brand);
+    }
 
     .ht-form-actions {
         display: flex;

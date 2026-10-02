@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSearchParams } from "react-router";
-import { User, MapPin, PhoneCall } from "lucide-react";
+import { User, MapPin, PhoneCall, CalendarDays } from "lucide-react";
 import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { Field, Input, Select, Textarea } from "../../../components/ui/Input";
@@ -37,11 +37,77 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const [sendLoginCredentials, setSendLoginCredentials] = useState(true);
   const [selectedBirthRegion, setSelectedBirthRegion] = useState("");
   const [selectedBirthLocation, setSelectedBirthLocation] = useState("");
+  const birthDatePickerRef = useRef(null);
 
   const birthLocationOptions = PHILIPPINE_LOCATIONS[selectedBirthRegion] || [];
 
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  function getDaysInMonth(month, year) {
+    const monthNumber = Number(month);
+    const yearNumber = Number(year) || new Date().getFullYear();
+
+    if (monthNumber === 2) {
+      const isLeapYear = (yearNumber % 4 === 0 && yearNumber % 100 !== 0) || yearNumber % 400 === 0;
+      return isLeapYear ? 29 : 28;
+    }
+
+    if ([4, 6, 9, 11].includes(monthNumber)) return 30;
+    return 31;
+  }
+
+  function normalizeDateText(value) {
+    const digits = value.replace(/\D/g, "").slice(0, 8);
+    if (!digits) return "";
+
+    let day = digits.slice(0, 2);
+    let month = digits.slice(2, 4);
+    let year = digits.slice(4, 8);
+
+    if (day) {
+      const dayNumber = Number(day);
+      if (dayNumber > 31) day = "31";
+    }
+
+    if (month) {
+      const monthNumber = Number(month);
+      if (monthNumber > 12) month = "12";
+      if (monthNumber === 0) month = "01";
+    }
+
+    if (month) {
+      const maxDay = getDaysInMonth(month, year || new Date().getFullYear());
+      const dayNumber = Number(day || "0");
+      if (dayNumber > maxDay) day = String(maxDay).padStart(2, "0");
+    }
+
+    if (digits.length <= 2) return day;
+    if (digits.length <= 4) return `${day}/${month}`;
+    return `${day}/${month}/${year}`;
+  }
+
+  function toIsoDate(value) {
+    if (!value) return "";
+    const parts = value.split("/");
+    if (parts.length !== 3) return value;
+    const [day, month, year] = parts;
+    if (!day || !month || !year || day.length !== 2 || month.length !== 2 || year.length !== 4) {
+      return value;
+    }
+    return `${year}-${month}-${day}`;
+  }
+
+  function formatIsoToText(value) {
+    if (!value) return "";
+    const [year, month, day] = value.split("-");
+    if (!year || !month || !day) return "";
+    return `${day}/${month}/${year}`;
+  }
+
+  function handleBirthDatePicker(value) {
+    set("birthdate", formatIsoToText(value));
   }
 
   function handleBirthRegionChange(region) {
@@ -69,6 +135,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
     try {
       const payload = {
         ...form,
+        birthdate: toIsoDate(form.birthdate),
       };
 
       const { data } = await api.post("/patients", payload);
@@ -90,7 +157,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
   return (
     <div className="grid gap-4">
       <PageHeader title="Register Patient" subtitle="Add a new patient to the Barangay Health Center of Mambog I.">
-        <button onClick={() => setSearchParams({ page: "patients" })} className="ht-button ht-button-muted">
+        <button onClick={() => setSearchParams({ page: "patients" })} className="ht-button ht-button-strong-green">
           Back to patients
         </button>
       </PageHeader>
@@ -130,14 +197,28 @@ export function RegisterPatient({ loadData, onRegistered }) {
             <Field label="Date of Birth" required>
               <div className="ht-date-input-wrap">
                 <Input
-                  type="date"
-                  lang="en-GB"
-                  className={!form.birthdate ? "ht-date-input-empty" : undefined}
+                  type="text"
+                  inputMode="numeric"
                   value={form.birthdate}
-                  onChange={(e) => set("birthdate", e.target.value)}
-                  max={new Date().toISOString().slice(0, 10)}
+                  onChange={(e) => set("birthdate", normalizeDateText(e.target.value))}
+                  placeholder="dd/mm/yyyy"
                 />
-                {!form.birthdate && <span className="ht-date-placeholder" aria-hidden="true">dd/mm/yyyy</span>}
+                <input
+                  ref={birthDatePickerRef}
+                  type="date"
+                  value={toIsoDate(form.birthdate)}
+                  onChange={(e) => handleBirthDatePicker(e.target.value)}
+                  max={new Date().toISOString().slice(0, 10)}
+                  className="ht-date-picker-hidden"
+                />
+                <button
+                  type="button"
+                  className="ht-date-icon-button"
+                  onClick={() => birthDatePickerRef.current?.showPicker?.() || birthDatePickerRef.current?.focus()}
+                  aria-label="Open calendar"
+                >
+                  <CalendarDays className="ht-date-icon" size={16} strokeWidth={1.8} />
+                </button>
               </div>
             </Field>
 
