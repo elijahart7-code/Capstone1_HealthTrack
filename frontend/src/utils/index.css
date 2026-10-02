@@ -676,11 +676,30 @@
         padding: 0.65rem 0.8rem 0.8rem;
     }
 
+    .ht-panel-table .ht-table {
+        table-layout: fixed;
+    }
+
     .ht-panel-table .ht-table th,
     .ht-panel-table .ht-table td {
         padding: 0.42rem 0.6rem;
         vertical-align: middle;
     }
+
+    .ht-panel-table .ht-table th:nth-child(1),
+    .ht-panel-table .ht-table td:nth-child(1) { width: 28%; }
+
+    .ht-panel-table .ht-table th:nth-child(2),
+    .ht-panel-table .ht-table td:nth-child(2) { width: 12%; }
+
+    .ht-panel-table .ht-table th:nth-child(3),
+    .ht-panel-table .ht-table td:nth-child(3) { width: 22%; }
+
+    .ht-panel-table .ht-table th:nth-child(4),
+    .ht-panel-table .ht-table td:nth-child(4) { width: 22%; }
+
+    .ht-panel-table .ht-table th:nth-child(5),
+    .ht-panel-table .ht-table td:nth-child(5) { width: 16%; }
 
     .ht-panel-table .ht-action-button {
         min-width: 104px;
