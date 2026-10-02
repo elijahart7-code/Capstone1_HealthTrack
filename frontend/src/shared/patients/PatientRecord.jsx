@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 
 const APPOINTMENT_STATUSES = ["pending", "confirmed", "completed", "cancelled"];
+const OVERVIEW_RECORD_TYPES = ["vital-signs", "health-assessment", "allergies", "midwife-notes"];
 
 export function PatientRecord({
   patientId,
@@ -40,6 +41,8 @@ export function PatientRecord({
   const [patient, setPatient] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [section, setSection] = useState("profile");
+  const [overviewRecords, setOverviewRecords] = useState({});
+  const [overviewLoading, setOverviewLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
 
@@ -84,6 +87,40 @@ export function PatientRecord({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId]);
+
+  async function loadOverview() {
+    setOverviewLoading(true);
+    const entries = await Promise.all(
+      OVERVIEW_RECORD_TYPES.map(async (type) => {
+        try {
+          const { data } = await api.get(
+            `/patients/${patientId}/records/${type}`,
+            { params: { perPage: 1 } }
+          );
+          return [type, data.records?.[0] || null];
+        } catch {
+          return [type, null];
+        }
+      })
+    );
+    setOverviewRecords(Object.fromEntries(entries));
+    setOverviewLoading(false);
+  }
+
+  useEffect(() => {
+    loadOverview();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [patientId]);
+
+  useEffect(() => {
+    if (section === "appointments") {
+      document.getElementById("ht-patient-appointments")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [section]);
 
   async function scheduleAppointment() {
     setApptError(null);
@@ -211,6 +248,12 @@ export function PatientRecord({
       icon: UserRound,
     },
     {
+      key: "appointments",
+      label: "Appointments",
+      icon: Calendar,
+      group: "Patient Information",
+    },
+    {
       key: "general",
       label: "General Information",
       icon: UserRound,
@@ -314,16 +357,16 @@ export function PatientRecord({
               section === item.key;
 
             return (
-              <button
-                key={item.key}
-                type="button"
-                onClick={() =>
-                  setSection(item.key)
-                }
-                className={`ht-sidebar-item ${
-                  active ? "active" : ""
-                }`}
-              >
+              <div className="ht-sidebar-entry" key={item.key}>
+                {item.group && <div className="ht-sidebar-heading">{item.group}</div>}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSection(item.key);
+                    if (item.key === "profile") loadOverview();
+                  }}
+                  className={`ht-sidebar-item ${active ? "active" : ""}`}
+                >
 
                 <span className="ht-sidebar-icon">
                   <Icon size={18} />
@@ -333,7 +376,8 @@ export function PatientRecord({
                   {item.label}
                 </span>
 
-              </button>
+                </button>
+              </div>
             );
           })}
 
@@ -344,26 +388,11 @@ export function PatientRecord({
         <main className="ht-patient-main">
 
           {section === "profile" && (
-            <div className="grid gap-4">
-              <div className="ht-content-card">
-                <h2>Patient Profile</h2>
-                <dl className="ht-detail-grid">
-                  <Detail icon={<UserRound size={20} />} label="Full Name" value={patient.full_name} />
-                  <Detail icon={<User size={20} />} label="Sex" value={patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : "--"} />
-                  <Detail icon={<Calendar size={20} />} label="Date of Birth" value={patient.birthdate ? new Date(patient.birthdate).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }) : "--"} />
-                  <Detail icon={<HeartPulse size={20} />} label="Age" value={patient.age ?? "--"} />
-                  <Detail icon={<MapPin size={20} />} label="Address" value={patient.address || "--"} />
-                  <Detail icon={<Phone size={20} />} label="Contact Number" value={patient.contact_number || "--"} />
-                  <Detail icon={<UserRound size={20} />} label="Emergency Contact" value={patient.emergency_contact_name || "--"} />
-                  <Detail icon={<Phone size={20} />} label="Emergency Contact Number" value={patient.emergency_contact_number || "--"} />
-                  <Detail icon={<IdCard size={20} />} label="Barangay ID Number" value={patient.barangay_id_number || "--"} />
-                </dl>
-              </div>
-            </div>
+            <PatientOverview records={overviewRecords} loading={overviewLoading} />
           )}
 
           {/* GENERAL / PATIENT INFORMATION */}
-          {section === "general" && (
+          {(section === "general" || section === "appointments") && (
             <div className="grid gap-4">
 
               <div className="ht-content-card">
@@ -592,7 +621,7 @@ export function PatientRecord({
 
 </div>
               {/* APPOINTMENTS */}
-              <div className="ht-content-card ht-patient-appointments">
+              <div id="ht-patient-appointments" className="ht-content-card ht-patient-appointments">
 
                 <div className="ht-card-heading">
 
@@ -811,7 +840,7 @@ export function PatientRecord({
 
 
           {/* CLINICAL RECORDS */}
-          {section !== "general" && section !== "profile" && (
+          {section !== "general" && section !== "appointments" && section !== "profile" && (
             <ClinicalRecords
               patientId={patientId}
               type={
@@ -1086,6 +1115,19 @@ export function PatientRecord({
           min-height: 430px;
         }
 
+        .ht-sidebar-heading {
+          padding: 18px 12px 8px;
+          color: #66766d;
+          font-size: 10px;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        .ht-sidebar-entry:first-child + .ht-sidebar-entry .ht-sidebar-heading {
+          padding-top: 10px;
+        }
+
         .ht-sidebar-item {
           width: 100%;
           min-height: 56px;
@@ -1146,6 +1188,101 @@ export function PatientRecord({
           margin: 0 0 18px;
           font-size: 16px;
           font-weight: 750;
+        }
+
+        .ht-overview-header {
+          margin: 0 0 14px;
+        }
+
+        .ht-overview-header h2 {
+          margin: 0;
+          font-size: 24px;
+          line-height: 1.2;
+        }
+
+        .ht-overview-header p {
+          margin: 5px 0 0;
+          color: #68766f;
+          font-size: 13px;
+        }
+
+        .ht-overview-stack {
+          display: grid;
+          gap: 12px;
+        }
+
+        .ht-overview-card {
+          overflow: hidden;
+          background: #fff;
+          border: 1px solid #dce8e1;
+          border-radius: 9px;
+        }
+
+        .ht-overview-card-heading {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          padding: 10px 14px;
+          background: #e2f2ea;
+          color: #235c43;
+        }
+
+        .ht-overview-card-heading h3 {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin: 0;
+          font-size: 14px;
+        }
+
+        .ht-overview-card-heading span {
+          color: #596d61;
+          font-size: 11px;
+        }
+
+        .ht-overview-table {
+          width: 100%;
+          border-collapse: collapse;
+          table-layout: fixed;
+        }
+
+        .ht-overview-table th,
+        .ht-overview-table td {
+          padding: 8px 12px;
+          border-bottom: 1px solid #e4ece7;
+          text-align: left;
+          vertical-align: top;
+          font-size: 12px;
+          line-height: 1.45;
+          overflow-wrap: anywhere;
+        }
+
+        .ht-overview-table th {
+          width: 36%;
+          color: #46574e;
+          font-weight: 700;
+        }
+
+        .ht-overview-table tr:last-child th,
+        .ht-overview-table tr:last-child td {
+          border-bottom: 0;
+        }
+
+        .ht-overview-empty {
+          padding: 16px;
+          color: #68766f;
+          font-size: 12px;
+        }
+
+        .ht-overview-notes {
+          margin: 0;
+          padding: 13px 16px;
+          color: #29352f;
+          font-size: 13px;
+          line-height: 1.6;
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
         }
         /* ================= PORTAL ACCOUNT ================= */
 
@@ -1471,5 +1608,74 @@ function Detail({ icon, label, value }) {
         <dd>{value || "--"}</dd>
       </div>
     </div>
+  );
+}
+
+function PatientOverview({ records, loading }) {
+  return (
+    <div className="ht-patient-overview">
+      <header className="ht-overview-header">
+        <h2>Patient Profile</h2>
+        <p>Summary of the patient's latest health information.</p>
+      </header>
+      <div className="ht-overview-stack">
+        <OverviewRecordCard type="vital-signs" record={records["vital-signs"]} loading={loading} />
+        <OverviewRecordCard type="health-assessment" record={records["health-assessment"]} loading={loading} />
+        <OverviewRecordCard type="allergies" record={records.allergies} loading={loading} />
+        <OverviewRecordCard type="midwife-notes" record={records["midwife-notes"]} loading={loading} />
+      </div>
+    </div>
+  );
+}
+
+function OverviewRecordCard({ type, record, loading }) {
+  const definition = RECORD_TYPES[type];
+  const Icon = {
+    "vital-signs": HeartPulse,
+    "health-assessment": ClipboardList,
+    allergies: TriangleAlert,
+    "midwife-notes": FileText,
+  }[type];
+
+  const formatDate = (value) => value
+    ? new Date(value).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
+    : "Date not recorded";
+  const formatValue = (value, field) => {
+    if (value === null || value === undefined || value === "") return "--";
+    return field.options?.[value] || value;
+  };
+  const recordedDate = record
+    ? record[definition.dateField] || record.created_at
+    : null;
+
+  return (
+    <section className="ht-overview-card">
+      <div className="ht-overview-card-heading">
+        <h3><Icon size={16} /> Latest {definition.label}</h3>
+        <span>{loading ? "Loading..." : record ? `Recorded on ${formatDate(recordedDate)}` : "No record yet"}</span>
+      </div>
+      {loading ? (
+        <div className="ht-overview-empty">Loading {definition.label.toLowerCase()}...</div>
+      ) : !record ? (
+        <div className="ht-overview-empty">No {definition.label.toLowerCase()} has been recorded for this patient.</div>
+      ) : type === "midwife-notes" ? (
+        <>
+          <table className="ht-overview-table"><tbody>
+            <tr><th>Consultation Date</th><td>{formatDate(record[definition.dateField])}</td></tr>
+            <tr><th>Recorded By</th><td>{record.created_by_name || record.recorded_by_name || "--"}</td></tr>
+          </tbody></table>
+          <p className="ht-overview-notes">{record.notes || "No notes recorded."}</p>
+        </>
+      ) : (
+        <table className="ht-overview-table"><tbody>
+          {Object.entries(definition.fields).map(([column, field]) => (
+            <tr key={column}>
+              <th>{field.label.replace(/\s*\([^)]*\)/g, "")}</th>
+              <td>{formatValue(record[column], field)}</td>
+            </tr>
+          ))}
+        </tbody></table>
+      )}
+    </section>
   );
 }
