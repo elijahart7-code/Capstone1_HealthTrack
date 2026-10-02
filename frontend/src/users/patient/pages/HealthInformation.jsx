@@ -136,7 +136,7 @@ export function HealthInformation({ healthInfo }) {
           <div className="patient-sidebar-label">MY HEALTH INFORMATION</div>
 
           <SidebarItem icon={Calendar} label="Appointments" active={section === "appointments"} onClick={() => selectSection("appointments")} />
-          <SidebarItem icon={User} label="Patient Information" active={section === "patient-information"} onClick={() => selectSection("patient-information")} />
+          <SidebarItem icon={User} label="General Information" active={section === "patient-information"} onClick={() => selectSection("patient-information")} />
           <SidebarItem
             icon={Stethoscope}
             label="Health Assessment"
@@ -241,7 +241,7 @@ export function HealthInformation({ healthInfo }) {
                 <span className="patient-panel-icon patient-panel-icon-small">
                   <User size={18} strokeWidth={1.8} />
                 </span>
-                <h2>Patient Information</h2>
+                <h2>General Information</h2>
               </div>
             </div>
 
