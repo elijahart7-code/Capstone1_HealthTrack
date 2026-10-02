@@ -3101,6 +3101,10 @@
         overflow-x: auto;
     }
 
+    .patient-vitals-record-section .patient-table-wrap {
+        border-radius: 10px;
+    }
+
     .patient-health-table {
         width: 100%;
         border-collapse: separate;
@@ -3109,6 +3113,43 @@
         border-radius: 12px;
         overflow: hidden;
         background: #fff;
+    }
+
+    .patient-vitals-record-section .patient-health-table {
+        width: 1200px;
+        min-width: 100%;
+        table-layout: fixed;
+        border-radius: 10px;
+    }
+
+    .patient-vitals-record-section .patient-health-table th,
+    .patient-vitals-record-section .patient-health-table td {
+        height: auto;
+        padding: 0.8rem 0.75rem;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        vertical-align: middle;
+    }
+
+    .patient-vitals-record-section .patient-health-table th {
+        background: #eaf7f1;
+        color: #17483e;
+        line-height: 1.4;
+    }
+
+    .patient-vitals-record-section .patient-health-table tbody td {
+        background: #ffffff;
+        line-height: 1.45;
+    }
+
+    .patient-vitals-record-section .patient-health-table th:nth-child(-n+9),
+    .patient-vitals-record-section .patient-health-table td:nth-child(-n+9) {
+        width: 9.65%;
+    }
+
+    .patient-vitals-record-section .patient-health-table th:nth-child(10),
+    .patient-vitals-record-section .patient-health-table td:nth-child(10) {
+        width: 13.15%;
     }
 
     .patient-vital-table {
