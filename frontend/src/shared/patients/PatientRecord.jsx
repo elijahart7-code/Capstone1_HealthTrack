@@ -39,7 +39,7 @@ export function PatientRecord({
 
   const [patient, setPatient] = useState(null);
   const [appointments, setAppointments] = useState([]);
-  const [section, setSection] = useState("general");
+  const [section, setSection] = useState("profile");
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
 
@@ -811,7 +811,7 @@ export function PatientRecord({
 
 
           {/* CLINICAL RECORDS */}
-          {section !== "general" && (
+          {section !== "general" && section !== "profile" && (
             <ClinicalRecords
               patientId={patientId}
               type={
