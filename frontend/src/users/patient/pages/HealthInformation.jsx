@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
+import { getCurrentUser } from "../../../lib/auth";
 import {
   Home,
   Calendar,
@@ -81,6 +82,7 @@ export function HealthInformation({ healthInfo }) {
   }
 
   const patient = healthInfo.patient;
+  const currentUser = getCurrentUser();
   const recordTypes = healthInfo.recordTypes || {};
   const records = healthInfo.records || {};
   const appointments = healthInfo.appointments || [];
@@ -275,19 +277,9 @@ export function HealthInformation({ healthInfo }) {
             </div>
         </section>}
 
-        {section === "patient-information" && <section className="patient-healthinfo-card patient-portal-info-card">
-          <div className="patient-portal-info-icon" aria-hidden="true">
-            <UserRound size={22} strokeWidth={1.8} />
-          </div>
-          <div className="patient-portal-info-copy">
-            <h2>Patient Portal</h2>
-            <p>Access your personal health information and stay informed about your healthcare records.</p>
-          </div>
-          <button type="button" className="patient-portal-info-button" onClick={() => setSearchParams({ page: "dashboard" })}>
-            Go to Patient Portal
-            <ArrowRight size={17} strokeWidth={1.9} />
-          </button>
-        </section>}
+        {section === "patient-information" && (
+          <PatientPortalAccount patient={patient} currentUser={currentUser} />
+        )}
 
         {Object.entries(recordTypes).map(([key, definition]) => section === key && (
           key === "medical-history" ? (
@@ -336,6 +328,45 @@ export function HealthInformation({ healthInfo }) {
         )}
       </main>
     </div>
+  );
+}
+
+function PatientPortalAccount({ patient, currentUser }) {
+  const accountCreatedAt = patient.account_created_at || patient.user_created_at;
+  const accountCreatedDate = accountCreatedAt && Number.isFinite(Date.parse(accountCreatedAt))
+    ? new Date(accountCreatedAt).toLocaleDateString(undefined, {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    })
+    : "Not available";
+
+  return (
+    <section className="patient-healthinfo-card patient-general-account-card" aria-labelledby="patient-general-account-title">
+      <h2 id="patient-general-account-title">Patient Portal Account</h2>
+      <div className="patient-general-account-content">
+        <div className="patient-general-account-avatar" aria-label="Verified patient account">
+          <UserRound size={52} strokeWidth={1.6} aria-hidden="true" />
+          <span className="patient-general-account-verified" aria-hidden="true">
+            <CircleCheck size={19} strokeWidth={2.4} />
+          </span>
+        </div>
+        <dl className="patient-general-account-details">
+          <div>
+            <dt>Account Status:</dt>
+            <dd className="patient-general-account-status">Active</dd>
+          </div>
+          <div>
+            <dt>Email Address:</dt>
+            <dd>{patient.email || patient.portal_email || currentUser?.email || "Not available"}</dd>
+          </div>
+          <div>
+            <dt>Account Created:</dt>
+            <dd>{accountCreatedDate}</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
   );
 }
 
