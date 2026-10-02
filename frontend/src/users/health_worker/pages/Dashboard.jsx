@@ -11,6 +11,12 @@ export function Dashboard({ dashboard, onRegisterClick }) {
   const [, setSearchParams] = useSearchParams();
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const currentDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "2-digit",
+    year: "numeric",
+  });
   const totalPages = Math.max(1, Math.ceil(dashboard.recentPatients.length / pageSize));
   const pageStart = (page - 1) * pageSize;
   const pagePatients = dashboard.recentPatients.slice(pageStart, pageStart + pageSize);
@@ -25,9 +31,10 @@ export function Dashboard({ dashboard, onRegisterClick }) {
   return (
     <div className="grid gap-4">
       <PageHeader title="Health Worker Dashboard" subtitle="Register patients and view patient information.">
-        <button onClick={onRegisterClick} className="ht-button">
-          Register Patient
-        </button>
+        <div className="ht-current-date-pill">
+          <CalendarDays size={16} strokeWidth={2} />
+          <span>{currentDate}</span>
+        </div>
       </PageHeader>
 
       <div className="ht-metric-grid">
