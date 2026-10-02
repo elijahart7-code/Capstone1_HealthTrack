@@ -176,7 +176,11 @@ export function HealthInformation({ healthInfo }) {
               <h1>Patient Profile</h1>
               <p>Your latest health information from your most recent checkup.</p>
             </header>
-            <LatestAppointment appointment={upcomingAppointment} />
+            <LatestAppointment
+              appointment={upcomingAppointment}
+              hasAppointmentHistory={appointments.length > 0}
+              onViewAppointments={() => selectSection("appointments")}
+            />
             <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} />
             <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} />
             <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} />
@@ -460,11 +464,10 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, childre
   );
 }
 
-function LatestAppointment({ appointment }) {
+function LatestAppointment({ appointment, hasAppointmentHistory, onViewAppointments }) {
   const scheduledDate = appointment ? new Date(appointment.scheduled_at) : null;
-  const statusLabel = appointment?.status
-    ? appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)
-    : "Status unavailable";
+  const appointmentReason = appointment?.reason || "Appointment";
+  const reasonForVisit = appointment?.notes || appointment?.reason || "Not provided";
 
   return (
     <section className="patient-healthinfo-card patient-latest-appointment-card">
@@ -475,39 +478,62 @@ function LatestAppointment({ appointment }) {
           </span>
           <h2>Latest Appointment</h2>
         </div>
-        {appointment && (
-          <span className={`patient-appointment-status ${appointment.status ? `is-${appointment.status.toLowerCase()}` : ""}`}>
-            <span className="patient-appointment-status-dot" aria-hidden="true" />
-            {statusLabel}
-          </span>
-        )}
+        <button type="button" className="patient-appointment-link" onClick={onViewAppointments}>
+          View All Appointments
+          <ArrowRight size={16} strokeWidth={1.8} aria-hidden="true" />
+        </button>
       </header>
       {appointment ? (
-        <div className="patient-latest-appointment-details">
-          <div>
-            <span className="patient-latest-appointment-label">Date</span>
-            <strong>{scheduledDate.toLocaleDateString(undefined, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}</strong>
+        <div className="patient-appointment-panel">
+          <div className="patient-appointment-date-block" aria-label={scheduledDate.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}>
+            <span>{scheduledDate.toLocaleString(undefined, { month: "short" })}</span>
+            <strong>{scheduledDate.toLocaleString(undefined, { day: "2-digit" })}</strong>
+            <small>{scheduledDate.toLocaleString(undefined, { year: "numeric" })}</small>
           </div>
-          <div>
-            <span className="patient-latest-appointment-label">Time</span>
-            <strong>{scheduledDate.toLocaleTimeString(undefined, {
-              hour: "numeric",
-              minute: "2-digit",
-            })}</strong>
+          <div className="patient-appointment-main">
+            <span className="patient-appointment-upcoming-badge">
+              <span className="patient-appointment-status-dot" aria-hidden="true" />
+              Upcoming
+            </span>
+            <h3>{appointmentReason}</h3>
+            <div className="patient-appointment-meta">
+              <span>
+                <Clock3 size={15} strokeWidth={1.8} aria-hidden="true" />
+                {scheduledDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+              </span>
+              <span>
+                <MapPin size={15} strokeWidth={1.8} aria-hidden="true" />
+                Barangay Health Center of Mambog I
+              </span>
+            </div>
           </div>
-          <div>
-            <span className="patient-latest-appointment-label">Reason for visit</span>
-            <strong>{appointment.reason || "Not provided"}</strong>
+          <div className="patient-appointment-reason">
+            <FileText size={19} strokeWidth={1.8} aria-hidden="true" />
+            <div>
+              <span className="patient-latest-appointment-label">Reason for Visit</span>
+              <strong>{reasonForVisit}</strong>
+            </div>
           </div>
         </div>
       ) : (
         <div className="patient-latest-appointment-empty">
-          <strong>No upcoming appointments</strong>
-          <p>You’re all caught up! No upcoming visits are scheduled at the moment.</p>
+          <span className="patient-appointment-empty-icon" aria-hidden="true">
+            <CalendarDays size={20} strokeWidth={1.8} />
+          </span>
+          <div>
+            <strong>No Upcoming Appointments</strong>
+            <p>You're all caught up! No upcoming visits are scheduled at the moment.</p>
+            {hasAppointmentHistory && (
+              <button type="button" className="patient-appointment-link patient-appointment-history-link" onClick={onViewAppointments}>
+                View Appointment History
+                <ArrowRight size={15} strokeWidth={1.8} aria-hidden="true" />
+              </button>
+            )}
+          </div>
         </div>
       )}
     </section>
