@@ -3220,6 +3220,71 @@
         background: #ffffff;
     }
 
+    .patient-portal-info-card {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 1rem;
+        background: #ffffff;
+    }
+
+    .patient-portal-info-icon {
+        display: grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: #e8f6ef;
+        color: #0d8069;
+    }
+
+    .patient-portal-info-copy {
+        min-width: 0;
+    }
+
+    .patient-portal-info-copy h2 {
+        margin: 0;
+        color: #17483e;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .patient-portal-info-copy p {
+        margin: 0.3rem 0 0;
+        color: #596764;
+        font-size: 0.84rem;
+        line-height: 1.5;
+    }
+
+    .patient-portal-info-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        min-height: 42px;
+        padding: 0.65rem 0.9rem;
+        border: 1px solid #0d8069;
+        border-radius: 9px;
+        background: #0d8069;
+        color: #ffffff;
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 700;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: background 0.16s ease, border-color 0.16s ease;
+    }
+
+    .patient-portal-info-button:hover {
+        border-color: #096c59;
+        background: #096c59;
+    }
+
+    .patient-portal-info-button:focus-visible {
+        outline: 3px solid rgba(13, 128, 105, 0.25);
+        outline-offset: 2px;
+    }
+
     .patient-info-field {
         display: grid;
         align-content: start;
@@ -3353,6 +3418,16 @@
         .patient-information-grid {
             display: grid;
             grid-template-columns: 1fr;
+        }
+
+        .patient-portal-info-card {
+            grid-template-columns: auto minmax(0, 1fr);
+            align-items: start;
+        }
+
+        .patient-portal-info-button {
+            grid-column: 1 / -1;
+            width: 100%;
         }
 
         .patient-info-field,
