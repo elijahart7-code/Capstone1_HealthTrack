@@ -557,7 +557,6 @@ function MedicalHistorySection({ definition, records }) {
           <h2>Medical Histories</h2>
         </div>
         {records.length > 1 && <span className="patient-card-total">Latest of {records.length}</span>}
-        <span className="patient-readonly-pill"><Lock size={14} strokeWidth={1.8} /> View Only</span>
       </div>
       <dl className="patient-medical-history-list">
         {rows.map(({ key, label, icon: Icon, emptyValue }) => (
