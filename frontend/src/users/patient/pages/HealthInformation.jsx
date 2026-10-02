@@ -282,13 +282,19 @@ export function HealthInformation({ healthInfo }) {
               definition={definition}
               records={records[key] || []}
             />
+          ) : key === "vital-signs" ? (
+            <VitalSignsSection
+              key={key}
+              definition={definition}
+              records={records[key] || []}
+              onViewAll={() => selectSection(key)}
+            />
           ) : (
             <RecordSection
               key={key}
               definition={definition}
               records={records[key] || []}
               onViewAll={() => selectSection(key)}
-              className={key === "vital-signs" ? "patient-vitals-record-section" : ""}
             />
           )
         ))}
@@ -669,6 +675,81 @@ function AssessmentDetailRows({ fields, assessmentDate, recordedOn, recordedBy }
   );
 }
 
+const VITAL_SIGN_PRESENTATION = {
+  blood_pressure: { label: "Blood Pressure", unit: "mmHg" },
+  temperature: { label: "Temperature", unit: "°C" },
+  pulse_rate: { label: "Pulse Rate", unit: "bpm" },
+  respiratory_rate: { label: "Respiratory Rate", unit: "breaths/min" },
+  height_cm: { label: "Height", unit: "cm" },
+  weight_kg: { label: "Weight", unit: "kg" },
+  bmi: { label: "Body Mass Index (BMI)", unit: "kg/m²" },
+  oxygen_saturation: { label: "Oxygen Saturation (SpO2)", unit: "%" },
+  pain_score: { label: "Pain Score", unit: "0–10" },
+};
+
+function VitalSignsSection({ definition, records, onViewAll }) {
+  const record = getLatestRecord(records, definition.dateField);
+  const fields = Object.entries(definition.fields)
+    .filter(([key]) => VITAL_SIGN_PRESENTATION[key]);
+
+  return (
+    <section className="patient-healthinfo-card patient-vitals-section">
+      <div className="patient-vitals-heading">
+        <div className="patient-card-title">
+          <span className="patient-vitals-document-icon" aria-hidden="true">
+            <FileText size={18} strokeWidth={1.8} />
+          </span>
+          <h2>{definition.label}</h2>
+        </div>
+        <span className="patient-card-total">{records.length} total</span>
+      </div>
+
+      <button type="button" className="patient-vitals-view-all" onClick={onViewAll}>
+        View All
+      </button>
+
+      {record ? (
+        <>
+          <div className="patient-table-wrap patient-vitals-table-wrap">
+            <table className="patient-health-table patient-vitals-table">
+              <colgroup>
+                <col className="patient-vitals-measurement-column" />
+                <col className="patient-vitals-result-column" />
+                <col className="patient-vitals-unit-column" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col">Measurement</th>
+                  <th scope="col">Result</th>
+                  <th scope="col">Unit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {fields.map(([key]) => (
+                  <tr key={key}>
+                    <td>{VITAL_SIGN_PRESENTATION[key].label}</td>
+                    <td>{record[key] !== null && record[key] !== undefined && record[key] !== "" ? record[key] : "--"}</td>
+                    <td>{VITAL_SIGN_PRESENTATION[key].unit}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <footer className="patient-vitals-footer">
+            <span className="patient-vitals-recorded-date">
+              <CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" />
+              Recorded on: {formatRecordDate(record[definition.dateField]) || "Not recorded"}
+            </span>
+            <span>Showing latest vital signs.</span>
+          </footer>
+        </>
+      ) : (
+        <div className="patient-empty-state">No vital signs recorded.</div>
+      )}
+    </section>
+  );
+}
+
 function RecordSection({
   definition,
   records,
@@ -676,12 +757,11 @@ function RecordSection({
   emptyMessage,
   showTotal = true,
   onViewAll,
-  className = "",
 }) {
   const columnFields = Object.entries(definition.fields).filter(([, f]) => f.column || f.primary);
 
   return (
-    <section className={`patient-healthinfo-card ${className}`.trim()}>
+    <section className="patient-healthinfo-card">
       <div className="patient-card-header">
         <div className="patient-card-title">
           <span className="patient-panel-icon patient-panel-icon-small">
