@@ -206,6 +206,11 @@ export function PatientRecord({
 
   const sidebarItems = [
     {
+      key: "profile",
+      label: "Patient Profile",
+      icon: UserRound,
+    },
+    {
       key: "general",
       label: "General Information",
       icon: UserRound,
@@ -337,6 +342,25 @@ export function PatientRecord({
 
         {/* ================= RIGHT CONTENT ================= */}
         <main className="ht-patient-main">
+
+          {section === "profile" && (
+            <div className="grid gap-4">
+              <div className="ht-content-card">
+                <h2>Patient Profile</h2>
+                <dl className="ht-detail-grid">
+                  <Detail icon={<UserRound size={20} />} label="Full Name" value={patient.full_name} />
+                  <Detail icon={<User size={20} />} label="Sex" value={patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : "--"} />
+                  <Detail icon={<Calendar size={20} />} label="Date of Birth" value={patient.birthdate ? new Date(patient.birthdate).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }) : "--"} />
+                  <Detail icon={<HeartPulse size={20} />} label="Age" value={patient.age ?? "--"} />
+                  <Detail icon={<MapPin size={20} />} label="Address" value={patient.address || "--"} />
+                  <Detail icon={<Phone size={20} />} label="Contact Number" value={patient.contact_number || "--"} />
+                  <Detail icon={<UserRound size={20} />} label="Emergency Contact" value={patient.emergency_contact_name || "--"} />
+                  <Detail icon={<Phone size={20} />} label="Emergency Contact Number" value={patient.emergency_contact_number || "--"} />
+                  <Detail icon={<IdCard size={20} />} label="Barangay ID Number" value={patient.barangay_id_number || "--"} />
+                </dl>
+              </div>
+            </div>
+          )}
 
           {/* GENERAL / PATIENT INFORMATION */}
           {section === "general" && (
@@ -1215,14 +1239,16 @@ export function PatientRecord({
 
         .ht-detail-grid {
           display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 28px 45px;
+          grid-template-columns: repeat(3, minmax(220px, 1fr));
+          gap: 22px 30px;
         }
         .ht-detail-item {
           display: flex;
           align-items: flex-start;
           gap: 12px;
           min-width: 0;
+          width: 100%;
+          min-height: 64px;
         }
         .ht-detail-icon {
           width: 40px;
@@ -1237,24 +1263,28 @@ export function PatientRecord({
         }
         .ht-detail-content {
           min-width: 0;
+          width: 100%;
+          max-width: 220px;
         }
         .ht-detail-grid dt {
           margin-bottom: 5px;
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 700;
           color: #56645d;
+          line-height: 1.4;
         }
         .ht-detail-grid dd {
           margin: 0;
-          font-size: 13px;
+          font-size: 14px;
           color: #28352f;
-          line-height: 1.45;
+          line-height: 1.5;
+          word-break: break-word;
         }
         .ht-emergency-row {
           grid-column: 1 / -1;
           display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 28px 45px;
+          grid-template-columns: repeat(3, minmax(220px, 1fr));
+          gap: 22px 30px;
           border-top: 1px solid #dfeae4;
           padding-top: 24px;
         }
