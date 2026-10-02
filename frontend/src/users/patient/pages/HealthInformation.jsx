@@ -235,7 +235,7 @@ export function HealthInformation({ healthInfo }) {
             <div className="patient-table-footer">Showing 1 to {appointments.length} of {appointments.length} appointments</div>
         </section>}
 
-        {section === "patient-information" && <section className="patient-healthinfo-card">
+        {section === "patient-information" && <section className="patient-healthinfo-card patient-information-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
