@@ -779,9 +779,6 @@ function MidwifeNotesSection({ definition, records }) {
         <div className="patient-empty-state">No midwife notes recorded.</div>
       )}
 
-      <footer className="patient-midwife-pagination">
-        <span className="patient-midwife-page-indicator">Page 1 of 1</span>
-      </footer>
     </section>
   );
 }
