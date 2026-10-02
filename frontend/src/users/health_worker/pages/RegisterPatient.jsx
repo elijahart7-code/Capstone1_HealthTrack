@@ -26,6 +26,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
     address: "",
     nationality: "",
     place_of_birth: "",
+    place_of_birth_details: "",
     emergency_contact_name: "",
     emergency_contact_number: "",
     emergency_contact_relationship: "",
@@ -40,6 +41,32 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const birthDatePickerRef = useRef(null);
 
   const birthLocationOptions = PHILIPPINE_LOCATIONS[selectedBirthRegion] || [];
+
+  const birthplaceDetailOptions = {
+    "Quezon City": ["Fairview", "Litex", "Novaliches", "Cubao", "Kamuning", "Batasan", "Sandigan", "Project 6", "Other"],
+    "Caloocan City": ["Caloocan Proper", "Bagumbong", "Tala", "Grace Park", "Other"],
+    "Manila City": ["Binondo", "Quiapo", "Sta. Cruz", "Tondo", "Malate", "Other"],
+    "Makati City": ["Poblacion", "Bel-Air", "Magallanes", "San Antonio", "Other"],
+    "Pasig City": ["Ugong", "Ortigas", "Kapitolyo", "Rizal", "Other"],
+    "Taguig City": ["Bonifacio Global City", "Lower Bicutan", "Upper Bicutan", "Fort Bonifacio", "Other"],
+    "Bacoor City": ["Bacoor Proper", "Salinas", "Mambog", "Molino", "Other"],
+    "Imus City": ["Imus Proper", "Anabu", "Bayan Luma", "Palico", "Other"],
+    "Dasmariñas City": ["Dasmariñas Proper", "Langkaan", "Salawag", "Other"],
+    "General Trias City": ["General Trias Proper", "Panghulo", "Sampalucan", "Other"],
+    "Trece Martires City": ["Trece Martires Proper", "Barangay Conchu", "Other"],
+  };
+
+  function getBirthplaceDetailOptions() {
+    return birthplaceDetailOptions[selectedBirthLocation] || [
+      "Barangay proper",
+      "Town proper",
+      "Subdivision / village",
+      "Commercial center",
+      "Market area",
+      "Near school / transport hub",
+      "Other",
+    ];
+  }
 
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -110,15 +137,25 @@ export function RegisterPatient({ loadData, onRegistered }) {
     set("birthdate", formatIsoToText(value));
   }
 
+  function syncBirthPlace(region = selectedBirthRegion, location = selectedBirthLocation, details = form.place_of_birth_details) {
+    const nextPlaceOfBirth = [region, location, details].filter(Boolean).join(" / ");
+    set("place_of_birth", nextPlaceOfBirth);
+  }
+
   function handleBirthRegionChange(region) {
     setSelectedBirthRegion(region);
     setSelectedBirthLocation("");
-    set("place_of_birth", "");
+    syncBirthPlace(region, "", form.place_of_birth_details);
   }
 
   function handleBirthLocationChange(location) {
     setSelectedBirthLocation(location);
-    set("place_of_birth", `${selectedBirthRegion} / ${location}`);
+    syncBirthPlace(selectedBirthRegion, location, form.place_of_birth_details);
+  }
+
+  function handleBirthDetailsChange(value) {
+    set("place_of_birth_details", value);
+    syncBirthPlace(selectedBirthRegion, selectedBirthLocation, value);
   }
 
   async function handleSubmit(e) {
@@ -133,12 +170,13 @@ export function RegisterPatient({ loadData, onRegistered }) {
 
     setSaving(true);
     try {
-      const payload = {
-        ...form,
+      const { place_of_birth_details, ...payload } = form;
+      const finalPayload = {
+        ...payload,
         birthdate: toIsoDate(form.birthdate),
       };
 
-      const { data } = await api.post("/patients", payload);
+      const { data } = await api.post("/patients", finalPayload);
 
       await loadData();
       onRegistered(data.patient.patient_id);
@@ -306,31 +344,51 @@ export function RegisterPatient({ loadData, onRegistered }) {
             </Field>
 
             <Field label="Place of Birth" required className="ht-place-of-birth-field">
-              <div className="grid gap-2">
-                <Select
-                  value={selectedBirthRegion}
-                  onChange={(e) => handleBirthRegionChange(e.target.value)}
-                  required
-                >
-                  <option value="" disabled>Select region</option>
-                  {PHILIPPINE_REGIONS.map((region) => (
-                    <option key={region} value={region}>
-                      {region}
+              <div className="ht-place-of-birth-stack">
+                <div className="ht-place-of-birth-row">
+                  <Select
+                    value={selectedBirthRegion}
+                    onChange={(e) => handleBirthRegionChange(e.target.value)}
+                    required
+                    className="ht-place-of-birth-select"
+                  >
+                    <option value="" disabled>Select region</option>
+                    {PHILIPPINE_REGIONS.map((region) => (
+                      <option key={region} value={region}>
+                        {region}
+                      </option>
+                    ))}
+                  </Select>
+
+                  <Select
+                    value={selectedBirthLocation}
+                    onChange={(e) => handleBirthLocationChange(e.target.value)}
+                    required
+                    className="ht-place-of-birth-select"
+                  >
+                    <option value="" disabled>
+                      Select province/city/municipality
                     </option>
-                  ))}
-                </Select>
+                    {birthLocationOptions.map((location) => (
+                      <option key={location} value={location}>
+                        {location}
+                      </option>
+                    ))}
+                  </Select>
+                </div>
 
                 <Select
-                  value={selectedBirthLocation}
-                  onChange={(e) => handleBirthLocationChange(e.target.value)}
-                  required
+                  value={form.place_of_birth_details}
+                  onChange={(e) => handleBirthDetailsChange(e.target.value)}
+                  className="ht-place-of-birth-detail-input"
+                  disabled={!selectedBirthLocation}
                 >
-                  <option value="" disabled>
-                    Select province/city/municipality
+                  <option value="">
+                    {selectedBirthLocation ? "Select specific birthplace area" : "Select city/municipality first"}
                   </option>
-                  {birthLocationOptions.map((location) => (
-                    <option key={location} value={location}>
-                      {location}
+                  {getBirthplaceDetailOptions().map((option) => (
+                    <option key={option} value={option}>
+                      {option}
                     </option>
                   ))}
                 </Select>

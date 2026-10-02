@@ -152,7 +152,22 @@
     }
 
     .ht-place-of-birth-field {
-        grid-column: 2;
+        grid-column: 1 / -1;
+    }
+
+    .ht-place-of-birth-stack {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+
+    .ht-place-of-birth-row {
+        display: contents;
+    }
+
+    .ht-place-of-birth-select,
+    .ht-place-of-birth-detail-input {
+        width: 100%;
     }
 
     .ht-section-icon,
