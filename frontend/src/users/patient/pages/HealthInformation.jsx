@@ -22,6 +22,10 @@ import {
   UserRound,
   MessageSquare,
   CircleCheck,
+  Scissors,
+  Hospital,
+  UsersRound,
+  Syringe,
 } from "lucide-react";
 
 const SECTION_ICONS = {
@@ -246,12 +250,20 @@ export function HealthInformation({ healthInfo }) {
         </section>}
 
         {Object.entries(recordTypes).map(([key, definition]) => section === key && (
-          <RecordSection
-            key={key}
-            definition={definition}
-            records={records[key] || []}
-            onViewAll={() => selectSection(key)}
-          />
+          key === "medical-history" ? (
+            <MedicalHistorySection
+              key={key}
+              definition={definition}
+              records={records[key] || []}
+            />
+          ) : (
+            <RecordSection
+              key={key}
+              definition={definition}
+              records={records[key] || []}
+              onViewAll={() => selectSection(key)}
+            />
+          )
         ))}
           </>
         )}
@@ -519,6 +531,63 @@ function AllergyDetailRows({ rows }) {
         </div>
       ))}
     </dl>
+  );
+}
+
+function MedicalHistorySection({ definition, records }) {
+  const record = records[0] || null;
+  const rows = [
+    { key: "past_illnesses", label: "Past Illnesses", icon: HeartPulse, emptyValue: "None" },
+    { key: "chronic_conditions", label: "Chronic Conditions", icon: Activity, emptyValue: "None" },
+    { key: "past_surgeries", label: "Past Surgeries", icon: Scissors, emptyValue: "None" },
+    { key: "previous_hospitalizations", label: "Previous Hospitalizations", icon: Hospital, emptyValue: "None" },
+    { key: "family_medical_history", label: "Family Medical History", icon: UsersRound, emptyValue: "Not provided" },
+    { key: "immunization_status", label: "Immunization Status", icon: Syringe, emptyValue: "Not provided" },
+  ];
+  const recordedOn = formatRecordDate(record?.[definition.dateField]);
+  const recordedBy = record?.created_by_name || record?.created_by;
+
+  return (
+    <section className="patient-healthinfo-card patient-medical-history-card">
+      <div className="patient-card-header">
+        <div className="patient-card-title">
+          <span className="patient-panel-icon patient-panel-icon-small">
+            <FileText size={18} strokeWidth={1.8} />
+          </span>
+          <h2>Medical Histories</h2>
+        </div>
+        {records.length > 1 && <span className="patient-card-total">Latest of {records.length}</span>}
+        <span className="patient-readonly-pill"><Lock size={14} strokeWidth={1.8} /> View Only</span>
+      </div>
+      <dl className="patient-medical-history-list">
+        {rows.map(({ key, label, icon: Icon, emptyValue }) => (
+          <div className="patient-medical-history-row" key={key}>
+            <span className="patient-medical-history-icon" aria-hidden="true">
+              <Icon size={17} strokeWidth={1.8} />
+            </span>
+            <dt>{label}</dt>
+            <span className="patient-medical-history-separator" aria-hidden="true">:</span>
+            <dd>{record?.[key] || emptyValue}</dd>
+          </div>
+        ))}
+        <div className="patient-medical-history-row patient-medical-history-meta">
+          <span className="patient-medical-history-icon" aria-hidden="true">
+            <CalendarDays size={17} strokeWidth={1.8} />
+          </span>
+          <dt>Recorded on</dt>
+          <span className="patient-medical-history-separator" aria-hidden="true">:</span>
+          <dd>{recordedOn || "Not provided"}</dd>
+        </div>
+        <div className="patient-medical-history-row patient-medical-history-meta">
+          <span className="patient-medical-history-icon" aria-hidden="true">
+            <UserRound size={17} strokeWidth={1.8} />
+          </span>
+          <dt>Recorded by</dt>
+          <span className="patient-medical-history-separator" aria-hidden="true">:</span>
+          <dd>{recordedBy || "Not provided"}</dd>
+        </div>
+      </dl>
+    </section>
   );
 }
 
