@@ -181,8 +181,8 @@ export function HealthInformation({ healthInfo }) {
               hasAppointmentHistory={appointments.length > 0}
               onViewAppointments={() => selectSection("appointments")}
             />
-            <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} />
             <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} />
+            <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} />
             <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} />
             <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} />
           </>
