@@ -26,6 +26,11 @@ import {
   Hospital,
   UsersRound,
   Syringe,
+  ArrowRight,
+  Briefcase,
+  IdCard,
+  MapPin,
+  PhoneCall,
 } from "lucide-react";
 
 const SECTION_ICONS = {
@@ -232,21 +237,36 @@ export function HealthInformation({ healthInfo }) {
                 </span>
                 <h2>Patient Information</h2>
               </div>
-              <button type="button" className="patient-view-button" onClick={() => selectSection("patient-information")}>
-                View All
-              </button>
             </div>
 
             <div className="patient-information-grid">
-              <InfoField label="Full Name" value={patientName || "Patient"} />
-              <InfoField label="Gender" value={patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null} />
-              <InfoField label="Date of Birth" value={patient.birthdate ? new Date(patient.birthdate).toLocaleDateString() : null} />
-              <InfoField label="Age" value={patient.age !== undefined ? `${patient.age} years old` : null} />
-              <InfoField label="Contact Number" value={patient.contact_number} />
-              <InfoField label="Address" value={patient.address} wide />
-              <InfoField label="Blood Type" value={patient.blood_type} />
-              <InfoField label="Civil Status" value={patient.civil_status} />
+              <InfoField icon={User} label="Full Name" value={patientName} />
+              <InfoField icon={UserRound} label="Sex" value={patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null} />
+              <InfoField icon={CalendarDays} label="Date of Birth" value={patient.birthdate ? new Date(patient.birthdate).toLocaleDateString() : null} />
+              <InfoField icon={Clock3} label="Age" value={patient.age != null ? `${patient.age} years old` : null} />
+              <InfoField icon={MapPin} label="Address" value={patient.address} />
+              <InfoField icon={HeartPulse} label="Civil Status" value={patient.civil_status} />
+              <InfoField icon={Droplets} label="Blood Type" value={patient.blood_type} />
+              <InfoField icon={Phone} label="Contact Number" value={patient.contact_number} />
+              <InfoField icon={Briefcase} label="Occupation" value={patient.occupation} />
+              <InfoField icon={UsersRound} label="Emergency Contact" value={patient.emergency_contact_name} />
+              <InfoField icon={PhoneCall} label="Emergency Contact Number" value={patient.emergency_contact_number} />
+              <InfoField icon={IdCard} label="Barangay ID Number" value={patient.barangay_id_number} />
             </div>
+        </section>}
+
+        {section === "patient-information" && <section className="patient-healthinfo-card patient-portal-info-card">
+          <div className="patient-portal-info-icon" aria-hidden="true">
+            <HeartPulse size={22} strokeWidth={1.8} />
+          </div>
+          <div className="patient-portal-info-copy">
+            <h2>Patient Portal</h2>
+            <p>The patient portal allows patients to access their health information and communicate with their healthcare provider.</p>
+          </div>
+          <button type="button" className="patient-portal-info-button" onClick={() => setSearchParams({ page: "dashboard" })}>
+            Go to Patient Portal
+            <ArrowRight size={17} strokeWidth={1.9} />
+          </button>
         </section>}
 
         {Object.entries(recordTypes).map(([key, definition]) => section === key && (
@@ -272,10 +292,13 @@ export function HealthInformation({ healthInfo }) {
   );
 }
 
-function InfoField({ label, value, wide }) {
+function InfoField({ icon: Icon, label, value }) {
   return (
-    <div className={`patient-info-field ${wide ? "patient-info-field-wide" : ""}`}>
-      <span className="patient-info-label">{label}</span>
+    <div className="patient-info-field">
+      <span className="patient-info-label">
+        <Icon size={15} strokeWidth={1.8} aria-hidden="true" />
+        <span>{label}</span>
+      </span>
       <span className="patient-info-value">{value || "Not provided"}</span>
     </div>
   );
