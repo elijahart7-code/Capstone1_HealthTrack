@@ -262,16 +262,16 @@ export function PatientRecord({
       recordType: "midwife-notes",
     },
     {
-      key: "medical-history",
-      label: "Medical Histories",
-      icon: BriefcaseMedical,
-      recordType: "medical-history",
-    },
-    {
       key: "allergies",
       label: "Allergies",
       icon: TriangleAlert,
       recordType: "allergies",
+    },
+    {
+      key: "medical-history",
+      label: "Medical Histories",
+      icon: BriefcaseMedical,
+      recordType: "medical-history",
     },
   ];
 
