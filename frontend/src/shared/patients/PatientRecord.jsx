@@ -1295,19 +1295,20 @@ export function PatientRecord({
         }
         .ht-portal-info {
           display: grid;
-          grid-template-columns: 112px minmax(0, 1fr);
+          grid-template-columns: 190px minmax(0, 1fr);
           align-items: center;
-          gap: 26px;
-          min-height: 112px;
+          gap: 18px;
+          min-height: 150px;
         }
          /* Large account icon */
         .ht-portal-avatar {
           position: relative;
-          width: 88px;
-          height: 88px;
-          min-width: 88px;
-          border-radius: 50%;
-          background: #F2FAF6;
+          width: 96px;
+          height: 96px;
+          min-width: 96px;
+          justify-self: center;
+          border-radius: 0;
+          background: #FFFFFF;
           color: #0F513F;
           display: flex;
           align-items: center;
@@ -1339,15 +1340,11 @@ export function PatientRecord({
         }
         .ht-portal-detail {
           display: grid;
-          grid-template-columns: minmax(145px, 0.7fr) minmax(0, 1.3fr);
+          grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.28fr);
           align-items: center;
           gap: 18px;
-          min-height: 40px;
-          border-bottom: 1px solid #E6F2EC;
-          font-size: 0.82rem;
-        }
-        .ht-portal-detail:last-child {
-          border-bottom: 0;
+          min-height: 50px;
+          font-size: 0.9rem;
         }
         .ht-portal-detail > span:first-child {
           color: #073B2A;
@@ -1607,6 +1604,7 @@ export function PatientRecord({
             grid-template-columns: 1fr;
             justify-items: center;
             gap: 18px;
+            padding-top: 8px;
           }
 
           .ht-portal-details {
@@ -1616,6 +1614,8 @@ export function PatientRecord({
           .ht-portal-detail {
             grid-template-columns: minmax(115px, 0.8fr) minmax(0, 1.2fr);
             gap: 12px;
+            min-height: 44px;
+            font-size: 0.82rem;
           }
 
         }
