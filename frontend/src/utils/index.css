@@ -612,6 +612,180 @@
         background: rgba(178, 69, 62, 0.08);
     }
 
+    .ht-report-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        padding: 0.35rem;
+        border: 1px solid rgba(15, 107, 95, 0.14);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .ht-report-tabs button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        min-height: 2.5rem;
+        padding: 0.55rem 0.9rem;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        color: var(--color-ink-soft);
+        font-size: 0.86rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .ht-report-tabs button:hover,
+    .ht-report-tabs button.is-active {
+        background: rgba(15, 107, 95, 0.1);
+        color: var(--color-brand-strong);
+    }
+
+    .ht-report-tabs .ht-report-export {
+        margin-left: auto;
+        background: var(--color-danger);
+        color: #fff;
+    }
+
+    .ht-report-tabs .ht-report-export:hover {
+        background: #923a35;
+        color: #fff;
+    }
+
+    .ht-report-period {
+        padding-top: 0.2rem;
+    }
+
+    .ht-report-period > h3 {
+        margin: 0 0 0.65rem;
+        color: var(--color-brand-strong);
+        font-family: var(--font-display);
+        font-size: 1.05rem;
+    }
+
+    .ht-report-list {
+        min-height: 8rem;
+        padding: 0.85rem;
+        border: 1px solid rgba(15, 107, 95, 0.12);
+        border-radius: 12px;
+        background: rgba(246, 250, 247, 0.72);
+    }
+
+    .ht-report-list h4 {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin: 0 0 0.65rem;
+        color: var(--color-ink);
+        font-size: 0.85rem;
+    }
+
+    .ht-report-list-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.4rem 0;
+        border-top: 1px solid rgba(31, 36, 33, 0.08);
+        font-size: 0.82rem;
+    }
+
+    .ht-report-list-row strong {
+        color: var(--color-brand-strong);
+    }
+
+    .ht-print-report {
+        display: none;
+    }
+
+    @media (max-width: 700px) {
+        .ht-report-tabs .ht-report-export {
+            width: 100%;
+            margin-left: 0;
+        }
+    }
+
+    @media print {
+        @page {
+            margin: 1.4cm;
+        }
+
+        body {
+            background: #fff !important;
+        }
+
+        .ht-admin-shell .ht-topbar,
+        .ht-admin-shell .ht-content > *:not(.ht-print-report) {
+            display: none !important;
+        }
+
+        .ht-print-report {
+            display: block;
+            color: #1f2421;
+        }
+
+        .ht-print-report section {
+            break-inside: avoid;
+            margin: 1.5rem 0;
+        }
+
+        .ht-print-cover {
+            min-height: 70vh;
+            padding-top: 25vh;
+            break-after: page;
+        }
+
+        .ht-print-report h1 {
+            margin: 0.4rem 0;
+            font-size: 2.2rem;
+        }
+
+        .ht-print-report h2 {
+            padding-bottom: 0.35rem;
+            border-bottom: 2px solid #0f6b5f;
+            color: #0c4f46;
+        }
+
+        .ht-report-kicker {
+            color: #0f6b5f;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .ht-print-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        .ht-print-summary div {
+            padding: 0.8rem;
+            border: 1px solid #d8e3dd;
+        }
+
+        .ht-print-summary strong,
+        .ht-print-summary span {
+            display: block;
+        }
+
+        .ht-print-summary strong {
+            color: #0f6b5f;
+            font-size: 1.5rem;
+        }
+
+        .ht-print-summary span {
+            font-size: 0.72rem;
+        }
+
+        .ht-report-list {
+            min-height: auto;
+            background: #fff;
+        }
+    }
+
     /* --- Tables ------------------------------------------------------- */
 
     .ht-admin-shell,
