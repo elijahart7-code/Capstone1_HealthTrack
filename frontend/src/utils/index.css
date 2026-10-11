@@ -2190,6 +2190,24 @@
         background: #F2FAF6;
         transform: rotate(-18deg);
     }
+    .patient-welcome-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.patient-welcome-heading span {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.patient-welcome-heading h1 {
+  margin: 0;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
     .patient-welcome-simple {
   display: flex;
   align-items: center;

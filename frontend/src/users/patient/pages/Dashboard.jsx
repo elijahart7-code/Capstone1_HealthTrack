@@ -74,18 +74,20 @@ export function Dashboard({ dashboard }) {
           <UserRound size={38} strokeWidth={1.8} />
         </div>
 
-        <div className="patient-welcome-copy">
-          <span className="patient-welcome-eyebrow">Welcome back,</span>
-          <h2>{patientName}!</h2>
+        <div className="patient-welcome-text">
+  <div className="patient-welcome-heading">
+    <span>Welcome back,</span>
+    <h1>{patientName}!</h1>
+  </div>
 
-          <p>
-            Your records at Barangay Health Center of Mambog I.
-          </p>
+  <p>
+    Your records at Barangay Health Center of Mambog I.
+  </p>
 
-          <blockquote>
-            Take care of your health today for a better tomorrow.
-          </blockquote>
-        </div>
+  <p className="patient-welcome-message">
+    Take care of your health today for a better tomorrow.
+  </p>
+</div>
       </section>
 
 
