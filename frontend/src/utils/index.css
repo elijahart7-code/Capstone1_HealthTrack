@@ -5139,30 +5139,30 @@
 }
 
 
-/* RED — VITAL SIGNS */
+/* VITAL SIGNS */
 
 .patient-metric-title-icon.vitals {
-    background: #ffe7eb !important;
+    background: #e3f5ed !important;
 
-    color: #dc4d62 !important;
+    color: #08755f !important;
 }
 
 
-/* BLUE — ASSESSMENT */
+/* ASSESSMENT */
 
 .patient-metric-title-icon.assessment {
-    background: #e5f0ff !important;
+    background: #e3f5ed !important;
 
-    color: #1266b1 !important;
+    color: #08755f !important;
 }
 
 
-/* ORANGE — ALLERGIES */
+/* ALLERGIES */
 
 .patient-metric-title-icon.allergies {
-    background: #fff0d9 !important;
+    background: #e3f5ed !important;
 
-    color: #d98b22 !important;
+    color: #08755f!important;
 }
 
 

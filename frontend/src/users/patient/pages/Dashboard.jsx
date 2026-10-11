@@ -50,6 +50,23 @@ export function Dashboard({ dashboard }) {
 
   return (
     <div className="patient-dashboard-shell">
+      {/*Patient Dashboard*/}
+      <div className="patient-dashboard-header">
+  <div>
+    <h1>Patient Dashboard</h1>
+    <p>View your health information and medical records.</p>
+  </div>
+
+  <button
+    className="patient-dashboard-view-button"
+    onClick={() =>
+      setSearchParams({ page: "health-information" })
+    }
+  >
+    View Health Information
+    <ArrowRight size={18} />
+  </button>
+</div>
       {/* ================= WELCOME ================= */}
       <section className="patient-welcome-simple">
 
