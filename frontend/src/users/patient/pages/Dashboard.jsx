@@ -7,16 +7,15 @@ import {
   ShieldAlert,
   ArrowRight,
   FileText,
-  Building2,
-  MapPin,
+  PersonStanding,
+  House,
+  Landmark,
   Phone,
   Clock,
-  Lightbulb,
   Droplet,
   Apple,
   Activity,
   Moon,
-  Leaf,
 } from "lucide-react";
 
 export function Dashboard({ dashboard }) {
@@ -66,12 +65,9 @@ export function Dashboard({ dashboard }) {
             Your records at Barangay Health Center of Mambog I.
           </p>
 
-          <blockquote>Take care of your health today for a better tomorrow.</blockquote>
-        </div>
-
-        <div className="patient-welcome-art" aria-hidden="true">
-          <Building2 size={86} strokeWidth={1.25} />
-          <span><HeartPulse size={24} strokeWidth={1.7} /></span>
+          <blockquote>
+            Take care of your health today for a better tomorrow.
+          </blockquote>
         </div>
       </section>
 
@@ -83,7 +79,7 @@ export function Dashboard({ dashboard }) {
   icon={<CalendarDays size={25} strokeWidth={1.6} />}
         iconClass="appointment"
   title="Upcoming Appointment"
-  description="Check your scheduled visits and upcoming appointments."
+  description="View your scheduled appointments."
   onClick={() => setSearchParams({ page: "health-information", section: "appointments" })}
 />
 
@@ -91,7 +87,7 @@ export function Dashboard({ dashboard }) {
   icon={<HeartPulse size={25} strokeWidth={1.6} />}
   iconClass="vitals"
   title="Updated Vital Signs"
-  description="View your latest recorded vital signs."
+  description="View your latest vital sign records."
   onClick={() => setSearchParams({ page: "health-information", section: "vital-signs" })}
 />
 
@@ -99,7 +95,7 @@ export function Dashboard({ dashboard }) {
   icon={<ClipboardList size={25} strokeWidth={1.6} />}
   iconClass="assessment"
   title="Health Assessment"
-  description="Review your latest health assessment."
+  description="View your health assessment records."
   onClick={() => setSearchParams({ page: "health-information", section: "health-assessment" })}
 />
 
@@ -107,7 +103,7 @@ export function Dashboard({ dashboard }) {
   icon={<ShieldAlert size={25} strokeWidth={1.6} />}
   iconClass="allergies"
   title="Known Allergies"
-  description="View your recorded allergies and sensitivities."
+  description="View your recorded allergy information."
   onClick={() => setSearchParams({ page: "health-information", section: "allergies" })}
 />
 
@@ -128,8 +124,8 @@ export function Dashboard({ dashboard }) {
             <h2>Your Health Information</h2>
 
             <p>
-              Your Personal Information, Vital Signs, Health Assessment,
-              Midwife Notes, Medical Histories and Allergies are all
+              Your personal information, Vital Signs, Health Assessment,
+              Midwife Notes, Medical History and Allergies are all
               recorded by the Midwife and shown in one place.
             </p>
 
@@ -172,14 +168,14 @@ export function Dashboard({ dashboard }) {
         <div className="patient-emergency-grid">
 
           <ContactCard
-            icon={<MapPin size={22} strokeWidth={1.8} />}
+            icon={<House size={22} strokeWidth={1.8} />}
             title="Barangay Health Center"
             line1="Brgy. Mambog I, Bacoor, Cavite"
             line2="(046) 123-4567"
           />
 
           <ContactCard
-            icon={<Building2 size={22} strokeWidth={1.8} />}
+            icon={<Landmark size={22} strokeWidth={1.8} />}
             title="City Government of Bacoor"
             line1="Bacoor City Hall, Bacoor, Cavite"
             line2="(046) 417-3000"
@@ -210,7 +206,7 @@ export function Dashboard({ dashboard }) {
         <div className="patient-tips-heading">
 
           <div className="patient-panel-icon patient-panel-icon-small">
-            <Leaf size={24} strokeWidth={1.8} />
+            <HeartPulse size={22} strokeWidth={1.8} />
           </div>
 
           <div>
@@ -236,7 +232,7 @@ export function Dashboard({ dashboard }) {
           />
 
           <TipItem
-            icon={<Activity size={23} strokeWidth={1.8} />}
+            icon={<PersonStanding size={23} strokeWidth={1.8} />}
             text="Stay active and exercise."
             type="activity"
           />
@@ -270,21 +266,17 @@ function PatientMetricCard({
   return (
     <div className="patient-metric-card">
 
-      <div className="patient-metric-header">
-
+      <div className="patient-metric-content">
         <div
           className={`patient-metric-title-icon ${iconClass}`}
         >
           {icon}
         </div>
-
-        <h3>{title}</h3>
-
+        <div className="patient-metric-copy">
+          <h3>{title}</h3>
+          <p className="patient-metric-description">{description}</p>
+        </div>
       </div>
-
-      <div className="patient-metric-space" />
-
-      <p className="patient-metric-description">{description}</p>
 
       <button
         type="button"
