@@ -150,15 +150,6 @@ export function Dashboard({ dashboard }) {
 
         </div>
 
-        <button
-          type="button"
-          onClick={() => setSearchParams({ page: "health-information" })}
-          className="patient-summary-button"
-        >
-          View Health Information
-          <ArrowRight size={18} strokeWidth={2} />
-        </button>
-
       </section>
 
 
