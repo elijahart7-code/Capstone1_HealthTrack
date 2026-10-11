@@ -4752,6 +4752,34 @@
     line-height: 1.45;
 }
 
+.patient-dashboard-view-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 18px;
+  color: #ffffff;
+  background: #087f5b;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.patient-dashboard-view-button:hover {
+  background: #066b4d;
+}
+
+@media (max-width: 640px) {
+  .patient-dashboard-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .patient-dashboard-view-button {
+    width: 100%;
+  }
+}
 
 /* =========================================================
    VIEW HEALTH INFORMATION BUTTON
