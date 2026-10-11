@@ -5944,8 +5944,9 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 
 .patient-dashboard-shell .patient-metric-description {
     margin: 0.35rem 0 0.65rem;
-    color: var(--dashboard-deep) !important;
+    color: #6b7280 !important;
     font-size: 0.75rem;
+    font-weight: 400 !important;
     line-height: 1.4;
 }
 
