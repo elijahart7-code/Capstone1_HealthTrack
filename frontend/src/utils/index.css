@@ -5561,8 +5561,11 @@
     background: #FFFFFF !important;
     border-color: rgba(12, 79, 70, 0.05) !important;
 }
-
-
+.patient-dashboard-shell .patient-health-information p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #66736D;
+}
 /* =========================================================
    EMERGENCY CONTACT
    ========================================================= */
