@@ -6518,9 +6518,9 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 
     .patient-dashboard-shell .patient-metric-copy .patient-metric-description {
         margin: 0;
-        color: #086B4D !important;
-        font-size: 0.74rem !important;
-        line-height: 1.4;
+        color: #66736d !important;
+        font-size: 0.9rem !important;
+        line-height: 1.5;
     }
 
     .patient-dashboard-shell .patient-view-button {
