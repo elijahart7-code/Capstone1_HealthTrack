@@ -5549,11 +5549,11 @@
 .patient-health-copy p {
     margin: 0 !important;
 
-    color: #667875 !important;
+    color: #66736d;
 
-    font-size: 1.5rem !important;
+    font-size: 14px ;
 
-    line-height: 1.5 !important;
+    line-height: 1.6 ;
 }
 
 .patient-dashboard-shell .patient-health-summary,
