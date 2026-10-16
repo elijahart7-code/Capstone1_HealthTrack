@@ -64,7 +64,7 @@ function formatTrendLabel(value) {
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 }
 
-function ReportTrendChart({ rows = [] }) {
+function ReportTrendChart({ rows = [], compact = false }) {
   const [hovered, setHovered] = useState(null);
   const max = Math.max(...rows.map((row) => row.total), 1);
   const width = 640;
@@ -81,7 +81,7 @@ function ReportTrendChart({ rows = [] }) {
     return { ...row, x, y };
   });
   return (
-    <div className="ht-chart-card">
+    <div className={`ht-chart-card${compact ? " ht-chart-card-compact" : ""}`}>
       <h3>Appointment activity</h3>
       {!rows.length ? <EmptyState>No appointments for this range.</EmptyState> : (
         <svg className="ht-trend-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Appointment activity trend with dates and appointment counts">
@@ -229,11 +229,10 @@ function FullReport({ dashboard, appointments, report, reportSets }) {
         <PrintableReportSection key={key} label={PERIODS.find((period) => period.key === key).label} data={reportSets[key] || report} />
       ))}
       <section>
-        <h2>Patients with appointments this month</h2>
+        <h2>Patients and appointment details this month</h2>
+        <h3>Patients with appointments this month</h3>
         <PatientReportTable patients={reportSets.monthly?.patients || report?.patients} />
-      </section>
-      <section>
-        <h2>Appointment details this month</h2>
+        <h3>Appointment details this month</h3>
         <AppointmentDetailTable appointments={monthlyAppointments} />
       </section>
       <section>
@@ -379,18 +378,15 @@ export function Dashboard({ dashboard, appointments, loadData }) {
         ) : (
           <div className="grid gap-4">
             {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
-            <div className="ht-panel">
+            <div className="ht-panel ht-report-period-panel">
               <h2>{currentPeriod.label} Report</h2>
               <p className="ht-muted mb-4">Aggregated report data grouped by {currentPeriod.label.toLowerCase()}.</p>
-              <ReportTrendChart rows={report?.trend} />
+              <ReportTrendChart rows={report?.trend} compact />
             </div>
             <div className="grid gap-4 lg:grid-cols-3">
               <ReportBarChart title="Appointment reasons" rows={normalizeRows(report?.reasons)} />
               <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
-              <div className="ht-chart-card">
-                <h3>Patients needing follow-up</h3>
-                <FollowUpPatients patients={report?.followUps} onPatientClick={openPatient} />
-              </div>
+              <ReportBarChart title="Appointment status" rows={normalizeRows(report?.statuses)} color="var(--color-warm)" />
             </div>
           </div>
         )}

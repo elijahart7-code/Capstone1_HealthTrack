@@ -735,6 +735,16 @@
         color: var(--color-brand-strong);
     }
 
+    .ht-chart-card-compact .ht-trend-chart {
+        height: 14rem;
+        min-height: 0;
+    }
+
+    .ht-report-period-panel {
+        max-height: 24rem;
+        overflow: hidden;
+    }
+
     .ht-chart-axis-label,
     .ht-chart-axis-title {
         fill: currentColor;
