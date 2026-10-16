@@ -32,7 +32,7 @@ import {
   HeartHandshake,
   Hospital,
 } from "lucide-react";
-import { Field, Input, Select, Textarea } from "../../components/ui/Input";
+import { Combobox, Field, Input, Select, Textarea } from "../../components/ui/Input";
 
 /**
  * Table + form for one clinical record type. It is driven entirely by the
@@ -53,6 +53,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     new Date().toISOString().slice(0, 10)
   );
   const [error, setError] = useState(null);
+  const [healthOptions, setHealthOptions] = useState({});
 
   const canManage = !readOnly && role === "admin";
 
@@ -81,6 +82,12 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, perPage]);
+
+  useEffect(() => {
+    api.get("/patients/options")
+      .then(({ data }) => setHealthOptions(data.options || {}))
+      .catch((err) => console.error("Could not load health option values.", err));
+  }, []);
 
   function resetForm() {
     const blank = {};
@@ -422,6 +429,17 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                         </option>
                       ))}
                     </Select>
+                  ) : field.type === "combobox" ? (
+                    <Combobox
+                      options={healthOptions[field.optionKey] || field.options}
+                      value={form[column] || ""}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          [column]: e.target.value,
+                        })
+                      }
+                    />
                   ) : (
                     <Input
                       type={

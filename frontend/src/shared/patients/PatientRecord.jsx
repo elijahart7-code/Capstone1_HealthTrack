@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { calculateAge } from "../../utils/calculateAge";
 import { RECORD_TYPES } from "../../config/recordTypes";
-import { Field, Input, Select, Textarea } from "../../components/ui/Input";
+import { Combobox, Field, Input, Select, Textarea } from "../../components/ui/Input";
+import { APPOINTMENT_REASONS } from "../../config/healthOptions";
 import { Badge, EmptyState, Table, Th, Td } from "../../components/ui/Table";
 import { ClinicalRecords } from "./ClinicalRecords";
 
@@ -52,6 +53,7 @@ export function PatientRecord({
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState("pending");
   const [apptError, setApptError] = useState(null);
+  const [appointmentReasons, setAppointmentReasons] = useState(APPOINTMENT_REASONS);
 
   const [showAccountForm, setShowAccountForm] = useState(false);
   const [portalEmail, setPortalEmail] = useState("");
@@ -87,6 +89,16 @@ export function PatientRecord({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId]);
+
+  useEffect(() => {
+    api.get("/patients/options")
+      .then(({ data }) => {
+        if (data.options?.appointment_reasons?.length) {
+          setAppointmentReasons(data.options.appointment_reasons);
+        }
+      })
+      .catch((err) => console.error("Could not load appointment reason values.", err));
+  }, []);
 
   async function loadOverview() {
     setOverviewLoading(true);
@@ -389,6 +401,7 @@ export function PatientRecord({
                 scheduleAppointment={scheduleAppointment}
                 updateAppointmentStatus={updateAppointmentStatus}
                 deleteAppointment={deleteAppointment}
+                appointmentReasons={appointmentReasons}
               />
             </PatientOverview>
           )}
@@ -705,7 +718,8 @@ export function PatientRecord({
                       label="Reason"
                       required
                     >
-                      <Input
+                      <Combobox
+                        options={appointmentReasons}
                         value={reason}
                         onChange={(e) =>
                           setReason(e.target.value)
@@ -1657,6 +1671,7 @@ function PatientAppointments({
   scheduleAppointment,
   updateAppointmentStatus,
   deleteAppointment,
+  appointmentReasons,
 }) {
   return (
     <section className="ht-content-card ht-patient-appointments">
@@ -1695,7 +1710,8 @@ function PatientAppointments({
             </Field>
           </div>
           <Field label="Reason" required>
-            <Input
+            <Combobox
+              options={appointmentReasons}
               value={reason}
               onChange={(event) => setReason(event.target.value)}
               placeholder="e.g. Prenatal check-up"

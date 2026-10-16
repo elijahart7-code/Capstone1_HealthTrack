@@ -14,6 +14,7 @@ import {
 } from "../controllers/patients/postRequests.controller.js";
 import { updateClinicalRecord, updatePatient } from "../controllers/patients/updateRequests.controller.js";
 import { archivePatient, deleteClinicalRecord, restorePatient } from "../controllers/patients/deleteRequest.controller.js";
+import { getHealthOptions } from "../controllers/options.controller.js";
 
 /**
  * Shared by admin and health worker roles. The route group handles the
@@ -23,6 +24,7 @@ import { archivePatient, deleteClinicalRecord, restorePatient } from "../control
 const router = Router();
 
 router.get("/record-types", getRecordTypes);
+router.get("/options", getHealthOptions);
 router.get("/", getAllPatients);
 router.post("/", registerPatient);
 router.get("/:patientId", getPatient);
