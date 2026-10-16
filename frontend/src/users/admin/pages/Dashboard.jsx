@@ -7,7 +7,6 @@ import {
   ClipboardList,
   Download,
   FileText,
-  Filter,
   HeartPulse,
   Syringe,
   Users,
@@ -237,10 +236,6 @@ export function Dashboard({ dashboard, appointments, loadData }) {
   const [activeTab, setActiveTab] = useState("overview");
   const [report, setReport] = useState(null);
   const [reportError, setReportError] = useState(null);
-  const [reportPeriod, setReportPeriod] = useState("month");
-  const [reportStatus, setReportStatus] = useState("all");
-  const [reportFrom, setReportFrom] = useState(() => new Date(new Date().setDate(new Date().getDate() - 90)).toISOString().slice(0, 10));
-  const [reportTo, setReportTo] = useState(() => new Date().toISOString().slice(0, 10));
   const today = new Date().toLocaleDateString(undefined, {
     weekday: "long", day: "2-digit", month: "long", year: "numeric",
   });
@@ -251,24 +246,27 @@ export function Dashboard({ dashboard, appointments, loadData }) {
   }
 
   useEffect(() => {
-    const params = new URLSearchParams({ period: reportPeriod, from: reportFrom, to: reportTo });
-    if (reportStatus !== "all") params.set("status", reportStatus);
+    const selectedPeriod = PERIODS.find((period) => period.key === activeTab);
+    const reportPeriod = selectedPeriod?.apiKey || "month";
+    const rangeDays = selectedPeriod?.days || 90;
+    const reportTo = new Date();
+    const reportFrom = new Date(reportTo);
+    reportFrom.setDate(reportFrom.getDate() - rangeDays);
+    const params = new URLSearchParams({
+      period: reportPeriod,
+      from: reportFrom.toISOString().slice(0, 10),
+      to: reportTo.toISOString().slice(0, 10),
+    });
     api.get(`/admin/reports?${params}`)
       .then(({ data }) => {
         setReport(data);
         setReportError(null);
       })
       .catch((error) => setReportError(error?.response?.data?.error || "Could not load report data."));
-  }, [reportPeriod, reportStatus, reportFrom, reportTo]);
+  }, [activeTab]);
 
   function selectPeriod(period) {
     setActiveTab(period.key);
-    setReportPeriod(period.apiKey);
-    const to = new Date();
-    const from = new Date(to);
-    from.setDate(from.getDate() - period.days);
-    setReportFrom(from.toISOString().slice(0, 10));
-    setReportTo(to.toISOString().slice(0, 10));
   }
 
   function exportReport() {
@@ -290,14 +288,6 @@ export function Dashboard({ dashboard, appointments, loadData }) {
         <button className={activeTab === "overview" ? "is-active" : ""} onClick={() => setActiveTab("overview")} role="tab" aria-selected={activeTab === "overview"}><BarChart3 size={16} /> Overview</button>
         {PERIODS.map((period) => <button key={period.key} className={activeTab === period.key ? "is-active" : ""} onClick={() => selectPeriod(period)} role="tab" aria-selected={activeTab === period.key}>{period.label}</button>)}
         <button className="ht-report-export" onClick={exportReport}><Download size={16} /> Export PDF</button>
-      </div>
-
-      <div className="ht-report-filters ht-panel">
-        <div className="ht-report-filter-title"><Filter size={16} /> Report filters</div>
-        <label>From <input type="date" value={reportFrom} onChange={(event) => setReportFrom(event.target.value)} /></label>
-        <label>To <input type="date" value={reportTo} onChange={(event) => setReportTo(event.target.value)} /></label>
-        <label>Grouping <Select value={reportPeriod} onChange={(event) => setReportPeriod(event.target.value)}><option value="day">Daily</option><option value="week">Weekly</option><option value="month">Monthly</option><option value="year">Yearly</option></Select></label>
-        <label>Status <Select value={reportStatus} onChange={(event) => setReportStatus(event.target.value)}><option value="all">All statuses</option>{STATUSES.map((status) => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}</Select></label>
       </div>
 
       <div className="ht-metric-grid">
