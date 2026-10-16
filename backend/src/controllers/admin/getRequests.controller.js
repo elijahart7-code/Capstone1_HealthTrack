@@ -53,3 +53,82 @@ export async function getAppointments(_req, res) {
     statuses: ["pending", "confirmed", "completed", "cancelled"],
   });
 }
+
+/** GET /api/admin/reports -- aggregate dashboard data for charts and exports. */
+export async function getReports(req, res) {
+  const period = ["day", "week", "month"].includes(req.query.period) ? req.query.period : "month";
+  const status = ["pending", "confirmed", "completed", "cancelled"].includes(req.query.status)
+    ? req.query.status
+    : null;
+  const dateFrom = /^\d{4}-\d{2}-\d{2}$/.test(req.query.from || "")
+    ? req.query.from
+    : new Date(new Date().setDate(new Date().getDate() - 90)).toISOString().slice(0, 10);
+  const dateTo = /^\d{4}-\d{2}-\d{2}$/.test(req.query.to || "")
+    ? req.query.to
+    : new Date().toISOString().slice(0, 10);
+  const statusClause = status ? " AND a.status = $3" : "";
+  const statusValues = status ? [dateFrom, dateTo, status] : [dateFrom, dateTo];
+
+  const [
+    trend,
+    reasons,
+    statuses,
+    conditions,
+    allergyReactions,
+    immunizations,
+  ] = await Promise.all([
+    sql.query(
+      `SELECT date_trunc('${period}', scheduled_at)::date AS period,
+              COUNT(*)::int AS total,
+              COUNT(*) FILTER (WHERE status = 'completed')::int AS completed
+       FROM appointments a
+       WHERE scheduled_at >= $1::date
+         AND scheduled_at < ($2::date + INTERVAL '1 day')${statusClause}
+       GROUP BY 1 ORDER BY 1`,
+      statusValues
+    ),
+    sql.query(
+      `SELECT COALESCE(NULLIF(TRIM(reason), ''), 'Not specified') AS label, COUNT(*)::int AS count
+       FROM appointments a
+       WHERE scheduled_at >= $1::date
+         AND scheduled_at < ($2::date + INTERVAL '1 day')${statusClause}
+       GROUP BY 1 ORDER BY count DESC LIMIT 8`,
+      statusValues
+    ),
+    sql.query(
+      `SELECT status AS label, COUNT(*)::int AS count
+       FROM appointments a
+       WHERE scheduled_at >= $1::date
+         AND scheduled_at < ($2::date + INTERVAL '1 day')${statusClause}
+       GROUP BY status ORDER BY count DESC`,
+      statusValues
+    ),
+    sql.query(
+      `SELECT COALESCE(NULLIF(TRIM(condition), ''), 'Not specified') AS label, COUNT(*)::int AS count
+       FROM health_assessments
+       WHERE assessment_date >= $1::date AND assessment_date < ($2::date + INTERVAL '1 day')
+       GROUP BY 1 ORDER BY count DESC LIMIT 8`,
+      [dateFrom, dateTo]
+    ),
+    sql.query(
+      `SELECT COALESCE(NULLIF(TRIM(reaction), ''), 'Not specified') AS label, COUNT(*)::int AS count
+       FROM allergies
+       WHERE recorded_at >= $1::date AND recorded_at < ($2::date + INTERVAL '1 day')
+       GROUP BY 1 ORDER BY count DESC LIMIT 8`,
+      [dateFrom, dateTo]
+    ),
+    sql.query(
+      `SELECT COALESCE(NULLIF(TRIM(immunization_status), ''), 'Not specified') AS label, COUNT(*)::int AS count
+       FROM medical_histories
+       WHERE recorded_at >= $1::date AND recorded_at < ($2::date + INTERVAL '1 day')
+       GROUP BY 1 ORDER BY count DESC`,
+      [dateFrom, dateTo]
+    ),
+  ]);
+
+  return res.status(200).json({
+    message: "Reports retrieved.",
+    filters: { period, status, from: dateFrom, to: dateTo },
+    trend, reasons, statuses, conditions, allergyReactions, immunizations,
+  });
+}

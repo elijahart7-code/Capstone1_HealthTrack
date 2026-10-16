@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   Activity,
@@ -6,8 +6,8 @@ import {
   CalendarDays,
   ClipboardList,
   Download,
-  Eye,
   FileText,
+  Filter,
   HeartPulse,
   Syringe,
   Users,
@@ -119,7 +119,57 @@ function ReportList({ title, icon: Icon, rows }) {
   );
 }
 
-function FullReport({ dashboard, appointments }) {
+function ReportBarChart({ title, rows = [], color = "var(--color-brand-strong)" }) {
+  const max = Math.max(...rows.map(([, count]) => count), 1);
+  return (
+    <div className="ht-chart-card">
+      <h3>{title}</h3>
+      {!rows.length ? <EmptyState>No data for this range.</EmptyState> : (
+        <div className="ht-bar-chart">
+          {rows.map(([label, count]) => (
+            <div className="ht-bar-row" key={label}>
+              <span title={label}>{label}</span>
+              <div className="ht-bar-track"><i style={{ width: `${(count / max) * 100}%`, background: color }} /></div>
+              <strong>{count}</strong>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ReportTrendChart({ rows = [] }) {
+  const max = Math.max(...rows.map((row) => row.total), 1);
+  const width = 640;
+  const height = 210;
+  const points = rows.map((row, index) => {
+    const x = rows.length === 1 ? width / 2 : (index / (rows.length - 1)) * (width - 32) + 16;
+    const y = height - 28 - (row.total / max) * (height - 52);
+    return `${x},${y}`;
+  }).join(" ");
+  return (
+    <div className="ht-chart-card">
+      <h3>Appointment activity</h3>
+      {!rows.length ? <EmptyState>No appointments for this range.</EmptyState> : (
+        <svg className="ht-trend-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Appointment activity trend">
+          <line x1="16" y1={height - 28} x2={width - 16} y2={height - 28} stroke="currentColor" opacity=".2" />
+          <polyline points={points} fill="none" stroke="var(--color-brand-strong)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+          {rows.map((row, index) => {
+            const [x, y] = points.split(" ")[index].split(",");
+            return <circle key={row.period} cx={x} cy={y} r="5" fill="var(--color-brand-strong)" />;
+          })}
+        </svg>
+      )}
+    </div>
+  );
+}
+
+function normalizeRows(rows = []) {
+  return rows.map((row) => [row.label, Number(row.count)]);
+}
+
+function FullReport({ dashboard, appointments, report }) {
   return (
     <div className="ht-print-report">
       <div className="ht-print-cover">
@@ -135,6 +185,15 @@ function FullReport({ dashboard, appointments }) {
           <div><strong>{appointments.length}</strong><span>Total appointments</span></div>
           <div><strong>{dashboard.appointmentsToday}</strong><span>Appointments today</span></div>
           <div><strong>{dashboard.upcomingCount}</strong><span>Upcoming appointments</span></div>
+        </div>
+      </section>
+      <section>
+        <h2>Report summaries</h2>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <ReportList title="Appointment Reasons" icon={ClipboardList} rows={normalizeRows(report?.reasons)} />
+          <ReportList title="Common Conditions" icon={HeartPulse} rows={normalizeRows(report?.conditions)} />
+          <ReportList title="Allergy Reactions" icon={Activity} rows={normalizeRows(report?.allergyReactions)} />
+          <ReportList title="Immunization Status" icon={Syringe} rows={normalizeRows(report?.immunizations)} />
         </div>
       </section>
       {PERIODS.map(({ key, label }) => (
@@ -176,6 +235,12 @@ function NotableEvents({ appointments }) {
 export function Dashboard({ dashboard, appointments, loadData }) {
   const [, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("overview");
+  const [report, setReport] = useState(null);
+  const [reportError, setReportError] = useState(null);
+  const [reportPeriod, setReportPeriod] = useState("month");
+  const [reportStatus, setReportStatus] = useState("all");
+  const [reportFrom, setReportFrom] = useState(() => new Date(new Date().setDate(new Date().getDate() - 90)).toISOString().slice(0, 10));
+  const [reportTo, setReportTo] = useState(() => new Date().toISOString().slice(0, 10));
   const today = new Date().toLocaleDateString(undefined, {
     weekday: "long", day: "2-digit", month: "long", year: "numeric",
   });
@@ -184,6 +249,17 @@ export function Dashboard({ dashboard, appointments, loadData }) {
     await api.patch(`/appointments/${appointmentId}/status`, { status });
     await loadData();
   }
+
+  useEffect(() => {
+    const params = new URLSearchParams({ period: reportPeriod, from: reportFrom, to: reportTo });
+    if (reportStatus !== "all") params.set("status", reportStatus);
+    api.get(`/admin/reports?${params}`)
+      .then(({ data }) => {
+        setReport(data);
+        setReportError(null);
+      })
+      .catch((error) => setReportError(error?.response?.data?.error || "Could not load report data."));
+  }, [reportPeriod, reportStatus, reportFrom, reportTo]);
 
   function exportReport() {
     const title = document.title;
@@ -203,7 +279,15 @@ export function Dashboard({ dashboard, appointments, loadData }) {
       <div className="ht-report-tabs" role="tablist" aria-label="Health center reports">
         <button className={activeTab === "overview" ? "is-active" : ""} onClick={() => setActiveTab("overview")} role="tab" aria-selected={activeTab === "overview"}><BarChart3 size={16} /> Overview</button>
         {PERIODS.map(({ key, label }) => <button key={key} className={activeTab === key ? "is-active" : ""} onClick={() => setActiveTab(key)} role="tab" aria-selected={activeTab === key}>{label}</button>)}
-        <button className="ht-report-export" onClick={exportReport}><Download size={16} /> Export & Reports</button>
+        <button className="ht-report-export" onClick={exportReport}><Download size={16} /> Export PDF</button>
+      </div>
+
+      <div className="ht-report-filters ht-panel">
+        <div className="ht-report-filter-title"><Filter size={16} /> Report filters</div>
+        <label>From <input type="date" value={reportFrom} onChange={(event) => setReportFrom(event.target.value)} /></label>
+        <label>To <input type="date" value={reportTo} onChange={(event) => setReportTo(event.target.value)} /></label>
+        <label>Grouping <Select value={reportPeriod} onChange={(event) => setReportPeriod(event.target.value)}><option value="day">Daily</option><option value="week">Weekly</option><option value="month">Monthly</option></Select></label>
+        <label>Status <Select value={reportStatus} onChange={(event) => setReportStatus(event.target.value)}><option value="all">All statuses</option>{STATUSES.map((status) => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}</Select></label>
       </div>
 
       <div className="ht-metric-grid">
@@ -214,7 +298,19 @@ export function Dashboard({ dashboard, appointments, loadData }) {
       </div>
 
       {activeTab === "overview" ? (
-        <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+        <div className="grid gap-4">
+          {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
+          <div className="grid gap-4 lg:grid-cols-2">
+            <ReportTrendChart rows={report?.trend} />
+            <ReportBarChart title="Appointment status" rows={normalizeRows(report?.statuses)} color="var(--color-warm)" />
+          </div>
+          <div className="grid gap-4 lg:grid-cols-3">
+            <ReportBarChart title="Top appointment reasons" rows={normalizeRows(report?.reasons)} />
+            <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
+            <ReportBarChart title="Allergy reactions" rows={normalizeRows(report?.allergyReactions)} color="var(--color-warm)" />
+          </div>
+          <div className="grid gap-4 lg:grid-cols-[1fr_2fr]">
+            <ReportBarChart title="Immunization status" rows={normalizeRows(report?.immunizations)} color="var(--color-brand)" />
           <div className="ht-panel ht-dashboard-schedule">
             <h2>Overview</h2>
             {dashboard.todaysAppointments.length === 0 ? <EmptyState>Nothing scheduled for today.</EmptyState> : (
@@ -229,6 +325,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
             )}
           </div>
           <div className="ht-panel"><h2>Notable Events</h2><NotableEvents appointments={appointments} /></div>
+          </div>
         </div>
       ) : (
         <div className="ht-panel">
@@ -238,7 +335,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
         </div>
       )}
 
-      <FullReport dashboard={dashboard} appointments={appointments} />
+      <FullReport dashboard={dashboard} appointments={appointments} report={report} />
     </div>
   );
 }
