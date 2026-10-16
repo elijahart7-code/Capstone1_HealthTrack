@@ -131,20 +131,6 @@ function normalizeRows(rows = []) {
   return rows.map((row) => [row.label, Number(row.count)]);
 }
 
-function ReportSummary({ summary = {} }) {
-  const total = Number(summary.total_appointments || 0);
-  const completed = Number(summary.completed_appointments || 0);
-  const completionRate = total ? `${Math.round((completed / total) * 100)}%` : "0%";
-  return (
-    <div className="ht-report-summary-grid">
-      <div><strong>{total}</strong><span>Appointments in period</span></div>
-      <div><strong>{completionRate}</strong><span>Completion rate</span></div>
-      <div><strong>{summary.active_conditions || 0}</strong><span>Active conditions</span></div>
-      <div><strong>{summary.cancelled_appointments || 0}</strong><span>Cancelled appointments</span></div>
-    </div>
-  );
-}
-
 function FollowUpPatients({ patients, onPatientClick }) {
   if (!patients?.length) return <EmptyState>No patients currently flagged for follow-up.</EmptyState>;
 
@@ -299,7 +285,6 @@ export function Dashboard({ dashboard, appointments, loadData }) {
       {activeTab === "overview" ? (
         <div className="grid gap-4">
           {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
-          <ReportSummary summary={report?.summary} />
           <div className="grid gap-4 lg:grid-cols-2">
             <ReportTrendChart rows={report?.trend} />
             <ReportBarChart title="Appointment status" rows={normalizeRows(report?.statuses)} color="var(--color-warm)" />
@@ -332,7 +317,6 @@ export function Dashboard({ dashboard, appointments, loadData }) {
       ) : (
         <div className="grid gap-4">
           {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
-          <ReportSummary summary={report?.summary} />
           <div className="ht-panel">
             <h2>{currentPeriod.label} Report</h2>
             <p className="ht-muted mb-4">Aggregated report data grouped by {currentPeriod.label.toLowerCase()}.</p>
