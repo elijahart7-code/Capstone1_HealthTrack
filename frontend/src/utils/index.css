@@ -4920,6 +4920,10 @@
 
     line-height: 1.45;
 }
+.patient-dashboard-shell > p{
+    font-size: 16px;
+    line-weight: 1.6;
+}
 
 .patient-dashboard-view-button {
   display: inline-flex;
