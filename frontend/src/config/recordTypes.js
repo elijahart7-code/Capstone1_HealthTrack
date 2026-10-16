@@ -1,3 +1,9 @@
+import {
+  ALLERGY_REACTIONS,
+  HEALTH_CONDITIONS,
+  IMMUNIZATION_STATUSES,
+} from "./healthOptions";
+
 /** Mirrors backend/src/config/recordTypes.js -- drives the clinical-record tabs/forms. */
 export const RECORD_TYPES = {
   "health-assessment": {
@@ -7,7 +13,7 @@ export const RECORD_TYPES = {
     dateField: "assessment_date",
     dateLabel: "Assessment Date",
     fields: {
-      condition: { label: "Condition", type: "text", required: true, primary: true },
+      condition: { label: "Condition", type: "combobox", optionKey: "health_conditions", required: true, primary: true, options: HEALTH_CONDITIONS },
       description: { label: "Description", type: "textarea", required: true, column: true },
       status: { label: "Status", type: "select", required: true, column: true, options: { active: "Active", resolved: "Resolved", monitoring: "Monitoring" } },
       medication: { label: "Medication", type: "text", required: false, column: true },
@@ -54,7 +60,7 @@ export const RECORD_TYPES = {
       past_surgeries: { label: "Past Surgeries", type: "textarea", required: true, column: true },
       previous_hospitalizations: { label: "Previous Hospitalizations", type: "textarea", required: true, column: true },
       family_medical_history: { label: "Family Medical History", type: "textarea", required: true, column: true },
-      immunization_status: { label: "Immunization Status", type: "text", required: true, column: true },
+      immunization_status: { label: "Immunization Status", type: "combobox", optionKey: "immunization_statuses", required: true, column: true, options: IMMUNIZATION_STATUSES },
     },
   },
   allergies: {
@@ -67,7 +73,7 @@ export const RECORD_TYPES = {
       medication_allergies: { label: "Medication Allergies", type: "textarea", required: true, primary: true },
       food_allergies: { label: "Food Allergies", type: "textarea", required: true, column: true },
       environmental_allergies: { label: "Environmental Allergies", type: "textarea", required: true, column: true },
-      reaction: { label: "Reaction", type: "textarea", required: true, column: true },
+      reaction: { label: "Reaction", type: "combobox", optionKey: "allergy_reactions", required: true, column: true, options: ALLERGY_REACTIONS },
       status: { label: "Status", type: "select", required: true, column: true, options: { active: "Active", resolved: "Resolved" } },
       remarks: { label: "Remarks", type: "textarea", required: false, column: true },
     },

@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { cn } from "../../lib/utils";
 
 export function Input({ className, ...props }) {
@@ -13,6 +14,19 @@ export function Select({ className, children, ...props }) {
     <select className={cn("ht-input", className)} {...props}>
       {children}
     </select>
+  );
+}
+
+export function Combobox({ className, options = [], ...props }) {
+  const listId = useId();
+
+  return (
+    <>
+      <input className={cn("ht-input", className)} list={listId} {...props} />
+      <datalist id={listId}>
+        {options.map((option) => <option key={option} value={option} />)}
+      </datalist>
+    </>
   );
 }
 

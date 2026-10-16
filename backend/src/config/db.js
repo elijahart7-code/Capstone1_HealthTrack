@@ -61,6 +61,24 @@ export const sql = ["localhost", "127.0.0.1", "::1"].includes(databaseUrl.hostna
 
 const TABLES = [
   {
+    table: "health_option_values",
+    createSQL: `CREATE TABLE IF NOT EXISTS health_option_values (
+      id          SERIAL PRIMARY KEY,
+      option_key  VARCHAR(100) NOT NULL,
+      value       VARCHAR(255) NOT NULL,
+      sort_order  INTEGER NOT NULL DEFAULT 0,
+      active      BOOLEAN NOT NULL DEFAULT TRUE,
+      UNIQUE (option_key, value)
+    )`,
+    columns: {
+      id: "SERIAL PRIMARY KEY",
+      option_key: "VARCHAR(100) NOT NULL",
+      value: "VARCHAR(255) NOT NULL",
+      sort_order: "INTEGER NOT NULL DEFAULT 0",
+      active: "BOOLEAN NOT NULL DEFAULT TRUE",
+    },
+  },
+  {
     // A login account. role is one of "admin", "health_worker",
     // "patient" -- enforced in application code (controllers/auth), not a
     // DB CHECK constraint, so that syncSchema() never has to reconcile a
@@ -582,6 +600,39 @@ export async function connectNeon() {
 
     // Preserve existing accounts after the old staff role was renamed to admin.
     await sql`UPDATE users SET role = 'admin' WHERE role = 'midwife'`;
+
+    const optionSeeds = {
+      appointment_reasons: [
+        "General checkup", "Prenatal check-up", "Postnatal check-up",
+        "Child wellness check-up", "Vaccination", "Immunization",
+        "Family planning", "Maternal health consultation",
+        "Blood pressure monitoring", "Diabetes monitoring",
+        "Medical consultation", "Circumcision", "Other",
+      ],
+      health_conditions: [
+        "No known condition", "Hypertension", "Diabetes", "Asthma",
+        "Dengue", "Tuberculosis", "Malnutrition", "Anemia",
+        "Respiratory infection", "Skin infection",
+        "Gastrointestinal infection", "Pregnancy", "Other",
+      ],
+      allergy_reactions: [
+        "Rash", "Itching", "Swelling", "Hives", "Shortness of breath",
+        "Nausea or vomiting", "Anaphylaxis", "Other",
+      ],
+      immunization_statuses: [
+        "Up to date", "Partially immunized", "Not immunized", "Unknown", "Other",
+      ],
+    };
+
+    for (const [optionKey, values] of Object.entries(optionSeeds)) {
+      for (const [sortOrder, value] of values.entries()) {
+        await sql`
+          INSERT INTO health_option_values (option_key, value, sort_order)
+          VALUES (${optionKey}, ${value}, ${sortOrder})
+          ON CONFLICT (option_key, value) DO NOTHING
+        `;
+      }
+    }
 
     console.log("[db] Database initialized successfully");
   } catch (error) {
