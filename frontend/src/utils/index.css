@@ -6592,7 +6592,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-section-header h2,
     .patient-dashboard-shell .patient-tips-heading h2 {
         font-family: var(--font-sans) !important;
-        font-size: 1rem !important;
+        font-size: 1.2rem !important;
         font-weight: 800 !important;
         line-height: 1.3;
     }
