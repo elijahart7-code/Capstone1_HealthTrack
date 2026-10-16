@@ -74,17 +74,26 @@ export async function getReports(req, res) {
     reasons,
     statuses,
     conditions,
-    summary,
     followUps,
   ] = await Promise.all([
     sql.query(
-      `SELECT date_trunc('${period}', scheduled_at)::date AS period,
-              COUNT(*)::int AS total,
-              COUNT(*) FILTER (WHERE status = 'completed')::int AS completed
-       FROM appointments a
-       WHERE scheduled_at >= $1::date
-         AND scheduled_at < ($2::date + INTERVAL '1 day')${statusClause}
-       GROUP BY 1 ORDER BY 1`,
+      `WITH buckets AS (
+         SELECT generate_series(
+           date_trunc('${period}', $1::timestamp),
+           date_trunc('${period}', $2::timestamp),
+           INTERVAL '1 ${period}'
+         ) AS period
+       )
+       SELECT b.period::date,
+              COUNT(a.id)::int AS total,
+              COUNT(a.id) FILTER (WHERE a.status = 'completed')::int AS completed
+       FROM buckets b
+       LEFT JOIN appointments a
+         ON a.scheduled_at >= b.period
+        AND a.scheduled_at < b.period + INTERVAL '1 ${period}'
+        AND a.scheduled_at >= $1::date
+        AND a.scheduled_at < ($2::date + INTERVAL '1 day')${statusClause ? " AND a.status = $3" : ""}
+       GROUP BY b.period ORDER BY b.period`,
       statusValues
     ),
     sql.query(
@@ -111,21 +120,6 @@ export async function getReports(req, res) {
       [dateFrom, dateTo]
     ),
     sql.query(
-      `SELECT
-         COUNT(*)::int AS total_appointments,
-         COUNT(*) FILTER (WHERE status = 'completed')::int AS completed_appointments,
-         COUNT(*) FILTER (WHERE status = 'cancelled')::int AS cancelled_appointments,
-         COUNT(*) FILTER (WHERE status NOT IN ('completed', 'cancelled'))::int AS open_appointments,
-         (SELECT COUNT(*)::int FROM health_assessments
-          WHERE status IN ('active', 'monitoring')
-            AND assessment_date >= $1::date
-            AND assessment_date < ($2::date + INTERVAL '1 day')) AS active_conditions
-       FROM appointments
-       WHERE scheduled_at >= $1::date
-         AND scheduled_at < ($2::date + INTERVAL '1 day')${statusClause}`,
-      statusValues
-    ),
-    sql.query(
       `SELECT DISTINCT ON (p.patient_id)
          p.patient_id, p.first_name, p.last_name,
          ha.condition, ha.status, ha.assessment_date
@@ -142,7 +136,6 @@ export async function getReports(req, res) {
     message: "Reports retrieved.",
     filters: { period, status, from: dateFrom, to: dateTo },
     trend, reasons, statuses, conditions,
-    summary: summary[0] || {},
     followUps,
   });
 }
