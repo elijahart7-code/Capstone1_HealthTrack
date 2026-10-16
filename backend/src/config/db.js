@@ -619,6 +619,18 @@ export async function connectNeon() {
         "Rash", "Itching", "Swelling", "Hives", "Shortness of breath",
         "Nausea or vomiting", "Anaphylaxis", "Other",
       ],
+      medication_allergies: [
+        "Penicillin", "Amoxicillin", "Sulfa drugs", "Aspirin",
+        "Ibuprofen", "Paracetamol", "Acetaminophen", "Other",
+      ],
+      food_allergies: [
+        "Peanuts", "Tree nuts", "Milk", "Eggs", "Fish", "Shellfish",
+        "Wheat", "Soy", "Other",
+      ],
+      environmental_allergies: [
+        "Dust", "Dust mites", "Pollen", "Mold", "Pet dander",
+        "Insect bites", "Latex", "Other",
+      ],
       immunization_statuses: [
         "Up to date", "Partially immunized", "Not immunized", "Unknown", "Other",
       ],

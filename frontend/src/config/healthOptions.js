@@ -41,6 +41,40 @@ export const ALLERGY_REACTIONS = [
   "Other",
 ];
 
+export const MEDICATION_ALLERGIES = [
+  "Penicillin",
+  "Amoxicillin",
+  "Sulfa drugs",
+  "Aspirin",
+  "Ibuprofen",
+  "Paracetamol",
+  "Acetaminophen",
+  "Other",
+];
+
+export const FOOD_ALLERGIES = [
+  "Peanuts",
+  "Tree nuts",
+  "Milk",
+  "Eggs",
+  "Fish",
+  "Shellfish",
+  "Wheat",
+  "Soy",
+  "Other",
+];
+
+export const ENVIRONMENTAL_ALLERGIES = [
+  "Dust",
+  "Dust mites",
+  "Pollen",
+  "Mold",
+  "Pet dander",
+  "Insect bites",
+  "Latex",
+  "Other",
+];
+
 export const IMMUNIZATION_STATUSES = [
   "Up to date",
   "Partially immunized",

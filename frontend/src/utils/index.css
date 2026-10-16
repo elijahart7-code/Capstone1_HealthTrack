@@ -650,6 +650,90 @@
         font-size: 1.05rem;
     }
 
+    .ht-report-filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        gap: 1rem;
+    }
+
+    .ht-report-filter-title {
+        display: flex;
+        align-items: center;
+        gap: .4rem;
+        font-weight: 800;
+        margin-right: auto;
+    }
+
+    .ht-report-filters label {
+        display: grid;
+        gap: .35rem;
+        color: var(--color-muted);
+        font-size: .78rem;
+        font-weight: 700;
+    }
+
+    .ht-report-filters input,
+    .ht-report-filters select {
+        min-height: 2.35rem;
+        border: 1px solid var(--color-border);
+        border-radius: .55rem;
+        padding: .35rem .55rem;
+        background: var(--color-surface);
+        color: inherit;
+    }
+
+    .ht-chart-card {
+        min-width: 0;
+        padding: 1.15rem;
+        border: 1px solid var(--color-border);
+        border-radius: .8rem;
+        background: var(--color-surface);
+    }
+
+    .ht-chart-card h3 {
+        margin: 0 0 1rem;
+        font-size: 1rem;
+    }
+
+    .ht-bar-chart {
+        display: grid;
+        gap: .7rem;
+    }
+
+    .ht-bar-row {
+        display: grid;
+        grid-template-columns: minmax(8rem, 1.2fr) minmax(5rem, 2fr) 2rem;
+        align-items: center;
+        gap: .65rem;
+        font-size: .82rem;
+    }
+
+    .ht-bar-row > span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .ht-bar-track {
+        height: .65rem;
+        overflow: hidden;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--color-border) 55%, transparent);
+    }
+
+    .ht-bar-track i {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+    }
+
+    .ht-trend-chart {
+        width: 100%;
+        min-height: 13rem;
+        color: var(--color-brand-strong);
+    }
+
     .ht-report-list {
         min-height: 8rem;
         padding: 0.85rem;
@@ -708,6 +792,12 @@
         .ht-print-report {
             display: block;
             color: #1f2421;
+        }
+
+        .ht-report-filters,
+        .ht-report-tabs,
+        .ht-chart-card {
+            display: none !important;
         }
 
         .ht-print-report section {
