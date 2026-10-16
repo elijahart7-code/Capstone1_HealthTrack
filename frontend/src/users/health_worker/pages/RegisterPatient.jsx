@@ -26,7 +26,6 @@ export function RegisterPatient({ loadData, onRegistered }) {
     address: "",
     nationality: "",
     place_of_birth: "",
-    place_of_birth_details: "",
     emergency_contact_name: "",
     emergency_contact_number: "",
     emergency_contact_relationship: "",
@@ -36,38 +35,9 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const [portalEmailError, setPortalEmailError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [sendLoginCredentials, setSendLoginCredentials] = useState(true);
-  const [selectedBirthRegion, setSelectedBirthRegion] = useState("");
-  const [selectedBirthLocation, setSelectedBirthLocation] = useState("");
+  const [selectedBirthPlace, setSelectedBirthPlace] = useState("");
   const [birthplaceOtherText, setBirthplaceOtherText] = useState("");
   const birthDatePickerRef = useRef(null);
-
-  const birthLocationOptions = PHILIPPINE_LOCATIONS[selectedBirthRegion] || [];
-
-  const birthplaceDetailOptions = {
-    "Quezon City": ["Fairview", "Litex", "Novaliches", "Cubao", "Kamuning", "Batasan", "Sandigan", "Project 6", "Other"],
-    "Caloocan City": ["Caloocan Proper", "Bagumbong", "Tala", "Grace Park", "Other"],
-    "Manila City": ["Binondo", "Quiapo", "Sta. Cruz", "Tondo", "Malate", "Other"],
-    "Makati City": ["Poblacion", "Bel-Air", "Magallanes", "San Antonio", "Other"],
-    "Pasig City": ["Ugong", "Ortigas", "Kapitolyo", "Rizal", "Other"],
-    "Taguig City": ["Bonifacio Global City", "Lower Bicutan", "Upper Bicutan", "Fort Bonifacio", "Other"],
-    "Bacoor City": ["Bacoor Proper", "Salinas", "Mambog", "Molino", "Other"],
-    "Imus City": ["Imus Proper", "Anabu", "Bayan Luma", "Palico", "Other"],
-    "Dasmariñas City": ["Dasmariñas Proper", "Langkaan", "Salawag", "Other"],
-    "General Trias City": ["General Trias Proper", "Panghulo", "Sampalucan", "Other"],
-    "Trece Martires City": ["Trece Martires Proper", "Barangay Conchu", "Other"],
-  };
-
-  function getBirthplaceDetailOptions() {
-    return birthplaceDetailOptions[selectedBirthLocation] || [
-      "Barangay proper",
-      "Town proper",
-      "Subdivision / village",
-      "Commercial center",
-      "Market area",
-      "Near school / transport hub",
-      "Other",
-    ];
-  }
 
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -138,43 +108,22 @@ export function RegisterPatient({ loadData, onRegistered }) {
     set("birthdate", formatIsoToText(value));
   }
 
-  function syncBirthPlace(region = selectedBirthRegion, location = selectedBirthLocation, details = form.place_of_birth_details) {
-    const normalizedDetails = details === "Other" ? birthplaceOtherText.trim() || "Other" : details;
-    const nextPlaceOfBirth = [region, location, normalizedDetails].filter(Boolean).join(" / ");
-    set("place_of_birth", nextPlaceOfBirth);
-  }
-
-  function handleBirthRegionChange(region) {
-    setSelectedBirthRegion(region);
-    setSelectedBirthLocation("");
-    set("place_of_birth_details", "");
+  function handleBirthPlaceChange(value) {
+    setSelectedBirthPlace(value);
     setBirthplaceOtherText("");
-    syncBirthPlace(region, "", "");
-  }
 
-  function handleBirthLocationChange(location) {
-    setSelectedBirthLocation(location);
-    set("place_of_birth_details", "");
-    setBirthplaceOtherText("");
-    syncBirthPlace(selectedBirthRegion, location, "");
-  }
-
-  function handleBirthDetailsChange(value) {
-    if (value === "Other") {
-      set("place_of_birth_details", "Other");
-      setBirthplaceOtherText("");
-      syncBirthPlace(selectedBirthRegion, selectedBirthLocation, "Other");
+    if (value === "other") {
+      set("place_of_birth", "");
       return;
     }
 
-    set("place_of_birth_details", value);
-    setBirthplaceOtherText("");
-    syncBirthPlace(selectedBirthRegion, selectedBirthLocation, value);
+    const [region, location] = value.split("::");
+    set("place_of_birth", `${location}, ${region}`);
   }
 
   function handleBirthplaceOtherTextChange(value) {
     setBirthplaceOtherText(value);
-    syncBirthPlace(selectedBirthRegion, selectedBirthLocation, "Other");
+    set("place_of_birth", value.trim());
   }
 
   async function handleSubmit(e) {
@@ -182,16 +131,15 @@ export function RegisterPatient({ loadData, onRegistered }) {
     setError(null);
     setPortalEmailError(null);
 
-    if (!form.place_of_birth) {
+    if (!selectedBirthPlace || !form.place_of_birth.trim()) {
       setError("Please select the patient's place of birth.");
       return;
     }
 
     setSaving(true);
     try {
-      const { place_of_birth_details, ...payload } = form;
       const finalPayload = {
-        ...payload,
+        ...form,
         birthdate: toIsoDate(form.birthdate),
       };
 
@@ -364,59 +312,31 @@ export function RegisterPatient({ loadData, onRegistered }) {
 
             <Field label="Place of Birth" required className="ht-place-of-birth-field">
               <div className="ht-place-of-birth-stack">
-                <div className="ht-place-of-birth-row">
-                  <Select
-                    value={selectedBirthRegion}
-                    onChange={(e) => handleBirthRegionChange(e.target.value)}
-                    required
-                    className="ht-place-of-birth-select"
-                  >
-                    <option value="" disabled>Select region</option>
-                    {PHILIPPINE_REGIONS.map((region) => (
-                      <option key={region} value={region}>
-                        {region}
-                      </option>
-                    ))}
-                  </Select>
-
-                  <Select
-                    value={selectedBirthLocation}
-                    onChange={(e) => handleBirthLocationChange(e.target.value)}
-                    required
-                    className="ht-place-of-birth-select"
-                  >
-                    <option value="" disabled>
-                      Select province/city/municipality
-                    </option>
-                    {birthLocationOptions.map((location) => (
-                      <option key={location} value={location}>
-                        {location}
-                      </option>
-                    ))}
-                  </Select>
-                </div>
-
                 <Select
-                  value={form.place_of_birth_details || ""}
-                  onChange={(e) => handleBirthDetailsChange(e.target.value)}
-                  className="ht-place-of-birth-detail-input"
-                  disabled={!selectedBirthLocation}
+                  value={selectedBirthPlace}
+                  onChange={(e) => handleBirthPlaceChange(e.target.value)}
+                  required
+                  className="ht-place-of-birth-select"
                 >
-                  <option value="">
-                    {selectedBirthLocation ? "Select specific birthplace area" : "Select city/municipality first"}
-                  </option>
-                  {getBirthplaceDetailOptions().map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
+                  <option value="" disabled>Select place of birth</option>
+                  {PHILIPPINE_REGIONS.map((region) => (
+                    <optgroup key={region} label={region}>
+                      {(PHILIPPINE_LOCATIONS[region] || []).map((location) => (
+                        <option key={`${region}::${location}`} value={`${region}::${location}`}>
+                          {location}
+                        </option>
+                      ))}
+                    </optgroup>
                   ))}
+                  <option value="other">Other</option>
                 </Select>
 
-                {form.place_of_birth_details === "Other" && selectedBirthLocation && (
+                {selectedBirthPlace === "other" && (
                   <Input
                     value={birthplaceOtherText}
                     onChange={(e) => handleBirthplaceOtherTextChange(e.target.value)}
-                    placeholder="Type your birthplace area here..."
+                    placeholder="Enter place of birth"
+                    required
                   />
                 )}
               </div>

@@ -157,16 +157,11 @@
 
     .ht-place-of-birth-stack {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: minmax(0, 1fr);
         gap: 0.75rem;
     }
 
-    .ht-place-of-birth-row {
-        display: contents;
-    }
-
-    .ht-place-of-birth-select,
-    .ht-place-of-birth-detail-input {
+    .ht-place-of-birth-select {
         width: 100%;
     }
 
