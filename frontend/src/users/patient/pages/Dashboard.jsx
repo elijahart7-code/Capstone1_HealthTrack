@@ -80,13 +80,10 @@ export function Dashboard({ dashboard }) {
     <h1>{patientName}!</h1>
   </div>
 
-  <p>
-    Your records at Barangay Health Center of Mambog I.
+  <p className="patient-welcome-message">
+    Your records at Barangay Health Center of Mambog I. Take care of your health today for a better tomorrow.
   </p>
 
-  <p className="patient-welcome-message">
-    Take care of your health today for a better tomorrow.
-  </p>
 </div>
       </section>
 
