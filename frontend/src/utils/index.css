@@ -165,6 +165,12 @@
         width: 100%;
     }
 
+    .ht-place-of-birth-help {
+        color: var(--color-ink-soft);
+        font-size: 0.7rem;
+        font-weight: 400;
+    }
+
     .ht-section-icon,
     .ht-section-icon svg {
         flex: 0 0 auto;
