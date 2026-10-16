@@ -76,6 +76,7 @@ export async function getReports(req, res) {
     conditions,
     allergyReactions,
     immunizations,
+    summary,
   ] = await Promise.all([
     sql.query(
       `SELECT date_trunc('${period}', scheduled_at)::date AS period,
@@ -124,11 +125,31 @@ export async function getReports(req, res) {
        GROUP BY 1 ORDER BY count DESC`,
       [dateFrom, dateTo]
     ),
+    sql.query(
+      `SELECT
+         COUNT(*)::int AS total_appointments,
+         COUNT(*) FILTER (WHERE status = 'completed')::int AS completed_appointments,
+         COUNT(*) FILTER (WHERE status = 'cancelled')::int AS cancelled_appointments,
+         COUNT(*) FILTER (WHERE status NOT IN ('completed', 'cancelled'))::int AS open_appointments,
+         (SELECT COUNT(*)::int FROM health_assessments
+          WHERE status IN ('active', 'monitoring')
+            AND assessment_date >= $1::date
+            AND assessment_date < ($2::date + INTERVAL '1 day')) AS active_conditions,
+         (SELECT COUNT(*)::int FROM medical_histories
+          WHERE immunization_status IN ('Up to date', 'Partially immunized')
+            AND recorded_at >= $1::date
+            AND recorded_at < ($2::date + INTERVAL '1 day')) AS immunized_patients
+       FROM appointments
+       WHERE scheduled_at >= $1::date
+         AND scheduled_at < ($2::date + INTERVAL '1 day')${statusClause}`,
+      statusValues
+    ),
   ]);
 
   return res.status(200).json({
     message: "Reports retrieved.",
     filters: { period, status, from: dateFrom, to: dateTo },
     trend, reasons, statuses, conditions, allergyReactions, immunizations,
+    summary: summary[0] || {},
   });
 }

@@ -138,26 +138,70 @@ function ReportBarChart({ title, rows = [], color = "var(--color-brand-strong)" 
   );
 }
 
+function formatTrendLabel(value) {
+  if (!value) return "";
+  const date = new Date(`${String(value).slice(0, 10)}T00:00:00`);
+  return date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
 function ReportTrendChart({ rows = [] }) {
+  const [hovered, setHovered] = useState(null);
   const max = Math.max(...rows.map((row) => row.total), 1);
   const width = 640;
-  const height = 210;
+  const height = 250;
+  const left = 48;
+  const right = 18;
+  const top = 24;
+  const bottom = 48;
+  const plotWidth = width - left - right;
+  const plotHeight = height - top - bottom;
   const points = rows.map((row, index) => {
-    const x = rows.length === 1 ? width / 2 : (index / (rows.length - 1)) * (width - 32) + 16;
-    const y = height - 28 - (row.total / max) * (height - 52);
-    return `${x},${y}`;
-  }).join(" ");
+    const x = rows.length === 1 ? width / 2 : (index / (rows.length - 1)) * plotWidth + left;
+    const y = top + plotHeight - (row.total / max) * plotHeight;
+    return { ...row, x, y };
+  });
   return (
     <div className="ht-chart-card">
       <h3>Appointment activity</h3>
       {!rows.length ? <EmptyState>No appointments for this range.</EmptyState> : (
-        <svg className="ht-trend-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Appointment activity trend">
-          <line x1="16" y1={height - 28} x2={width - 16} y2={height - 28} stroke="currentColor" opacity=".2" />
-          <polyline points={points} fill="none" stroke="var(--color-brand-strong)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-          {rows.map((row, index) => {
-            const [x, y] = points.split(" ")[index].split(",");
-            return <circle key={row.period} cx={x} cy={y} r="5" fill="var(--color-brand-strong)" />;
+        <svg className="ht-trend-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Appointment activity trend with dates and appointment counts">
+          {[0, .5, 1].map((fraction) => {
+            const y = top + plotHeight - fraction * plotHeight;
+            const value = Math.round(max * fraction);
+            return (
+              <g key={fraction}>
+                <line x1={left} y1={y} x2={width - right} y2={y} stroke="currentColor" opacity=".15" />
+                <text x={left - 8} y={y + 4} textAnchor="end" className="ht-chart-axis-label">{value}</text>
+              </g>
+            );
           })}
+          <line x1={left} y1={top + plotHeight} x2={width - right} y2={top + plotHeight} stroke="currentColor" opacity=".35" />
+          <line x1={left} y1={top} x2={left} y2={top + plotHeight} stroke="currentColor" opacity=".35" />
+          <text x={12} y={top - 8} className="ht-chart-axis-title">Appointments</text>
+          <text x={width - right} y={height - 8} textAnchor="end" className="ht-chart-axis-title">Date</text>
+          <polyline points={points.map(({ x, y }) => `${x},${y}`).join(" ")} fill="none" stroke="var(--color-brand-strong)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+          {points.map((row, index) => (
+            <g key={row.period} onMouseEnter={() => setHovered({ ...row, index })} onMouseLeave={() => setHovered(null)}>
+              <circle cx={row.x} cy={row.y} r="5" fill="var(--color-brand-strong)" />
+              <circle cx={row.x} cy={row.y} r="14" fill="transparent" />
+              {(index === 0 || index === points.length - 1 || points.length <= 8) && (
+                <text x={row.x} y={height - 24} textAnchor="middle" className="ht-chart-axis-label">
+                  {formatTrendLabel(row.period)}
+                </text>
+              )}
+            </g>
+          ))}
+          {hovered && (
+            <g pointerEvents="none">
+              <rect x={Math.min(Math.max(hovered.x - 78, left), width - right - 156)} y={Math.max(hovered.y - 58, 4)} width="156" height="44" rx="6" className="ht-chart-tooltip" />
+              <text x={Math.min(Math.max(hovered.x, left + 78), width - right - 78)} y={Math.max(hovered.y - 36, 20)} textAnchor="middle" className="ht-chart-tooltip-text">
+                {formatTrendLabel(hovered.period)}: {hovered.total} appointments
+              </text>
+              <text x={Math.min(Math.max(hovered.x, left + 78), width - right - 78)} y={Math.max(hovered.y - 20, 36)} textAnchor="middle" className="ht-chart-tooltip-text">
+                Completed: {hovered.completed}
+              </text>
+            </g>
+          )}
         </svg>
       )}
     </div>
@@ -166,6 +210,20 @@ function ReportTrendChart({ rows = [] }) {
 
 function normalizeRows(rows = []) {
   return rows.map((row) => [row.label, Number(row.count)]);
+}
+
+function ReportSummary({ summary = {} }) {
+  const total = Number(summary.total_appointments || 0);
+  const completed = Number(summary.completed_appointments || 0);
+  const completionRate = total ? `${Math.round((completed / total) * 100)}%` : "0%";
+  return (
+    <div className="ht-report-summary-grid">
+      <div><strong>{total}</strong><span>Appointments in period</span></div>
+      <div><strong>{completionRate}</strong><span>Completion rate</span></div>
+      <div><strong>{summary.active_conditions || 0}</strong><span>Active conditions</span></div>
+      <div><strong>{summary.immunized_patients || 0}</strong><span>Immunized records</span></div>
+    </div>
+  );
 }
 
 function FullReport({ dashboard, appointments, report }) {
@@ -300,6 +358,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
       {activeTab === "overview" ? (
         <div className="grid gap-4">
           {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
+          <ReportSummary summary={report?.summary} />
           <div className="grid gap-4 lg:grid-cols-2">
             <ReportTrendChart rows={report?.trend} />
             <ReportBarChart title="Appointment status" rows={normalizeRows(report?.statuses)} color="var(--color-warm)" />
@@ -330,6 +389,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
       ) : (
         <div className="grid gap-4">
           {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
+          <ReportSummary summary={report?.summary} />
           <div className="ht-panel">
             <h2>{currentPeriod.label} Report</h2>
             <p className="ht-muted mb-4">Aggregated report data grouped by {currentPeriod.label.toLowerCase()}.</p>

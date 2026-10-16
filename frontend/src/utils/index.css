@@ -701,6 +701,58 @@
         color: var(--color-brand-strong);
     }
 
+    .ht-chart-axis-label,
+    .ht-chart-axis-title {
+        fill: currentColor;
+        font-size: 10px;
+    }
+
+    .ht-chart-axis-title {
+        font-weight: 700;
+    }
+
+    .ht-chart-tooltip {
+        fill: var(--color-ink, #1f2421);
+        opacity: .95;
+    }
+
+    .ht-chart-tooltip-text {
+        fill: white;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .ht-report-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .ht-report-summary-grid > div {
+        display: grid;
+        gap: .25rem;
+        padding: 1rem;
+        border: 1px solid var(--color-border);
+        border-radius: .8rem;
+        background: var(--color-surface);
+    }
+
+    .ht-report-summary-grid strong {
+        font-size: 1.6rem;
+    }
+
+    .ht-report-summary-grid span {
+        color: var(--color-muted);
+        font-size: .8rem;
+        font-weight: 700;
+    }
+
+    @media (max-width: 700px) {
+        .ht-report-summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
     .ht-report-list {
         min-height: 8rem;
         padding: 0.85rem;
