@@ -6600,7 +6600,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-health-copy p,
     .patient-dashboard-shell .patient-section-header p,
     .patient-dashboard-shell .patient-tips-heading p {
-        font-size: 0.8rem !important;
+        font-size: 0.9rem !important;
         line-height: 1.45;
     }
 
