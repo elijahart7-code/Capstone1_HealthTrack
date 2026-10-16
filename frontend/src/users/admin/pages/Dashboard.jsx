@@ -18,9 +18,10 @@ import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 
 const STATUSES = ["pending", "confirmed", "completed", "cancelled"];
 const PERIODS = [
-  { key: "daily", apiKey: "day", label: "Daily", days: 30 },
+  { key: "daily", apiKey: "day", label: "Daily", days: 31 },
   { key: "weekly", apiKey: "week", label: "Weekly", days: 84 },
   { key: "monthly", apiKey: "month", label: "Monthly", days: 365 },
+  { key: "quarterly", apiKey: "quarter", label: "Quarterly", days: 730 },
   { key: "yearly", apiKey: "year", label: "Yearly", days: 1825 },
 ];
 
@@ -154,7 +155,59 @@ function FollowUpPatients({ patients, onPatientClick }) {
   );
 }
 
-function FullReport({ dashboard, appointments, report }) {
+function PrintableReportSection({ label, data }) {
+  return (
+    <section>
+      <h2>{label} report</h2>
+      <ReportTrendChart rows={data?.trend} />
+      <div className="ht-print-report-grid">
+        <ReportList title="Appointment Reasons / Program Demand" icon={ClipboardList} rows={normalizeRows(data?.reasons)} />
+        <ReportList title="Common Conditions" icon={HeartPulse} rows={normalizeRows(data?.conditions)} />
+        <ReportList title="Appointment Status" icon={Syringe} rows={normalizeRows(data?.statuses)} />
+      </div>
+    </section>
+  );
+}
+
+function PatientReportTable({ patients = [] }) {
+  if (!patients.length) return <EmptyState>No patients had appointments in this period.</EmptyState>;
+  return (
+    <Table>
+      <thead><tr><Th>Patient</Th><Th>Appointments</Th><Th>Reasons / Programs</Th><Th>Latest appointment</Th></tr></thead>
+      <tbody>{patients.map((patient) => (
+        <tr key={patient.patient_id}>
+          <Td>{patient.last_name}, {patient.first_name}</Td>
+          <Td>{patient.appointment_count}</Td>
+          <Td>{patient.reasons || "Not specified"}</Td>
+          <Td>{new Date(patient.latest_appointment).toLocaleDateString()}</Td>
+        </tr>
+      ))}</tbody>
+    </Table>
+  );
+}
+
+function AppointmentDetailTable({ appointments }) {
+  if (!appointments.length) return <EmptyState>No appointments recorded this month.</EmptyState>;
+  return (
+    <Table>
+      <thead><tr><Th>Date</Th><Th>Patient</Th><Th>Reason / Program</Th><Th>Status</Th><Th>Notes</Th></tr></thead>
+      <tbody>{appointments.map((appointment) => (
+        <tr key={appointment.appointment_id}>
+          <Td>{new Date(appointment.scheduled_at).toLocaleString()}</Td>
+          <Td>{appointment.last_name}, {appointment.first_name}</Td>
+          <Td>{appointment.reason || "Not specified"}</Td>
+          <Td>{appointment.status}</Td>
+          <Td>{appointment.notes || "—"}</Td>
+        </tr>
+      ))}</tbody>
+    </Table>
+  );
+}
+
+function FullReport({ dashboard, appointments, report, reportSets }) {
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  const monthlyAppointments = appointments.filter((appointment) => new Date(appointment.scheduled_at) >= monthStart);
   return (
     <div className="ht-print-report">
       <div className="ht-print-cover">
@@ -172,12 +225,16 @@ function FullReport({ dashboard, appointments, report }) {
           <div><strong>{dashboard.upcomingCount}</strong><span>Upcoming appointments</span></div>
         </div>
       </section>
+      {["weekly", "monthly", "quarterly"].map((key) => (
+        <PrintableReportSection key={key} label={PERIODS.find((period) => period.key === key).label} data={reportSets[key] || report} />
+      ))}
       <section>
-        <h2>Report summaries</h2>
-        <div className="grid gap-4 lg:grid-cols-2">
-          <ReportList title="Appointment Reasons" icon={ClipboardList} rows={normalizeRows(report?.reasons)} />
-          <ReportList title="Common Conditions" icon={HeartPulse} rows={normalizeRows(report?.conditions)} />
-        </div>
+        <h2>Patients with appointments this month</h2>
+        <PatientReportTable patients={reportSets.monthly?.patients || report?.patients} />
+      </section>
+      <section>
+        <h2>Appointment details this month</h2>
+        <AppointmentDetailTable appointments={monthlyAppointments} />
       </section>
       <section>
         <h2>Patients needing follow-up</h2>
@@ -217,6 +274,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
   const [, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("overview");
   const [report, setReport] = useState(null);
+  const [reportSets, setReportSets] = useState({});
   const [reportError, setReportError] = useState(null);
   const today = new Date().toLocaleDateString(undefined, {
     weekday: "long", day: "2-digit", month: "long", year: "numeric",
@@ -228,20 +286,23 @@ export function Dashboard({ dashboard, appointments, loadData }) {
   }
 
   useEffect(() => {
-    const selectedPeriod = PERIODS.find((period) => period.key === activeTab);
-    const reportPeriod = selectedPeriod?.apiKey || "month";
-    const rangeDays = selectedPeriod?.days || 90;
-    const reportTo = new Date();
-    const reportFrom = new Date(reportTo);
-    reportFrom.setDate(reportFrom.getDate() - rangeDays);
-    const params = new URLSearchParams({
-      period: reportPeriod,
-      from: reportFrom.toISOString().slice(0, 10),
-      to: reportTo.toISOString().slice(0, 10),
-    });
-    api.get(`/admin/reports?${params}`)
-      .then(({ data }) => {
-        setReport(data);
+    const today = new Date();
+    const requests = PERIODS.reduce((result, period) => {
+      const from = new Date(today);
+      from.setDate(from.getDate() - period.days);
+      const params = new URLSearchParams({
+        period: period.apiKey,
+        from: from.toISOString().slice(0, 10),
+        to: today.toISOString().slice(0, 10),
+      });
+      result[period.key] = api.get(`/admin/reports?${params}`).then(({ data }) => data);
+      return result;
+    }, {});
+    Promise.all(Object.entries(requests).map(async ([key, request]) => [key, await request]))
+      .then((entries) => {
+        const nextReports = Object.fromEntries(entries);
+        setReportSets(nextReports);
+        setReport(activeTab === "overview" ? nextReports.daily : nextReports[activeTab]);
         setReportError(null);
       })
       .catch((error) => setReportError(error?.response?.data?.error || "Could not load report data."));
@@ -287,15 +348,15 @@ export function Dashboard({ dashboard, appointments, loadData }) {
           {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
           <div className="grid gap-4 lg:grid-cols-2">
             <ReportTrendChart rows={report?.trend} />
-            <ReportBarChart title="Appointment status" rows={normalizeRows(report?.statuses)} color="var(--color-warm)" />
-          </div>
-          <div className="grid gap-4 lg:grid-cols-3">
-            <ReportBarChart title="Top appointment reasons" rows={normalizeRows(report?.reasons)} />
-            <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
             <div className="ht-chart-card">
               <h3>Patients needing follow-up</h3>
               <FollowUpPatients patients={report?.followUps} onPatientClick={openPatient} />
             </div>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-3">
+            <ReportBarChart title="Top appointment reasons" rows={normalizeRows(report?.reasons)} />
+            <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
+            <ReportBarChart title="Appointment status" rows={normalizeRows(report?.statuses)} color="var(--color-warm)" />
           </div>
           <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
           <div className="ht-panel ht-dashboard-schedule">
@@ -333,7 +394,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
         </div>
       )}
 
-      <FullReport dashboard={dashboard} appointments={appointments} report={report} />
+      <FullReport dashboard={dashboard} appointments={appointments} report={report} reportSets={reportSets} />
     </div>
   );
 }
