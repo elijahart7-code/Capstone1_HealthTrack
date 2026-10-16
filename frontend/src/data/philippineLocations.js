@@ -399,3 +399,73 @@ export const PHILIPPINE_LOCATIONS = {
     "Bayawan City",
   ],
 };
+
+const PHILIPPINE_PROVINCES = new Set([
+  "Abra", "Agusan del Norte", "Agusan del Sur", "Aklan", "Albay", "Antique", "Apayao", "Aurora",
+  "Basilan", "Bataan", "Batanes", "Batangas", "Benguet", "Biliran", "Bohol", "Bukidnon", "Bulacan",
+  "Cagayan", "Camarines Norte", "Camarines Sur", "Camiguin", "Capiz", "Catanduanes", "Cavite", "Cebu",
+  "Cotabato", "Davao de Oro", "Davao del Norte", "Davao del Sur", "Davao Occidental", "Davao Oriental",
+  "Dinagat Islands", "Eastern Samar", "Guimaras", "Ifugao", "Ilocos Norte", "Ilocos Sur", "Iloilo",
+  "Isabela", "Kalinga", "La Union", "Laguna", "Lanao del Norte", "Lanao del Sur", "Leyte", "Maguindanao",
+  "Marinduque", "Masbate", "Misamis Occidental", "Misamis Oriental", "Mountain Province", "Negros Occidental",
+  "Negros Oriental", "Northern Samar", "Nueva Ecija", "Nueva Vizcaya", "Occidental Mindoro", "Oriental Mindoro",
+  "Palawan", "Pampanga", "Pangasinan", "Quezon", "Quirino", "Rizal", "Romblon", "Samar", "Sarangani",
+  "South Cotabato", "Southern Leyte", "Sorsogon", "Sultan Kudarat", "Sulu", "Surigao del Norte",
+  "Surigao del Sur", "Tarlac", "Tawi-Tawi", "Zambales", "Zamboanga del Norte", "Zamboanga del Sur",
+  "Zamboanga Sibugay",
+]);
+
+export const PHILIPPINE_LOCATION_HIERARCHY = Object.fromEntries(
+  Object.entries(PHILIPPINE_LOCATIONS).map(([region, entries]) => {
+    if (region.startsWith("NCR:")) {
+      return [region, { "Metro Manila": [...new Set(entries)] }];
+    }
+
+    const provinces = {};
+    let currentProvince = "";
+
+    entries.forEach((entry) => {
+      if (PHILIPPINE_PROVINCES.has(entry)) {
+        currentProvince = entry;
+        provinces[currentProvince] ||= [];
+      } else if (currentProvince) {
+        provinces[currentProvince].push(entry);
+      }
+    });
+
+    return [region, Object.fromEntries(
+      Object.entries(provinces).map(([province, cities]) => [province, [...new Set(cities)]]),
+    )];
+  }),
+);
+
+export const PHILIPPINE_BIRTHPLACE_AREAS = {
+  "Quezon City": ["Fairview", "Litex", "Novaliches", "Cubao", "Kamuning", "Batasan", "Sandigan", "Project 6"],
+  "Caloocan City": ["Caloocan Proper", "Bagumbong", "Tala", "Grace Park"],
+  "Manila City": [
+    "Binondo",
+    "Ermita",
+    "Intramuros",
+    "Malate",
+    "Paco",
+    "Pandacan",
+    "Port Area",
+    "Quiapo",
+    "Sampaloc",
+    "San Andres",
+    "San Miguel",
+    "San Nicolas",
+    "Santa Ana",
+    "Santa Cruz",
+    "Tondo I",
+    "Tondo II",
+  ],
+  "Makati City": ["Poblacion", "Bel-Air", "Magallanes", "San Antonio"],
+  "Pasig City": ["Ugong", "Ortigas", "Kapitolyo", "Rizal"],
+  "Taguig City": ["Bonifacio Global City", "Lower Bicutan", "Upper Bicutan", "Fort Bonifacio"],
+  "Bacoor City": ["Bacoor Proper", "Salinas", "Mambog", "Molino"],
+  "Imus City": ["Imus Proper", "Anabu", "Bayan Luma", "Palico"],
+  "Dasmariñas City": ["Dasmariñas Proper", "Langkaan", "Salawag"],
+  "General Trias City": ["General Trias Proper", "Panghulo", "Sampalucan"],
+  "Trece Martires City": ["Trece Martires Proper", "Barangay Conchu"],
+};
