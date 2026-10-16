@@ -4930,11 +4930,17 @@
 
     line-height: 1.45;
 }
+/*Patient dashboard subtitle*/
 .patient-dashboard-shell > p{
     font-size: 16px;
     line-weight: 1.6;
 }
-
+/*Patient dashboard: feature card subtitles*/
+.patient-dashboard-shell .patient-feature-card p,
+.patient-dashboard-shell .patient-dashboard-card p{
+    font-size: 14px;
+    line-height:1.5;
+}
 .patient-dashboard-view-button {
   display: inline-flex;
   align-items: center;
