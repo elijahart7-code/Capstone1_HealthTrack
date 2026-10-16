@@ -6349,18 +6349,13 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         overflow: hidden;
         border: 1px solid #DDF7EF;
         border-radius: 12px;
-        background: #DDF7EF;
+        background: #D5E8DF;
     }
 
     .patient-dashboard-shell .patient-welcome-simple::before,
     .patient-dashboard-shell .patient-welcome-simple::after {
-        position: absolute;
-        z-index: 0;
-        right: -1.5rem;
-        border-radius: 50%;
-        background: #F0FBF7;
-        content: "";
-        pointer-events: none;
+        display: none !important;
+        content: none !important;
     }
 
     .patient-dashboard-shell .patient-welcome-simple::before {
