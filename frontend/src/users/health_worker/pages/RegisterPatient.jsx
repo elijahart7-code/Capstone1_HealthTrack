@@ -293,7 +293,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input
                 value={form.place_of_birth}
                 onChange={(e) => set("place_of_birth", e.target.value)}
-                placeholder="Type city/municipality, province, or country"
+                placeholder="Enter city/municipality, province, or country"
                 autoComplete="address-level2"
               />
             </Field>
