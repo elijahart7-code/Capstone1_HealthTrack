@@ -53,3 +53,106 @@ export async function getAppointments(_req, res) {
     statuses: ["pending", "confirmed", "completed", "cancelled"],
   });
 }
+
+/** GET /api/admin/reports -- aggregate dashboard data for charts and exports. */
+export async function getReports(req, res) {
+  const period = ["day", "week", "month", "quarter", "year"].includes(req.query.period) ? req.query.period : "month";
+  const status = ["pending", "confirmed", "completed", "cancelled"].includes(req.query.status)
+    ? req.query.status
+    : null;
+  const dateFrom = /^\d{4}-\d{2}-\d{2}$/.test(req.query.from || "")
+    ? req.query.from
+    : new Date(new Date().setDate(new Date().getDate() - 90)).toISOString().slice(0, 10);
+  const dateTo = /^\d{4}-\d{2}-\d{2}$/.test(req.query.to || "")
+    ? req.query.to
+    : new Date().toISOString().slice(0, 10);
+  const statusClause = status ? " AND a.status = $3" : "";
+  const statusValues = status ? [dateFrom, dateTo, status] : [dateFrom, dateTo];
+  const interval = { day: "1 day", week: "1 week", month: "1 month", quarter: "3 months", year: "1 year" }[period];
+
+  const [
+    trend,
+    reasons,
+    statuses,
+    conditions,
+    followUps,
+    patients,
+  ] = await Promise.all([
+    sql.query(
+      `WITH buckets AS (
+         SELECT generate_series(
+           date_trunc('${period}', $1::timestamp),
+           date_trunc('${period}', $2::timestamp),
+           INTERVAL '${interval}'
+         ) AS period
+       )
+       SELECT b.period::date,
+              COUNT(a.id)::int AS total,
+              COUNT(a.id) FILTER (WHERE a.status = 'completed')::int AS completed
+       FROM buckets b
+       LEFT JOIN appointments a
+         ON a.scheduled_at >= b.period
+        AND a.scheduled_at < b.period + INTERVAL '${interval}'
+        AND a.scheduled_at >= $1::date
+        AND a.scheduled_at < ($2::date + INTERVAL '1 day')${statusClause ? " AND a.status = $3" : ""}
+       GROUP BY b.period ORDER BY b.period`,
+      statusValues
+    ),
+    sql.query(
+      `SELECT COALESCE(NULLIF(TRIM(reason), ''), 'Not specified') AS label, COUNT(*)::int AS count
+       FROM appointments a
+       WHERE scheduled_at >= $1::date
+         AND scheduled_at < ($2::date + INTERVAL '1 day')${statusClause}
+       GROUP BY 1 ORDER BY count DESC LIMIT 8`,
+      statusValues
+    ),
+    sql.query(
+      `SELECT status AS label, COUNT(*)::int AS count
+       FROM appointments a
+       WHERE scheduled_at >= $1::date
+         AND scheduled_at < ($2::date + INTERVAL '1 day')${statusClause}
+       GROUP BY status ORDER BY count DESC`,
+      statusValues
+    ),
+    sql.query(
+      `SELECT COALESCE(NULLIF(TRIM(condition), ''), 'Not specified') AS label, COUNT(*)::int AS count
+       FROM health_assessments
+       WHERE assessment_date >= $1::date AND assessment_date < ($2::date + INTERVAL '1 day')
+       GROUP BY 1 ORDER BY count DESC LIMIT 8`,
+      [dateFrom, dateTo]
+    ),
+    sql.query(
+      `SELECT p.patient_id, p.first_name, p.last_name,
+              COUNT(a.id)::int AS appointment_count,
+              MAX(a.scheduled_at) AS latest_appointment,
+              STRING_AGG(DISTINCT a.reason, ', ' ORDER BY a.reason) AS reasons
+       FROM appointments a
+       JOIN patients p ON p.patient_id = a.patient_id
+       WHERE a.scheduled_at >= $1::date
+         AND a.scheduled_at < ($2::date + INTERVAL '1 day')
+         AND p.archived_at IS NULL
+       GROUP BY p.patient_id, p.first_name, p.last_name
+       ORDER BY latest_appointment DESC`,
+      [dateFrom, dateTo]
+    ),
+    sql.query(
+      `SELECT DISTINCT ON (p.patient_id)
+         p.patient_id, p.first_name, p.last_name,
+         ha.condition, ha.status, ha.assessment_date
+       FROM health_assessments ha
+       JOIN patients p ON p.patient_id = ha.patient_id
+       WHERE ha.status IN ('active', 'monitoring')
+         AND p.archived_at IS NULL
+       ORDER BY p.patient_id, ha.assessment_date DESC
+       LIMIT 10`
+    ),
+  ]);
+
+  return res.status(200).json({
+    message: "Reports retrieved.",
+    filters: { period, status, from: dateFrom, to: dateTo },
+    trend, reasons, statuses, conditions,
+    followUps,
+    patients,
+  });
+}
