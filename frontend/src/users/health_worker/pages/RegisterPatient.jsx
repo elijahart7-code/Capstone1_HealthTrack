@@ -38,6 +38,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const [sendLoginCredentials, setSendLoginCredentials] = useState(true);
   const [selectedBirthRegion, setSelectedBirthRegion] = useState("");
   const [selectedBirthLocation, setSelectedBirthLocation] = useState("");
+  const [birthplaceOtherText, setBirthplaceOtherText] = useState("");
   const birthDatePickerRef = useRef(null);
 
   const birthLocationOptions = PHILIPPINE_LOCATIONS[selectedBirthRegion] || [];
@@ -138,24 +139,42 @@ export function RegisterPatient({ loadData, onRegistered }) {
   }
 
   function syncBirthPlace(region = selectedBirthRegion, location = selectedBirthLocation, details = form.place_of_birth_details) {
-    const nextPlaceOfBirth = [region, location, details].filter(Boolean).join(" / ");
+    const normalizedDetails = details === "Other" ? birthplaceOtherText.trim() || "Other" : details;
+    const nextPlaceOfBirth = [region, location, normalizedDetails].filter(Boolean).join(" / ");
     set("place_of_birth", nextPlaceOfBirth);
   }
 
   function handleBirthRegionChange(region) {
     setSelectedBirthRegion(region);
     setSelectedBirthLocation("");
-    syncBirthPlace(region, "", form.place_of_birth_details);
+    set("place_of_birth_details", "");
+    setBirthplaceOtherText("");
+    syncBirthPlace(region, "", "");
   }
 
   function handleBirthLocationChange(location) {
     setSelectedBirthLocation(location);
-    syncBirthPlace(selectedBirthRegion, location, form.place_of_birth_details);
+    set("place_of_birth_details", "");
+    setBirthplaceOtherText("");
+    syncBirthPlace(selectedBirthRegion, location, "");
   }
 
   function handleBirthDetailsChange(value) {
+    if (value === "Other") {
+      set("place_of_birth_details", "Other");
+      setBirthplaceOtherText("");
+      syncBirthPlace(selectedBirthRegion, selectedBirthLocation, "Other");
+      return;
+    }
+
     set("place_of_birth_details", value);
+    setBirthplaceOtherText("");
     syncBirthPlace(selectedBirthRegion, selectedBirthLocation, value);
+  }
+
+  function handleBirthplaceOtherTextChange(value) {
+    setBirthplaceOtherText(value);
+    syncBirthPlace(selectedBirthRegion, selectedBirthLocation, "Other");
   }
 
   async function handleSubmit(e) {
@@ -378,7 +397,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
                 </div>
 
                 <Select
-                  value={form.place_of_birth_details}
+                  value={form.place_of_birth_details || ""}
                   onChange={(e) => handleBirthDetailsChange(e.target.value)}
                   className="ht-place-of-birth-detail-input"
                   disabled={!selectedBirthLocation}
@@ -392,6 +411,14 @@ export function RegisterPatient({ loadData, onRegistered }) {
                     </option>
                   ))}
                 </Select>
+
+                {form.place_of_birth_details === "Other" && (
+                  <Input
+                    value={birthplaceOtherText}
+                    onChange={(e) => handleBirthplaceOtherTextChange(e.target.value)}
+                    placeholder="Please specify your birthplace area, e.g., Ermita, Paco, Pandacan"
+                  />
+                )}
               </div>
             </Field>
           </div>
