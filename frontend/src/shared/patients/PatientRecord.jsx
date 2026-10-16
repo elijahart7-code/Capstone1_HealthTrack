@@ -1516,6 +1516,21 @@ export function PatientRecord({
           gap: 8px;
         }
 
+        .ht-date-time-controls {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .ht-date-time-controls .ht-input {
+          min-width: 0;
+          flex: 1;
+        }
+
+        .ht-date-time-ok {
+          flex: 0 0 auto;
+        }
+
         .ht-empty {
           padding: 25px;
           text-align: center;
@@ -1677,13 +1692,26 @@ function PatientAppointments({
         <div className="ht-form-box">
           {apptError && <div className="ht-login-alert ht-login-alert-error">{apptError}</div>}
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Date and time" required>
-              <Input
-                type="datetime-local"
-                value={scheduledAt}
-                onChange={(event) => setScheduledAt(event.target.value)}
-              />
-            </Field>
+            <div className="ht-field">
+              <label htmlFor="appointment-scheduled-at">
+                Date and time<span style={{ color: "var(--color-danger)" }}>*</span>
+              </label>
+              <div className="ht-date-time-controls">
+                <Input
+                  id="appointment-scheduled-at"
+                  type="datetime-local"
+                  value={scheduledAt}
+                  onChange={(event) => setScheduledAt(event.target.value)}
+                />
+                <button
+                  type="button"
+                  className="ht-small-button ht-date-time-ok"
+                  aria-label="Confirm date and time"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
             <Field label="Status">
               <Select value={status} onChange={(event) => setStatus(event.target.value)}>
                 {APPOINTMENT_STATUSES.map((option) => (
