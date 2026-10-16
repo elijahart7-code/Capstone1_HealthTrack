@@ -4920,9 +4920,7 @@
 }
 
 
-/* =========================================================
-   WELCOME SECTION
-   ========================================================= */
+/* WELCOME SECTION */
 
 .patient-welcome-simple {
     display: flex;
@@ -4949,8 +4947,19 @@
 }
 
 .patient-welcome-simple::after {
-    content: none;
-    display: none;
+    content: "";
+
+    position: absolute;
+
+    right: -35px;
+    bottom: -60px;
+
+    width: 180px;
+    height: 150px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.18);
 }
 
 .patient-welcome-icon {
@@ -4988,7 +4997,7 @@
 
     font-family: var(--font-sans);
 
-    font-size: 1.25rem;
+    font-size: 0.95rem;
 
     font-weight: 800;
 
