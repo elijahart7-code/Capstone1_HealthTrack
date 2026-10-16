@@ -1,7 +1,10 @@
 import {
   ALLERGY_REACTIONS,
+  ENVIRONMENTAL_ALLERGIES,
+  FOOD_ALLERGIES,
   HEALTH_CONDITIONS,
   IMMUNIZATION_STATUSES,
+  MEDICATION_ALLERGIES,
 } from "./healthOptions";
 
 /** Mirrors backend/src/config/recordTypes.js -- drives the clinical-record tabs/forms. */
@@ -70,9 +73,9 @@ export const RECORD_TYPES = {
     dateField: "recorded_at",
     dateLabel: "Date Recorded",
     fields: {
-      medication_allergies: { label: "Medication Allergies", type: "textarea", required: true, primary: true },
-      food_allergies: { label: "Food Allergies", type: "textarea", required: true, column: true },
-      environmental_allergies: { label: "Environmental Allergies", type: "textarea", required: true, column: true },
+      medication_allergies: { label: "Medication Allergies", type: "multi-combobox", optionKey: "medication_allergies", required: true, primary: true, options: MEDICATION_ALLERGIES },
+      food_allergies: { label: "Food Allergies", type: "multi-combobox", optionKey: "food_allergies", required: true, column: true, options: FOOD_ALLERGIES },
+      environmental_allergies: { label: "Environmental Allergies", type: "multi-combobox", optionKey: "environmental_allergies", required: true, column: true, options: ENVIRONMENTAL_ALLERGIES },
       reaction: { label: "Reaction", type: "combobox", optionKey: "allergy_reactions", required: true, column: true, options: ALLERGY_REACTIONS },
       status: { label: "Status", type: "select", required: true, column: true, options: { active: "Active", resolved: "Resolved" } },
       remarks: { label: "Remarks", type: "textarea", required: false, column: true },

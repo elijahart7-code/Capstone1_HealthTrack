@@ -32,7 +32,7 @@ import {
   HeartHandshake,
   Hospital,
 } from "lucide-react";
-import { Combobox, Field, Input, Select, Textarea } from "../../components/ui/Input";
+import { Combobox, Field, Input, MultiCombobox, Select, Textarea } from "../../components/ui/Input";
 
 /**
  * Table + form for one clinical record type. It is driven entirely by the
@@ -399,7 +399,19 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                   label={field.label}
                   required={field.required}
                 >
-                  {field.type === "textarea" ? (
+                  {field.type === "multi-combobox" ? (
+                    <MultiCombobox
+                      id={column}
+                      options={healthOptions[field.optionKey] || field.options}
+                      value={form[column] || ""}
+                      onChange={(e) =>
+                        setForm({
+                          ...form,
+                          [column]: e.target.value,
+                        })
+                      }
+                    />
+                  ) : field.type === "textarea" ? (
                     <Textarea
                       value={form[column] || ""}
                       onChange={(e) =>
