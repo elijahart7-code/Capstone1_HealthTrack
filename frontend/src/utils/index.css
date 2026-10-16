@@ -4949,7 +4949,7 @@
 }
 
 .patient-welcome-simple::after {
-    content: "";
+    content: none;
     display: none;
 }
 
