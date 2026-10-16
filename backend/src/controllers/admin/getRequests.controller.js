@@ -74,9 +74,8 @@ export async function getReports(req, res) {
     reasons,
     statuses,
     conditions,
-    allergyReactions,
-    immunizations,
     summary,
+    followUps,
   ] = await Promise.all([
     sql.query(
       `SELECT date_trunc('${period}', scheduled_at)::date AS period,
@@ -112,20 +111,6 @@ export async function getReports(req, res) {
       [dateFrom, dateTo]
     ),
     sql.query(
-      `SELECT COALESCE(NULLIF(TRIM(reaction), ''), 'Not specified') AS label, COUNT(*)::int AS count
-       FROM allergies
-       WHERE recorded_at >= $1::date AND recorded_at < ($2::date + INTERVAL '1 day')
-       GROUP BY 1 ORDER BY count DESC LIMIT 8`,
-      [dateFrom, dateTo]
-    ),
-    sql.query(
-      `SELECT COALESCE(NULLIF(TRIM(immunization_status), ''), 'Not specified') AS label, COUNT(*)::int AS count
-       FROM medical_histories
-       WHERE recorded_at >= $1::date AND recorded_at < ($2::date + INTERVAL '1 day')
-       GROUP BY 1 ORDER BY count DESC`,
-      [dateFrom, dateTo]
-    ),
-    sql.query(
       `SELECT
          COUNT(*)::int AS total_appointments,
          COUNT(*) FILTER (WHERE status = 'completed')::int AS completed_appointments,
@@ -134,22 +119,30 @@ export async function getReports(req, res) {
          (SELECT COUNT(*)::int FROM health_assessments
           WHERE status IN ('active', 'monitoring')
             AND assessment_date >= $1::date
-            AND assessment_date < ($2::date + INTERVAL '1 day')) AS active_conditions,
-         (SELECT COUNT(*)::int FROM medical_histories
-          WHERE immunization_status IN ('Up to date', 'Partially immunized')
-            AND recorded_at >= $1::date
-            AND recorded_at < ($2::date + INTERVAL '1 day')) AS immunized_patients
+            AND assessment_date < ($2::date + INTERVAL '1 day')) AS active_conditions
        FROM appointments
        WHERE scheduled_at >= $1::date
          AND scheduled_at < ($2::date + INTERVAL '1 day')${statusClause}`,
       statusValues
+    ),
+    sql.query(
+      `SELECT DISTINCT ON (p.patient_id)
+         p.patient_id, p.first_name, p.last_name,
+         ha.condition, ha.status, ha.assessment_date
+       FROM health_assessments ha
+       JOIN patients p ON p.patient_id = ha.patient_id
+       WHERE ha.status IN ('active', 'monitoring')
+         AND p.archived_at IS NULL
+       ORDER BY p.patient_id, ha.assessment_date DESC
+       LIMIT 10`
     ),
   ]);
 
   return res.status(200).json({
     message: "Reports retrieved.",
     filters: { period, status, from: dateFrom, to: dateTo },
-    trend, reasons, statuses, conditions, allergyReactions, immunizations,
+    trend, reasons, statuses, conditions,
     summary: summary[0] || {},
+    followUps,
   });
 }

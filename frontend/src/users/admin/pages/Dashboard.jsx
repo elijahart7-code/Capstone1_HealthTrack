@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
-  Activity,
   BarChart3,
   CalendarDays,
   ClipboardList,
@@ -24,86 +23,6 @@ const PERIODS = [
   { key: "monthly", apiKey: "month", label: "Monthly", days: 365 },
   { key: "yearly", apiKey: "year", label: "Yearly", days: 1825 },
 ];
-
-function startOfPeriod(date, period) {
-  const value = new Date(date);
-  if (period === "daily") return new Date(value.getFullYear(), value.getMonth(), value.getDate());
-  if (period === "weekly") {
-    const day = value.getDay();
-    return new Date(value.getFullYear(), value.getMonth(), value.getDate() - day);
-  }
-  if (period === "monthly") return new Date(value.getFullYear(), value.getMonth(), 1);
-  return new Date(value.getFullYear(), 0, 1);
-}
-
-function periodKey(date, period) {
-  const value = startOfPeriod(date, period);
-  if (period === "daily") return value.toISOString().slice(0, 10);
-  if (period === "weekly") return value.toISOString().slice(0, 10);
-  if (period === "monthly") return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}`;
-  return String(value.getFullYear());
-}
-
-function formatPeriod(date, period) {
-  const value = startOfPeriod(date, period);
-  if (period === "daily") return value.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
-  if (period === "weekly") return `Week of ${value.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
-  if (period === "monthly") return value.toLocaleDateString(undefined, { month: "long", year: "numeric" });
-  return String(value.getFullYear());
-}
-
-function countBy(items, getLabel) {
-  return Object.entries(items.reduce((counts, item) => {
-    const label = getLabel(item) || "Not specified";
-    counts[label] = (counts[label] || 0) + 1;
-    return counts;
-  }, {})).sort((a, b) => b[1] - a[1]);
-}
-
-function getProgram(reason = "") {
-  const value = reason.toLowerCase();
-  if (value.includes("maternal") || value.includes("prenatal") || value.includes("pregnan")) return "Maternal checkups";
-  if (value.includes("circum")) return "Circumcision";
-  if (value.includes("vaccin") || value.includes("immun")) return "Vaccination";
-  return "General checkups";
-}
-
-function ReportBreakdown({ appointments, period }) {
-  const grouped = useMemo(() => {
-    const byPeriod = {};
-    appointments.forEach((appointment) => {
-      const key = periodKey(appointment.scheduled_at, period);
-      byPeriod[key] ||= [];
-      byPeriod[key].push(appointment);
-    });
-    return Object.entries(byPeriod)
-      .sort((a, b) => b[0].localeCompare(a[0]))
-      .map(([, items]) => ({
-        label: formatPeriod(items[0].scheduled_at, period),
-        items,
-        reasons: countBy(items, (item) => item.reason),
-        diseases: countBy(items, (item) => item.reason),
-        programs: countBy(items, (item) => getProgram(item.reason)),
-      }));
-  }, [appointments, period]);
-
-  if (!grouped.length) return <EmptyState>No report data for this period.</EmptyState>;
-
-  return (
-    <div className="grid gap-4">
-      {grouped.map((group) => (
-        <div className="ht-report-period" key={group.label}>
-          <h3>{group.label}</h3>
-          <div className="grid gap-4 lg:grid-cols-3">
-            <ReportList title="Checkup Reasons" icon={ClipboardList} rows={group.reasons} />
-            <ReportList title="Common Diseases" icon={HeartPulse} rows={group.diseases} />
-            <ReportList title="Programs & Procedures" icon={Activity} rows={group.programs} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function ReportList({ title, icon: Icon, rows }) {
   return (
@@ -221,7 +140,30 @@ function ReportSummary({ summary = {} }) {
       <div><strong>{total}</strong><span>Appointments in period</span></div>
       <div><strong>{completionRate}</strong><span>Completion rate</span></div>
       <div><strong>{summary.active_conditions || 0}</strong><span>Active conditions</span></div>
-      <div><strong>{summary.immunized_patients || 0}</strong><span>Immunized records</span></div>
+      <div><strong>{summary.cancelled_appointments || 0}</strong><span>Cancelled appointments</span></div>
+    </div>
+  );
+}
+
+function FollowUpPatients({ patients, onPatientClick }) {
+  if (!patients?.length) return <EmptyState>No patients currently flagged for follow-up.</EmptyState>;
+
+  return (
+    <div className="ht-follow-up-list">
+      {patients.map((patient) => (
+        <button
+          type="button"
+          className="ht-follow-up-item"
+          key={`${patient.patient_id}-${patient.condition}`}
+          onClick={() => onPatientClick(patient.patient_id)}
+        >
+          <span>
+            <strong>{patient.last_name}, {patient.first_name}</strong>
+            <small>{patient.condition || "Active condition"}</small>
+          </span>
+          <span className="ht-follow-up-status">{patient.status}</span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -249,16 +191,12 @@ function FullReport({ dashboard, appointments, report }) {
         <div className="grid gap-4 lg:grid-cols-2">
           <ReportList title="Appointment Reasons" icon={ClipboardList} rows={normalizeRows(report?.reasons)} />
           <ReportList title="Common Conditions" icon={HeartPulse} rows={normalizeRows(report?.conditions)} />
-          <ReportList title="Allergy Reactions" icon={Activity} rows={normalizeRows(report?.allergyReactions)} />
-          <ReportList title="Immunization Status" icon={Syringe} rows={normalizeRows(report?.immunizations)} />
         </div>
       </section>
-      {PERIODS.map(({ key, label }) => (
-        <section key={key}>
-          <h2>{label} Report</h2>
-          <ReportBreakdown appointments={appointments} period={key} />
-        </section>
-      ))}
+      <section>
+        <h2>Patients needing follow-up</h2>
+        <FollowUpPatients patients={report?.followUps} onPatientClick={() => {}} />
+      </section>
       <section>
         <h2>Notable Events</h2>
         <NotableEvents appointments={appointments} />
@@ -335,6 +273,9 @@ export function Dashboard({ dashboard, appointments, loadData }) {
   }
 
   const currentPeriod = PERIODS.find((period) => period.key === activeTab);
+  function openPatient(patientId) {
+    setSearchParams({ page: "patients", patientId });
+  }
 
   return (
     <div className="grid gap-4">
@@ -366,10 +307,12 @@ export function Dashboard({ dashboard, appointments, loadData }) {
           <div className="grid gap-4 lg:grid-cols-3">
             <ReportBarChart title="Top appointment reasons" rows={normalizeRows(report?.reasons)} />
             <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
-            <ReportBarChart title="Allergy reactions" rows={normalizeRows(report?.allergyReactions)} color="var(--color-warm)" />
+            <div className="ht-chart-card">
+              <h3>Patients needing follow-up</h3>
+              <FollowUpPatients patients={report?.followUps} onPatientClick={openPatient} />
+            </div>
           </div>
-          <div className="grid gap-4 lg:grid-cols-[1fr_2fr]">
-            <ReportBarChart title="Immunization status" rows={normalizeRows(report?.immunizations)} color="var(--color-brand)" />
+          <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
           <div className="ht-panel ht-dashboard-schedule">
             <h2>Overview</h2>
             {dashboard.todaysAppointments.length === 0 ? <EmptyState>Nothing scheduled for today.</EmptyState> : (
@@ -398,7 +341,10 @@ export function Dashboard({ dashboard, appointments, loadData }) {
           <div className="grid gap-4 lg:grid-cols-3">
             <ReportBarChart title="Appointment reasons" rows={normalizeRows(report?.reasons)} />
             <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
-            <ReportBarChart title="Immunization status" rows={normalizeRows(report?.immunizations)} color="var(--color-brand)" />
+            <div className="ht-chart-card">
+              <h3>Patients needing follow-up</h3>
+              <FollowUpPatients patients={report?.followUps} onPatientClick={openPatient} />
+            </div>
           </div>
         </div>
       )}

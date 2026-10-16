@@ -747,6 +747,48 @@
         font-weight: 700;
     }
 
+    .ht-follow-up-list {
+        display: grid;
+        gap: .55rem;
+    }
+
+    .ht-follow-up-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: .75rem;
+        width: 100%;
+        padding: .65rem .75rem;
+        border: 1px solid var(--color-border);
+        border-radius: .55rem;
+        background: transparent;
+        color: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .ht-follow-up-item:hover {
+        border-color: var(--color-brand-strong);
+        background: color-mix(in srgb, var(--color-brand) 10%, transparent);
+    }
+
+    .ht-follow-up-item span:first-child {
+        display: grid;
+        gap: .15rem;
+    }
+
+    .ht-follow-up-item small,
+    .ht-follow-up-status {
+        color: var(--color-muted);
+        font-size: .75rem;
+    }
+
+    .ht-follow-up-status {
+        color: var(--color-danger);
+        font-weight: 800;
+        text-transform: capitalize;
+    }
+
     @media (max-width: 700px) {
         .ht-report-summary-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
