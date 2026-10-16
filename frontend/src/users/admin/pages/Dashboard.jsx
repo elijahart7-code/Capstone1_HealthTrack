@@ -326,73 +326,75 @@ export function Dashboard({ dashboard, appointments, loadData }) {
 
   return (
     <div className="grid gap-4">
-      <PageHeader title="Admin Overview" subtitle="Barangay Health Center of Mambog I">
-        <span className="ht-pill ht-pill-count"><CalendarDays size={18} strokeWidth={2} />{today}</span>
-      </PageHeader>
+      <div className="ht-dashboard-screen">
+        <PageHeader title="Admin Overview" subtitle="Barangay Health Center of Mambog I">
+          <span className="ht-pill ht-pill-count"><CalendarDays size={18} strokeWidth={2} />{today}</span>
+        </PageHeader>
 
-      <div className="ht-report-tabs" role="tablist" aria-label="Health center reports">
-        <button className={activeTab === "overview" ? "is-active" : ""} onClick={() => setActiveTab("overview")} role="tab" aria-selected={activeTab === "overview"}><BarChart3 size={16} /> Overview</button>
-        {PERIODS.map((period) => <button key={period.key} className={activeTab === period.key ? "is-active" : ""} onClick={() => selectPeriod(period)} role="tab" aria-selected={activeTab === period.key}>{period.label}</button>)}
-        <button className="ht-report-export" onClick={exportReport}><Download size={16} /> Export PDF</button>
-      </div>
+        <div className="ht-report-tabs" role="tablist" aria-label="Health center reports">
+          <button className={activeTab === "overview" ? "is-active" : ""} onClick={() => setActiveTab("overview")} role="tab" aria-selected={activeTab === "overview"}><BarChart3 size={16} /> Overview</button>
+          {PERIODS.map((period) => <button key={period.key} className={activeTab === period.key ? "is-active" : ""} onClick={() => selectPeriod(period)} role="tab" aria-selected={activeTab === period.key}>{period.label}</button>)}
+          <button className="ht-report-export" onClick={exportReport}><Download size={16} /> Export PDF</button>
+        </div>
 
-      <div className="ht-metric-grid">
-        <StatCard label="Today's Appointments" value={dashboard.appointmentsToday} tone="brand" icon={CalendarDays} />
-        <StatCard label="Registered Patients" value={dashboard.patientCount} tone="brand" icon={Users} />
-        <StatCard label="Upcoming Appointments" value={dashboard.upcomingCount} tone="brand" icon={ClockIcon} />
-        <StatCard label="Total Appointments" value={appointments.length} tone="warm" icon={Syringe} />
-      </div>
+        <div className="ht-metric-grid">
+          <StatCard label="Today's Appointments" value={dashboard.appointmentsToday} tone="brand" icon={CalendarDays} />
+          <StatCard label="Registered Patients" value={dashboard.patientCount} tone="brand" icon={Users} />
+          <StatCard label="Upcoming Appointments" value={dashboard.upcomingCount} tone="brand" icon={ClockIcon} />
+          <StatCard label="Total Appointments" value={appointments.length} tone="warm" icon={Syringe} />
+        </div>
 
-      {activeTab === "overview" ? (
-        <div className="grid gap-4">
-          {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
-          <div className="grid gap-4 lg:grid-cols-2">
-            <ReportTrendChart rows={report?.trend} />
-            <div className="ht-chart-card">
-              <h3>Patients needing follow-up</h3>
-              <FollowUpPatients patients={report?.followUps} onPatientClick={openPatient} />
+        {activeTab === "overview" ? (
+          <div className="grid gap-4">
+            {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
+            <div className="grid gap-4 lg:grid-cols-2">
+              <ReportTrendChart rows={report?.trend} />
+              <div className="ht-chart-card">
+                <h3>Patients needing follow-up</h3>
+                <FollowUpPatients patients={report?.followUps} onPatientClick={openPatient} />
+              </div>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+              <div className="ht-panel ht-dashboard-schedule">
+                <h2>Overview</h2>
+                {dashboard.todaysAppointments.length === 0 ? <EmptyState>Nothing scheduled for today.</EmptyState> : (
+                  <Table><thead><tr><Th>Time</Th><Th>Patient</Th><Th>Reason</Th><Th>Status</Th></tr></thead><tbody>
+                    {dashboard.todaysAppointments.map((a) => <tr key={a.appointment_id}>
+                      <Td className="whitespace-nowrap font-bold">{new Date(a.scheduled_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</Td>
+                      <Td><button onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id })} className="ht-link-button">{a.last_name}, {a.first_name}</button></Td>
+                      <Td>{a.reason}</Td>
+                      <Td><Select aria-label={`Update status for ${a.last_name}, ${a.first_name}`} value={a.status} onChange={(event) => updateStatus(a.appointment_id, event.target.value)} className={`ht-status-select ht-status-select-${a.status}`}>{STATUSES.map((status) => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}</Select></Td>
+                    </tr>)}
+                  </tbody></Table>
+                )}
+              </div>
+              <div className="ht-panel"><h2>Notable Events</h2><NotableEvents appointments={appointments} /></div>
+            </div>
+            <div className="grid gap-4 lg:grid-cols-3">
+              <ReportBarChart title="Top appointment reasons" rows={normalizeRows(report?.reasons)} />
+              <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
+              <ReportBarChart title="Appointment status" rows={normalizeRows(report?.statuses)} color="var(--color-warm)" />
             </div>
           </div>
-          <div className="grid gap-4 lg:grid-cols-3">
-            <ReportBarChart title="Top appointment reasons" rows={normalizeRows(report?.reasons)} />
-            <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
-            <ReportBarChart title="Appointment status" rows={normalizeRows(report?.statuses)} color="var(--color-warm)" />
-          </div>
-          <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-          <div className="ht-panel ht-dashboard-schedule">
-            <h2>Overview</h2>
-            {dashboard.todaysAppointments.length === 0 ? <EmptyState>Nothing scheduled for today.</EmptyState> : (
-              <Table><thead><tr><Th>Time</Th><Th>Patient</Th><Th>Reason</Th><Th>Status</Th></tr></thead><tbody>
-                {dashboard.todaysAppointments.map((a) => <tr key={a.appointment_id}>
-                  <Td className="whitespace-nowrap font-bold">{new Date(a.scheduled_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</Td>
-                  <Td><button onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id })} className="ht-link-button">{a.last_name}, {a.first_name}</button></Td>
-                  <Td>{a.reason}</Td>
-                  <Td><Select aria-label={`Update status for ${a.last_name}, ${a.first_name}`} value={a.status} onChange={(event) => updateStatus(a.appointment_id, event.target.value)} className={`ht-status-select ht-status-select-${a.status}`}>{STATUSES.map((status) => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}</Select></Td>
-                </tr>)}
-              </tbody></Table>
-            )}
-          </div>
-          <div className="ht-panel"><h2>Notable Events</h2><NotableEvents appointments={appointments} /></div>
-          </div>
-        </div>
-      ) : (
-        <div className="grid gap-4">
-          {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
-          <div className="ht-panel">
-            <h2>{currentPeriod.label} Report</h2>
-            <p className="ht-muted mb-4">Aggregated report data grouped by {currentPeriod.label.toLowerCase()}.</p>
-            <ReportTrendChart rows={report?.trend} />
-          </div>
-          <div className="grid gap-4 lg:grid-cols-3">
-            <ReportBarChart title="Appointment reasons" rows={normalizeRows(report?.reasons)} />
-            <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
-            <div className="ht-chart-card">
-              <h3>Patients needing follow-up</h3>
-              <FollowUpPatients patients={report?.followUps} onPatientClick={openPatient} />
+        ) : (
+          <div className="grid gap-4">
+            {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
+            <div className="ht-panel">
+              <h2>{currentPeriod.label} Report</h2>
+              <p className="ht-muted mb-4">Aggregated report data grouped by {currentPeriod.label.toLowerCase()}.</p>
+              <ReportTrendChart rows={report?.trend} />
+            </div>
+            <div className="grid gap-4 lg:grid-cols-3">
+              <ReportBarChart title="Appointment reasons" rows={normalizeRows(report?.reasons)} />
+              <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
+              <div className="ht-chart-card">
+                <h3>Patients needing follow-up</h3>
+                <FollowUpPatients patients={report?.followUps} onPatientClick={openPatient} />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <FullReport dashboard={dashboard} appointments={appointments} report={report} reportSets={reportSets} />
     </div>

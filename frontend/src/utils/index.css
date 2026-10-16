@@ -858,7 +858,7 @@
         }
 
         .ht-admin-shell .ht-topbar,
-        .ht-admin-shell .ht-content > *:not(.ht-print-report) {
+        .ht-dashboard-screen {
             display: none !important;
         }
 
