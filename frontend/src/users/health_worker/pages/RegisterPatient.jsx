@@ -111,7 +111,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
     setPortalEmailError(null);
 
     if (!form.place_of_birth.trim()) {
-      setError("Please select the patient's place of birth.");
+      setError("Please enter the patient's place of birth.");
       return;
     }
 
