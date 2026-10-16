@@ -5365,7 +5365,13 @@
 
     color: #08755f!important;
 }
-
+.patient-dashboard-shell .patient-feature-card p,
+.patient-dashboard-shell .patient-dashboard-card p,
+.patient-dashboard-shell .patient-welcome-text p{
+    color: #66736D;
+    font-size: 14px;
+    line-height: 1.5;
+}
 
 /* =========================================================
    CARD TITLE
