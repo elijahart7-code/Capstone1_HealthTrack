@@ -438,3 +438,34 @@ export const PHILIPPINE_LOCATION_HIERARCHY = Object.fromEntries(
     )];
   }),
 );
+
+export const PHILIPPINE_BIRTHPLACE_AREAS = {
+  "Quezon City": ["Fairview", "Litex", "Novaliches", "Cubao", "Kamuning", "Batasan", "Sandigan", "Project 6"],
+  "Caloocan City": ["Caloocan Proper", "Bagumbong", "Tala", "Grace Park"],
+  "Manila City": [
+    "Binondo",
+    "Ermita",
+    "Intramuros",
+    "Malate",
+    "Paco",
+    "Pandacan",
+    "Port Area",
+    "Quiapo",
+    "Sampaloc",
+    "San Andres",
+    "San Miguel",
+    "San Nicolas",
+    "Santa Ana",
+    "Santa Cruz",
+    "Tondo I",
+    "Tondo II",
+  ],
+  "Makati City": ["Poblacion", "Bel-Air", "Magallanes", "San Antonio"],
+  "Pasig City": ["Ugong", "Ortigas", "Kapitolyo", "Rizal"],
+  "Taguig City": ["Bonifacio Global City", "Lower Bicutan", "Upper Bicutan", "Fort Bonifacio"],
+  "Bacoor City": ["Bacoor Proper", "Salinas", "Mambog", "Molino"],
+  "Imus City": ["Imus Proper", "Anabu", "Bayan Luma", "Palico"],
+  "Dasmariñas City": ["Dasmariñas Proper", "Langkaan", "Salawag"],
+  "General Trias City": ["General Trias Proper", "Panghulo", "Sampalucan"],
+  "Trece Martires City": ["Trece Martires Proper", "Barangay Conchu"],
+};
