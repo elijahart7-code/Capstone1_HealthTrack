@@ -622,220 +622,6 @@ export function PatientRecord({
   )}
 
 </div>
-              {/* APPOINTMENTS */}
-              <div className="ht-content-card ht-patient-appointments">
-
-                <div className="ht-card-heading">
-
-                  <h2>Appointments</h2>
-
-                  {isAdmin && (
-                    <button
-                      onClick={() =>
-                        setShowAppointmentForm(
-                          (value) => !value
-                        )
-                      }
-                      className="ht-small-button"
-                    >
-                      {showAppointmentForm
-                        ? "Cancel"
-                        : "Schedule appointment"}
-                    </button>
-                  )}
-
-                </div>
-
-                {showAppointmentForm && (
-                  <div className="ht-form-box">
-
-                    {apptError && (
-                      <div className="ht-login-alert ht-login-alert-error">
-                        {apptError}
-                      </div>
-                    )}
-
-                    <div className="grid gap-3 sm:grid-cols-2">
-
-                      <Field
-                        label="Date and Time"
-                        required
-                      >
-                        <Input
-                          type="datetime-local"
-                          value={scheduledAt}
-                          onChange={(e) =>
-                            setScheduledAt(
-                              e.target.value
-                            )
-                          }
-                        />
-                      </Field>
-
-                      <Field label="Status">
-                        <Select
-                          value={status}
-                          onChange={(e) =>
-                            setStatus(
-                              e.target.value
-                            )
-                          }
-                        >
-                          <option value="pending">
-                            Pending
-                          </option>
-
-                          <option value="confirmed">
-                            Confirmed
-                          </option>
-
-                          <option value="completed">
-                            Completed
-                          </option>
-
-                          <option value="cancelled">
-                            Cancelled
-                          </option>
-                        </Select>
-                      </Field>
-
-                    </div>
-
-                    <Field
-                      label="Reason"
-                      required
-                    >
-                      <Input
-                        value={reason}
-                        onChange={(e) =>
-                          setReason(e.target.value)
-                        }
-                        placeholder="e.g. Prenatal check-up"
-                      />
-                    </Field>
-
-                    <Field label="Notes">
-                      <Textarea
-                        value={notes}
-                        onChange={(e) =>
-                          setNotes(e.target.value)
-                        }
-                      />
-                    </Field>
-
-                    <div className="ht-form-buttons">
-
-                      <button
-                        onClick={
-                          scheduleAppointment
-                        }
-                        className="ht-primary-button"
-                      >
-                        Save appointment
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          setShowAppointmentForm(false)
-                        }
-                        className="ht-secondary-button"
-                      >
-                        Cancel
-                      </button>
-
-                    </div>
-
-                  </div>
-                )}
-
-                {appointments.length === 0 ? (
-                  <EmptyState>
-                    No appointments for this patient.
-                  </EmptyState>
-                ) : (
-                  <Table>
-
-                    <thead>
-                      <tr>
-                        <Th>Date and time</Th>
-                        <Th>Reason</Th>
-                        <Th>Status</Th>
-
-                        {isAdmin && (
-                          <Th>Action</Th>
-                        )}
-                      </tr>
-                    </thead>
-
-                    <tbody>
-
-                      {appointments.map((appointment) => (
-                        <tr
-                          key={
-                            appointment.appointment_id
-                          }
-                        >
-
-                          <Td>
-                            {new Date(
-                              appointment.scheduled_at
-                            ).toLocaleString()}
-                          </Td>
-
-                          <Td>
-                            {appointment.reason}
-                          </Td>
-
-                          <Td>
-                            {isAdmin ? (
-                              <Select
-                                aria-label={`Update status for ${appointment.reason}`}
-                                value={appointment.status}
-                                className={`ht-status-select ht-status-select-${appointment.status}`}
-                                onChange={(event) =>
-                                  updateAppointmentStatus(
-                                    appointment.appointment_id,
-                                    event.target.value
-                                  )
-                                }
-                              >
-                                {APPOINTMENT_STATUSES.map((statusOption) => (
-                                  <option key={statusOption} value={statusOption}>
-                                    {statusOption.charAt(0).toUpperCase() + statusOption.slice(1)}
-                                  </option>
-                                ))}
-                              </Select>
-                            ) : (
-                              <Badge>{appointment.status}</Badge>
-                            )}
-                          </Td>
-
-                          {isAdmin && (
-                            <Td>
-
-                              <button
-                                onClick={() =>
-                                  deleteAppointment(
-                                    appointment.appointment_id
-                                  )
-                                }
-                                className="ht-delete-button ht-patient-appointment-remove"
-                              >
-                                Remove
-                              </button>
-
-                            </Td>
-                          )}
-
-                        </tr>
-                      ))}
-
-                    </tbody>
-
-                  </Table>
-                )}
-
-              </div>
             </div>
           )}
 
@@ -1519,16 +1305,32 @@ export function PatientRecord({
         .ht-date-time-controls {
           display: flex;
           align-items: center;
-          gap: 8px;
+          overflow: hidden;
+          border: 1px solid rgba(15, 107, 95, 0.18);
+          border-radius: 10px;
+          background: rgba(248, 251, 249, 0.7);
         }
 
         .ht-date-time-controls .ht-input {
           min-width: 0;
           flex: 1;
+          border: 0;
+          background: transparent;
+          box-shadow: none;
+        }
+
+        .ht-date-time-controls:focus-within {
+          border-color: var(--color-brand);
+          box-shadow: 0 0 0 3px rgba(15, 107, 95, 0.1);
         }
 
         .ht-date-time-ok {
           flex: 0 0 auto;
+          align-self: stretch;
+          border: 0;
+          border-left: 1px solid rgba(15, 107, 95, 0.18);
+          border-radius: 0;
+          background: transparent;
         }
 
         .ht-empty {
