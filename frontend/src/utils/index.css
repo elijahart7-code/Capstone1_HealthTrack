@@ -4950,18 +4950,7 @@
 
 .patient-welcome-simple::after {
     content: "";
-
-    position: absolute;
-
-    right: -35px;
-    bottom: -60px;
-
-    width: 180px;
-    height: 150px;
-
-    border-radius: 50%;
-
-    background: rgba(255, 255, 255, 0.18);
+    display: none;
 }
 
 .patient-welcome-icon {
