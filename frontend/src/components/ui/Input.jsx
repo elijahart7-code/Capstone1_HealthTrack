@@ -93,9 +93,9 @@ export function MultiCombobox({ className, options = [], value = "", onChange, .
  * Shared labelled input wrapper used across forms. It keeps the label,
  * required marker, and error message pattern consistent in one place.
  */
-export function Field({ label, required, error, children, className }) {
+export function Field({ label, required, error, children, className, style }) {
   return (
-    <label className={cn("ht-field", className)}>
+    <label className={cn("ht-field", className)} style={style}>
       <span>
         {label}
         {required && <span style={{ color: "var(--color-danger)" }}>*</span>}
