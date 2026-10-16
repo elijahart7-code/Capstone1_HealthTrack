@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
-import { User, MapPin, PhoneCall, CalendarDays } from "lucide-react";
+import { User, MapPin, PhoneCall, CalendarDays, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { Field, Input, Select, Textarea } from "../../../components/ui/Input";
@@ -39,11 +39,33 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const [selectedBirthProvince, setSelectedBirthProvince] = useState("");
   const [selectedBirthCity, setSelectedBirthCity] = useState("");
   const [birthplaceOtherText, setBirthplaceOtherText] = useState("");
+  const [birthplaceOpen, setBirthplaceOpen] = useState(false);
+  const [birthplaceLevel, setBirthplaceLevel] = useState("region");
   const birthDatePickerRef = useRef(null);
+  const birthplaceControlRef = useRef(null);
+  const birthplaceInputRef = useRef(null);
 
   const birthplaceProvinces = PHILIPPINE_LOCATION_HIERARCHY[selectedBirthRegion] || {};
   const birthplaceCities = birthplaceProvinces[selectedBirthProvince] || [];
   const isBirthplaceOther = [selectedBirthRegion, selectedBirthProvince, selectedBirthCity].includes("other");
+  const birthplaceDisplayValue = isBirthplaceOther
+    ? birthplaceOtherText
+    : [selectedBirthCity, selectedBirthProvince, selectedBirthRegion].filter(Boolean).join(", ");
+
+  useEffect(() => {
+    if (!birthplaceOpen) return undefined;
+
+    function closeBirthplaceMenu(event) {
+      if (!birthplaceControlRef.current?.contains(event.target)) setBirthplaceOpen(false);
+    }
+
+    document.addEventListener("mousedown", closeBirthplaceMenu);
+    return () => document.removeEventListener("mousedown", closeBirthplaceMenu);
+  }, [birthplaceOpen]);
+
+  useEffect(() => {
+    if (isBirthplaceOther) birthplaceInputRef.current?.focus();
+  }, [isBirthplaceOther]);
 
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -129,6 +151,8 @@ export function RegisterPatient({ loadData, onRegistered }) {
     setSelectedBirthCity("");
     setBirthplaceOtherText("");
     syncBirthPlace(region, "", "");
+    setBirthplaceLevel("province");
+    setBirthplaceOpen(region !== "other");
   }
 
   function handleBirthProvinceChange(province) {
@@ -136,17 +160,46 @@ export function RegisterPatient({ loadData, onRegistered }) {
     setSelectedBirthCity("");
     setBirthplaceOtherText("");
     syncBirthPlace(selectedBirthRegion, province, "");
+    setBirthplaceLevel("city");
+    setBirthplaceOpen(province !== "other");
   }
 
   function handleBirthCityChange(city) {
     setSelectedBirthCity(city);
     setBirthplaceOtherText("");
     syncBirthPlace(selectedBirthRegion, selectedBirthProvince, city);
+    setBirthplaceOpen(false);
   }
 
   function handleBirthplaceOtherTextChange(value) {
     setBirthplaceOtherText(value);
     syncBirthPlace(selectedBirthRegion, selectedBirthProvince, selectedBirthCity, value);
+  }
+
+  function toggleBirthplaceMenu() {
+    if (isBirthplaceOther) {
+      setSelectedBirthRegion("");
+      setSelectedBirthProvince("");
+      setSelectedBirthCity("");
+      setBirthplaceOtherText("");
+      set("place_of_birth", "");
+      setBirthplaceLevel("region");
+      setBirthplaceOpen(true);
+      return;
+    }
+
+    if (!birthplaceOpen) {
+      setBirthplaceLevel(
+        !selectedBirthRegion ? "region" : !selectedBirthProvince ? "province" : "city",
+      );
+    }
+    setBirthplaceOpen((open) => !open);
+  }
+
+  function selectBirthplaceOther() {
+    if (birthplaceLevel === "region") handleBirthRegionChange("other");
+    if (birthplaceLevel === "province") handleBirthProvinceChange("other");
+    if (birthplaceLevel === "city") handleBirthCityChange("other");
   }
 
   async function handleSubmit(e) {
@@ -340,61 +393,96 @@ export function RegisterPatient({ loadData, onRegistered }) {
 
             <div className="ht-field ht-place-of-birth-field">
               <span>Place of Birth<span style={{ color: "var(--color-danger)" }}>*</span></span>
-              <div className="ht-place-of-birth-stack">
-                <Field label="Region" required>
-                  <Select
-                    value={selectedBirthRegion}
-                    onChange={(e) => handleBirthRegionChange(e.target.value)}
-                    required={selectedBirthRegion !== "other"}
+              <div className="ht-place-of-birth-control" ref={birthplaceControlRef}>
+                <div className="ht-place-of-birth-input-wrap">
+                  <Input
+                    ref={birthplaceInputRef}
+                    value={birthplaceDisplayValue}
+                    onChange={(e) => handleBirthplaceOtherTextChange(e.target.value)}
+                    onClick={() => !isBirthplaceOther && toggleBirthplaceMenu()}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !isBirthplaceOther) {
+                        e.preventDefault();
+                        toggleBirthplaceMenu();
+                      }
+                      if (e.key === "Escape") setBirthplaceOpen(false);
+                    }}
+                    placeholder={isBirthplaceOther ? "Type region, province, city, or municipality" : "Select region, province, and city/municipality"}
+                    readOnly={!isBirthplaceOther}
+                    aria-expanded={!isBirthplaceOther && birthplaceOpen}
+                    aria-haspopup="listbox"
+                    aria-label="Place of Birth"
+                    required={!isBirthplaceOther}
+                    className="ht-place-of-birth-input"
+                  />
+                  <button
+                    type="button"
+                    className="ht-place-of-birth-toggle"
+                    onClick={toggleBirthplaceMenu}
+                    aria-label={isBirthplaceOther ? "Choose a listed place of birth" : "Open place of birth choices"}
                   >
-                    <option value="" disabled>Select region</option>
-                    {PHILIPPINE_REGIONS.map((region) => <option key={region} value={region}>{region}</option>)}
-                    <option value="other">Other</option>
-                  </Select>
-                </Field>
-
-                {selectedBirthRegion && selectedBirthRegion !== "other" && (
-                  <Field label="Province / City / Municipality" required>
-                    <Select
-                      value={selectedBirthProvince}
-                      onChange={(e) => handleBirthProvinceChange(e.target.value)}
-                      required={selectedBirthProvince !== "other"}
-                    >
-                      <option value="" disabled>Select province</option>
-                      {Object.keys(birthplaceProvinces).map((province) => (
-                        <option key={province} value={province}>{province}</option>
-                      ))}
-                      <option value="other">Other</option>
-                    </Select>
-                  </Field>
-                )}
-
-                {selectedBirthProvince && selectedBirthProvince !== "other" && (
-                  <Field label="City / Municipality" required>
-                    <Select
-                      value={selectedBirthCity}
-                      onChange={(e) => handleBirthCityChange(e.target.value)}
-                      required={selectedBirthCity !== "other"}
-                    >
-                      <option value="" disabled>Select city/municipality</option>
-                      {birthplaceCities.map((city) => <option key={city} value={city}>{city}</option>)}
-                      <option value="other">Other</option>
-                    </Select>
-                  </Field>
-                )}
+                    <ChevronDown size={16} aria-hidden="true" />
+                  </button>
+                </div>
 
                 {isBirthplaceOther && (
-                  <Field label="Enter place of birth" required className="ht-place-of-birth-other">
-                    <Input
-                      value={birthplaceOtherText}
-                      onChange={(e) => handleBirthplaceOtherTextChange(e.target.value)}
-                      placeholder="Type region, province, city, or municipality"
-                      required
-                    />
-                    <span className="ht-place-of-birth-help">
-                      Enter the complete place of birth if it is not available in the list.
-                    </span>
-                  </Field>
+                  <span className="ht-place-of-birth-help">
+                    Enter the complete place of birth if it is not available in the list.
+                  </span>
+                )}
+
+                {birthplaceOpen && !isBirthplaceOther && (
+                  <div className="ht-place-of-birth-menu">
+                    <div className="ht-place-of-birth-menu-header">
+                      {birthplaceLevel !== "region" && (
+                        <button
+                          type="button"
+                          className="ht-place-of-birth-back"
+                          onClick={() => setBirthplaceLevel(birthplaceLevel === "city" ? "province" : "region")}
+                        >
+                          <ChevronLeft size={15} aria-hidden="true" /> Back
+                        </button>
+                      )}
+                      <span>
+                        {birthplaceLevel === "region" && "Select region"}
+                        {birthplaceLevel === "province" && `${selectedBirthRegion} · Select province`}
+                        {birthplaceLevel === "city" && `${selectedBirthProvince} · Select city/municipality`}
+                      </span>
+                    </div>
+                    <div className="ht-place-of-birth-options" role="listbox" aria-label="Place of birth choices">
+                      {(birthplaceLevel === "region"
+                        ? PHILIPPINE_REGIONS
+                        : birthplaceLevel === "province"
+                          ? Object.keys(birthplaceProvinces)
+                          : birthplaceCities
+                      ).map((option) => (
+                        <button
+                          type="button"
+                          role="option"
+                          aria-selected={false}
+                          className="ht-place-of-birth-option"
+                          key={option}
+                          onClick={() => {
+                            if (birthplaceLevel === "region") handleBirthRegionChange(option);
+                            else if (birthplaceLevel === "province") handleBirthProvinceChange(option);
+                            else handleBirthCityChange(option);
+                          }}
+                        >
+                          {option}
+                          <ChevronRight size={15} aria-hidden="true" />
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={false}
+                        className="ht-place-of-birth-option ht-place-of-birth-option-other"
+                        onClick={selectBirthplaceOther}
+                      >
+                        Other
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
