@@ -289,7 +289,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.occupation} onChange={(e) => set("occupation", e.target.value)} placeholder="Enter occupation" />
             </Field>
 
-            <Field label="Place of Birth" required className="ht-place-of-birth-field">
+            <Field label="Place of Birth" required>
               <Input
                 value={form.place_of_birth}
                 onChange={(e) => set("place_of_birth", e.target.value)}
