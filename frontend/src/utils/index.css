@@ -152,7 +152,7 @@
     }
 
     .ht-place-of-birth-field {
-        grid-column: span 1;
+        grid-column: 2;
     }
 
     .ht-section-icon,
