@@ -154,9 +154,9 @@ export function RegisterPatient({ loadData, onRegistered }) {
 
   function handleBirthLocationChange(location) {
     setSelectedBirthLocation(location);
-    set("place_of_birth_details", "Other");
+    set("place_of_birth_details", "");
     setBirthplaceOtherText("");
-    syncBirthPlace(selectedBirthRegion, location, "Other");
+    syncBirthPlace(selectedBirthRegion, location, "");
   }
 
   function handleBirthDetailsChange(value) {
@@ -397,11 +397,14 @@ export function RegisterPatient({ loadData, onRegistered }) {
                 </div>
 
                 <Select
-                  value={form.place_of_birth_details || "Other"}
+                  value={form.place_of_birth_details || ""}
                   onChange={(e) => handleBirthDetailsChange(e.target.value)}
                   className="ht-place-of-birth-detail-input"
                   disabled={!selectedBirthLocation}
                 >
+                  <option value="">
+                    {selectedBirthLocation ? "Select specific birthplace area" : "Select city/municipality first"}
+                  </option>
                   {getBirthplaceDetailOptions().map((option) => (
                     <option key={option} value={option}>
                       {option}
@@ -409,7 +412,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
                   ))}
                 </Select>
 
-                {selectedBirthLocation && (
+                {form.place_of_birth_details === "Other" && selectedBirthLocation && (
                   <Input
                     value={birthplaceOtherText}
                     onChange={(e) => handleBirthplaceOtherTextChange(e.target.value)}
