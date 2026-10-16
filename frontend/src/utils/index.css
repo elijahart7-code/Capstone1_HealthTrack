@@ -2243,27 +2243,13 @@
         color: #fff;
         overflow: hidden;
     }
-
     .patient-welcome-banner::before {
-        content: "";
-        position: absolute;
-        inset: auto -8% -45% auto;
-        width: 62%;
-        height: 170%;
-        border-radius: 50%;
-        background: #F2FAF6;
-        transform: rotate(-16deg);
+        content: none;
+        display: none;
     }
-
     .patient-welcome-banner::after {
-        content: "";
-        position: absolute;
-        inset: auto 8% -24% auto;
-        width: 62%;
-        height: 170%;
-        border-radius: 50%;
-        background: #F2FAF6;
-        transform: rotate(-18deg);
+        content: none;
+        display: none;
     }
     .patient-welcome-heading {
   display: flex;
