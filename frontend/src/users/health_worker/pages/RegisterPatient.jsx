@@ -4,7 +4,6 @@ import { User, MapPin, PhoneCall, CalendarDays } from "lucide-react";
 import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { Field, Input, Select, Textarea } from "../../../components/ui/Input";
-import { PHILIPPINE_LOCATION_HIERARCHY, PHILIPPINE_REGIONS } from "../../../data/philippineLocations";
 
 /**
  * Registers a patient and creates their portal login from the required email.
@@ -35,15 +34,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const [portalEmailError, setPortalEmailError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [sendLoginCredentials, setSendLoginCredentials] = useState(true);
-  const [selectedBirthRegion, setSelectedBirthRegion] = useState("");
-  const [selectedBirthProvince, setSelectedBirthProvince] = useState("");
-  const [selectedBirthCity, setSelectedBirthCity] = useState("");
-  const [birthplaceOtherText, setBirthplaceOtherText] = useState("");
   const birthDatePickerRef = useRef(null);
-
-  const birthplaceProvinces = PHILIPPINE_LOCATION_HIERARCHY[selectedBirthRegion] || {};
-  const birthplaceCities = birthplaceProvinces[selectedBirthProvince] || [];
-  const isBirthplaceOther = [selectedBirthRegion, selectedBirthProvince, selectedBirthCity].includes("other");
 
   function set(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -114,53 +105,12 @@ export function RegisterPatient({ loadData, onRegistered }) {
     set("birthdate", formatIsoToText(value));
   }
 
-  function syncBirthPlace(region, province, city, otherText = "") {
-    if ([region, province, city].includes("other")) {
-      set("place_of_birth", otherText.trim());
-      return;
-    }
-
-    set("place_of_birth", [city, province, region].filter(Boolean).join(", "));
-  }
-
-  function handleBirthRegionChange(region) {
-    setSelectedBirthRegion(region);
-    setSelectedBirthProvince("");
-    setSelectedBirthCity("");
-    setBirthplaceOtherText("");
-    syncBirthPlace(region, "", "");
-  }
-
-  function handleBirthProvinceChange(province) {
-    setSelectedBirthProvince(province);
-    setSelectedBirthCity("");
-    setBirthplaceOtherText("");
-    syncBirthPlace(selectedBirthRegion, province, "");
-  }
-
-  function handleBirthCityChange(city) {
-    setSelectedBirthCity(city);
-    setBirthplaceOtherText("");
-    syncBirthPlace(selectedBirthRegion, selectedBirthProvince, city);
-  }
-
-  function handleBirthplaceOtherTextChange(value) {
-    setBirthplaceOtherText(value);
-    if (value.trim()) set("place_of_birth", value.trim());
-    else syncBirthPlace(selectedBirthRegion, selectedBirthProvince, selectedBirthCity);
-  }
-
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
     setPortalEmailError(null);
 
-    const birthplaceSelectionComplete = selectedBirthRegion && (
-      selectedBirthRegion === "other" || (selectedBirthProvince && (
-        selectedBirthProvince === "other" || selectedBirthCity
-      ))
-    );
-    if ((!birthplaceSelectionComplete && !birthplaceOtherText.trim()) || (isBirthplaceOther && !birthplaceOtherText.trim())) {
+    if (!form.place_of_birth.trim()) {
       setError("Please select the patient's place of birth.");
       return;
     }
@@ -339,49 +289,14 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.occupation} onChange={(e) => set("occupation", e.target.value)} placeholder="Enter occupation" />
             </Field>
 
-            <div className="ht-field ht-place-of-birth-field">
-              <span>Place of Birth<span style={{ color: "var(--color-danger)" }}>*</span></span>
-              <div className="ht-place-of-birth-stack">
-                <Field label="Region">
-                  <Select value={selectedBirthRegion} onChange={(e) => handleBirthRegionChange(e.target.value)} required={!birthplaceOtherText.trim()}>
-                    <option value="" disabled>Select region</option>
-                    {PHILIPPINE_REGIONS.map((region) => <option key={region} value={region}>{region}</option>)}
-                    <option value="other">Other</option>
-                  </Select>
-                </Field>
-
-                {selectedBirthRegion && selectedBirthRegion !== "other" && (
-                  <Field label="Province / City / Municipality">
-                    <Select value={selectedBirthProvince} onChange={(e) => handleBirthProvinceChange(e.target.value)} required={!birthplaceOtherText.trim()}>
-                      <option value="" disabled>Select province, city, or municipality</option>
-                      {Object.keys(birthplaceProvinces).map((province) => <option key={province} value={province}>{province}</option>)}
-                      <option value="other">Other</option>
-                    </Select>
-                  </Field>
-                )}
-
-                {selectedBirthProvince && selectedBirthProvince !== "other" && (
-                  <Field label="City / Municipality">
-                    <Select value={selectedBirthCity} onChange={(e) => handleBirthCityChange(e.target.value)} required={!birthplaceOtherText.trim()}>
-                      <option value="" disabled>Select city or municipality</option>
-                      {birthplaceCities.map((city) => <option key={city} value={city}>{city}</option>)}
-                      <option value="other">Other</option>
-                    </Select>
-                  </Field>
-                )}
-
-                <Field label="Enter place of birth" required={isBirthplaceOther}>
-                  <Input
-                    value={birthplaceOtherText}
-                    onChange={(e) => handleBirthplaceOtherTextChange(e.target.value)}
-                    placeholder="Type region, province, city, or municipality"
-                    aria-label="Enter place of birth"
-                  />
-                  <span className="ht-place-of-birth-help">Enter the complete place of birth if it is not available in the list.</span>
-                </Field>
-                <span className="ht-place-of-birth-note">Choose a listed location or enter the complete place of birth above.</span>
-              </div>
-            </div>
+            <Field label="Place of Birth" required className="ht-place-of-birth-field">
+              <Input
+                value={form.place_of_birth}
+                onChange={(e) => set("place_of_birth", e.target.value)}
+                placeholder="Type city/municipality, province, or country"
+                autoComplete="address-level2"
+              />
+            </Field>
           </div>
         </div>
 
