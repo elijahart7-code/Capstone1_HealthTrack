@@ -56,7 +56,7 @@ export async function getAppointments(_req, res) {
 
 /** GET /api/admin/reports -- aggregate dashboard data for charts and exports. */
 export async function getReports(req, res) {
-  const period = ["day", "week", "month", "year"].includes(req.query.period) ? req.query.period : "month";
+  const period = ["day", "week", "month", "quarter", "year"].includes(req.query.period) ? req.query.period : "month";
   const status = ["pending", "confirmed", "completed", "cancelled"].includes(req.query.status)
     ? req.query.status
     : null;
@@ -68,6 +68,7 @@ export async function getReports(req, res) {
     : new Date().toISOString().slice(0, 10);
   const statusClause = status ? " AND a.status = $3" : "";
   const statusValues = status ? [dateFrom, dateTo, status] : [dateFrom, dateTo];
+  const interval = { day: "1 day", week: "1 week", month: "1 month", quarter: "3 months", year: "1 year" }[period];
 
   const [
     trend,
@@ -75,13 +76,14 @@ export async function getReports(req, res) {
     statuses,
     conditions,
     followUps,
+    patients,
   ] = await Promise.all([
     sql.query(
       `WITH buckets AS (
          SELECT generate_series(
            date_trunc('${period}', $1::timestamp),
            date_trunc('${period}', $2::timestamp),
-           INTERVAL '1 ${period}'
+           INTERVAL '${interval}'
          ) AS period
        )
        SELECT b.period::date,
@@ -90,7 +92,7 @@ export async function getReports(req, res) {
        FROM buckets b
        LEFT JOIN appointments a
          ON a.scheduled_at >= b.period
-        AND a.scheduled_at < b.period + INTERVAL '1 ${period}'
+        AND a.scheduled_at < b.period + INTERVAL '${interval}'
         AND a.scheduled_at >= $1::date
         AND a.scheduled_at < ($2::date + INTERVAL '1 day')${statusClause ? " AND a.status = $3" : ""}
        GROUP BY b.period ORDER BY b.period`,
@@ -120,6 +122,20 @@ export async function getReports(req, res) {
       [dateFrom, dateTo]
     ),
     sql.query(
+      `SELECT p.patient_id, p.first_name, p.last_name,
+              COUNT(a.id)::int AS appointment_count,
+              MAX(a.scheduled_at) AS latest_appointment,
+              STRING_AGG(DISTINCT a.reason, ', ' ORDER BY a.reason) AS reasons
+       FROM appointments a
+       JOIN patients p ON p.patient_id = a.patient_id
+       WHERE a.scheduled_at >= $1::date
+         AND a.scheduled_at < ($2::date + INTERVAL '1 day')
+         AND p.archived_at IS NULL
+       GROUP BY p.patient_id, p.first_name, p.last_name
+       ORDER BY latest_appointment DESC`,
+      [dateFrom, dateTo]
+    ),
+    sql.query(
       `SELECT DISTINCT ON (p.patient_id)
          p.patient_id, p.first_name, p.last_name,
          ha.condition, ha.status, ha.assessment_date
@@ -137,5 +153,6 @@ export async function getReports(req, res) {
     filters: { period, status, from: dateFrom, to: dateTo },
     trend, reasons, statuses, conditions,
     followUps,
+    patients,
   });
 }
