@@ -6679,13 +6679,13 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     }
 
     .patient-dashboard-shell .patient-contact-body h3 {
-        font-size: 0.72rem !important;
+        font-size: 0.75rem !important;
         line-height: 1.35;
     }
 
     .patient-dashboard-shell .patient-contact-body p,
     .patient-dashboard-shell .patient-contact-body span {
-        font-size: 0.66rem !important;
+        font-size: 0.68rem !important;
         line-height: 1.4;
     }
 
