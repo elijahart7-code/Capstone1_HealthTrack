@@ -20,10 +20,10 @@ import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 
 const STATUSES = ["pending", "confirmed", "completed", "cancelled"];
 const PERIODS = [
-  { key: "daily", label: "Daily" },
-  { key: "weekly", label: "Weekly" },
-  { key: "monthly", label: "Monthly" },
-  { key: "yearly", label: "Yearly" },
+  { key: "daily", apiKey: "day", label: "Daily", days: 30 },
+  { key: "weekly", apiKey: "week", label: "Weekly", days: 84 },
+  { key: "monthly", apiKey: "month", label: "Monthly", days: 365 },
+  { key: "yearly", apiKey: "year", label: "Yearly", days: 1825 },
 ];
 
 function startOfPeriod(date, period) {
@@ -261,6 +261,16 @@ export function Dashboard({ dashboard, appointments, loadData }) {
       .catch((error) => setReportError(error?.response?.data?.error || "Could not load report data."));
   }, [reportPeriod, reportStatus, reportFrom, reportTo]);
 
+  function selectPeriod(period) {
+    setActiveTab(period.key);
+    setReportPeriod(period.apiKey);
+    const to = new Date();
+    const from = new Date(to);
+    from.setDate(from.getDate() - period.days);
+    setReportFrom(from.toISOString().slice(0, 10));
+    setReportTo(to.toISOString().slice(0, 10));
+  }
+
   function exportReport() {
     const title = document.title;
     document.title = "HealthTrack Complete Report";
@@ -278,7 +288,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
 
       <div className="ht-report-tabs" role="tablist" aria-label="Health center reports">
         <button className={activeTab === "overview" ? "is-active" : ""} onClick={() => setActiveTab("overview")} role="tab" aria-selected={activeTab === "overview"}><BarChart3 size={16} /> Overview</button>
-        {PERIODS.map(({ key, label }) => <button key={key} className={activeTab === key ? "is-active" : ""} onClick={() => setActiveTab(key)} role="tab" aria-selected={activeTab === key}>{label}</button>)}
+        {PERIODS.map((period) => <button key={period.key} className={activeTab === period.key ? "is-active" : ""} onClick={() => selectPeriod(period)} role="tab" aria-selected={activeTab === period.key}>{period.label}</button>)}
         <button className="ht-report-export" onClick={exportReport}><Download size={16} /> Export PDF</button>
       </div>
 
@@ -286,7 +296,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
         <div className="ht-report-filter-title"><Filter size={16} /> Report filters</div>
         <label>From <input type="date" value={reportFrom} onChange={(event) => setReportFrom(event.target.value)} /></label>
         <label>To <input type="date" value={reportTo} onChange={(event) => setReportTo(event.target.value)} /></label>
-        <label>Grouping <Select value={reportPeriod} onChange={(event) => setReportPeriod(event.target.value)}><option value="day">Daily</option><option value="week">Weekly</option><option value="month">Monthly</option></Select></label>
+        <label>Grouping <Select value={reportPeriod} onChange={(event) => setReportPeriod(event.target.value)}><option value="day">Daily</option><option value="week">Weekly</option><option value="month">Monthly</option><option value="year">Yearly</option></Select></label>
         <label>Status <Select value={reportStatus} onChange={(event) => setReportStatus(event.target.value)}><option value="all">All statuses</option>{STATUSES.map((status) => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}</Select></label>
       </div>
 
@@ -328,10 +338,18 @@ export function Dashboard({ dashboard, appointments, loadData }) {
           </div>
         </div>
       ) : (
-        <div className="ht-panel">
-          <h2>{currentPeriod.label} Report</h2>
-          <p className="ht-muted mb-4">Checkup reasons, common diseases, and programs & procedures grouped by {currentPeriod.label.toLowerCase()}.</p>
-          <ReportBreakdown appointments={appointments} period={currentPeriod.key} />
+        <div className="grid gap-4">
+          {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
+          <div className="ht-panel">
+            <h2>{currentPeriod.label} Report</h2>
+            <p className="ht-muted mb-4">Aggregated report data grouped by {currentPeriod.label.toLowerCase()}.</p>
+            <ReportTrendChart rows={report?.trend} />
+          </div>
+          <div className="grid gap-4 lg:grid-cols-3">
+            <ReportBarChart title="Appointment reasons" rows={normalizeRows(report?.reasons)} />
+            <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
+            <ReportBarChart title="Immunization status" rows={normalizeRows(report?.immunizations)} color="var(--color-brand)" />
+          </div>
         </div>
       )}
 

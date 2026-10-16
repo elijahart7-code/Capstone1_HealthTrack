@@ -56,7 +56,7 @@ export async function getAppointments(_req, res) {
 
 /** GET /api/admin/reports -- aggregate dashboard data for charts and exports. */
 export async function getReports(req, res) {
-  const period = ["day", "week", "month"].includes(req.query.period) ? req.query.period : "month";
+  const period = ["day", "week", "month", "year"].includes(req.query.period) ? req.query.period : "month";
   const status = ["pending", "confirmed", "completed", "cancelled"].includes(req.query.status)
     ? req.query.status
     : null;
