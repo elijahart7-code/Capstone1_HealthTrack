@@ -151,6 +151,10 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
+    .ht-place-of-birth-field {
+        grid-column: span 1;
+    }
+
     .ht-section-icon,
     .ht-section-icon svg {
         flex: 0 0 auto;
