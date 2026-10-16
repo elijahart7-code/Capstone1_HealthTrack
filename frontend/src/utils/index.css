@@ -6231,12 +6231,12 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 }
 
 .patient-dashboard-shell .patient-contact-body h3 {
-    font-size: 0.72rem !important;
+    font-size: 0.77rem !important;
 }
 
 .patient-dashboard-shell .patient-contact-body p,
 .patient-dashboard-shell .patient-contact-body span {
-    font-size: 0.65rem !important;
+    font-size: 0.75rem !important;
 }
 
 .patient-dashboard-shell .patient-tip-item {
@@ -6272,8 +6272,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 
 .patient-dashboard-shell .patient-tip-item span {
     color: var(--dashboard-deep) !important;
-    font-size: 1.2rem !important;
-    line-height: 1.45;
+    font-size: 0.76rem !important;
+    line-height: 1.4;
 }
 
 @media (max-width: 980px) {
