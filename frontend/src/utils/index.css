@@ -650,6 +650,39 @@
         font-size: 1.05rem;
     }
 
+    .ht-report-filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        gap: 1rem;
+    }
+
+    .ht-report-filter-title {
+        display: flex;
+        align-items: center;
+        gap: .4rem;
+        font-weight: 800;
+        margin-right: auto;
+    }
+
+    .ht-report-filters label {
+        display: grid;
+        gap: .35rem;
+        color: var(--color-muted);
+        font-size: .78rem;
+        font-weight: 700;
+    }
+
+    .ht-report-filters input,
+    .ht-report-filters select {
+        min-height: 2.35rem;
+        border: 1px solid var(--color-border);
+        border-radius: .55rem;
+        padding: .35rem .55rem;
+        background: var(--color-surface);
+        color: inherit;
+    }
+
     .ht-chart-card {
         min-width: 0;
         padding: 1.15rem;
@@ -855,6 +888,7 @@
             color: #1f2421;
         }
 
+        .ht-report-filters,
         .ht-report-tabs,
         .ht-chart-card {
             display: none !important;
@@ -2303,13 +2337,27 @@
         color: #fff;
         overflow: hidden;
     }
+
     .patient-welcome-banner::before {
-        content: none;
-        display: none;
+        content: "";
+        position: absolute;
+        inset: auto -8% -45% auto;
+        width: 62%;
+        height: 170%;
+        border-radius: 50%;
+        background: #F2FAF6;
+        transform: rotate(-16deg);
     }
+
     .patient-welcome-banner::after {
-        content: none;
-        display: none;
+        content: "";
+        position: absolute;
+        inset: auto 8% -24% auto;
+        width: 62%;
+        height: 170%;
+        border-radius: 50%;
+        background: #F2FAF6;
+        transform: rotate(-18deg);
     }
     .patient-welcome-heading {
   display: flex;
@@ -4983,7 +5031,7 @@
 
     padding: 14px 20px;
 
-    background: #c2ecd9 !important;
+    background: #D5E8DF !important;
 
     border: 1px solid rgba(12, 79, 70, 0.05);
 
