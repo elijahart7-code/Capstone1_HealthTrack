@@ -17,14 +17,56 @@ export function Select({ className, children, ...props }) {
   );
 }
 
+function closestOption(value, options) {
+  const query = value.trim().toLowerCase();
+  if (!query) return value;
+
+  const ranked = options
+    .map((option, index) => {
+      const normalized = option.toLowerCase();
+      const startsWith = normalized.startsWith(query);
+      const contains = normalized.includes(query);
+      const distance = Math.abs(normalized.length - query.length);
+      return {
+        option,
+        index,
+        score: startsWith ? 0 : contains ? 1 : 2,
+        distance,
+      };
+    })
+    .filter(({ score }) => score < 2 || query.length >= 3)
+    .sort((a, b) => a.score - b.score || a.distance - b.distance || a.index - b.index);
+
+  return ranked[0]?.option || value;
+}
+
 export function Combobox({ className, options = [], ...props }) {
   const listId = useId();
+  const optionValues = options.map((option) => (
+    typeof option === "string" ? option : option.value
+  )).filter(Boolean);
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      return;
+    }
+
+    if (event.key === "Tab") {
+      const nextValue = closestOption(event.currentTarget.value, optionValues);
+      if (nextValue !== event.currentTarget.value) {
+        props.onChange?.({ target: { value: nextValue } });
+      }
+    }
+
+    props.onKeyDown?.(event);
+  }
 
   return (
     <>
-      <input className={cn("ht-input", className)} list={listId} {...props} />
+      <input className={cn("ht-input", className)} list={listId} {...props} onKeyDown={handleKeyDown} />
       <datalist id={listId}>
-        {options.map((option) => <option key={option} value={option} />)}
+        {optionValues.map((option) => <option key={option} value={option} />)}
       </datalist>
     </>
   );
