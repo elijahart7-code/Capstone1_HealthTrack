@@ -111,7 +111,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
     setPortalEmailError(null);
 
     if (!form.place_of_birth.trim()) {
-      setError("Please select the patient's place of birth.");
+      setError("Please enter the patient's place of birth.");
       return;
     }
 
@@ -289,11 +289,16 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.occupation} onChange={(e) => set("occupation", e.target.value)} placeholder="Enter occupation" />
             </Field>
 
-            <Field label="Place of Birth" required className="ht-place-of-birth-field">
+            <Field
+              label="Place of Birth"
+              required
+              className="ht-place-of-birth-field"
+              style={{ gridColumn: "2 / 3" }}
+            >
               <Input
                 value={form.place_of_birth}
                 onChange={(e) => set("place_of_birth", e.target.value)}
-                placeholder="Type city/municipality, province, or country"
+                placeholder="Enter city/municipality, province, or country"
                 autoComplete="address-level2"
               />
             </Field>

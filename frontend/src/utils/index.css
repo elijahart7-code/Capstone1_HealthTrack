@@ -152,7 +152,7 @@
     }
 
     .ht-place-of-birth-field {
-        grid-column: 1 / -1;
+        grid-column: 2;
     }
 
     .ht-section-icon,
@@ -4938,7 +4938,7 @@
 /*Patient dashboard: feature card subtitles*/
 .patient-dashboard-shell .patient-feature-card p,
 .patient-dashboard-shell .patient-dashboard-card p{
-    font-size: 14px;
+    font-size: 16px;
     line-height:1.5;
 }
 .patient-dashboard-view-button {
@@ -5029,7 +5029,7 @@
 
     padding: 14px 20px;
 
-    background: #D8E7DE !important;
+    background: #e8f3ed !important;
 
     border: 1px solid rgba(12, 79, 70, 0.05);
 
@@ -5102,8 +5102,8 @@
     margin: 0 !important;
     color: #1F2421;
     font-weight: 400;
-    font-size: 0.82rem;
-    line-height: 1.4;
+    font-size: 0.94rem;
+    line-height: 1.2;
 }
 
 .patient-latest-appointment {
@@ -5375,8 +5375,6 @@
 
     color: #08755f!important;
 }
-
-
 /* =========================================================
    CARD TITLE
    ========================================================= */
@@ -5543,11 +5541,11 @@
 .patient-health-copy p {
     margin: 0 !important;
 
-    color: #667875 !important;
+    color: #66736d;
 
-    font-size: 0.78rem !important;
+    font-size: 17px ;
 
-    line-height: 1.5 !important;
+    line-height: 1.7 ;
 }
 
 .patient-dashboard-shell .patient-health-summary,
@@ -5555,8 +5553,11 @@
     background: #FFFFFF !important;
     border-color: rgba(12, 79, 70, 0.05) !important;
 }
-
-
+.patient-dashboard-shell .patient-health-information p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #66736D;
+}
 /* =========================================================
    EMERGENCY CONTACT
    ========================================================= */
@@ -5605,7 +5606,7 @@
 
     font-family: var(--font-sans) !important;
 
-    font-size: 1rem !important;
+    font-size: 1.2rem !important;
 
     font-weight: 800 !important;
 }
@@ -5616,7 +5617,7 @@
 
     color: #75827f !important;
 
-    font-size: 0.72rem !important;
+    font-size: 0.74rem !important;
 }
 
 
@@ -5679,11 +5680,11 @@
 
     color: #243532 !important;
 
-    font-size: 0.73rem !important;
+    font-size: 0.80rem !important;
 
     font-weight: 800 !important;
 
-    line-height: 1.3 !important;
+    line-height: 1.5 !important;
 }
 
 .patient-contact-body p {
@@ -5691,9 +5692,9 @@
 
     color: #77827f !important;
 
-    font-size: 0.63rem !important;
+    font-size: 0.85rem !important;
 
-    line-height: 1.4 !important;
+    line-height: 1.5 !important;
 }
 
 .patient-contact-body span {
@@ -5703,7 +5704,7 @@
 
     color: #77827f;
 
-    font-size: 0.63rem;
+    font-size: 0.85rem;
 }
 
 
@@ -6230,12 +6231,12 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 }
 
 .patient-dashboard-shell .patient-contact-body h3 {
-    font-size: 0.72rem !important;
+    font-size: 0.77rem !important;
 }
 
 .patient-dashboard-shell .patient-contact-body p,
 .patient-dashboard-shell .patient-contact-body span {
-    font-size: 0.65rem !important;
+    font-size: 0.75rem !important;
 }
 
 .patient-dashboard-shell .patient-tip-item {
@@ -6517,9 +6518,9 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 
     .patient-dashboard-shell .patient-metric-copy .patient-metric-description {
         margin: 0;
-        color: #086B4D !important;
-        font-size: 0.74rem !important;
-        line-height: 1.4;
+        color: #66736d !important;
+        font-size: 0.9rem !important;
+        line-height: 1.5;
     }
 
     .patient-dashboard-shell .patient-view-button {
@@ -6591,7 +6592,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-section-header h2,
     .patient-dashboard-shell .patient-tips-heading h2 {
         font-family: var(--font-sans) !important;
-        font-size: 1rem !important;
+        font-size: 1.2rem !important;
         font-weight: 800 !important;
         line-height: 1.3;
     }
@@ -6599,8 +6600,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-health-copy p,
     .patient-dashboard-shell .patient-section-header p,
     .patient-dashboard-shell .patient-tips-heading p {
-        font-size: 0.8rem !important;
-        line-height: 1.45;
+        font-size: 1.1rem !important;
+        line-height: 1.48;
     }
 
     .patient-dashboard-shell .patient-summary-button {
@@ -6678,13 +6679,13 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     }
 
     .patient-dashboard-shell .patient-contact-body h3 {
-        font-size: 0.72rem !important;
+        font-size: 0.75rem !important;
         line-height: 1.35;
     }
 
     .patient-dashboard-shell .patient-contact-body p,
     .patient-dashboard-shell .patient-contact-body span {
-        font-size: 0.66rem !important;
+        font-size: 0.68rem !important;
         line-height: 1.4;
     }
 
