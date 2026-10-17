@@ -74,6 +74,9 @@ export function Combobox({ className, options = [], ...props }) {
 
 export function MultiCombobox({ className, options = [], value = "", onChange, ...props }) {
   const [draft, setDraft] = useState("");
+  const optionValues = options.map((option) => (
+    typeof option === "string" ? option : option.value
+  )).filter(Boolean);
   const values = value
     .split(/\n|,/)
     .map((item) => item.trim())
@@ -118,6 +121,8 @@ export function MultiCombobox({ className, options = [], value = "", onChange, .
           if (event.key === "Enter" || event.key === ",") {
             event.preventDefault();
             addValue();
+          } else if (event.key === "Tab" && draft.trim()) {
+            addValue(closestOption(draft, optionValues));
           }
         }}
         onBlur={() => addValue()}
