@@ -711,44 +711,59 @@ function LatestAllergies({ definition, record }) {
 }
 
 function LatestMidwifeNotes({ definition, record }) {
-  const note = record?.notes;
-  const noteItems = note
-    ? note.split(/\r?\n/).map((item) => item.replace(/^\s*[-*•]\s*/, "").trim()).filter(Boolean)
-    : [];
-  const consultationDate = formatRecordDate(record?.[definition.dateField]);
-  const recordedBy = record?.created_by_name || record?.created_by;
+  const noteItems = [
+    { key: "notes", label: "Midwife Notes" },
+    { key: "assessment", label: "Assessment" },
+    { key: "remarks", label: "Remarks" },
+    { key: "referral", label: "Referral" },
+  ].filter(
+    ({ key }) =>
+      record?.[key] !== null &&
+      record?.[key] !== undefined &&
+      record?.[key] !== ""
+  );
 
   return (
-    <LatestRecordCard title="Latest Midwife Notes" icon={FileText} type="notes" definition={definition} record={record}>
-      <div className="patient-midwife-note-layout">
-        <span className="patient-midwife-note-icon" aria-hidden="true">
-          <FileText size={21} strokeWidth={1.8} />
-        </span>
-        <div className="patient-midwife-note-body">
-          <div className="patient-midwife-note-meta">
-            <div>
-              <span className="patient-midwife-note-label">Consultation Date</span>
-              <span className="patient-midwife-note-value">{consultationDate || "Not recorded"}</span>
-            </div>
-            <div>
-              <span className="patient-midwife-note-label">Recorded By</span>
-              <span className="patient-midwife-note-value">{recordedBy || "Not recorded"}</span>
-            </div>
-          </div>
-          <section className="patient-midwife-note-content" aria-label="Midwife notes">
-            <h3>Notes:</h3>
-            {noteItems.length > 0 ? (
-              <ul>
-                {noteItems.map((item, index) => <li key={`${index}-${item}`}>{item}</li>)}
-              </ul>
-            ) : <p>No midwife notes recorded yet.</p>}
-          </section>
+    <LatestRecordCard
+      title="Latest Midwife Notes"
+      icon={ClipboardList}
+      type="midwife-notes"
+      definition={definition}
+      record={record}
+    >
+      {noteItems.length > 0 ? (
+        <div className="patient-table-wrap patient-midwife-horizontal-wrap">
+          <table className="patient-health-table patient-midwife-horizontal-table">
+            <thead>
+              <tr>
+                {noteItems.map(({ key, label }) => (
+                  <th scope="col" key={key}>
+                    {label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                {noteItems.map(({ key }) => (
+                  <td key={key}>
+                    <span className="patient-midwife-value">
+                      {record[key]}
+                    </span>
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
+      ) : (
+        <div className="patient-empty-state">
+          No midwife notes recorded yet.
+        </div>
+      )}
     </LatestRecordCard>
   );
 }
-
 function AllergyDetailRows({ rows }) {
   return (
     <dl className="patient-allergy-detail-list">
