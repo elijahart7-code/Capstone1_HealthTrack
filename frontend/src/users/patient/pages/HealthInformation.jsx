@@ -637,21 +637,56 @@ function LatestVitalSigns({ definition, record }) {
 }
 
 function LatestHealthAssessment({ definition, record }) {
-  const fields = getRecordFields(definition, record, ["condition", "description", "status", "remarks"]);
-  const assessmentDate = record?.[definition.dateField];
-  const recordedOn = formatRecordDateTime(record?.created_at);
-  const recordedBy = record?.created_by_name || record?.created_by;
+  const assessmentItems = [
+    { key: "general_condition", label: "General Condition" },
+    { key: "mental_status", label: "Mental Status" },
+    { key: "mobility", label: "Mobility" },
+    { key: "nutritional_status", label: "Nutritional Status" },
+  ].filter(
+    ({ key }) =>
+      record?.[key] !== null &&
+      record?.[key] !== undefined &&
+      record?.[key] !== ""
+  );
 
   return (
-    <LatestRecordCard title="Latest Health Assessment" icon={ClipboardList} type="assessment" definition={definition} record={record}>
-      {record ? (
-        <AssessmentDetailRows
-          fields={fields}
-          assessmentDate={assessmentDate}
-          recordedOn={recordedOn}
-          recordedBy={recordedBy}
-        />
-      ) : <div className="patient-empty-state">No health assessment recorded yet.</div>}
+    <LatestRecordCard
+      title="Latest Health Assessment"
+      icon={ClipboardList}
+      type="assessment"
+      definition={definition}
+      record={record}
+    >
+      {assessmentItems.length > 0 ? (
+        <div className="patient-table-wrap patient-assessment-horizontal-wrap">
+          <table className="patient-health-table patient-assessment-horizontal-table">
+            <thead>
+              <tr>
+                {assessmentItems.map(({ key, label }) => (
+                  <th scope="col" key={key}>
+                    {label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                {assessmentItems.map(({ key }) => (
+                  <td key={key}>
+                    <span className="patient-assessment-value">
+                      {record[key]}
+                    </span>
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="patient-empty-state">
+          No health assessment recorded yet.
+        </div>
+      )}
     </LatestRecordCard>
   );
 }
