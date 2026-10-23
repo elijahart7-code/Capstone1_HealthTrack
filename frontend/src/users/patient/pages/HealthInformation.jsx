@@ -572,6 +572,7 @@ function LatestAppointment({ appointment, hasAppointmentHistory, onViewAppointme
   );
 }
 
+
 function LatestVitalSigns({ definition, record }) {
   const vitalRows = [
     { key: "blood_pressure", label: "Blood Pressure", unit: "mmHg" },
@@ -582,37 +583,55 @@ function LatestVitalSigns({ definition, record }) {
     { key: "weight_kg", label: "Weight", unit: "kg" },
     { key: "bmi", label: "BMI", unit: "kg/m²" },
     { key: "pulse_rate", label: "Pulse Rate", unit: "bpm" },
-  ].filter(({ key }) => record?.[key] !== null && record?.[key] !== undefined && record?.[key] !== "");
+  ].filter(
+    ({ key }) =>
+      record?.[key] !== null &&
+      record?.[key] !== undefined &&
+      record?.[key] !== ""
+  );
 
   return (
-    <LatestRecordCard title="Latest Vital Signs" icon={Activity} type="vitals" definition={definition} record={record}>
+    <LatestRecordCard
+      title="Latest Vital Signs"
+      icon={Activity}
+      type="vitals"
+      definition={definition}
+      record={record}
+    >
       {vitalRows.length > 0 ? (
-        <div className="patient-table-wrap patient-vital-table-wrap">
-          <table className="patient-health-table patient-vital-table">
-            <colgroup>
-              <col className="patient-vital-measurement-column" />
-              <col className="patient-vital-result-column" />
-              <col className="patient-vital-unit-column" />
-            </colgroup>
+        <div className="patient-table-wrap patient-vital-horizontal-wrap">
+          <table className="patient-health-table patient-vital-horizontal-table">
             <thead>
               <tr>
-                <th>Measurement</th>
-                <th>Result</th>
-                <th>Unit</th>
+                {vitalRows.map(({ key, label }) => (
+                  <th scope="col" key={key}>
+                    {label}
+                  </th>
+                ))}
               </tr>
             </thead>
+
             <tbody>
-              {vitalRows.map(({ key, label, unit }) => (
-                <tr key={key}>
-                  <td>{label}</td>
-                  <td>{record[key]}</td>
-                  <td>{unit}</td>
-                </tr>
-              ))}
+              <tr>
+                {vitalRows.map(({ key, unit }) => (
+                  <td key={key}>
+                    <span className="patient-vital-value">
+                      {record[key]}
+                    </span>
+                    <span className="patient-vital-unit">
+                      {unit}
+                    </span>
+                  </td>
+                ))}
+              </tr>
             </tbody>
           </table>
         </div>
-      ) : <div className="patient-empty-state">No vital signs recorded yet.</div>}
+      ) : (
+        <div className="patient-empty-state">
+          No vital signs recorded yet.
+        </div>
+      )}
     </LatestRecordCard>
   );
 }

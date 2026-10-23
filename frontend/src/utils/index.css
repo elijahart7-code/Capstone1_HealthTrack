@@ -6833,4 +6833,56 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         .patient-dashboard-shell .patient-contact-card:last-child {
             border-bottom: 0 !important;
         }
+        
+/* Latest Vital Signs - horizontal table */
+.patient-vital-horizontal-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 10px;
+}
+
+.patient-vital-horizontal-table {
+  width: 100%;
+  min-width: 760px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.patient-vital-horizontal-table th {
+  background-color: #edf7f1;
+  color: #315c49;
+  padding: 14px 10px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: normal;
+  border-bottom: 1px solid #dcebe1;
+}
+
+.patient-vital-horizontal-table td {
+  padding: 18px 10px;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e8eee9;
+}
+
+.patient-vital-value {
+  display: block;
+  color: #294d3c;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.patient-vital-unit {
+  display: block;
+  margin-top: 4px;
+  color: #78847d;
+  font-size: 12px;
+  font-weight: 400;
+}
+
     }
