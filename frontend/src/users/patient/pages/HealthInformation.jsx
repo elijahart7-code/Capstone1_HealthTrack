@@ -692,89 +692,24 @@ function LatestHealthAssessment({ definition, record }) {
   );
 }
 
-
 function LatestAllergies({ definition, record }) {
-  const fields = getRecordFields(
-    definition,
-    record,
-    Object.keys(definition?.fields || {})
-  );
-
-  const fieldValues = Object.fromEntries(
-    fields.map(({ key, value }) => [key, value])
-  );
-
-  const allergyItems = [
-    {
-      key: "medication_allergies",
-      label: "Drug Allergies",
-      icon: Pill,
-      value: fieldValues.medication_allergies,
-    },
-    {
-      key: "food_allergies",
-      label: "Food Allergies",
-      icon: Utensils,
-      value: fieldValues.food_allergies,
-    },
-    {
-      key: "environmental_allergies",
-      label: "Environmental Allergies",
-      icon: Leaf,
-      value: fieldValues.environmental_allergies,
-    },
-    {
-      key: "reaction",
-      label: "Reaction",
-      icon: CircleAlert,
-      value: fieldValues.reaction,
-    },
-    {
-      key: "remarks",
-      label: "Remarks",
-      icon: MessageSquare,
-      value: fieldValues.remarks,
-    },
-    {
-      key: "recorded_by",
-      label: "Recorded By",
-      icon: User,
-      value: record?.created_by_name || record?.created_by,
-    },
+  const fields = getRecordFields(definition, record, Object.keys(definition?.fields || {}));
+  const fieldValues = Object.fromEntries(fields.map(({ key, value }) => [key, value]));
+  const rows = [
+    { key: "medication_allergies", label: "Drug Allergies", icon: Pill, value: fieldValues.medication_allergies },
+    { key: "food_allergies", label: "Food Allergies", icon: Utensils, value: fieldValues.food_allergies },
+    { key: "environmental_allergies", label: "Environmental Allergies", icon: Leaf, value: fieldValues.environmental_allergies },
+    { key: "reaction", label: "Reaction", icon: CircleAlert, value: fieldValues.reaction },
+    { key: "remarks", label: "Remarks", icon: MessageSquare, value: fieldValues.remarks },
+    { key: "recorded_by", label: "Recorded By", icon: User, value: record?.created_by_name || record?.created_by },
   ];
 
   return (
-    <LatestRecordCard
-      title="Latest Allergies"
-      icon={TriangleAlert}
-      type="allergies"
-      definition={definition}
-      record={record}
-    >
-      {record ? (
-        <div className="patient-latest-allergies-grid">
-          {allergyItems.map(({ key, label, icon: Icon, value }) => (
-            <div className="patient-latest-allergy-item" key={key}>
-              <span className="patient-latest-allergy-label">
-                <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
-                {label}
-              </span>
-
-              <span className="patient-latest-allergy-value">
-                {value || "Not recorded"}
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="patient-empty-state">
-          No allergies recorded yet.
-        </div>
-      )}
+    <LatestRecordCard title="Latest Allergies" icon={TriangleAlert} type="allergies" definition={definition} record={record}>
+      <AllergyDetailRows rows={rows} />
     </LatestRecordCard>
   );
 }
-
 
 function LatestMidwifeNotes({ definition, record }) {
   const noteItems = [
