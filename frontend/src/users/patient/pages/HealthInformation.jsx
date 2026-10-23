@@ -582,6 +582,7 @@ function LatestVitalSigns({ definition, record }) {
     { key: "height_cm", label: "Height", unit: "cm" },
     { key: "weight_kg", label: "Weight", unit: "kg" },
     { key: "bmi", label: "BMI", unit: "kg/m²" },
+    { key: "oxygen_saturation", label: "Oxygen Saturation", unit: "%" },
     { key: "pulse_rate", label: "Pulse Rate", unit: "bpm" },
   ].filter(
     ({ key }) =>
