@@ -935,8 +935,10 @@ const VITAL_SIGN_PRESENTATION = {
 
 function VitalSignsSection({ definition, records, onViewAll }) {
   const record = getLatestRecord(records, definition.dateField);
-  const fields = Object.entries(definition.fields)
-    .filter(([key]) => VITAL_SIGN_PRESENTATION[key]);
+
+  const fields = Object.entries(definition.fields).filter(
+    ([key]) => VITAL_SIGN_PRESENTATION[key]
+  );
 
   return (
     <section className="patient-healthinfo-card patient-vitals-section">
@@ -947,50 +949,79 @@ function VitalSignsSection({ definition, records, onViewAll }) {
           </span>
           <h2>{definition.label}</h2>
         </div>
-        <span className="patient-card-total">{records.length} total</span>
+
+        <span className="patient-card-total">
+          {records.length} total
+        </span>
       </div>
 
-      <button type="button" className="patient-vitals-view-all" onClick={onViewAll}>
+      <button
+        type="button"
+        className="patient-vitals-view-all"
+        onClick={onViewAll}
+      >
         View All
       </button>
 
       {record ? (
         <>
-          <div className="patient-table-wrap patient-vitals-table-wrap">
-            <table className="patient-health-table patient-vitals-table">
-              <colgroup>
-                <col className="patient-vitals-measurement-column" />
-                <col className="patient-vitals-result-column" />
-                <col className="patient-vitals-unit-column" />
-              </colgroup>
+          <div className="patient-table-wrap patient-vitals-horizontal-wrap">
+            <table className="patient-health-table patient-vitals-horizontal-table">
               <thead>
                 <tr>
-                  <th scope="col">Measurement</th>
-                  <th scope="col">Result</th>
-                  <th scope="col">Unit</th>
+                  {fields.map(([key]) => (
+                    <th scope="col" key={key}>
+                      {VITAL_SIGN_PRESENTATION[key].label}
+                    </th>
+                  ))}
                 </tr>
               </thead>
+
               <tbody>
-                {fields.map(([key]) => (
-                  <tr key={key}>
-                    <td>{VITAL_SIGN_PRESENTATION[key].label}</td>
-                    <td>{record[key] !== null && record[key] !== undefined && record[key] !== "" ? record[key] : "--"}</td>
-                    <td>{VITAL_SIGN_PRESENTATION[key].unit}</td>
-                  </tr>
-                ))}
+                <tr>
+                  {fields.map(([key]) => {
+                    const value = record[key];
+
+                    return (
+                      <td key={key}>
+                        <span className="patient-vitals-horizontal-value">
+                          {value !== null &&
+                          value !== undefined &&
+                          value !== ""
+                            ? value
+                            : "--"}
+                        </span>
+
+                        <span className="patient-vitals-horizontal-unit">
+                          {VITAL_SIGN_PRESENTATION[key].unit}
+                        </span>
+                      </td>
+                    );
+                  })}
+                </tr>
               </tbody>
             </table>
           </div>
+
           <footer className="patient-vitals-footer">
             <span className="patient-vitals-recorded-date">
-              <CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" />
-              Recorded on: {formatRecordDate(record[definition.dateField]) || "Not recorded"}
+              <CalendarDays
+                size={16}
+                strokeWidth={1.8}
+                aria-hidden="true"
+              />
+              Recorded on:{" "}
+              {formatRecordDate(record[definition.dateField]) ||
+                "Not recorded"}
             </span>
+
             <span>Showing latest vital signs.</span>
           </footer>
         </>
       ) : (
-        <div className="patient-empty-state">No vital signs recorded.</div>
+        <div className="patient-empty-state">
+          No vital signs recorded.
+        </div>
       )}
     </section>
   );
