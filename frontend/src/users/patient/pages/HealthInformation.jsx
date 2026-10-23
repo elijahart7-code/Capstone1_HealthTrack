@@ -693,20 +693,56 @@ function LatestHealthAssessment({ definition, record }) {
 }
 
 function LatestAllergies({ definition, record }) {
-  const fields = getRecordFields(definition, record, Object.keys(definition?.fields || {}));
-  const fieldValues = Object.fromEntries(fields.map(({ key, value }) => [key, value]));
-  const rows = [
-    { key: "medication_allergies", label: "Drug Allergies", icon: Pill, value: fieldValues.medication_allergies },
-    { key: "food_allergies", label: "Food Allergies", icon: Utensils, value: fieldValues.food_allergies },
-    { key: "environmental_allergies", label: "Environmental Allergies", icon: Leaf, value: fieldValues.environmental_allergies },
-    { key: "reaction", label: "Reaction", icon: CircleAlert, value: fieldValues.reaction },
-    { key: "remarks", label: "Remarks", icon: MessageSquare, value: fieldValues.remarks },
-    { key: "recorded_by", label: "Recorded By", icon: User, value: record?.created_by_name || record?.created_by },
-  ];
+  const allergyItems = [
+    { key: "allergen", label: "Allergen" },
+    { key: "reaction", label: "Reaction" },
+    { key: "severity", label: "Severity" },
+    { key: "notes", label: "Notes" },
+  ].filter(
+    ({ key }) =>
+      record?.[key] !== null &&
+      record?.[key] !== undefined &&
+      record?.[key] !== ""
+  );
 
   return (
-    <LatestRecordCard title="Latest Allergies" icon={TriangleAlert} type="allergies" definition={definition} record={record}>
-      <AllergyDetailRows rows={rows} />
+    <LatestRecordCard
+      title="Latest Allergies"
+      icon={ShieldAlert}
+      type="allergies"
+      definition={definition}
+      record={record}
+    >
+      {allergyItems.length > 0 ? (
+        <div className="patient-table-wrap patient-allergies-horizontal-wrap">
+          <table className="patient-health-table patient-allergies-horizontal-table">
+            <thead>
+              <tr>
+                {allergyItems.map(({ key, label }) => (
+                  <th scope="col" key={key}>
+                    {label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                {allergyItems.map(({ key }) => (
+                  <td key={key}>
+                    <span className="patient-allergy-value">
+                      {record[key]}
+                    </span>
+                  </td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="patient-empty-state">
+          No allergy information recorded yet.
+        </div>
+      )}
     </LatestRecordCard>
   );
 }
