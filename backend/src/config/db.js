@@ -128,6 +128,7 @@ const TABLES = [
       address                   TEXT NOT NULL,
       nationality              VARCHAR(100),
       place_of_birth            VARCHAR(255),
+      place_of_birth_data       JSONB,
       emergency_contact_name    VARCHAR(255),
       emergency_contact_number  VARCHAR(20),
       emergency_contact_relationship VARCHAR(100),
@@ -153,6 +154,7 @@ const TABLES = [
       address: "TEXT NOT NULL",
       nationality: "VARCHAR(100)",
       place_of_birth: "VARCHAR(255)",
+      place_of_birth_data: "JSONB",
       emergency_contact_name: "VARCHAR(255)",
       emergency_contact_number: "VARCHAR(20)",
       emergency_contact_relationship: "VARCHAR(100)",
@@ -397,6 +399,7 @@ export async function connectNeon() {
 
     await sql`ALTER TABLE patients ADD COLUMN IF NOT EXISTS nationality VARCHAR(100)`;
     await sql`ALTER TABLE patients ADD COLUMN IF NOT EXISTS place_of_birth VARCHAR(255)`;
+    await sql`ALTER TABLE patients ADD COLUMN IF NOT EXISTS place_of_birth_data JSONB`;
     await sql`ALTER TABLE patients ADD COLUMN IF NOT EXISTS emergency_contact_relationship VARCHAR(100)`;
     await sql`ALTER TABLE patients ADD COLUMN IF NOT EXISTS archived_at TIMESTAMP`;
     await sql`ALTER TABLE patients ADD COLUMN IF NOT EXISTS archived_by VARCHAR(255) REFERENCES users(user_id)`;

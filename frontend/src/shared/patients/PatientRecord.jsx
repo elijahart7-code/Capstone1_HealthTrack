@@ -6,6 +6,7 @@ import { Combobox, Field, Input, Select, Textarea } from "../../components/ui/In
 import { APPOINTMENT_REASONS } from "../../config/healthOptions";
 import { Badge, EmptyState, Table, Th, Td } from "../../components/ui/Table";
 import { ClinicalRecords } from "./ClinicalRecords";
+import { PlaceOfBirthField } from "./PlaceOfBirthField";
 
 import {
   UserRound,
@@ -59,6 +60,9 @@ export function PatientRecord({
   const [portalEmail, setPortalEmail] = useState("");
   const [accountError, setAccountError] = useState(null);
   const [showEditInformation, setShowEditInformation] = useState(false);
+  const [birthplaceDraft, setBirthplaceDraft] = useState(null);
+  const [birthplaceSaving, setBirthplaceSaving] = useState(false);
+  const [birthplaceError, setBirthplaceError] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
 
   async function load() {
@@ -173,6 +177,25 @@ export function PatientRecord({
 
     load();
     onPatientUpdated?.();
+  }
+
+  async function saveBirthplace() {
+    setBirthplaceError(null);
+    if (!birthplaceDraft?.region_code || (!birthplaceDraft.city_code && !birthplaceDraft.custom_city?.trim())) {
+      setBirthplaceError("Select the birthplace region and city or municipality.");
+      return;
+    }
+    setBirthplaceSaving(true);
+    try {
+      const { data } = await api.patch(`/patients/${patientId}`, { place_of_birth_data: birthplaceDraft });
+      setPatient(data.patient);
+      setShowEditInformation(false);
+      onPatientUpdated?.();
+    } catch (err) {
+      setBirthplaceError(err?.response?.data?.error || "Could not update the place of birth.");
+    } finally {
+      setBirthplaceSaving(false);
+    }
   }
 
   async function createPortalAccount() {
@@ -412,7 +435,41 @@ export function PatientRecord({
 
               <div className="ht-content-card">
 
-                <h2>General Information</h2>
+                <div className="ht-card-heading">
+                  <h2>General Information</h2>
+                  {(isAdmin || role === "health_worker") && (
+                    <button
+                      type="button"
+                      className="ht-small-button"
+                      onClick={() => {
+                        setBirthplaceError(null);
+                        setBirthplaceDraft(patient.place_of_birth_data || { specific: patient.place_of_birth || "" });
+                        setShowEditInformation((current) => !current);
+                      }}
+                    >
+                      {showEditInformation ? "Cancel edit" : "Edit place of birth"}
+                    </button>
+                  )}
+                </div>
+
+                {showEditInformation && (
+                  <div className="ht-form-box ht-birthplace-edit">
+                    {birthplaceError && <div className="ht-login-alert ht-login-alert-error">{birthplaceError}</div>}
+                    <PlaceOfBirthField
+                      required
+                      value={birthplaceDraft}
+                      onChange={setBirthplaceDraft}
+                    />
+                    <div className="ht-form-buttons">
+                      <button type="button" className="ht-primary-button" onClick={saveBirthplace} disabled={birthplaceSaving}>
+                        {birthplaceSaving ? "Saving…" : "Save place of birth"}
+                      </button>
+                      <button type="button" className="ht-secondary-button" onClick={() => setShowEditInformation(false)}>
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 <dl className="ht-detail-grid">
 
@@ -494,7 +551,7 @@ export function PatientRecord({
             <Detail
                 icon={<MapPin size={20} />}
                 label="Place of Birth"
-                value={patient.place_of_birth}
+                value={`${patient.place_of_birth || "--"}${patient.place_of_birth_data?.verified === false ? " (unverified location)" : ""}`}
             />
                 {/* ROW 5 - EMERGENCY INFORMATION */}
             <div className="ht-emergency-row">

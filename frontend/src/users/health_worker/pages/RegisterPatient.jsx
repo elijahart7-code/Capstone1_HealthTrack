@@ -4,6 +4,7 @@ import { User, MapPin, PhoneCall, CalendarDays } from "lucide-react";
 import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { Field, Input, Select, Textarea } from "../../../components/ui/Input";
+import { PlaceOfBirthField } from "../../../shared/patients/PlaceOfBirthField";
 
 /**
  * Registers a patient and creates their portal login from the required email.
@@ -25,6 +26,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
     address: "",
     nationality: "",
     place_of_birth: "",
+    place_of_birth_data: null,
     emergency_contact_name: "",
     emergency_contact_number: "",
     emergency_contact_relationship: "",
@@ -110,8 +112,8 @@ export function RegisterPatient({ loadData, onRegistered }) {
     setError(null);
     setPortalEmailError(null);
 
-    if (!form.place_of_birth.trim()) {
-      setError("Please enter the patient's place of birth.");
+    if (!form.place_of_birth_data?.region_code || (!form.place_of_birth_data?.city_code && !form.place_of_birth_data?.custom_city?.trim())) {
+      setError("Please select the patient's region and city or municipality of birth.");
       return;
     }
 
@@ -289,19 +291,19 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Input value={form.occupation} onChange={(e) => set("occupation", e.target.value)} placeholder="Enter occupation" />
             </Field>
 
-            <Field
-              label="Place of Birth"
-              required
-              className="ht-place-of-birth-field"
-              style={{ gridColumn: "2 / 3" }}
-            >
-              <Input
-                value={form.place_of_birth}
-                onChange={(e) => set("place_of_birth", e.target.value)}
-                placeholder="Enter city/municipality, province, or country"
-                autoComplete="address-level2"
+            <div className="ht-field ht-place-of-birth-field" style={{ gridColumn: "1 / -1" }}>
+              <span>Place of Birth <span style={{ color: "var(--color-danger)" }}>*</span></span>
+              <PlaceOfBirthField
+                required
+                value={form.place_of_birth_data}
+                onChange={(placeOfBirth) => {
+                  const readable = [placeOfBirth.barangay_name, placeOfBirth.city_name, placeOfBirth.province_name, placeOfBirth.region_name, placeOfBirth.specific]
+                    .filter(Boolean)
+                    .join(", ");
+                  setForm((current) => ({ ...current, place_of_birth: readable, place_of_birth_data: placeOfBirth }));
+                }}
               />
-            </Field>
+            </div>
           </div>
         </div>
 

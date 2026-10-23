@@ -1,6 +1,7 @@
 import { sql } from "../../config/db.js";
 import { AppointmentPolicy, ClinicalRecordPolicy, PatientPolicy } from "../../policies/policies.js";
 import { isRecordType, RECORD_TYPES } from "../../config/recordTypes.js";
+import { validatePlaceOfBirth } from "../../utils/placeOfBirth.js";
 
 const VALID_STATUSES = ["pending", "confirmed", "completed", "cancelled"];
 
@@ -39,10 +40,16 @@ export async function updatePatient(req, res) {
     "first_name", "middle_name", "last_name", "sex", "birthdate", "civil_status",
     "blood_type", "occupation", "barangay_id_number", "contact_number", "address",
     "nationality", "place_of_birth", "emergency_contact_name",
-    "emergency_contact_number", "emergency_contact_relationship",
+    "emergency_contact_number", "emergency_contact_relationship", "place_of_birth_data",
   ];
 
   const b = req.body;
+  if ("place_of_birth_data" in b) {
+    const birthplace = await validatePlaceOfBirth(b.place_of_birth_data);
+    if (birthplace.error) return res.status(422).json({ error: birthplace.error });
+    b.place_of_birth_data = JSON.stringify({ ...birthplace.value, verified: birthplace.verified });
+    b.place_of_birth = birthplace.display;
+  }
   const setClauses = editable.filter((c) => c in b);
 
   if (setClauses.length === 0) return res.status(422).json({ error: "No fields to update." });

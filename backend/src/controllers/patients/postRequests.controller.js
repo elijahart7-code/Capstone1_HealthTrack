@@ -3,6 +3,7 @@ import { sql } from "../../config/db.js";
 import { generateAppointmentId, generatePatientId, generateRecordId, generateUserId } from "../../utils/generateId.js";
 import { isRecordType, RECORD_TYPES } from "../../config/recordTypes.js";
 import { AppointmentPolicy, ClinicalRecordPolicy, PatientPolicy } from "../../policies/policies.js";
+import { validatePlaceOfBirth } from "../../utils/placeOfBirth.js";
 
 /**
  * POST /api/patients
@@ -26,6 +27,9 @@ export async function registerPatient(req, res) {
       return res.status(422).json({ error: `${field.replace(/_/g, " ")} is required.` });
     }
   }
+
+  const birthplace = await validatePlaceOfBirth(b.place_of_birth_data);
+  if (birthplace.error) return res.status(422).json({ error: birthplace.error });
 
   const firstName = b.first_name.trim();
   const middleName = b.middle_name?.trim() || null;
@@ -52,13 +56,13 @@ export async function registerPatient(req, res) {
       patient_id, user_id, first_name, middle_name, last_name, sex, birthdate,
       civil_status, blood_type, occupation, barangay_id_number, contact_number,
       address, nationality, place_of_birth, emergency_contact_name,
-      emergency_contact_number, emergency_contact_relationship
+      emergency_contact_number, emergency_contact_relationship, place_of_birth_data
     ) VALUES (
       ${patientId}, ${userId}, ${firstName}, ${middleName}, ${lastName}, ${b.sex}, ${b.birthdate},
       ${b.civil_status}, ${b.blood_type}, ${b.occupation}, ${b.barangay_id_number}, ${b.contact_number || null},
-      ${b.address}, ${b.nationality || null}, ${b.place_of_birth || null},
+      ${b.address}, ${b.nationality || null}, ${birthplace.display},
       ${b.emergency_contact_name || null}, ${b.emergency_contact_number || null},
-      ${b.emergency_contact_relationship || null}
+      ${b.emergency_contact_relationship || null}, ${JSON.stringify({ ...birthplace.value, verified: birthplace.verified })}::jsonb
     ) RETURNING *
   `;
 

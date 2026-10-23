@@ -152,7 +152,23 @@
     }
 
     .ht-place-of-birth-field {
-        grid-column: 2;
+        grid-column: 1 / -1;
+    }
+
+    .ht-place-of-birth-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.85rem 1rem;
+    }
+
+    .ht-place-of-birth .ht-field {
+        min-width: 0;
+    }
+
+    .ht-location-loading {
+        color: var(--color-ink-soft);
+        font-size: 0.72rem;
+        font-weight: 400;
     }
 
     .ht-section-icon,
@@ -463,6 +479,13 @@
 
     .ht-form-grid .ht-field {
         min-width: 0;
+    }
+
+    @media (max-width: 700px) {
+        .ht-place-of-birth-grid {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 0.75rem;
+        }
     }
 
     .ht-form-grid .ht-field > span:first-child {
