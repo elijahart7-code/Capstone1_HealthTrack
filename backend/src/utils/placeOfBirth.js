@@ -4,6 +4,10 @@ import { fileURLToPath } from "node:url";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PSGC_DIR = path.resolve(HERE, "../../../frontend/public/data/psgc");
+const MANILA_DISTRICTS = new Set([
+  "Tondo", "San Nicolas", "Binondo", "Santa Cruz", "Quiapo", "Sampaloc", "Santa Mesa", "San Miguel",
+  "Port Area", "Intramuros", "Ermita", "Paco", "Malate", "San Andres", "Pandacan", "Santa Ana",
+]);
 let indexPromise;
 const areaPromises = new Map();
 
@@ -57,6 +61,7 @@ export async function validatePlaceOfBirth(input) {
   if (input.custom_province_selected && !customProvince) return { error: "Enter the unlisted province or area name." };
   const customCity = String(input.custom_city || "").trim();
   const customBarangay = String(input.custom_barangay || "").trim();
+  const barangayCode = input.barangay_code ? String(input.barangay_code) : "";
   if (input.custom_city_selected && !customCity) return { error: "Enter the unlisted city or municipality name." };
   if (input.custom_barangay_selected && !customBarangay) return { error: "Enter the unlisted barangay name." };
   const cityCode = input.city_code ? String(input.city_code) : "";
@@ -74,13 +79,33 @@ export async function validatePlaceOfBirth(input) {
     if (!city) return { error: "The selected city or municipality does not belong to the selected province or region." };
   }
 
+  let manilaDistrict = null;
+  const customManilaDistrict = String(input.custom_manila_district || "").trim();
+  if (input.custom_manila_district_selected && !customManilaDistrict) {
+    return { error: "Enter the other Manila district name." };
+  }
+  if (customManilaDistrict && !input.custom_manila_district_selected) {
+    return { error: "Select Other / Specify before entering a custom Manila district." };
+  }
+  if (customManilaDistrict && cityCode !== "1380600000") {
+    return { error: "A custom district can only be entered for the City of Manila." };
+  }
+  if (input.manila_district) {
+    if (cityCode !== "1380600000") return { error: "A Manila district can only be selected for the City of Manila." };
+    manilaDistrict = MANILA_DISTRICTS.has(input.manila_district) || input.manila_district === "Other / Specify"
+      ? input.manila_district
+      : null;
+    if (!manilaDistrict) return { error: "Select a valid district in the City of Manila." };
+    if (barangayCode || customManilaDistrict) return { error: "Select either a Manila district or a barangay, not both." };
+  }
+  if (customManilaDistrict && barangayCode) return { error: "Select either a custom Manila district or a barangay, not both." };
+
   let barangay = null;
-  const barangayCode = input.barangay_code ? String(input.barangay_code) : "";
   if (barangayCode) {
     if (!city) return { error: "A PSGC barangay requires a verified PSGC city or municipality." };
     const entry = city.barangays.find(([code]) => code === barangayCode);
     if (!entry) return { error: "The selected barangay does not belong to the selected city or municipality." };
-    barangay = { code: entry[0], name: entry[1] };
+    barangay = { code: entry[0], name: entry[1], district: entry[2] || null };
   } else if (customBarangay && !city && !customCity) {
     return { error: "A custom barangay requires a city or municipality." };
   }
@@ -89,8 +114,11 @@ export async function validatePlaceOfBirth(input) {
   const geographicAreaName = administrativeArea?.name || null;
   const cityDisplayName = city?.name || customCity || cityName;
   const barangayName = barangay?.name || customBarangay || null;
-  const verified = Boolean(region && city && !customProvince && !customCity && !customBarangay);
-  const parts = [barangayName, cityDisplayName, provinceName, geographicAreaName, region.name, String(input.specific || "").trim()].filter(Boolean);
+  const barangayDistrict = barangay?.district || null;
+  const birthplaceDistrict = manilaDistrict || customManilaDistrict || barangayDistrict;
+  const verified = Boolean(region && city && !customProvince && !customCity && !customBarangay && !customManilaDistrict);
+  const formattedBarangay = barangayName && barangayDistrict ? `${barangayName} (${barangayDistrict})` : barangayName;
+  const parts = [manilaDistrict || customManilaDistrict || formattedBarangay, cityDisplayName, provinceName, geographicAreaName, region.name, String(input.specific || "").trim()].filter(Boolean);
   return {
     value: {
       region_code: region.code,
@@ -104,6 +132,10 @@ export async function validatePlaceOfBirth(input) {
       city_name: cityDisplayName,
       barangay_code: barangay?.code || null,
       barangay_name: barangayName,
+      barangay_district: birthplaceDistrict,
+      manila_district: manilaDistrict,
+      custom_manila_district: customManilaDistrict,
+      custom_manila_district_selected: Boolean(input.custom_manila_district_selected),
       custom_province_selected: Boolean(input.custom_province_selected),
       custom_city_selected: Boolean(input.custom_city_selected),
       custom_barangay_selected: Boolean(input.custom_barangay_selected),

@@ -3,6 +3,24 @@ import { Field, Input, Select } from "../../components/ui/Input";
 
 const DATA_URL = "/data/psgc";
 const OTHER = "__other__";
+const MANILA_DISTRICTS = [
+  "Tondo",
+  "San Nicolas",
+  "Binondo",
+  "Santa Cruz",
+  "Quiapo",
+  "Sampaloc",
+  "Santa Mesa",
+  "San Miguel",
+  "Port Area",
+  "Intramuros",
+  "Ermita",
+  "Paco",
+  "Malate",
+  "San Andres",
+  "Pandacan",
+  "Santa Ana",
+];
 
 function SearchableSelect({ label, value, options, onChange, disabled, loading, required, placeholder, includeOther = false }) {
   return (
@@ -38,6 +56,9 @@ export function PlaceOfBirthField({ value = null, onChange, required = false }) 
     scopeKind: "",
     cityCode: "",
     barangayCode: "",
+    manilaDistrict: "",
+    customManilaDistrict: "",
+    customManilaDistrictActive: false,
     customProvince: "",
     customCity: "",
     customCityActive: false,
@@ -93,6 +114,9 @@ export function PlaceOfBirthField({ value = null, onChange, required = false }) 
       scopeKind: value.custom_province_selected || value.custom_province ? "custom" : value.scope_type || (value.province_code ? "province" : value.area_code ? "independent" : ""),
       cityCode: value.city_code || "",
       barangayCode: value.barangay_code || "",
+      manilaDistrict: value.manila_district || "",
+      customManilaDistrict: value.custom_manila_district || "",
+      customManilaDistrictActive: Boolean(value.custom_manila_district_selected || value.custom_manila_district),
       customProvince: value.custom_province || "",
       customCity: value.custom_city || "",
       customCityActive: Boolean(value.custom_city_selected || value.custom_city),
@@ -110,9 +134,14 @@ export function PlaceOfBirthField({ value = null, onChange, required = false }) 
         ...(region.independent || []).map((item) => ({ ...item, kind: "independent" })),
       ]
     : [];
-  const cities = area?.cities || [];
+  const cities = area?.code === selection.scopeCode ? area.cities || [] : [];
   const selectedCity = cities.find((item) => item.code === selection.cityCode);
-  const barangays = (selectedCity?.barangays || []).map(([code, name]) => ({ code, name }));
+  const barangays = (selectedCity?.barangays || []).map(([code, name, district]) => ({
+    code,
+    name: district ? `${name} — ${district}` : name,
+  }));
+  const isManila = selection.cityCode === "1380600000";
+  const manilaDistricts = MANILA_DISTRICTS.map((district) => ({ code: district, name: district }));
   const emptyCustomCity = selection.scopeKind === "custom";
 
   function notify(nextSelection) {
@@ -120,14 +149,17 @@ export function PlaceOfBirthField({ value = null, onChange, required = false }) 
     const nextRegion = regions.find((item) => item.code === nextSelection.regionCode);
     const nextScope = scopes.find((item) => item.code === nextSelection.scopeCode);
     const nextArea = area?.code === nextSelection.scopeCode ? area : null;
-    const nextCities = nextRegion?.code === "1300000000"
-      ? (nextRegion.independent || [])
-      : nextArea?.cities || [];
-    const nextCity = nextCities.find((item) => item.code === nextSelection.cityCode);
-    const nextBarangay = nextCity?.barangays?.find(([code]) => code === nextSelection.barangayCode);
+    // NCR choices come from the region's independent list, but barangays are
+    // loaded from the selected city's area file. Use that loaded hierarchy
+    // here as well so NCR barangay codes/names are resolved and retained.
+    const nextCity = nextRegion?.code === "1300000000"
+      ? nextRegion.independent?.find((item) => item.code === nextSelection.cityCode)
+      : nextArea?.cities?.find((item) => item.code === nextSelection.cityCode);
+    const nextBarangayCity = nextArea?.cities?.find((item) => item.code === nextSelection.cityCode);
+    const nextBarangay = nextBarangayCity?.barangays?.find(([code]) => code === nextSelection.barangayCode);
     const custom = Boolean(
       nextSelection.customProvince || nextSelection.customCity || nextSelection.customBarangay ||
-      nextSelection.scopeKind === "custom" || nextSelection.customCityActive || nextSelection.customBarangayActive
+      nextSelection.customManilaDistrict || nextSelection.scopeKind === "custom" || nextSelection.customCityActive || nextSelection.customBarangayActive || nextSelection.customManilaDistrictActive
     );
     onChange?.({
       region_code: nextSelection.regionCode || null,
@@ -141,6 +173,10 @@ export function PlaceOfBirthField({ value = null, onChange, required = false }) 
       city_name: nextCity?.name || nextSelection.customCity || "",
       barangay_code: nextBarangay?.[0] || null,
       barangay_name: nextBarangay?.[1] || nextSelection.customBarangay || null,
+      barangay_district: nextBarangay?.[2] || null,
+      manila_district: nextSelection.manilaDistrict || null,
+      custom_manila_district: nextSelection.customManilaDistrict || "",
+      custom_manila_district_selected: Boolean(nextSelection.customManilaDistrictActive),
       specific: nextSelection.specific || "",
       verified: !custom && Boolean(nextRegion && nextCity),
       custom_province: nextSelection.customProvince || "",
@@ -159,6 +195,9 @@ export function PlaceOfBirthField({ value = null, onChange, required = false }) 
       scopeKind: "",
       cityCode: "",
       barangayCode: "",
+      manilaDistrict: "",
+      customManilaDistrict: "",
+      customManilaDistrictActive: false,
       customProvince: "",
       customCity: "",
       customCityActive: false,
@@ -170,23 +209,23 @@ export function PlaceOfBirthField({ value = null, onChange, required = false }) 
 
   function changeScope(scopeCode) {
     if (scopeCode === OTHER) {
-      notify({ ...selection, scopeCode: "", scopeKind: "custom", cityCode: "", barangayCode: "", customProvince: "", customCity: "", customCityActive: false, customBarangay: "", customBarangayActive: false });
+      notify({ ...selection, scopeCode: "", scopeKind: "custom", cityCode: "", barangayCode: "", manilaDistrict: "", customManilaDistrict: "", customManilaDistrictActive: false, customProvince: "", customCity: "", customCityActive: false, customBarangay: "", customBarangayActive: false });
       return;
     }
     const selected = scopes.find((item) => item.code === scopeCode);
-    notify({ ...selection, scopeCode, scopeKind: selected?.kind || "", cityCode: "", barangayCode: "", customProvince: "", customCity: "", customCityActive: false, customBarangay: "", customBarangayActive: false });
+    notify({ ...selection, scopeCode, scopeKind: selected?.kind || "", cityCode: "", barangayCode: "", manilaDistrict: "", customManilaDistrict: "", customManilaDistrictActive: false, customProvince: "", customCity: "", customCityActive: false, customBarangay: "", customBarangayActive: false });
   }
 
   function changeCity(cityCode) {
     if (cityCode === OTHER) {
-      notify({ ...selection, cityCode: "", barangayCode: "", customCity: "", customCityActive: true, customBarangay: "", customBarangayActive: false });
+      notify({ ...selection, cityCode: "", barangayCode: "", manilaDistrict: "", customManilaDistrict: "", customManilaDistrictActive: false, customCity: "", customCityActive: true, customBarangay: "", customBarangayActive: false });
       return;
     }
     const directCity = isNcr ? region?.independent?.find((item) => item.code === cityCode) : null;
     if (directCity) {
-      notify({ ...selection, scopeCode: directCity.code, scopeKind: "independent", cityCode, barangayCode: "", customCity: "", customCityActive: false, customBarangay: "", customBarangayActive: false });
+      notify({ ...selection, scopeCode: directCity.code, scopeKind: "independent", cityCode, barangayCode: "", manilaDistrict: "", customManilaDistrict: "", customManilaDistrictActive: false, customCity: "", customCityActive: false, customBarangay: "", customBarangayActive: false });
     } else {
-      notify({ ...selection, cityCode, barangayCode: "", customCity: "", customCityActive: false, customBarangay: "", customBarangayActive: false });
+      notify({ ...selection, cityCode, barangayCode: "", manilaDistrict: "", customManilaDistrict: "", customManilaDistrictActive: false, customCity: "", customCityActive: false, customBarangay: "", customBarangayActive: false });
     }
   }
 
@@ -196,10 +235,15 @@ export function PlaceOfBirthField({ value = null, onChange, required = false }) 
     code,
     name: kind === "independent" ? `${name} (independent city; no province)` : name,
   }));
-  const cityOptions = (isNcr ? (region?.independent || []) : cities).map(({ code, name, type }) => ({
-    code,
-    name: `${name}${type === "municipality" ? " (municipality)" : ""}`,
-  }));
+  const cityOptions = (isNcr ? (region?.independent || []) : cities).map(({ code, name, type }) => {
+    const displayName = name === "Quezon City"
+      ? name
+      : name.replace(/^City of\s+/i, "").replace(/\s+City$/i, "");
+    return {
+      code,
+      name: `${displayName}${type === "municipality" ? " (municipality)" : ""}`,
+    };
+  });
 
   return (
     <div className="ht-place-of-birth">
@@ -268,25 +312,55 @@ export function PlaceOfBirthField({ value = null, onChange, required = false }) 
           </Field>
         )}
 
-        {hasCity && (
+        {(isNcr || hasCity) && (
           <>
-            <SearchableSelect
-              label="Barangay (Optional)"
-              value={selection.barangayCode || (selection.customBarangayActive ? OTHER : "")}
-              options={barangays}
-              onChange={(code) => {
-                if (code === OTHER) notify({ ...selection, barangayCode: "", customBarangay: "", customBarangayActive: true });
-                else notify({ ...selection, barangayCode: code, customBarangay: "", customBarangayActive: false });
-              }}
-              disabled={!selectedCity && !(selection.customCityActive && selection.customCity.trim())}
-              loading={loadingArea}
-              placeholder="Select a barangay (optional)"
-              includeOther
-            />
-            {selection.customBarangayActive && (
-              <Field label="Other barangay" >
-                <Input value={selection.customBarangay} onChange={(event) => notify({ ...selection, customBarangay: event.target.value })} placeholder="Enter an unlisted barangay" />
-              </Field>
+            {isManila ? (
+              selection.customManilaDistrictActive ? (
+                <Field label="District (Optional)">
+                  <Input
+                    autoFocus
+                    value={selection.customManilaDistrict}
+                    onChange={(event) => notify({ ...selection, manilaDistrict: "", customManilaDistrict: event.target.value, barangayCode: "", customBarangay: "", customBarangayActive: false })}
+                    placeholder="Enter another Manila district"
+                  />
+                  <button type="button" className="ht-small-button" onClick={() => notify({ ...selection, manilaDistrict: "", customManilaDistrict: "", customManilaDistrictActive: false })}>Choose from districts</button>
+                </Field>
+              ) : (
+                <SearchableSelect
+                  label="District (Optional)"
+                  value={selection.manilaDistrict}
+                  options={manilaDistricts}
+                  onChange={(district) => {
+                    if (district === OTHER) notify({ ...selection, manilaDistrict: "", customManilaDistrict: "", customManilaDistrictActive: true, barangayCode: "", customBarangay: "", customBarangayActive: false });
+                    else notify({ ...selection, manilaDistrict: district, customManilaDistrict: "", customManilaDistrictActive: false, barangayCode: "", customBarangay: "", customBarangayActive: false });
+                  }}
+                  disabled={!selectedCity}
+                  loading={loadingArea}
+                  placeholder="Select a Manila district"
+                  includeOther
+                />
+              )
+            ) : (
+              <>
+                <SearchableSelect
+                  label="Barangay (Optional)"
+                  value={selection.barangayCode || (selection.customBarangayActive ? OTHER : "")}
+                  options={barangays}
+                  onChange={(code) => {
+                    if (code === OTHER) notify({ ...selection, barangayCode: "", customBarangay: "", customBarangayActive: true });
+                    else notify({ ...selection, barangayCode: code, customBarangay: "", customBarangayActive: false });
+                  }}
+                  disabled={!selectedCity && !(selection.customCityActive && selection.customCity.trim())}
+                  loading={loadingArea}
+                  placeholder="Select a barangay (optional)"
+                  includeOther
+                />
+                {selection.customBarangayActive && (
+                  <Field label="Other barangay">
+                    <Input value={selection.customBarangay} onChange={(event) => notify({ ...selection, customBarangay: event.target.value })} placeholder="Enter an unlisted barangay" />
+                  </Field>
+                )}
+              </>
             )}
           </>
         )}

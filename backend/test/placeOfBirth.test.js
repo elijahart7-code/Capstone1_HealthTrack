@@ -78,6 +78,66 @@ test("accepts an NCR independent city without a province", async () => {
   assert.equal(result.verified, true);
 });
 
+test("Manila barangays retain and expose their official district metadata", async () => {
+  const area = await loadPsgcArea("1380600000");
+  const manila = area.cities[0];
+  const [code, name, district] = manila.barangays[0];
+  assert.ok(district);
+
+  const result = await validatePlaceOfBirth({
+    region_code: "1300000000",
+    area_code: "1380600000",
+    city_code: "1380600000",
+    barangay_code: code,
+  });
+  assert.equal(result.value.barangay_name, name);
+  assert.equal(result.value.barangay_district, district);
+  assert.ok(result.display.includes(district));
+});
+
+test("accepts a Manila district instead of requiring a numbered barangay", async () => {
+  const districts = [
+    "Tondo", "San Nicolas", "Binondo", "Santa Cruz", "Quiapo", "Sampaloc", "Santa Mesa", "San Miguel",
+    "Port Area", "Intramuros", "Ermita", "Paco", "Malate", "San Andres", "Pandacan", "Santa Ana",
+  ];
+  for (const district of districts) {
+    const result = await validatePlaceOfBirth({
+      region_code: "1300000000",
+      area_code: "1380600000",
+      city_code: "1380600000",
+      manila_district: district,
+    });
+    assert.equal(result.error, undefined, district);
+    assert.equal(result.value.manila_district, district);
+    assert.equal(result.value.barangay_code, null);
+    assert.match(result.display, new RegExp(`^${district},`));
+  }
+});
+
+test("accepts a custom Manila district only after Other / Specify is selected", async () => {
+  const result = await validatePlaceOfBirth({
+    region_code: "1300000000",
+    area_code: "1380600000",
+    city_code: "1380600000",
+    custom_manila_district_selected: true,
+    custom_manila_district: "Custom Manila district",
+  });
+  assert.equal(result.error, undefined);
+  assert.equal(result.verified, false);
+  assert.equal(result.value.manila_district, null);
+  assert.equal(result.value.custom_manila_district, "Custom Manila district");
+  assert.match(result.display, /^Custom Manila district,/);
+
+  const invalid = await validatePlaceOfBirth({
+    region_code: "1300000000",
+    area_code: "1380600000",
+    city_code: "1380600000",
+    custom_manila_district_selected: true,
+    custom_manila_district: "",
+  });
+  assert.match(invalid.error, /Enter the other Manila district/);
+});
+
 test("rejects a province or city outside the submitted parent", async () => {
   const wrongProvince = await validatePlaceOfBirth({
     region_code: "0200000000",
