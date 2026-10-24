@@ -7068,4 +7068,44 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
   }
 }
 
+/* Latest Allergies - same horizontal table format as Vital Signs */
+.patient-latest-allergies .patient-allergies-horizontal-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: 10px;
+}
+
+.patient-latest-allergies .patient-allergies-horizontal-table {
+  width: 100%;
+  min-width: 760px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.patient-latest-allergies .patient-allergies-horizontal-table th {
+  background-color: #fff5df;
+  color: #8b5b18;
+  padding: 14px 10px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid #f0e2c4;
+}
+
+.patient-latest-allergies .patient-allergies-horizontal-table td {
+  padding: 18px 10px;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #ffffff;
+  color: #294d3c;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid #e8eee9;
+}
+
     }
