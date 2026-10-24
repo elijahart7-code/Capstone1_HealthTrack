@@ -87,13 +87,36 @@ export function HealthInformation({ healthInfo }) {
   const records = healthInfo.records || {};
   const appointments = healthInfo.appointments || [];
   const now = Date.now();
-  const upcomingAppointment = appointments
+  
+const sortedAppointments = [...appointments]
+  .filter((appointment) =>
+    appointment?.scheduled_at &&
+    Number.isFinite(Date.parse(appointment.scheduled_at))
+  )
+  .sort(
+    (a, b) =>
+      Date.parse(b.scheduled_at) - Date.parse(a.scheduled_at)
+  );
+
+const upcomingAppointment =
+  sortedAppointments
     .filter((appointment) => {
       const scheduledTime = Date.parse(appointment.scheduled_at);
       const status = appointment.status?.toLowerCase();
-      return Number.isFinite(scheduledTime) && scheduledTime >= now && status !== "completed" && status !== "cancelled";
+
+      return (
+        scheduledTime >= now &&
+        status !== "completed" &&
+        status !== "cancelled"
+      );
     })
-    .sort((first, second) => Date.parse(first.scheduled_at) - Date.parse(second.scheduled_at))[0] || null;
+    .sort(
+      (a, b) =>
+        Date.parse(a.scheduled_at) - Date.parse(b.scheduled_at)
+    )[0] ||
+  sortedAppointments[0] ||
+  null;
+
   const patientName = [patient.first_name, patient.middle_name, patient.last_name]
     .filter(Boolean)
     .join(" ");
