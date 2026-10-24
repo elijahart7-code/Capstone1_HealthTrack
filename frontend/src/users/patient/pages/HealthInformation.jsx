@@ -767,18 +767,28 @@ function LatestMidwifeNotes({ definition, record }) {
 }
 function AllergyDetailRows({ rows }) {
   return (
-    <dl className="patient-allergy-detail-list">
-      {rows.map(({ key, label, icon: Icon, value }) => (
-        <div className="patient-allergy-detail-row" key={key}>
-          <span className="patient-allergy-detail-icon" aria-hidden="true">
-            <Icon size={17} strokeWidth={1.8} />
-          </span>
-          <dt>{label}</dt>
-          <span className="patient-allergy-detail-separator" aria-hidden="true">:</span>
-          <dd>{value || "Not recorded"}</dd>
-        </div>
-      ))}
-    </dl>
+    <div className="patient-table-wrap patient-allergies-horizontal-wrap">
+  <table className="patient-health-table patient-allergies-horizontal-table">
+    <thead>
+      <tr>
+        {rows.map(({ key, label }) => (
+          <th scope="col" key={key}>
+            {label}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        {rows.map(({ key, value }) => (
+          <td key={key}>
+            {value || "Not recorded"}
+          </td>
+        ))}
+      </tr>
+    </tbody>
+  </table>
+</div>
   );
 }
 
