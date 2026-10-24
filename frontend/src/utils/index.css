@@ -7018,4 +7018,54 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
   font-size: 12px;
   font-weight: 400;
 }
+
+/* Latest Allergies - horizontal table in Patient Profile */
+.patient-latest-allergies .patient-allergy-horizontal-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid #f0e2c4;
+  border-radius: 10px;
+}
+
+.patient-latest-allergies .patient-allergy-horizontal-table {
+  width: 100%;
+  min-width: 760px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0;
+}
+
+.patient-latest-allergies .patient-allergy-horizontal-table th {
+  padding: 12px 10px;
+  background: #fff5df;
+  color: #8b5b18;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid #f0e2c4;
+}
+
+.patient-latest-allergies .patient-allergy-horizontal-table td {
+  padding: 14px 10px;
+  background: #fff;
+  color: #293a34;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  border-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .patient-latest-allergies .patient-allergy-horizontal-table {
+    min-width: 760px;
+  }
+}
+
     }
