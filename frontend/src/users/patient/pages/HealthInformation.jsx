@@ -638,17 +638,10 @@ function LatestVitalSigns({ definition, record }) {
 }
 
 
-
 function LatestHealthAssessment({ definition, record }) {
-  const assessmentFields = [
-    { key: "condition", label: "Condition" },
-    { key: "description", label: "Description" },
-    { key: "status", label: "Status" },
-    { key: "medication", label: "Medication" },
-    { key: "remarks", label: "Remarks" },
-  ];
-
-  const hasAssessment = Boolean(record);
+  const assessmentItems = Object.entries(definition?.fields || {}).filter(
+    ([, field]) => field.column || field.primary
+  );
 
   return (
     <LatestRecordCard
@@ -658,29 +651,40 @@ function LatestHealthAssessment({ definition, record }) {
       definition={definition}
       record={record}
     >
-      {hasAssessment ? (
-        <div className="patient-table-wrap">
-          <table className="patient-health-table">
+      {record && assessmentItems.length > 0 ? (
+        <div className="patient-table-wrap patient-assessment-horizontal-wrap">
+          <table className="patient-health-table patient-assessment-horizontal-table">
             <thead>
               <tr>
-                {assessmentFields.map(({ key, label }) => (
+                {assessmentItems.map(([key, field]) => (
                   <th scope="col" key={key}>
-                    {label}
+                    {field.label}
                   </th>
                 ))}
-                <th scope="col">Assessment Date</th>
+                <th scope="col">
+                  {definition.dateLabel || "Assessment Date"}
+                </th>
               </tr>
             </thead>
 
             <tbody>
               <tr>
-                {assessmentFields.map(({ key }) => (
-                  <td key={key}>
-                    {record[key] ?? "--"}
-                  </td>
-                ))}
+                {assessmentItems.map(([key, field]) => {
+                  const value = record[key];
+                  const displayValue =
+                    field.type === "select" && value
+                      ? field.options?.[value] || value
+                      : value;
+
+                  return (
+                    <td key={key}>
+                      {displayValue || "--"}
+                    </td>
+                  );
+                })}
+
                 <td>
-                  {formatRecordDate(record.assessment_date) || "--"}
+                  {formatRecordDate(record[definition.dateField]) || "--"}
                 </td>
               </tr>
             </tbody>
@@ -694,7 +698,6 @@ function LatestHealthAssessment({ definition, record }) {
     </LatestRecordCard>
   );
 }
-
 
 
 function LatestAllergies({ definition, record }) {
