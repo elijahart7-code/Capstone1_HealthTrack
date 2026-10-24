@@ -1,3 +1,4 @@
+import { PatientExportButton } from "../../../shared/ExportDialog";
 import { useEffect, useMemo, useState } from "react";
 import { CalendarDays, Eye } from "lucide-react";
 import { useSearchParams } from "react-router";
@@ -62,6 +63,7 @@ export function Patients({ patients, loadData }) {
   if (selectedId) {
     return (
       <PatientRecord
+        key={selectedId}
         patientId={selectedId}
         role="health_worker"
         onBack={() => setSearchParams({ page: "patients" })}
@@ -133,6 +135,7 @@ export function Patients({ patients, loadData }) {
                     )}
                   </Td>
                   <Td>
+                    <PatientExportButton patient={p} />
                     <button
                       type="button"
                       onClick={() => setSearchParams({ page: "patients", patientId: p.patient_id })}

@@ -1,20 +1,14 @@
+import { AppointmentWorkspace } from "./AppointmentWorkspace";
+import { PatientExportButton } from "../ExportDialog";
+import { useSearchParams } from "react-router";
 import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { calculateAge } from "../../utils/calculateAge";
-import { RECORD_TYPES } from "../../config/recordTypes";
-import { Combobox, Field, Input, Select, Textarea } from "../../components/ui/Input";
-import { APPOINTMENT_REASONS } from "../../config/healthOptions";
-import { Badge, EmptyState, Table, Th, Td } from "../../components/ui/Table";
-import { ClinicalRecords } from "./ClinicalRecords";
+import { Field, Input } from "../../components/ui/Input";
 import { PlaceOfBirthField } from "./PlaceOfBirthField";
 
 import {
   UserRound,
-  HeartPulse,
-  ClipboardList,
-  FileText,
-  BriefcaseMedical,
-  TriangleAlert,
   ArrowLeft,
   Calendar,
   MapPin,
@@ -24,13 +18,10 @@ import {
   IdCard,
   Flag,
   User,
-  Pencil,
   Archive,
   ArchiveRestore,
 } from "lucide-react";
 
-const APPOINTMENT_STATUSES = ["pending", "confirmed", "completed", "cancelled"];
-const OVERVIEW_RECORD_TYPES = ["vital-signs", "health-assessment", "allergies", "midwife-notes"];
 
 export function PatientRecord({
   patientId,
@@ -39,22 +30,14 @@ export function PatientRecord({
   onPatientUpdated,
 }) {
   const isAdmin = role === "admin";
+  const [searchParams] = useSearchParams();
 
   const [patient, setPatient] = useState(null);
   const [appointments, setAppointments] = useState([]);
-  const [section, setSection] = useState("profile");
-  const [overviewRecords, setOverviewRecords] = useState({});
-  const [overviewLoading, setOverviewLoading] = useState(true);
+  const [section, setSection] = useState(searchParams.get("appointmentId") ? "appointments" : "general");
+  useEffect(() => { if (searchParams.get("appointmentId")) setSection("appointments"); }, [searchParams]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
-
-  const [showAppointmentForm, setShowAppointmentForm] = useState(false);
-  const [scheduledAt, setScheduledAt] = useState("");
-  const [reason, setReason] = useState("");
-  const [notes, setNotes] = useState("");
-  const [status, setStatus] = useState("pending");
-  const [apptError, setApptError] = useState(null);
-  const [appointmentReasons, setAppointmentReasons] = useState(APPOINTMENT_REASONS);
 
   const [showAccountForm, setShowAccountForm] = useState(false);
   const [portalEmail, setPortalEmail] = useState("");
@@ -93,91 +76,6 @@ export function PatientRecord({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId]);
-
-  useEffect(() => {
-    api.get("/patients/options")
-      .then(({ data }) => {
-        if (data.options?.appointment_reasons?.length) {
-          setAppointmentReasons(data.options.appointment_reasons);
-        }
-      })
-      .catch((err) => console.error("Could not load appointment reason values.", err));
-  }, []);
-
-  async function loadOverview() {
-    setOverviewLoading(true);
-    const entries = await Promise.all(
-      OVERVIEW_RECORD_TYPES.map(async (type) => {
-        try {
-          const { data } = await api.get(
-            `/patients/${patientId}/records/${type}`,
-            { params: { perPage: 1 } }
-          );
-          return [type, data.records?.[0] || null];
-        } catch {
-          return [type, null];
-        }
-      })
-    );
-    setOverviewRecords(Object.fromEntries(entries));
-    setOverviewLoading(false);
-  }
-
-  useEffect(() => {
-    loadOverview();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patientId]);
-
-  async function scheduleAppointment() {
-    setApptError(null);
-
-    if (!scheduledAt || !reason) {
-      setApptError("Date/time and reason are required.");
-      return;
-    }
-
-    try {
-      await api.post(`/patients/${patientId}/appointments`, {
-        scheduledAt,
-        reason,
-        notes,
-        status,
-      });
-
-      setScheduledAt("");
-      setReason("");
-      setNotes("");
-      setStatus("pending");
-      setShowAppointmentForm(false);
-
-      load();
-      onPatientUpdated?.();
-    } catch (err) {
-      setApptError(
-        err?.response?.data?.error ||
-          "Could not schedule that appointment."
-      );
-    }
-  }
-
-  async function deleteAppointment(appointmentId) {
-    if (!confirm("Remove this appointment?")) return;
-
-    await api.delete(`/appointments/${appointmentId}`);
-
-    load();
-    onPatientUpdated?.();
-  }
-
-  async function updateAppointmentStatus(appointmentId, nextStatus) {
-    await api.patch(`/appointments/${appointmentId}/status`, {
-      status: nextStatus,
-    });
-
-    load();
-    onPatientUpdated?.();
-  }
 
   async function saveBirthplace() {
     setBirthplaceError(null);
@@ -268,46 +166,8 @@ export function PatientRecord({
   }
 
   const sidebarItems = [
-    {
-      key: "profile",
-      label: "Patient Profile",
-      icon: UserRound,
-    },
-    {
-      key: "general",
-      label: "General Information",
-      icon: UserRound,
-    },
-    {
-      key: "vital-signs",
-      label: "Vital Signs",
-      icon: HeartPulse,
-      recordType: "vital-signs",
-    },
-    {
-      key: "health-assessment",
-      label: "Health Assessment",
-      icon: ClipboardList,
-      recordType: "health-assessment",
-    },
-    {
-      key: "midwife-notes",
-      label: "Midwife Notes",
-      icon: FileText,
-      recordType: "midwife-notes",
-    },
-    {
-      key: "allergies",
-      label: "Allergies",
-      icon: TriangleAlert,
-      recordType: "allergies",
-    },
-    {
-      key: "medical-history",
-      label: "Medical Histories",
-      icon: BriefcaseMedical,
-      recordType: "medical-history",
-    },
+    { key: "general", label: "Patient Information", icon: UserRound },
+    { key: "appointments", label: "Appointments", icon: Calendar },
   ];
 
   return (
@@ -330,6 +190,7 @@ export function PatientRecord({
         </div>
 
          <div className="ht-patient-actions">
+          <PatientExportButton patient={patient} />
           <button
             type="button"
             onClick={onBack}
@@ -382,7 +243,6 @@ export function PatientRecord({
                 type="button"
                 onClick={() => {
                   setSection(item.key);
-                  if (item.key === "profile") loadOverview();
                 }}
                 className={`ht-sidebar-item ${active ? "active" : ""}`}
               >
@@ -405,29 +265,7 @@ export function PatientRecord({
         {/* ================= RIGHT CONTENT ================= */}
         <main className="ht-patient-main">
 
-          {section === "profile" && (
-            <PatientOverview records={overviewRecords} loading={overviewLoading}>
-              <PatientAppointments
-                isAdmin={isAdmin}
-                appointments={appointments}
-                showAppointmentForm={showAppointmentForm}
-                setShowAppointmentForm={setShowAppointmentForm}
-                apptError={apptError}
-                scheduledAt={scheduledAt}
-                setScheduledAt={setScheduledAt}
-                status={status}
-                setStatus={setStatus}
-                reason={reason}
-                setReason={setReason}
-                notes={notes}
-                setNotes={setNotes}
-                scheduleAppointment={scheduleAppointment}
-                updateAppointmentStatus={updateAppointmentStatus}
-                deleteAppointment={deleteAppointment}
-                appointmentReasons={appointmentReasons}
-              />
-            </PatientOverview>
-          )}
+          {section === "appointments" && <AppointmentWorkspace patientId={patientId} appointments={appointments} role={role} onSaved={async () => { const {data} = await api.get(`/patients/${patientId}/appointments`); setAppointments(data.appointments || []); onPatientUpdated?.(); }} />}
 
           {/* GENERAL / PATIENT INFORMATION */}
           {section === "general" && (
@@ -696,19 +534,6 @@ export function PatientRecord({
           )}
 
 
-          {/* CLINICAL RECORDS */}
-          {section !== "general" && section !== "profile" && (
-            <ClinicalRecords
-              patientId={patientId}
-              type={
-                sidebarItems.find(
-                  (item) =>
-                    item.key === section
-                )?.recordType
-              }
-              role={role}
-            />
-          )}
 
         </main>
 
@@ -1524,224 +1349,5 @@ function Detail({ icon, label, value }) {
         <dd>{value || "--"}</dd>
       </div>
     </div>
-  );
-}
-
-function PatientAppointments({
-  isAdmin,
-  appointments,
-  showAppointmentForm,
-  setShowAppointmentForm,
-  apptError,
-  scheduledAt,
-  setScheduledAt,
-  status,
-  setStatus,
-  reason,
-  setReason,
-  notes,
-  setNotes,
-  scheduleAppointment,
-  updateAppointmentStatus,
-  deleteAppointment,
-  appointmentReasons,
-}) {
-  return (
-    <section className="ht-content-card ht-patient-appointments">
-      <div className="ht-card-heading">
-        <h2>Appointments</h2>
-        {isAdmin && (
-          <button
-            type="button"
-            onClick={() => setShowAppointmentForm((value) => !value)}
-            className="ht-small-button"
-          >
-            {showAppointmentForm ? "Cancel" : "Schedule appointment"}
-          </button>
-        )}
-      </div>
-
-      {showAppointmentForm && (
-        <div className="ht-form-box">
-          {apptError && <div className="ht-login-alert ht-login-alert-error">{apptError}</div>}
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="ht-field">
-              <label htmlFor="appointment-scheduled-at">
-                Date and time<span style={{ color: "var(--color-danger)" }}>*</span>
-              </label>
-              <div className="ht-date-time-controls">
-                <Input
-                  id="appointment-scheduled-at"
-                  type="datetime-local"
-                  value={scheduledAt}
-                  onChange={(event) => setScheduledAt(event.target.value)}
-                />
-                <button
-                  type="button"
-                  className="ht-small-button ht-date-time-ok"
-                  aria-label="Confirm date and time"
-                >
-                  OK
-                </button>
-              </div>
-            </div>
-            <Field label="Status">
-              <Select value={status} onChange={(event) => setStatus(event.target.value)}>
-                {APPOINTMENT_STATUSES.map((option) => (
-                  <option key={option} value={option}>
-                    {option.charAt(0).toUpperCase() + option.slice(1)}
-                  </option>
-                ))}
-              </Select>
-            </Field>
-          </div>
-          <Field label="Reason" required>
-            <Combobox
-              options={appointmentReasons}
-              value={reason}
-              onChange={(event) => setReason(event.target.value)}
-              placeholder="e.g. Prenatal check-up"
-            />
-          </Field>
-          <Field label="Notes">
-            <Textarea value={notes} onChange={(event) => setNotes(event.target.value)} />
-          </Field>
-          <div className="ht-form-buttons">
-            <button type="button" onClick={scheduleAppointment} className="ht-primary-button">
-              Save appointment
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowAppointmentForm(false)}
-              className="ht-secondary-button"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {appointments.length === 0 ? (
-        <EmptyState>No appointments for this patient.</EmptyState>
-      ) : (
-        <Table>
-          <thead>
-            <tr>
-              <Th>Date and time</Th>
-              <Th>Reason</Th>
-              <Th>Status</Th>
-              {isAdmin && <Th>Action</Th>}
-            </tr>
-          </thead>
-          <tbody>
-            {appointments.map((appointment) => (
-              <tr key={appointment.appointment_id}>
-                <Td>{new Date(appointment.scheduled_at).toLocaleString()}</Td>
-                <Td>{appointment.reason}</Td>
-                <Td>
-                  {isAdmin ? (
-                    <Select
-                      aria-label={`Update status for ${appointment.reason}`}
-                      value={appointment.status}
-                      className={`ht-status-select ht-status-select-${appointment.status}`}
-                      onChange={(event) => updateAppointmentStatus(appointment.appointment_id, event.target.value)}
-                    >
-                      {APPOINTMENT_STATUSES.map((option) => (
-                        <option key={option} value={option}>
-                          {option.charAt(0).toUpperCase() + option.slice(1)}
-                        </option>
-                      ))}
-                    </Select>
-                  ) : (
-                    <Badge>{appointment.status}</Badge>
-                  )}
-                </Td>
-                {isAdmin && (
-                  <Td>
-                    <button
-                      type="button"
-                      onClick={() => deleteAppointment(appointment.appointment_id)}
-                      className="ht-delete-button ht-patient-appointment-remove"
-                    >
-                      Remove
-                    </button>
-                  </Td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      )}
-    </section>
-  );
-}
-
-function PatientOverview({ records, loading, children }) {
-  return (
-    <div className="ht-patient-overview">
-      <header className="ht-overview-header">
-        <h2>Patient Profile</h2>
-        <p>Summary of the patient's latest health information.</p>
-      </header>
-      <div className="ht-overview-stack">
-        {children}
-        <OverviewRecordCard type="vital-signs" record={records["vital-signs"]} loading={loading} />
-        <OverviewRecordCard type="health-assessment" record={records["health-assessment"]} loading={loading} />
-        <OverviewRecordCard type="allergies" record={records.allergies} loading={loading} />
-        <OverviewRecordCard type="midwife-notes" record={records["midwife-notes"]} loading={loading} />
-      </div>
-    </div>
-  );
-}
-
-function OverviewRecordCard({ type, record, loading }) {
-  const definition = RECORD_TYPES[type];
-  const Icon = {
-    "vital-signs": HeartPulse,
-    "health-assessment": ClipboardList,
-    allergies: TriangleAlert,
-    "midwife-notes": FileText,
-  }[type];
-
-  const formatDate = (value) => value
-    ? new Date(value).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
-    : "Date not recorded";
-  const formatValue = (value, field) => {
-    if (value === null || value === undefined || value === "") return "--";
-    return field.options?.[value] || value;
-  };
-  const recordedDate = record
-    ? record[definition.dateField] || record.created_at
-    : null;
-
-  return (
-    <section className="ht-overview-card">
-      <div className="ht-overview-card-heading">
-        <h3><Icon size={16} /> Latest {definition.label}</h3>
-        <span>{loading ? "Loading..." : record ? `Recorded on ${formatDate(recordedDate)}` : "No record yet"}</span>
-      </div>
-      {loading ? (
-        <div className="ht-overview-empty">Loading {definition.label.toLowerCase()}...</div>
-      ) : !record ? (
-        <div className="ht-overview-empty">No {definition.label.toLowerCase()} has been recorded for this patient.</div>
-      ) : type === "midwife-notes" ? (
-        <>
-          <table className="ht-overview-table"><tbody>
-            <tr><th>Consultation Date</th><td>{formatDate(record[definition.dateField])}</td></tr>
-            <tr><th>Recorded By</th><td>{record.created_by_name || record.recorded_by_name || "--"}</td></tr>
-          </tbody></table>
-          <p className="ht-overview-notes">{record.notes || "No notes recorded."}</p>
-        </>
-      ) : (
-        <table className="ht-overview-table"><tbody>
-          {Object.entries(definition.fields).map(([column, field]) => (
-            <tr key={column}>
-              <th>{field.label.replace(/\s*\([^)]*\)/g, "")}</th>
-              <td>{formatValue(record[column], field)}</td>
-            </tr>
-          ))}
-        </tbody></table>
-      )}
-    </section>
   );
 }

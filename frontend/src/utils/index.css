@@ -4956,7 +4956,7 @@
 /*Patient dashboard subtitle*/
 .patient-dashboard-shell > p{
     font-size: 16px;
-    line-weight: 1.6;
+    line-height: 1.6;
 }
 /*Patient dashboard: feature card subtitles*/
 .patient-dashboard-shell .patient-feature-card p,
@@ -7020,3 +7020,38 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 }
 
     }
+.ht-export-dialog { width: min(600px, 94vw); max-height: 85vh; overflow: auto; margin: auto; border: 1px solid #cbd8d1; border-radius: 14px; padding: 26px; color: #243c32; background: white; }
+.ht-export-dialog::backdrop { background: #10251db0; }
+.ht-export-dialog h2 { font-size: 1.3rem; font-weight: 750; margin-bottom: 12px; }
+.ht-export-dialog p { margin: 12px 0; font-size: 13px; }
+.ht-export-options { display: grid; gap: 12px; margin: 20px 0; }
+.ht-export-options input { margin-right: 8px; }
+.ht-export-dialog input[type=number] { border: 1px solid #bccfc4; padding: 8px; width: 90px; margin-left: 10px; }
+.ht-export-document { display: none; }
+.ht-dashboard-screen .ht-metric-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.ht-activity-layout { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: 16px; }
+.ht-activity-layout > .ht-chart-card { height: 350px; min-width: 0; display: flex; flex-direction: column; }
+.ht-activity-layout .ht-trend-chart { flex: 1; min-height: 0; width: 100%; }
+.ht-follow-up-scroll { overflow-y: auto; min-height: 0; flex: 1; }
+.ht-appointment-scroll { max-height: 263px; overflow: auto; }
+.ht-appointment-scroll tbody tr { height: 54px; }
+.ht-appointment-scroll thead { position: sticky; top: 0; background: #eaf7f0; z-index: 1; }
+.ht-encounter-section { border: 1px solid #dce8e1; border-radius: 10px; margin-top: 14px; padding: 14px; background: white; }
+.ht-encounter-section > summary { cursor: pointer; font-weight: 750; color: #235c43; }
+@media(max-width:700px) { .ht-activity-layout { grid-template-columns: 1fr; } .ht-dashboard-screen .ht-metric-grid { grid-template-columns:1fr; } }
+@media print {
+ body.ht-exporting > :not(.ht-export-document) { display: none !important; }
+ body.ht-exporting > .ht-export-document { display:block!important; color: #111; font: 11px Arial,sans-serif; }
+ .ht-export-document section { margin-top: 24px; }
+ .ht-export-document h1 { font-size: 23px; } .ht-export-document h2 { font-size: 18px; margin: 16px 0; }
+ .ht-export-document table { width:100%; border-collapse:collapse; } .ht-export-document td,.ht-export-document th { border-bottom:1px solid #ddd; padding:7px; text-align:left; overflow-wrap:anywhere; }
+ .ht-export-document thead { display:table-header-group; } .ht-export-document tr,.ht-export-record { break-inside:avoid; }
+ .ht-export-document dl > div { display:grid; grid-template-columns: 180px 1fr; gap:12px; padding:5px; } .ht-export-document dt { font-weight: bold; }
+ .ht-export-document .ht-chart-card { box-shadow:none; } .ht-export-document button { color:inherit; }
+}
+
+.ht-dashboard-screen .ht-bar-chart { max-height: 300px; overflow-y: auto; }
+.ht-appointment-scroll .ht-table-scroll { overflow: visible; }
+.ht-appointment-scroll .ht-table td { height: 54px; white-space: nowrap; }
+.ht-appointment-scroll .ht-table th { height: 46px; }
+.ht-appointment-scroll { max-height: 262px; }

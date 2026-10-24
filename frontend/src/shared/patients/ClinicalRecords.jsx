@@ -40,17 +40,19 @@ import { Combobox, Field, Input, MultiCombobox, Select, Textarea } from "../../c
  * per-record-type branching.
  */
 
-export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
+export function ClinicalRecords({ patientId, type, role, readOnly = false, appointmentId, appointmentDate, appendOnly = false }) {
   const definition = RECORD_TYPES[type];
 
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
+  const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [perPage, setPerPage] = useState(10);
   const [form, setForm] = useState({});
   const [editingRecord, setEditingRecord] = useState(null);
   const [recordDate, setRecordDate] = useState(
-    new Date().toISOString().slice(0, 10)
+    appointmentDate || new Date().toLocaleDateString("en-CA")
   );
   const [error, setError] = useState(null);
   const [healthOptions, setHealthOptions] = useState({});
@@ -59,18 +61,19 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
 
   async function load() {
     setLoading(true);
+    setLoadError(null);
 
     try {
       const { data } = await api.get(
         `/patients/${patientId}/records/${type}`,
         {
-          params: { perPage },
+          params: { perPage, appointmentId },
         }
       );
 
       setRecords(data.records || []);
     } catch (err) {
-      console.error(err);
+      setLoadError(err?.response?.data?.error || "Could not load clinical records.");
       setRecords([]);
     } finally {
       setLoading(false);
@@ -81,7 +84,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     load();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, perPage]);
+  }, [patientId, type, perPage, appointmentId]);
 
   useEffect(() => {
     api.get("/patients/options")
@@ -97,7 +100,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
     });
 
     setForm(blank);
-    setRecordDate(new Date().toISOString().slice(0, 10));
+    setRecordDate(appointmentDate || new Date().toLocaleDateString("en-CA"));
     setError(null);
     setEditingRecord(null);
   }
@@ -124,10 +127,12 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
   }
 
   async function handleSave() {
+    if (saving) return;
+    setSaving(true);
     setError(null);
 
     try {
-      const payload = { ...form, recordDate };
+      const payload = { ...form, recordDate, appointmentId };
       const url = editingRecord
         ? `/patients/${patientId}/records/${type}/${editingRecord.record_id}`
         : `/patients/${patientId}/records/${type}`;
@@ -142,6 +147,8 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
         err?.response?.data?.error ||
           "Could not save that record."
       );
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -369,7 +376,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
               ) : (
                 <>
                   <Plus size={16} />
-                  {isMidwifeNotes ? "Add Midwife Note" : "Add New Assessment"}
+                  {`Add ${definition.singular}`}
                 </>
               )}
             </button>
@@ -489,10 +496,11 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
           <div className="ht-health-form-buttons">
             <button
               type="button"
+              disabled={saving}
               onClick={handleSave}
               className="ht-health-save-button"
             >
-              {editingRecord ? "Save Changes" : "Save Assessment"}
+              {saving ? "Saving…" : `Save ${definition.singular}`}
             </button>
 
             <button
@@ -507,9 +515,9 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
       )}
 
       {/* CONTENT */}
-      {loading ? (
+      {loadError ? <div role="alert">{loadError}<button className="ht-small-button" onClick={load}>Retry</button></div> : loading ? (
         <div className="ht-health-empty">
-          <p>Loading health assessments...</p>
+          <p>Loading clinical records…</p>
         </div>
       ) : records.length === 0 ? (
         <div className="ht-health-empty">
@@ -517,15 +525,15 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
             <ClipboardList size={25} />
           </div>
 
-          <h3>{isMidwifeNotes ? "No Midwife Notes" : "No Health Assessment"}</h3>
+          <h3>{`No ${definition.label} records`}</h3>
 
           <p>
             {isMidwifeNotes
               ? "No midwife notes have been recorded for this patient."
-              : "No health assessment has been recorded for this patient."}
+              : "No records have been recorded for this appointment."}
           </p>
 
-          {canManage && (
+          {canManage && !appendOnly && (
             <button
               type="button"
               onClick={() => {
@@ -535,7 +543,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
               className="ht-health-empty-button"
             >
               <Plus size={16} />
-              {isMidwifeNotes ? "Add Midwife Note" : "Add New Assessment"}
+              {`Add ${definition.singular}`}
             </button>
           )}
         </div>
@@ -572,7 +580,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
                     </ul>
                   </div>
 
-                  {canManage && (
+                  {canManage && !appendOnly && (
                     <div className="ht-assessment-buttons ht-midwife-notes-actions">
                       <button
                         type="button"
@@ -665,7 +673,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
             )}
           </div>
 
-          {canManage && (
+          {canManage && !appendOnly && (
             <div className="ht-assessment-buttons">
               <button
                 type="button"
@@ -801,7 +809,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false }) {
             )}
           </div>
 
-          {canManage && (
+          {canManage && !appendOnly && (
             <div className="ht-assessment-buttons">
               <button
                 type="button"

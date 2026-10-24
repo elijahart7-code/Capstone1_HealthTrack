@@ -181,6 +181,11 @@ export async function createClinicalRecord(req, res) {
     }
   }
 
+  const appointmentId = body.appointmentId || null;
+  if (appointmentId) {
+    const matches = await sql`SELECT appointment_id FROM appointments WHERE appointment_id = ${appointmentId} AND patient_id = ${patientId}`;
+    if (!matches.length) return res.status(422).json({ error: "Appointment does not belong to this patient." });
+  }
   const recordId = await generateRecordId(definition.table);
   const columns = Object.keys(definition.fields);
   const values = columns.map((c) => body[c] ?? null);
@@ -188,9 +193,9 @@ export async function createClinicalRecord(req, res) {
   // Column list is dynamic (driven by RECORD_TYPES), so this uses
   // sql.query() with positional params rather than the tagged template --
   // every value is still bound as a parameter, never string-concatenated.
-  const allColumns = ["record_id", "patient_id", "created_by", ...columns, definition.dateField];
+  const allColumns = ["record_id", "patient_id", "appointment_id", "created_by", ...columns, definition.dateField];
   const placeholders = allColumns.map((_, i) => `$${i + 1}`).join(", ");
-  const params = [recordId, patientId, req.user.user_id, ...values, recordDate];
+  const params = [recordId, patientId, appointmentId, req.user.user_id, ...values, recordDate];
 
   const rows = await sql.query(
     `INSERT INTO ${definition.table} (${allColumns.join(", ")}) VALUES (${placeholders}) RETURNING *`,

@@ -56,7 +56,7 @@ export async function getAppointments(_req, res) {
 
 /** GET /api/admin/reports -- aggregate dashboard data for charts and exports. */
 export async function getReports(req, res) {
-  const period = ["day", "week", "month", "quarter", "year"].includes(req.query.period) ? req.query.period : "month";
+  const period = ["hour", "day", "week", "month", "quarter", "year"].includes(req.query.period) ? req.query.period : "month";
   const status = ["pending", "confirmed", "completed", "cancelled"].includes(req.query.status)
     ? req.query.status
     : null;
@@ -68,25 +68,25 @@ export async function getReports(req, res) {
     : new Date().toISOString().slice(0, 10);
   const statusClause = status ? " AND a.status = $3" : "";
   const statusValues = status ? [dateFrom, dateTo, status] : [dateFrom, dateTo];
-  const interval = { day: "1 day", week: "1 week", month: "1 month", quarter: "3 months", year: "1 year" }[period];
+  const interval = { hour: "1 hour", day: "1 day", week: "1 week", month: "1 month", quarter: "3 months", year: "1 year" }[period];
 
   const [
     trend,
     reasons,
     statuses,
     conditions,
-    followUps,
     patients,
+    followUps,
   ] = await Promise.all([
     sql.query(
       `WITH buckets AS (
          SELECT generate_series(
            date_trunc('${period}', $1::timestamp),
-           date_trunc('${period}', $2::timestamp),
+           date_trunc('${period}', $2::timestamp + INTERVAL '1 day' - INTERVAL '1 second'),
            INTERVAL '${interval}'
          ) AS period
        )
-       SELECT b.period::date,
+       SELECT to_char(b.period, 'YYYY-MM-DD"T"HH24:MI:SS') AS period,
               COUNT(a.id)::int AS total,
               COUNT(a.id) FILTER (WHERE a.status = 'completed')::int AS completed
        FROM buckets b
@@ -103,7 +103,7 @@ export async function getReports(req, res) {
        FROM appointments a
        WHERE scheduled_at >= $1::date
          AND scheduled_at < ($2::date + INTERVAL '1 day')${statusClause}
-       GROUP BY 1 ORDER BY count DESC LIMIT 8`,
+       GROUP BY 1 ORDER BY count DESC`,
       statusValues
     ),
     sql.query(
@@ -118,7 +118,7 @@ export async function getReports(req, res) {
       `SELECT COALESCE(NULLIF(TRIM(condition), ''), 'Not specified') AS label, COUNT(*)::int AS count
        FROM health_assessments
        WHERE assessment_date >= $1::date AND assessment_date < ($2::date + INTERVAL '1 day')
-       GROUP BY 1 ORDER BY count DESC LIMIT 8`,
+       GROUP BY 1 ORDER BY count DESC`,
       [dateFrom, dateTo]
     ),
     sql.query(
@@ -136,15 +136,17 @@ export async function getReports(req, res) {
       [dateFrom, dateTo]
     ),
     sql.query(
-      `SELECT DISTINCT ON (p.patient_id)
+      `SELECT DISTINCT ON (p.patient_id, ha.condition)
          p.patient_id, p.first_name, p.last_name,
          ha.condition, ha.status, ha.assessment_date
        FROM health_assessments ha
        JOIN patients p ON p.patient_id = ha.patient_id
        WHERE ha.status IN ('active', 'monitoring')
          AND p.archived_at IS NULL
-       ORDER BY p.patient_id, ha.assessment_date DESC
-       LIMIT 10`
+         AND ha.assessment_date >= $1::date AND ha.assessment_date < ($2::date + INTERVAL '1 day')
+         AND NOT EXISTS (SELECT 1 FROM health_assessments newer WHERE newer.patient_id = ha.patient_id AND newer.condition = ha.condition AND (newer.assessment_date, newer.id) > (ha.assessment_date, ha.id))
+       ORDER BY p.patient_id, ha.condition, ha.assessment_date DESC, ha.id DESC`,
+      [dateFrom, dateTo]
     ),
   ]);
 
@@ -152,7 +154,7 @@ export async function getReports(req, res) {
     message: "Reports retrieved.",
     filters: { period, status, from: dateFrom, to: dateTo },
     trend, reasons, statuses, conditions,
-    followUps,
     patients,
+    followUps,
   });
 }

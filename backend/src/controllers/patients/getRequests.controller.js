@@ -95,14 +95,15 @@ export async function getClinicalRecords(req, res) {
   }
 
   const definition = RECORD_TYPES[type];
-  const perPage = Math.min(200, Number(req.query.perPage) || 10);
+  const perPage = Math.max(1, Math.min(10000, Number(req.query.perPage) || 10));
+  const appointmentId = req.query.appointmentId || null;
 
   // definition.table / definition.dateField come from our own fixed
   // RECORD_TYPES map, never from user input, so interpolating them into the
   // query text is safe; patientId and perPage are still bound params.
   const records = await sql.query(
-    `SELECT * FROM ${definition.table} WHERE patient_id = $1 ORDER BY ${definition.dateField} DESC, id DESC LIMIT $2`,
-    [patientId, perPage]
+    `SELECT * FROM ${definition.table} WHERE patient_id = $1 AND ($3::text IS NULL OR appointment_id = $3) ORDER BY ${definition.dateField} DESC, id DESC LIMIT $2`,
+    [patientId, perPage, appointmentId]
   );
 
   return res.status(200).json({ message: "Records retrieved.", type, definition, records });

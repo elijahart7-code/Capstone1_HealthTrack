@@ -206,6 +206,7 @@ const TABLES = [
     createSQL: `CREATE TABLE IF NOT EXISTS health_assessments (
       id             SERIAL PRIMARY KEY,
       record_id      VARCHAR(255) UNIQUE NOT NULL,
+      appointment_id VARCHAR(255) REFERENCES appointments(appointment_id),
       patient_id     VARCHAR(255) NOT NULL REFERENCES patients(patient_id),
       created_by     VARCHAR(255) REFERENCES users(user_id),
       condition      VARCHAR(255) NOT NULL,
@@ -220,6 +221,7 @@ const TABLES = [
     columns: {
       id: "SERIAL PRIMARY KEY",
       record_id: "VARCHAR(255) UNIQUE NOT NULL",
+      appointment_id: "VARCHAR(255) REFERENCES appointments(appointment_id)",
       patient_id: "VARCHAR(255) NOT NULL REFERENCES patients(patient_id)",
       created_by: "VARCHAR(255) REFERENCES users(user_id)",
       condition: "VARCHAR(255) NOT NULL",
@@ -238,6 +240,7 @@ const TABLES = [
     createSQL: `CREATE TABLE IF NOT EXISTS vital_signs (
       id                  SERIAL PRIMARY KEY,
       record_id           VARCHAR(255) UNIQUE NOT NULL,
+      appointment_id VARCHAR(255) REFERENCES appointments(appointment_id),
       patient_id          VARCHAR(255) NOT NULL REFERENCES patients(patient_id),
       created_by          VARCHAR(255) REFERENCES users(user_id),
       blood_pressure      VARCHAR(20) NOT NULL,
@@ -256,6 +259,7 @@ const TABLES = [
     columns: {
       id: "SERIAL PRIMARY KEY",
       record_id: "VARCHAR(255) UNIQUE NOT NULL",
+      appointment_id: "VARCHAR(255) REFERENCES appointments(appointment_id)",
       patient_id: "VARCHAR(255) NOT NULL REFERENCES patients(patient_id)",
       created_by: "VARCHAR(255) REFERENCES users(user_id)",
       blood_pressure: "VARCHAR(20) NOT NULL",
@@ -278,6 +282,7 @@ const TABLES = [
     createSQL: `CREATE TABLE IF NOT EXISTS midwife_notes (
       id               SERIAL PRIMARY KEY,
       record_id        VARCHAR(255) UNIQUE NOT NULL,
+      appointment_id VARCHAR(255) REFERENCES appointments(appointment_id),
       patient_id       VARCHAR(255) NOT NULL REFERENCES patients(patient_id),
       created_by       VARCHAR(255) REFERENCES users(user_id),
       consultation_date DATE NOT NULL,
@@ -288,6 +293,7 @@ const TABLES = [
     columns: {
       id: "SERIAL PRIMARY KEY",
       record_id: "VARCHAR(255) UNIQUE NOT NULL",
+      appointment_id: "VARCHAR(255) REFERENCES appointments(appointment_id)",
       patient_id: "VARCHAR(255) NOT NULL REFERENCES patients(patient_id)",
       created_by: "VARCHAR(255) REFERENCES users(user_id)",
       consultation_date: "DATE NOT NULL",
@@ -302,6 +308,7 @@ const TABLES = [
     createSQL: `CREATE TABLE IF NOT EXISTS medical_histories (
       id                        SERIAL PRIMARY KEY,
       record_id                 VARCHAR(255) UNIQUE NOT NULL,
+      appointment_id VARCHAR(255) REFERENCES appointments(appointment_id),
       patient_id                VARCHAR(255) NOT NULL REFERENCES patients(patient_id),
       created_by                VARCHAR(255) REFERENCES users(user_id),
       past_illnesses            TEXT NOT NULL,
@@ -317,6 +324,7 @@ const TABLES = [
     columns: {
       id: "SERIAL PRIMARY KEY",
       record_id: "VARCHAR(255) UNIQUE NOT NULL",
+      appointment_id: "VARCHAR(255) REFERENCES appointments(appointment_id)",
       patient_id: "VARCHAR(255) NOT NULL REFERENCES patients(patient_id)",
       created_by: "VARCHAR(255) REFERENCES users(user_id)",
       past_illnesses: "TEXT NOT NULL",
@@ -336,6 +344,7 @@ const TABLES = [
     createSQL: `CREATE TABLE IF NOT EXISTS allergies (
       id                    SERIAL PRIMARY KEY,
       record_id             VARCHAR(255) UNIQUE NOT NULL,
+      appointment_id VARCHAR(255) REFERENCES appointments(appointment_id),
       patient_id            VARCHAR(255) NOT NULL REFERENCES patients(patient_id),
       created_by            VARCHAR(255) REFERENCES users(user_id),
       medication_allergies TEXT NOT NULL,
@@ -351,6 +360,7 @@ const TABLES = [
     columns: {
       id: "SERIAL PRIMARY KEY",
       record_id: "VARCHAR(255) UNIQUE NOT NULL",
+      appointment_id: "VARCHAR(255) REFERENCES appointments(appointment_id)",
       patient_id: "VARCHAR(255) NOT NULL REFERENCES patients(patient_id)",
       created_by: "VARCHAR(255) REFERENCES users(user_id)",
       medication_allergies: "TEXT NOT NULL",
@@ -376,6 +386,11 @@ export async function connectNeon() {
   try {
     for (const { createSQL } of TABLES) {
       await sql.query(createSQL);
+    }
+    // Additive migration: preserve earlier records with a NULL appointment link.
+    for (const table of ["health_assessments", "vital_signs", "midwife_notes", "medical_histories", "allergies"]) {
+      await sql.query(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS appointment_id VARCHAR(255) REFERENCES appointments(appointment_id)`);
+      await sql.query(`CREATE INDEX IF NOT EXISTS ${table}_appointment_idx ON ${table} (patient_id, appointment_id)`);
     }
 
     await sql`

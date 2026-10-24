@@ -1,3 +1,4 @@
+import { PatientExportButton } from "../../../shared/ExportDialog";
 import { useEffect, useMemo, useState } from "react";
 import { Archive, Eye, Search, Users } from "lucide-react";
 import { useSearchParams } from "react-router";
@@ -90,6 +91,7 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
   if (selectedId) {
     return (
       <PatientRecord
+        key={selectedId}
         patientId={selectedId}
         role="admin"
         onBack={() => setSearchParams({ page: "patients" })}
@@ -174,10 +176,11 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                         <span className="ht-record-action-icon">
                           <Eye size={15} strokeWidth={2} />
                         </span>
-                        Open / Modify
+                        Open record
                       </button>
                     </Td>
                     <Td>
+                      <PatientExportButton patient={p} />
                       {showArchived ? (
                         <button
                           type="button"

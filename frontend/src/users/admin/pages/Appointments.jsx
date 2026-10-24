@@ -117,7 +117,7 @@ export function Appointments({ appointments, loadData }) {
                       </Td>
                       <Td>
                         <button
-                          onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id })}
+                          onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id, appointmentId: a.appointment_id })}
                           style={{ color: "var(--color-brand-strong)", fontWeight: 700 }}
                         >
                           {a.last_name}, {a.first_name}
@@ -141,13 +141,13 @@ export function Appointments({ appointments, loadData }) {
                       <Td>
                         <button
                           type="button"
-                          onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id })}
+                          onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id, appointmentId: a.appointment_id })}
                           className="ht-record-action"
                         >
                           <span className="ht-record-action-icon">
                             <Eye size={15} strokeWidth={2} />
                           </span>
-                          Open / Modify
+                          Open appointment
                         </button>
                       </Td>
                     </tr>
