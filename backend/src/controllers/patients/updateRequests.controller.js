@@ -3,7 +3,7 @@ import { AppointmentPolicy, ClinicalRecordPolicy, PatientPolicy } from "../../po
 import { isRecordType, RECORD_TYPES } from "../../config/recordTypes.js";
 import { validatePlaceOfBirth } from "../../utils/placeOfBirth.js";
 
-const VALID_STATUSES = ["pending", "confirmed", "completed", "cancelled"];
+const VALID_STATUSES = ["confirmed", "cancelled"];
 
 /**
  * PATCH /api/appointments/:appointmentId/status
@@ -15,6 +15,7 @@ export async function updateAppointmentStatus(req, res) {
   }
 
   const { status } = req.body;
+  if (status === "completed") return res.status(422).json({ error: "Use Finish recording to complete an appointment." });
   if (!status || !VALID_STATUSES.includes(status)) {
     return res.status(422).json({ error: "Unknown appointment status." });
   }

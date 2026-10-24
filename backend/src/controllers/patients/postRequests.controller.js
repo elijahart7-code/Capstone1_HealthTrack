@@ -85,11 +85,14 @@ export async function createAppointment(req, res) {
     return res.status(422).json({ error: "Date/time and reason are required." });
   }
 
+  if (status && !["confirmed", "cancelled"].includes(status)) {
+    return res.status(422).json({ error: "Unknown appointment status." });
+  }
   const appointmentId = await generateAppointmentId();
 
   const rows = await sql`
     INSERT INTO appointments (appointment_id, patient_id, admin_id, scheduled_at, reason, notes, status)
-    VALUES (${appointmentId}, ${req.params.patientId}, ${req.user.user_id}, ${scheduledAt}, ${reason}, ${notes || null}, ${status || "pending"})
+    VALUES (${appointmentId}, ${req.params.patientId}, ${req.user.user_id}, ${scheduledAt}, ${reason}, ${notes || null}, ${status || "confirmed"})
     RETURNING *
   `;
 
@@ -203,4 +206,73 @@ export async function createClinicalRecord(req, res) {
   );
 
   return res.status(201).json({ message: `${definition.singular} added.`, record: rows[0] });
+}
+
+/** Save all required sections and complete the appointment in one transaction. */
+export async function createAppointmentRecords(req, res) {
+  if (!ClinicalRecordPolicy.create(req.user)) {
+    return res.status(403).json({ error: "Only an admin may add clinical records." });
+  }
+  const { patientId, appointmentId } = req.params;
+  const records = req.body.records;
+  if (!records || typeof records !== "object" || Array.isArray(records) || !Object.keys(records).length) {
+    return res.status(422).json({ error: "Choose at least one clinical section to save." });
+  }
+  const entries = Object.entries(records);
+  if (Object.keys(RECORD_TYPES).some(type => !Object.hasOwn(records, type))) {
+    return res.status(422).json({ error: "Complete all required clinical sections before finishing recording." });
+  }
+  // Validate every section before generating IDs or inserting any rows.
+  for (const [type, body] of entries) {
+    if (!isRecordType(type) || !body || typeof body !== "object" || Array.isArray(body)) {
+      return res.status(422).json({ error: "Unknown clinical section." });
+    }
+    const def = RECORD_TYPES[type];
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(body.recordDate || "") || !Number.isFinite(Date.parse(body.recordDate))) {
+      return res.status(422).json({ error: `${def.label}: a valid ${def.dateLabel.toLowerCase()} is required.` });
+    }
+    for (const [key, field] of Object.entries(def.fields)) {
+      const value = body[key];
+      if (field.required && !String(value ?? "").trim()) {
+        return res.status(422).json({ error: `${def.label}: ${field.label} is required.` });
+      }
+      if (value !== undefined && value !== null && value !== "") {
+        if (field.type === "number" && !Number.isFinite(Number(value))) {
+          return res.status(422).json({ error: `${def.label}: ${field.label} must be a number.` });
+        }
+        if (field.type === "select" && !Object.hasOwn(field.options, value)) {
+          return res.status(422).json({ error: `${def.label}: invalid ${field.label.toLowerCase()}.` });
+        }
+      }
+    }
+  }
+  const params = [patientId, appointmentId, req.user.user_id];
+  const ctes = [
+    `eligible AS (SELECT a.appointment_id FROM appointments a JOIN patients p ON p.patient_id = a.patient_id
+      WHERE a.patient_id = $1 AND a.appointment_id = $2 AND a.status = 'confirmed'
+      AND p.archived_at IS NULL FOR UPDATE OF a, p)`,
+  ];
+  for (const [index, [type, body]] of entries.entries()) {
+    const def = RECORD_TYPES[type];
+    const columns = Object.keys(def.fields);
+    const recordId = await generateRecordId(def.table);
+    const values = [recordId, ...columns.map(key => body[key] === "" ? null : body[key] ?? null), body.recordDate];
+    const slots = values.map(value => { params.push(value); return `$${params.length}`; });
+    ctes.push(`saved_${index} AS (INSERT INTO ${def.table}
+      (record_id, patient_id, appointment_id, created_by, ${columns.join(", ")}, ${def.dateField})
+      SELECT ${slots[0]}, $1, $2, $3, ${slots.slice(1).join(", ")} FROM eligible RETURNING record_id)`);
+  }
+  ctes.push(`finished AS (UPDATE appointments SET status = 'completed', updated_at = NOW()
+    WHERE appointment_id IN (SELECT appointment_id FROM eligible)
+    AND ${entries.map((_, i) => `(SELECT COUNT(*) FROM saved_${i}) = 1`).join(" AND ")}
+    RETURNING appointment_id)`);
+  // A single data-modifying CTE is a single PostgreSQL transaction on both
+  // local pg and Neon. Any insertion failure rolls back the whole session.
+  const result = await sql.query(`WITH ${ctes.join(",\n")}
+    SELECT (SELECT COUNT(*) FROM eligible)::int AS eligible, (SELECT COUNT(*) FROM finished)::int AS finished,
+      ${entries.map((_, i) => `(SELECT COUNT(*) FROM saved_${i})::int AS saved_${i}`).join(", ")}`, params);
+  if (!result[0]?.eligible || !result[0]?.finished) {
+    return res.status(409).json({ error: "This appointment is no longer available for recording. Your draft has not been saved." });
+  }
+  return res.status(201).json({ message: "Appointment recording completed.", appointmentStatus: "completed", sectionsSaved: entries.length });
 }

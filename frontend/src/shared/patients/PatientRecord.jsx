@@ -9,6 +9,7 @@ import { PlaceOfBirthField } from "./PlaceOfBirthField";
 
 import {
   UserRound,
+  BriefcaseMedical,
   ArrowLeft,
   Calendar,
   MapPin,
@@ -173,7 +174,7 @@ export function PatientRecord({
   return (
     <div className="ht-patient-page">
 
-      
+
       {/* ================= PATIENT HEADER ================= */}
       <section className="ht-patient-header">
 
@@ -556,102 +557,6 @@ export function PatientRecord({
           padding-bottom: 40px;
         }
 
-        /* TOP BAR */
-
-        .ht-topbar {
-          height: 72px;
-          display: flex;
-          align-items: center;
-          grid-template-columns: 1fr auto 1fr;
-          width: 100%;
-          padding: 0 42px;
-          boxing-sizing: border-box;
-          background: #f8fcfa;
-          border-bottom: 1px solid #dce9e2;
-        }
-
-        .ht-brand {
-          justify-self: start;
-        }
-
-        .ht-brand-logo {
-          width: 38px;
-          height: 38px;
-          border-radius: 9px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: #3d7c62;
-          color: white;
-          font-size: 14px;
-          font-weight: 800;
-        }
-
-        .ht-brand-name {
-          color: #225c45;
-          font-size: 18px;
-          font-weight: 800;
-        }
-
-        .ht-main-nav {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-        }
-
-        .ht-main-nav-item {
-          border: none;
-          background: transparent;
-          padding: 10px 18px;
-          border-radius: 9px;
-          color: #24332c;
-          font-size: 12px;
-          font-weight: 600;
-          cursor: pointer;
-        }
-
-        .ht-main-nav-item.active {
-          background: #e0f0e8;
-          color: #245e48;
-        }
-
-        .ht-user-area {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          justify-content: end;
-        }
-
-        .ht-user-info {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-        }
-
-        .ht-user-info strong {
-          font-size: 12px;
-        }
-
-        .ht-user-info span {
-          color: #7a8680;
-          font-size: 10px;
-        }
-
-        .ht-logout-button {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          padding: 9px 12px;
-          border: 1px solid #cbd9d2;
-          border-radius: 7px;
-          background: white;
-          color: #35443d;
-          font-size: 11px;
-          font-weight: 700;
-          cursor: pointer;
-        }
-
         /* PATIENT HEADER */
 
         .ht-patient-header {
@@ -775,7 +680,7 @@ export function PatientRecord({
 .ht-back-button:hover {
   background: #f4f8f6;
 }
-        
+
 
         /* MAIN */
 
@@ -1114,42 +1019,6 @@ export function PatientRecord({
           padding-top: 24px;
         }
         /* BUTTONS */
-        .ht-small-button {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          min-height: 34px;
-          padding: 0 13px;
-          border: 1px solid #9eb7aa;
-          border-radius: 7px;
-          background: white;
-          color: #315846;
-          font-size: 11px;
-          font-weight: 700;
-          cursor: pointer;
-        }
-
-        .ht-primary-button {
-          padding: 9px 14px;
-          border: none;
-          border-radius: 7px;
-          background: #3f725b;
-          color: white;
-          font-size: 11px;
-          font-weight: 700;
-          cursor: pointer;
-        }
-
-        .ht-secondary-button {
-          padding: 9px 14px;
-          border: 1px solid #cbd8d1;
-          border-radius: 7px;
-          background: white;
-          color: #56645d;
-          font-size: 11px;
-          font-weight: 700;
-          cursor: pointer;
-        }
 
         .ht-delete-patient-button {
   display: inline-flex;
@@ -1192,10 +1061,7 @@ export function PatientRecord({
           background: #f4f8f6;
         }
 
-        .ht-form-buttons {
-          display: flex;
-          gap: 8px;
-        }
+
 
         .ht-date-time-controls {
           display: flex;
@@ -1250,14 +1116,6 @@ export function PatientRecord({
 
         @media (max-width: 900px) {
 
-          .ht-topbar {
-            padding: 0 20px;
-          }
-
-          .ht-main-nav {
-            display: none;
-          }
-
           .ht-patient-header {
             margin-left: 20px;
             margin-right: 20px;
@@ -1271,18 +1129,6 @@ export function PatientRecord({
         }
 
         @media (max-width: 700px) {
-
-          .ht-topbar {
-            padding: 0 14px;
-          }
-
-          .ht-brand-name {
-            display: none;
-          }
-
-          .ht-user-info {
-            display: none;
-          }
 
           .ht-patient-header {
             margin: 14px;

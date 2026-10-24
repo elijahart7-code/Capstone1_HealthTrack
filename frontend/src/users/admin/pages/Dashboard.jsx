@@ -1,3 +1,5 @@
+import { ReportInsights, ReportMetrics } from "../../../shared/ReportInsights";
+import { AppointmentDate } from "../../../shared/appointments/AppointmentDate";
 import { ExportDialog } from "../../../shared/ExportDialog";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
@@ -15,15 +17,15 @@ import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { StatCard } from "../../../components/ui/Card";
 import { Select } from "../../../components/ui/Input";
-import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
+import { Badge, EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 
-const STATUSES = ["pending", "confirmed", "completed", "cancelled"];
+const STATUSES = ["confirmed", "cancelled"];
 const PERIODS = [
-  { key: "daily", apiKey: "day", label: "Daily", days: 31 },
-  { key: "weekly", apiKey: "week", label: "Weekly", days: 84 },
-  { key: "monthly", apiKey: "month", label: "Monthly", days: 365 },
-  { key: "quarterly", apiKey: "quarter", label: "Quarterly", days: 730 },
-  { key: "yearly", apiKey: "year", label: "Yearly", days: 1825 },
+  { key: "daily", label: "Today" },
+  { key: "weekly", label: "Weekly" },
+  { key: "monthly", label: "Monthly" },
+  { key: "quarterly", label: "Quarterly" },
+  { key: "yearly", label: "Yearly" },
 ];
 
 function ReportList({ title, icon: Icon, rows }) {
@@ -159,15 +161,15 @@ function FollowUpPatients({ patients, onPatientClick }) {
 
 function PrintableReportSection({ label, data, limit = 50 }) {
   return (
-    <section>
-      <h2>{label} report</h2>
+    <div className="ht-print-period-content" aria-label={`${label} report`}>
+      <ReportInsights data={data} heading={`${label} summary`} />
       <ReportTrendChart rows={data?.trend} hourly={data?.filters?.period === "hour"} />
       <div className="ht-print-report-grid">
         <ReportList title="Appointment Reasons / Program Demand" icon={ClipboardList} rows={normalizeRows(data?.reasons).slice(0, limit)} />
         <ReportList title="Common Conditions" icon={HeartPulse} rows={normalizeRows(data?.conditions).slice(0, limit)} />
         <ReportList title="Appointment Status" icon={Syringe} rows={normalizeRows(data?.statuses).slice(0, limit)} />
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -189,10 +191,18 @@ function AppointmentDetailTable({ appointments }) {
   );
 }
 
+function exportRowSummary(total, limit) {
+  const shown = Math.min(total, limit);
+  return `Showing ${shown} of ${total}${total > shown ? ` — ${total - shown} more not included` : ""}`;
+}
+
+function notableAppointments(appointments) {
+  return appointments.filter(appointment => appointment.status === "completed" || appointment.notes);
+}
+
 function NotableEvents({ appointments, onAppointmentClick, limit = 100 }) {
-  const events = [...appointments]
+  const events = notableAppointments(appointments)
     .sort((a, b) => new Date(b.scheduled_at) - new Date(a.scheduled_at))
-    .filter((appointment) => appointment.status === "completed" || appointment.notes)
     .slice(0, limit);
 
   if (!events.length) return <EmptyState>No notable events recorded.</EmptyState>;
@@ -262,11 +272,24 @@ export function Dashboard({ dashboard, appointments, loadData }) {
   }
   const periodAppointments = appointmentsFor(report);
   const exportSections = [
-    { key: "overview", label: "Overview", render: () => <p>Registered patients: {dashboard.patientCount} · Today's appointments: {dashboard.appointmentsToday} · Upcoming appointments: {dashboard.upcomingCount}</p> },
-    ...PERIODS.map(p => ({ key: p.key, label: `${p.label} summary`, render: limit => <><p>{reportSets[p.key]?.filters?.from} to {reportSets[p.key]?.filters?.to}</p><PrintableReportSection label={p.label} data={reportSets[p.key]} limit={limit} /></> })),
-    { key: "details", label: "Appointment details — selected period", render: limit => <><p>{report?.filters?.from} to {report?.filters?.to} · Showing {Math.min(limit, periodAppointments.length)} of {periodAppointments.length}</p><AppointmentDetailTable appointments={periodAppointments.slice(0, limit)} /></> },
-    { key: "followups", label: "Patients needing follow-up — selected period", render: limit => <><p>Showing {Math.min(limit, report?.followUps?.length || 0)} of {report?.followUps?.length || 0}</p><FollowUpPatients patients={report?.followUps?.slice(0, limit)} onPatientClick={() => {}} /></> },
-    { key: "events", label: "Notable events — selected period", render: limit => <><p>{report?.filters?.from} to {report?.filters?.to} · Up to {limit} events</p><NotableEvents appointments={periodAppointments} limit={limit} /></> }
+    { key: "overview", label: "Overview", render: () => <>
+      <div className="ht-export-summary"><div><strong>{dashboard.patientCount}</strong><span>Registered patients (current)</span></div><div><strong>{dashboard.appointmentsToday}</strong><span>Today's appointments</span></div><div><strong>{dashboard.upcomingCount}</strong><span>Upcoming appointments (all dates)</span></div></div>
+      <ReportInsights data={reportSets.monthly} heading="Month-to-date operating summary" />
+    </> },
+    ...PERIODS.map(p => ({ key: p.key, label: `${p.label} report`, render: limit => <><p>{reportSets[p.key]?.filters?.from} to {reportSets[p.key]?.filters?.to}</p><PrintableReportSection label={p.label} data={reportSets[p.key]} limit={limit} /></> })),
+    { key: "details", label: "Appointment details", periods: PERIODS, defaultPeriod: activeTab === "overview" ? "monthly" : activeTab, render: (limit, period) => {
+      const data = reportSets[period];
+      const rows = appointmentsFor(data);
+      return <><p>{data?.filters?.from} to {data?.filters?.to} · {exportRowSummary(rows.length, limit)}</p><AppointmentDetailTable appointments={rows.slice(0, limit)} /></>;
+    } },
+    { key: "followups", label: "Patients needing follow-up", periods: PERIODS, defaultPeriod: activeTab === "overview" ? "monthly" : activeTab, render: (limit, period) => {
+      const data = reportSets[period];
+      return <><p>{data?.filters?.from} to {data?.filters?.to} · {exportRowSummary(data?.followUps?.length || 0, limit)}</p><FollowUpPatients patients={data?.followUps?.slice(0, limit)} onPatientClick={() => {}} /></>;
+    } },
+    { key: "events", label: "Notable events", periods: PERIODS, defaultPeriod: activeTab === "overview" ? "monthly" : activeTab, render: (limit, period) => {
+      const data = reportSets[period];
+      return <><p>{data?.filters?.from} to {data?.filters?.to} · {exportRowSummary(notableAppointments(appointmentsFor(data)).length, limit)}</p><NotableEvents appointments={appointmentsFor(data)} limit={limit} /></>;
+    } }
   ];
   return (
     <div className="grid gap-4">
@@ -285,11 +308,11 @@ export function Dashboard({ dashboard, appointments, loadData }) {
         <div className="ht-report-tabs" role="tablist" aria-label="Health center reports">
           <button className={activeTab === "overview" ? "is-active" : ""} onClick={() => setActiveTab("overview")} role="tab" aria-selected={activeTab === "overview"}><BarChart3 size={16} /> Overview</button>
           {PERIODS.map((period) => <button key={period.key} className={activeTab === period.key ? "is-active" : ""} onClick={() => selectPeriod(period)} role="tab" aria-selected={activeTab === period.key}>{period.label}</button>)}
-          <button className="ht-report-export" onClick={() => setShowExport(true)} disabled={!report || !!reportError}><Download size={16} /> Export PDF</button>
+          <button className="ht-report-export ht-export-pdf-button" onClick={() => setShowExport(true)} disabled={!report || !!reportError}><Download size={16} /> Export PDF</button>
         </div>
 
         {!report && !reportError && <p role="status">Loading report data…</p>}
-        {report && <p className="ht-muted">{report.filters.from} to {report.filters.to} · {activeTab === "overview" ? "Month" : currentPeriod.label} to date · {periodAppointments.length} appointments · {report.patients?.length || 0} patients seen</p>}
+        {report && <p className="ht-report-range ht-muted">{report.filters.from} to {report.filters.to} · {activeTab === "overview" ? "Month" : currentPeriod.label} to date · {periodAppointments.length} appointments</p>}
         {activeTab === "overview" ? (
           <div className="grid gap-4">
             {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
@@ -300,22 +323,23 @@ export function Dashboard({ dashboard, appointments, loadData }) {
                 <div className="ht-follow-up-scroll"><FollowUpPatients patients={report?.followUps} onPatientClick={openPatient} /></div>
               </div>
             </div>
-            <div className="grid gap-4 lg:grid-cols-1">
+            <div className="ht-dashboard-events-grid">
               <div className="ht-panel ht-dashboard-schedule">
                 <h2>Overview</h2>
                 {dashboard.todaysAppointments.length === 0 ? <EmptyState>Nothing scheduled for today.</EmptyState> : (
                   <Table><thead><tr><Th>Time</Th><Th>Patient</Th><Th>Reason</Th><Th>Status</Th></tr></thead><tbody>
                     {dashboard.todaysAppointments.map((a) => <tr key={a.appointment_id}>
-                      <Td className="whitespace-nowrap font-bold">{new Date(a.scheduled_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</Td>
+                      <Td className="whitespace-nowrap font-bold"><AppointmentDate appointment={a} timeOnly /></Td>
                       <Td><button onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id, appointmentId: a.appointment_id })} className="ht-link-button">{a.last_name}, {a.first_name}</button></Td>
                       <Td>{a.reason}</Td>
-                      <Td><Select aria-label={`Update status for ${a.last_name}, ${a.first_name}`} value={a.status} onChange={(event) => updateStatus(a.appointment_id, event.target.value)} className={`ht-status-select ht-status-select-${a.status}`}>{STATUSES.map((status) => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}</Select></Td>
+                      <Td>{a.status === "completed" ? <Badge>Completed</Badge> : <Select aria-label={`Update status for ${a.last_name}, ${a.first_name}`} value={a.status} onChange={(event) => updateStatus(a.appointment_id, event.target.value)} className={`ht-status-select ht-status-select-${a.status}`}>{STATUSES.map((status) => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}</Select>}</Td>
                     </tr>)}
                   </tbody></Table>
                 )}
               </div>
-              <div className="ht-panel"><h2>Notable Events</h2><NotableEvents appointments={periodAppointments} onAppointmentClick={a => setSearchParams({ page: "patients", patientId: a.patient_id, appointmentId: a.appointment_id })} /></div>
+              <div className="ht-panel ht-dashboard-events"><h2>Notable Events</h2><NotableEvents appointments={periodAppointments} onAppointmentClick={a => setSearchParams({ page: "patients", patientId: a.patient_id, appointmentId: a.appointment_id })} /></div>
             </div>
+            {report && <ReportInsights data={report} heading="Month-to-date operating summary" />}
             <div className="grid gap-4 lg:grid-cols-3">
               <ReportBarChart title="Top appointment reasons" rows={normalizeRows(report?.reasons)} />
               <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
@@ -325,11 +349,12 @@ export function Dashboard({ dashboard, appointments, loadData }) {
         ) : (
           <div className="grid gap-4">
             {reportError && <div className="ht-login-alert ht-login-alert-error">{reportError}</div>}
+            {report && <ReportMetrics data={report} />}
             <div className="ht-panel ht-report-period-panel">
               <h2>{currentPeriod.label} Report</h2>
-              <p className="ht-muted mb-4">{report?.filters?.from} to {report?.filters?.to} · Current {currentPeriod.label.toLowerCase()} period to date</p>
               <ReportTrendChart rows={report?.trend} compact hourly={report?.filters?.period === "hour"} />
             </div>
+            {report && <ReportInsights data={report} heading={`${currentPeriod.label} operating summary`} includeMetrics={false} />}
             <div className="grid gap-4 lg:grid-cols-3">
               <ReportBarChart title="Appointment reasons" rows={normalizeRows(report?.reasons)} />
               <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />

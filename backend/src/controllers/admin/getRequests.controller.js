@@ -50,14 +50,14 @@ export async function getAppointments(_req, res) {
   return res.status(200).json({
     message: "Appointments retrieved.",
     appointments,
-    statuses: ["pending", "confirmed", "completed", "cancelled"],
+    statuses: ["confirmed", "completed", "cancelled"],
   });
 }
 
 /** GET /api/admin/reports -- aggregate dashboard data for charts and exports. */
 export async function getReports(req, res) {
   const period = ["hour", "day", "week", "month", "quarter", "year"].includes(req.query.period) ? req.query.period : "month";
-  const status = ["pending", "confirmed", "completed", "cancelled"].includes(req.query.status)
+  const status = ["confirmed", "completed", "cancelled"].includes(req.query.status)
     ? req.query.status
     : null;
   const dateFrom = /^\d{4}-\d{2}-\d{2}$/.test(req.query.from || "")
@@ -77,6 +77,7 @@ export async function getReports(req, res) {
     conditions,
     patients,
     followUps,
+    summaryRows,
   ] = await Promise.all([
     sql.query(
       `WITH buckets AS (
@@ -136,7 +137,7 @@ export async function getReports(req, res) {
       [dateFrom, dateTo]
     ),
     sql.query(
-      `SELECT DISTINCT ON (p.patient_id, ha.condition)
+      `SELECT DISTINCT ON (p.patient_id, LOWER(TRIM(ha.condition)))
          p.patient_id, p.first_name, p.last_name,
          ha.condition, ha.status, ha.assessment_date
        FROM health_assessments ha
@@ -144,9 +145,55 @@ export async function getReports(req, res) {
        WHERE ha.status IN ('active', 'monitoring')
          AND p.archived_at IS NULL
          AND ha.assessment_date >= $1::date AND ha.assessment_date < ($2::date + INTERVAL '1 day')
-         AND NOT EXISTS (SELECT 1 FROM health_assessments newer WHERE newer.patient_id = ha.patient_id AND newer.condition = ha.condition AND (newer.assessment_date, newer.id) > (ha.assessment_date, ha.id))
-       ORDER BY p.patient_id, ha.condition, ha.assessment_date DESC, ha.id DESC`,
+         AND NOT EXISTS (SELECT 1 FROM health_assessments newer WHERE newer.patient_id = ha.patient_id AND LOWER(TRIM(newer.condition)) = LOWER(TRIM(ha.condition)) AND (newer.assessment_date, newer.id) > (ha.assessment_date, ha.id))
+       ORDER BY p.patient_id, LOWER(TRIM(ha.condition)), ha.assessment_date DESC, ha.id DESC`,
       [dateFrom, dateTo]
+    ),
+    sql.query(
+      `WITH bounds AS (
+         SELECT $1::date AS date_from, $2::date + INTERVAL '1 day' AS date_to,
+           ($1::date - ($2::date - $1::date + 1)) AS previous_from,
+           NOW() AT TIME ZONE 'Asia/Manila' AS local_now
+       ), current_appointments AS (
+         SELECT a.* FROM appointments a, bounds b
+         WHERE a.scheduled_at >= b.date_from AND a.scheduled_at < b.date_to${statusClause}
+       ), previous_appointments AS (
+         SELECT a.* FROM appointments a, bounds b
+         WHERE a.scheduled_at >= b.previous_from AND a.scheduled_at < b.date_from${statusClause}
+       ), latest_assessments AS (
+         SELECT DISTINCT ON (ha.patient_id, LOWER(TRIM(ha.condition)))
+           ha.patient_id, ha.status, ha.assessment_date
+         FROM health_assessments ha JOIN patients p ON p.patient_id = ha.patient_id
+         WHERE p.archived_at IS NULL
+         ORDER BY ha.patient_id, LOWER(TRIM(ha.condition)), ha.assessment_date DESC, ha.id DESC
+       )
+       SELECT COUNT(*)::int AS appointments,
+         COUNT(*) FILTER (WHERE a.status = 'completed')::int AS completed,
+         COUNT(*) FILTER (WHERE a.status = 'cancelled')::int AS cancelled,
+         COUNT(*) FILTER (WHERE a.status = 'confirmed')::int AS confirmed,
+         COUNT(*) FILTER (WHERE a.status = 'confirmed' AND a.scheduled_at < (SELECT local_now FROM bounds))::int AS overdue,
+         COUNT(*) FILTER (WHERE a.status = 'confirmed' AND a.scheduled_at >= (SELECT local_now FROM bounds))::int AS upcoming,
+         COUNT(DISTINCT a.patient_id) FILTER (WHERE a.status <> 'cancelled')::int AS patients_scheduled,
+         COUNT(DISTINCT a.patient_id) FILTER (WHERE a.status = 'completed')::int AS patients_served,
+         COUNT(*) FILTER (WHERE a.status = 'completed' AND (
+           EXISTS (SELECT 1 FROM vital_signs r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
+           EXISTS (SELECT 1 FROM health_assessments r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
+           EXISTS (SELECT 1 FROM midwife_notes r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
+           EXISTS (SELECT 1 FROM medical_histories r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
+           EXISTS (SELECT 1 FROM allergies r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id)
+         ))::int AS documented_completed,
+         (SELECT COUNT(*)::int FROM (SELECT patient_id FROM current_appointments WHERE status = 'completed' GROUP BY patient_id HAVING COUNT(*) > 1) repeat_visitors) AS repeat_patients,
+         (SELECT COUNT(*)::int FROM patients p, bounds b WHERE p.archived_at IS NULL AND p.created_at >= b.date_from AND p.created_at < b.date_to) AS new_patients,
+         (SELECT COUNT(*)::int FROM health_assessments h, bounds b WHERE h.assessment_date >= b.date_from AND h.assessment_date < b.date_to) AS assessments,
+         (SELECT COUNT(DISTINCT h.patient_id)::int FROM health_assessments h, bounds b WHERE h.assessment_date >= b.date_from AND h.assessment_date < b.date_to) AS patients_assessed,
+         (SELECT COUNT(DISTINCT patient_id)::int FROM latest_assessments WHERE status IN ('active', 'monitoring')) AS current_follow_up_patients,
+         (SELECT COUNT(DISTINCT h.patient_id)::int FROM latest_assessments h, bounds b WHERE h.status IN ('active', 'monitoring') AND h.assessment_date >= b.date_from AND h.assessment_date < b.date_to) AS period_follow_up_patients,
+         (SELECT COUNT(*)::int FROM previous_appointments) AS previous_appointments,
+         (SELECT COUNT(*)::int FROM previous_appointments WHERE status = 'completed') AS previous_completed,
+         (SELECT to_char(previous_from, 'YYYY-MM-DD') FROM bounds) AS previous_from,
+         (SELECT to_char(date_from - INTERVAL '1 day', 'YYYY-MM-DD') FROM bounds) AS previous_to
+       FROM current_appointments a`,
+      statusValues
     ),
   ]);
 
@@ -156,5 +203,6 @@ export async function getReports(req, res) {
     trend, reasons, statuses, conditions,
     patients,
     followUps,
+    summary: summaryRows?.[0] || null,
   });
 }

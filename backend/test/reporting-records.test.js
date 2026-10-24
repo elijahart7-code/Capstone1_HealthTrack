@@ -54,3 +54,117 @@ test('new records persist their appointment association using bound parameters',
   assert.match(inserted.query, /patient_id, appointment_id, created_by/);
   assert.deepEqual(Array.from(inserted.params), ['REC1', 'P1', 'APT1', 'U1', 'Follow up', '2026-10-24']);
 });
+
+
+test('appointment status updates allow confirmed/cancelled and block manual completion', async () => {
+  const { updateAppointmentStatus } = await controller('patients/updateRequests.controller.js', {
+    names: ['updateAppointmentStatus'], AppointmentPolicy: { update: () => true },
+    sql: async () => [{ appointment_id: 'APT1' }],
+  });
+  for (const status of ['confirmed', 'cancelled']) {
+    const res = response();
+    await updateAppointmentStatus({ user: {}, params: { appointmentId: 'APT1' }, body: { status } }, res);
+    assert.equal(res.code, 200);
+  }
+  const res = response();
+  await updateAppointmentStatus({ user: {}, params: { appointmentId: 'APT1' }, body: { status: 'pending' } }, res);
+  assert.equal(res.code, 422);
+  const completed = response();
+  await updateAppointmentStatus({ user: {}, params: { appointmentId: 'APT1' }, body: { status: 'completed' } }, completed);
+  assert.equal(completed.code, 422);
+  assert.match(completed.data.error, /Finish recording/);
+});
+
+test('new appointments default to confirmed and reject pending', async () => {
+  let inserted;
+  const { createAppointment } = await controller('patients/postRequests.controller.js', {
+    names: ['createAppointment'], AppointmentPolicy: { create: () => true },
+    generateAppointmentId: async () => 'APT1',
+    sql: async (strings, ...values) => {
+      if (strings.join('').includes('INSERT')) { inserted = values; return [{ appointment_id: 'APT1' }]; }
+      return [{ patient_id: 'P1' }];
+    },
+  });
+  const req = { user: { user_id: 'U1' }, params: { patientId: 'P1' }, body: { scheduledAt: '2026-10-24T09:00', reason: 'Consultation' } };
+  const res = response();
+  await createAppointment(req, res);
+  assert.equal(res.code, 201);
+  assert.equal(inserted.at(-1), 'confirmed');
+  const invalid = response();
+  await createAppointment({ ...req, body: { ...req.body, status: 'pending' } }, invalid);
+  assert.equal(invalid.code, 422);
+});
+
+test('recording validates all sections before writing and saves valid sections in one statement', async () => {
+  const statements = [];
+  const context = {
+    names: ['createAppointmentRecords'], ClinicalRecordPolicy: { create: () => true },
+    isRecordType: type => ['notes', 'assessment'].includes(type),
+    RECORD_TYPES: {
+      notes: { table: 'midwife_notes', label: 'Notes', dateLabel: 'Date', dateField: 'consultation_date', fields: { notes: { required: true, label: 'Notes', type: 'text' } } },
+      assessment: { table: 'health_assessments', label: 'Assessment', dateLabel: 'Date', dateField: 'assessment_date', fields: { condition: { required: true, label: 'Condition', type: 'text' } } },
+    },
+    generateRecordId: async table => table + '-1',
+    sql: { query: async (query, params) => { statements.push({ query, params }); return [{ eligible: 1, finished: 1 }]; } },
+  };
+  const { createAppointmentRecords } = await controller('patients/postRequests.controller.js', context);
+  const req = { user: { user_id: 'U1' }, params: { patientId: 'P1', appointmentId: 'APT1' } };
+  const invalid = response();
+  await createAppointmentRecords({ ...req, body: { records: { notes: { notes: 'Draft', recordDate: '2026-10-24' }, assessment: { recordDate: '2026-10-24' } } } }, invalid);
+  assert.equal(invalid.code, 422);
+  assert.equal(statements.length, 0);
+  const res = response();
+  await createAppointmentRecords({ ...req, body: { records: { notes: { notes: 'Draft', recordDate: '2026-10-24' }, assessment: { condition: 'Monitoring', recordDate: '2026-10-24' } } } }, res);
+  assert.equal(res.code, 201);
+  assert.equal(res.data.sectionsSaved, 2);
+  assert.equal(res.data.appointmentStatus, 'completed');
+  assert.equal(statements.length, 1);
+  assert.match(statements[0].query, /saved_0 AS \(INSERT INTO midwife_notes/);
+  assert.match(statements[0].query, /saved_1 AS \(INSERT INTO health_assessments/);
+  assert.match(statements[0].query, /FOR UPDATE OF a, p/);
+  assert.ok(statements[0].params.includes('Draft'));
+  assert.match(statements[0].query, /finished AS \(UPDATE appointments SET status = 'completed'/);
+});
+
+test('recording refuses an ineligible appointment and preserves the draft', async () => {
+  const { createAppointmentRecords } = await controller('patients/postRequests.controller.js', {
+    names: ['createAppointmentRecords'], ClinicalRecordPolicy: { create: () => true },
+    isRecordType: () => true,
+    RECORD_TYPES: { notes: { table: 'midwife_notes', label: 'Notes', dateLabel: 'Date', dateField: 'consultation_date', fields: { notes: { required: true, label: 'Notes', type: 'text' } } } },
+    generateRecordId: async () => 'NOTE1', sql: { query: async () => [{ eligible: 0 }] },
+  });
+  const res = response();
+  await createAppointmentRecords({ user: { user_id: 'U1' }, params: { patientId: 'P1', appointmentId: 'OTHER' }, body: { records: { notes: { notes: 'Draft', recordDate: '2026-10-24' } } } }, res);
+  assert.equal(res.code, 409);
+});
+
+
+test('report summary is returned independently from row lists and uses bound date ranges', async () => {
+  const statements = [];
+  const summary = { appointments: 12, completed: 8, patients_served: 5, overdue: 2 };
+  const { getReports } = await controller('admin/getRequests.controller.js', { names: ['getReports'], sql: { query: async (query, params) => { statements.push({query, params}); return statements.length === 7 ? [summary] : []; } } });
+  const res = response();
+  await getReports({ query: { from: '2026-10-01', to: '2026-10-24', period: 'day' } }, res);
+  assert.equal(res.data.summary.appointments, 12);
+  assert.equal(res.data.summary.patients_served, 5);
+  assert.deepEqual(Array.from(statements[6].params), ['2026-10-01', '2026-10-24']);
+  assert.match(statements[6].query, /COUNT\(DISTINCT a.patient_id\) FILTER \(WHERE a.status = 'completed'\)/);
+  assert.match(statements[6].query, /previous_appointments/);
+  assert.match(statements[6].query, /Asia\/Manila/);
+  assert.match(statements[6].query, /r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id/);
+});
+
+
+test('recording rejects entirely omitted required clinical sections before any write', async () => {
+  const { createAppointmentRecords } = await controller('patients/postRequests.controller.js', {
+    names: ['createAppointmentRecords'], ClinicalRecordPolicy: { create: () => true },
+    isRecordType: () => true,
+    RECORD_TYPES: { notes: { fields: {} }, vitals: { fields: {} } },
+    generateRecordId: async () => { throw new Error('Must not generate IDs'); },
+    sql: { query: async () => { throw new Error('Must not write'); } },
+  });
+  const res = response();
+  await createAppointmentRecords({ user: {}, params: {}, body: { records: { notes: { recordDate: '2026-10-24', notes: 'Partial' } } } }, res);
+  assert.equal(res.code, 422);
+  assert.match(res.data.error, /all required clinical sections/);
+});

@@ -1,3 +1,4 @@
+import { AppointmentDate } from "../../../shared/appointments/AppointmentDate";
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, Eye } from "lucide-react";
 import { useSearchParams } from "react-router";
@@ -6,9 +7,8 @@ import { PageHeader } from "../../../components/ui/PageHeader";
 import { Select } from "../../../components/ui/Input";
 import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 
-const STATUSES = ["pending", "confirmed", "completed", "cancelled"];
+const STATUSES = ["confirmed", "cancelled"];
 const STATUS_COLORS = {
-  pending: "ht-status-badge-pending",
   confirmed: "ht-status-badge-active",
   completed: "ht-status-badge-completed",
   cancelled: "ht-status-badge-cancelled",
@@ -101,18 +101,12 @@ export function Appointments({ appointments, loadData }) {
               </thead>
               <tbody>
                 {pageItems.map((a) => {
-                  const appointmentDate = new Date(a.scheduled_at);
-                  const dateStr = appointmentDate.toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" });
-                  const timeStr = appointmentDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
                   return (
                     <tr key={a.appointment_id}>
                       <Td className="font-bold" style={{ color: "#1f2421" }}>
                         <div className="flex items-center gap-2">
                           <Calendar size={16} />
-                          <div>
-                            <div>{dateStr}</div>
-                            <div className="text-xs text-gray-500">{timeStr}</div>
-                          </div>
+                          <AppointmentDate appointment={a} />
                         </div>
                       </Td>
                       <Td>
@@ -125,7 +119,7 @@ export function Appointments({ appointments, loadData }) {
                       </Td>
                       <Td>{a.reason}</Td>
                       <Td>
-                        <Select
+                        {a.status === "completed" ? <span className="ht-status-badge ht-status-badge-completed">Completed</span> : <Select
                           aria-label={`Update status for ${a.last_name}, ${a.first_name}`}
                           value={a.status}
                           onChange={(event) => setStatus(a.appointment_id, event.target.value)}
@@ -136,7 +130,7 @@ export function Appointments({ appointments, loadData }) {
                               {status.charAt(0).toUpperCase() + status.slice(1)}
                             </option>
                           ))}
-                        </Select>
+                        </Select>}
                       </Td>
                       <Td>
                         <button

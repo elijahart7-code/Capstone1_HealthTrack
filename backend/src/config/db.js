@@ -174,7 +174,7 @@ const TABLES = [
       patient_id     VARCHAR(255) NOT NULL REFERENCES patients(patient_id),
       admin_id       VARCHAR(255) REFERENCES users(user_id),
       scheduled_at   TIMESTAMP NOT NULL,
-      status         VARCHAR(20) NOT NULL DEFAULT 'pending',
+      status         VARCHAR(20) NOT NULL DEFAULT 'confirmed',
       reason         TEXT NOT NULL,
       notes          TEXT,
       created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -186,7 +186,7 @@ const TABLES = [
       patient_id: "VARCHAR(255) NOT NULL REFERENCES patients(patient_id)",
       admin_id: "VARCHAR(255) REFERENCES users(user_id)",
       scheduled_at: "TIMESTAMP NOT NULL",
-      status: "VARCHAR(20) NOT NULL DEFAULT 'pending'",
+      status: "VARCHAR(20) NOT NULL DEFAULT 'confirmed'",
       reason: "TEXT NOT NULL",
       notes: "TEXT",
       created_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
@@ -387,6 +387,9 @@ export async function connectNeon() {
     for (const { createSQL } of TABLES) {
       await sql.query(createSQL);
     }
+    // Pending is retired: scheduled appointments now start as confirmed.
+    await sql`ALTER TABLE appointments ALTER COLUMN status SET DEFAULT 'confirmed'`;
+    await sql`UPDATE appointments SET status = 'confirmed', updated_at = NOW() WHERE status = 'pending'`;
     // Additive migration: preserve earlier records with a NULL appointment link.
     for (const table of ["health_assessments", "vital_signs", "midwife_notes", "medical_histories", "allergies"]) {
       await sql.query(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS appointment_id VARCHAR(255) REFERENCES appointments(appointment_id)`);

@@ -74,12 +74,12 @@ export function AdminShell() {
         </div>
       </header>
 
-      <main className="ht-content">
+      <main className="ht-content" aria-busy={loading}>
         {loadError && (page !== "patients" || patients.length === 0) ? (
           <div className="ht-panel">
             <p className="ht-muted text-sm">{loadError}</p>
           </div>
-        ) : loading || !dashboard ? (
+        ) : !dashboard ? (
           <p className="ht-muted text-sm">Loading...</p>
         ) : page === "patients" ? (
           <Patients

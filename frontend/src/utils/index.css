@@ -7055,3 +7055,266 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-appointment-scroll .ht-table td { height: 54px; white-space: nowrap; }
 .ht-appointment-scroll .ht-table th { height: 46px; }
 .ht-appointment-scroll { max-height: 262px; }
+
+/* Keep dashboard sections on the same spacing rhythm as the card grids. */
+.ht-dashboard-screen { display: grid; gap: 1rem; }
+.ht-dashboard-screen .ht-page-header { margin-bottom: 0; }
+.ht-dashboard-screen .ht-metric-grid { gap: 1rem; }
+.ht-report-range { margin: 0; font-size: .82rem; line-height: 1.5; }
+.ht-dashboard-events-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 1rem; align-items: stretch; }
+.ht-dashboard-events-grid > .ht-panel { min-width: 0; }
+.ht-dashboard-events-grid .ht-table-scroll { max-height: 350px; overflow: auto; }
+@media (max-width: 1000px) { .ht-dashboard-events-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* Shared controls used by registry rows, appointment forms, and export dialogs. */
+.ht-small-button {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 34px;
+          padding: 0 13px;
+          border: 1px solid #9eb7aa;
+          border-radius: 7px;
+          background: white;
+          color: #315846;
+          font-size: 11px;
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+.ht-primary-button {
+          padding: 9px 14px;
+          border: none;
+          border-radius: 7px;
+          background: #3f725b;
+          color: white;
+          font-size: 11px;
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+.ht-secondary-button {
+          padding: 9px 14px;
+          border: 1px solid #cbd8d1;
+          border-radius: 7px;
+          background: white;
+          color: #56645d;
+          font-size: 11px;
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+.ht-form-buttons {
+          display: flex;
+          gap: 8px;
+        }
+.ht-small-button:hover, .ht-secondary-button:hover { background: #edf6f1; border-color: #6f9b83; }
+.ht-primary-button:hover { background: #295a42; }
+.ht-small-button:focus-visible, .ht-primary-button:focus-visible, .ht-secondary-button:focus-visible { outline: 3px solid #82b69a; outline-offset: 2px; }
+.ht-small-button:disabled, .ht-primary-button:disabled, .ht-secondary-button:disabled { opacity: .55; cursor: not-allowed; }
+.ht-form-buttons { flex-wrap: wrap; align-items: center; }
+.ht-export-dialog .ht-form-buttons { margin-top: 18px; }
+.ht-legacy-record { border-top: 1px solid #dfeae4; margin-top: 12px; padding-top: 12px; }
+.ht-legacy-record h3 { font-size: .9rem; font-weight: 700; margin-bottom: 12px; }
+.ht-legacy-record dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.ht-legacy-record dt { font-size: .75rem; color: #56645d; font-weight: 700; margin-bottom: 4px; }
+.ht-legacy-record dd { margin: 0; font-size: .875rem; color: #28352f; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Consistent actions, including before a patient record has been opened. */
+.ht-patient-row-actions { display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; }
+.ht-patient-row-actions > button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 112px; min-width: 112px; height: 36px; min-height: 36px; margin: 0; padding: 0 12px; border-radius: 8px; font: inherit; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; }
+.ht-patient-panel th:last-child, .ht-patient-actions-cell { text-align: left !important; }
+.ht-export-dialog { text-align: left; }
+.ht-export-dialog .ht-export-options { justify-items: stretch; }
+.ht-export-dialog .ht-export-options > label { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; width: 100%; margin: 0; padding: 9px 10px; text-align: left; border: 1px solid #dce8e1; border-radius: 8px; cursor: pointer; }
+.ht-export-dialog .ht-export-options input { width: 16px; height: 16px; flex: 0 0 16px; margin: 0; accent-color: #235c43; }
+.ht-export-dialog .ht-export-limit { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; text-align: left; }
+.ht-export-dialog .ht-export-limit input { margin: 0; }
+
+/* Give the selected visit and its recording state a clear visual hierarchy. */
+.ht-appointment-record { margin-top: 16px; padding: 22px; border: 1px solid #b6d2c2; border-left: 5px solid #5a8c71; border-radius: 12px; background: linear-gradient(120deg, #eaf5ef, #fff 80%); box-shadow: 0 3px 12px #163c2810; }
+.ht-appointment-record.is-recording { border-color: #16815a; border-left-width: 6px; background: linear-gradient(120deg, #dff5e9, #f5fcf8); box-shadow: 0 0 0 3px #16815a15; }
+.ht-appointment-record-topline { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.ht-appointment-record-label { display: inline-flex; align-items: center; gap: 7px; color: #3b6650; font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .04em; }
+.ht-appointment-record h2 { margin: 0 0 12px; color: #163f2d; font-size: 22px; font-weight: 800; line-height: 1.3; }
+.ht-recording-state { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border: 1px solid #bdcebf; border-radius: 999px; background: #fff; color: #4c6555; font-size: 12px; font-weight: 750; }
+.ht-recording-state.is-active { color: #fff; background: #14734c; border-color: #14734c; }
+.ht-appointment-record-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; font-size: 13px; color: #42644f; }
+.ht-appointment-record-meta > span { display: inline-flex; align-items: center; gap: 7px; }
+.ht-appointment-record-notes { margin-top: 16px; padding: 12px 14px; border-radius: 8px; border: 1px solid #d5e7dc; background: #ffffffb3; font-size: 13px; }
+.ht-appointment-record-notes strong { display: block; color: #365842; font-size: 11px; margin-bottom: 5px; }
+.ht-appointment-record-notes p { margin: 0; white-space: pre-wrap; }
+.ht-appointment-record-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 18px; padding-top: 14px; border-top: 1px solid #cce1d4; }
+.ht-appointment-record-footer p { margin: 0; max-width: 65%; color: #476451; font-size: 12px; line-height: 1.6; }
+.ht-appointment-record-footer button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 36px; font-size: 12px; }
+.ht-admin-shell .ht-appointment-row-selected > td { background: #edf6f0; }
+.ht-admin-shell .ht-appointment-row-recording > td { background: #def3e6; border-bottom-color: #b6d8c3; }
+.ht-appointment-row-recording > td:first-child { box-shadow: inset 4px 0 #14734c; }
+.ht-activate-button-active:disabled { opacity: 1; border-color: #14734c; color: #146441; background: #e3f6eb; gap: 6px; cursor: default; }
+
+/* Clinical data belongs directly to each collapsible section. */
+.ht-clinical-sections .ht-encounter-section { margin-top: 12px; padding: 0; overflow: hidden; }
+.ht-clinical-sections .ht-encounter-section > summary { padding: 16px 18px; background: #f5f9f6; }
+.ht-clinical-sections .ht-encounter-section[open] > summary { border-bottom: 1px solid #dce8e1; }
+.ht-clinical-sections.is-recording .ht-encounter-section { border-color: #9ac8ad; }
+.ht-section-recording-hint { float: right; margin-left: 12px; color: #258154; font-size: 11px; font-weight: 650; }
+.ht-clinical-sections .ht-clinical-content { padding: 18px; margin: 0; border: none; border-radius: 0; box-shadow: none; background: #fff; }
+.ht-clinical-content .ht-health-assessment-header { justify-content: flex-end; margin: 0 0 14px; padding: 0; border: none; }
+.ht-clinical-content .ht-health-form { box-shadow: none; }
+.ht-clinical-record + .ht-clinical-record { margin-top: 20px; padding-top: 18px; border-top: 1px solid #dce8e1; }
+.ht-clinical-record-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-bottom: 16px; color: #65756b; font-size: 11px; }
+.ht-clinical-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; margin: 0; }
+.ht-clinical-fields dt { font-size: 12px; color: #5c6b60; font-weight: 650; margin-bottom: 5px; }
+.ht-clinical-fields dd { margin: 0; color: #233c2b; font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ht-clinical-fields.ht-clinical-vitals { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ht-clinical-vitals dd { font-size: 20px; font-weight: 750; color: #1b5f3b; }
+.ht-clinical-field-long { grid-column: 1 / -1; }
+.ht-clinical-empty { margin: 0; color: #718076; font-size: 13px; }
+@media (max-width: 700px) {
+ .ht-clinical-fields, .ht-clinical-fields.ht-clinical-vitals { grid-template-columns: minmax(0, 1fr); }
+ .ht-appointment-record { padding: 18px; }
+ .ht-appointment-record-footer p { max-width: 100%; }
+ .ht-section-recording-hint { display: none; }
+}
+
+.ht-appointment-date-late { color: #bb303b; font-weight: 750; }
+.ht-link-button .ht-appointment-date-late { color: #bb303b; }
+.ht-appointment-record.ht-appointment-record-compact { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px 20px; padding: 14px 18px; margin-top: 16px; border-left-width: 4px; box-shadow: none; background: #f1f7f3; }
+.ht-appointment-record-compact.is-recording { margin-top: 0; background: #e9f6ee; border-color: #9ac8ad; }
+.ht-appointment-record-compact .ht-appointment-record-label { font-size: 10px; gap: 5px; }
+.ht-appointment-record-compact h2 { display: inline; margin: 0 0 0 12px; font-size: 16px; line-height: 1.5; }
+.ht-appointment-record-compact .ht-appointment-record-meta { margin-top: 5px; gap: 10px; font-size: 12px; }
+.ht-appointment-record-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.ht-appointment-record-controls button { min-height: 34px; }
+.ht-appointment-compact-notes { flex-basis: 100%; max-height: 3.4em; overflow-y: auto; margin: 0; color: #526859; font-size: 12px; white-space: pre-wrap; }
+.ht-recording-form { margin: 0; }
+.ht-recording-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding: 18px; margin-top: 16px; border: 1px solid #c8dfd0; border-radius: 10px; background: #edf7f0; }
+.ht-recording-actions > span { color: #5c7062; font-size: 12px; }
+.ht-recording-actions > [role=alert] { flex-basis: 100%; margin: 0; }
+.ht-recording-actions .ht-primary-button, .ht-recording-actions .ht-secondary-button { min-height: 38px; padding: 9px 16px; font-size: 12px; }
+.ht-recording-form .ht-clinical-content .ht-health-form { margin: 0; padding: 0; border: none; background: transparent; box-shadow: none; }
+.ht-recording-form fieldset.ht-health-form-grid { min-width: 0; margin: 0; padding: 0; border: none; }
+@media (max-width: 700px) {
+ .ht-appointment-record-compact h2 { display: block; margin-left: 0; }
+ .ht-recording-actions .ht-form-buttons { width: 100%; }
+}
+
+.ht-export-pdf-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; padding: 8px 12px; border: 1px solid var(--color-danger, #b2453e); border-radius: 9px; background: var(--color-danger, #b2453e); color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.ht-export-pdf-button:hover { background: #923a35; border-color: #923a35; color: #fff; }
+.ht-export-pdf-button:focus-visible { outline: 3px solid #d8a3a0; outline-offset: 2px; }
+.ht-export-pdf-button:disabled { opacity: .55; cursor: not-allowed; }
+
+/* The print portal lives under body, so its design must not rely on app-shell
+   ancestors. Only top-level report topics start new pages; their tables flow. */
+@media print {
+ @page { size: A4; margin: 14mm; }
+ .ht-export-document, .ht-export-document * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+ body.ht-exporting > .ht-export-document { color: #24392d; font: 10pt/1.45 Inter, Arial, sans-serif; --color-brand-strong: #0c4f46; --color-border: #d4e3da; --color-ink: #24392d; --color-muted: #66796d; }
+ .ht-export-document .ht-export-heading { margin-bottom: 22px; padding-bottom: 16px; border-bottom: 3px solid #0f6b5f; }
+ .ht-export-document .ht-export-brand { color: #0c6253; font-size: 10pt; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+ .ht-export-document h1 { margin: 8px 0; color: #173d2b; font-size: 22pt; font-weight: 800; line-height: 1.2; }
+ .ht-export-document .ht-export-heading p { margin: 0; color: #6b7f71; font-size: 8pt; }
+ .ht-export-document > .ht-export-section { margin: 0; break-inside: auto; page-break-inside: auto; }
+ .ht-export-document > .ht-export-section + .ht-export-section { break-before: page; page-break-before: always; }
+ .ht-export-document .ht-export-section-title { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; padding: 12px 14px; border-left: 4px solid #0f6b5f; border-radius: 4px; background: #e8f3ec; color: #174f37; font-size: 16pt; font-weight: 750; line-height: 1.3; break-after: avoid; page-break-after: avoid; }
+ .ht-export-document .ht-export-section-title > span { color: #5b8d71; font-size: 10pt; }
+ .ht-export-document h3, .ht-export-document h4 { color: #275a3e; font-weight: 750; break-after: avoid; page-break-after: avoid; }
+ .ht-export-document p { margin: 8px 0 12px; }
+ .ht-export-document .ht-muted { color: #6a7e70; }
+ .ht-export-document .ht-table-scroll { overflow: visible; max-height: none; }
+ .ht-export-document table { width: 100%; border: 1px solid #cfdfd4; border-collapse: collapse; border-radius: 0; font-size: 8pt; background: #fff; }
+ .ht-export-document th { background: #e1eee5; color: #244f35; font-weight: 750; }
+ .ht-export-document td, .ht-export-document th { padding: 9px 8px; border-bottom: 1px solid #d9e5dd; text-align: left; vertical-align: top; line-height: 1.45; overflow-wrap: anywhere; white-space: normal; }
+ .ht-export-document tbody tr:nth-child(even) td { background: #f3f8f5; }
+ .ht-export-document thead { display: table-header-group; }
+ .ht-export-document tr { break-inside: avoid; page-break-inside: avoid; }
+ .ht-export-document button { color: #244b35; background: transparent; border: none; padding: 0; font: inherit; text-align: left; }
+ .ht-export-document .ht-chart-card { padding: 14px; border: 1px solid #d4e3da; border-radius: 8px; background: #f8fbf9; box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+ .ht-export-document .ht-chart-card h3 { margin: 0 0 12px; font-size: 11pt; }
+ .ht-export-document .ht-trend-chart { display: block; width: 100%; height: 195px; min-height: 0; color: #0c4f46; }
+ .ht-export-document .ht-trend-chart polyline { stroke: #0c4f46; }
+ .ht-export-document .ht-trend-chart circle:not([fill=transparent]) { fill: #0c4f46; }
+ .ht-export-document .ht-chart-axis-label, .ht-export-document .ht-chart-axis-title { fill: #496650; font-size: 10px; }
+ .ht-export-document .ht-print-report-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 10px; margin-top: 14px; }
+ .ht-export-document .ht-report-list { min-height: 0; padding: 12px; background: #f0f7f3; border: 1px solid #cfdfd4; border-radius: 7px; }
+ .ht-export-document .ht-report-list h4 { display: flex; align-items: center; gap: 6px; margin: 0 0 10px; font-size: 9pt; line-height: 1.4; }
+ .ht-export-document .ht-report-list h4 svg { flex: 0 0 14px; width: 14px; height: 14px; }
+ .ht-export-document .ht-report-list-row { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid #d4e3da; font-size: 8pt; break-inside: avoid; }
+ .ht-export-document .ht-report-list-row strong { color: #0f6b5f; }
+ .ht-export-document .ht-export-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+ .ht-export-document .ht-export-summary > div { padding: 18px; border: 1px solid #c9dfd0; border-radius: 8px; background: #edf6f0; }
+ .ht-export-document .ht-export-summary strong { display: block; color: #0f6b5f; font-size: 24pt; line-height: 1.2; }
+ .ht-export-document .ht-export-summary span { display: block; margin-top: 8px; font-size: 9pt; }
+ .ht-export-document .ht-follow-up-list { display: grid; gap: 10px; }
+ .ht-export-document .ht-follow-up-item { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 12px; border: 1px solid #cfdfd4; border-radius: 7px; background: #f0f7f3; break-inside: avoid; }
+ .ht-export-document .ht-follow-up-item span:first-child { display: grid; gap: 4px; }
+ .ht-export-document .ht-follow-up-status { color: #9c453e; font-size: 9pt; font-weight: 750; text-transform: capitalize; }
+ .ht-export-document .ht-export-record { padding: 14px 0; border-bottom: 1px solid #cfdfd4; break-inside: auto; }
+ .ht-export-document .ht-export-record h3 { font-size: 10pt; }
+ .ht-export-document dl { margin: 0; }
+ .ht-export-document dl > div { display: grid; grid-template-columns: 32% 1fr; gap: 14px; padding: 9px 10px; border-bottom: 1px solid #e0e9e3; break-inside: avoid; }
+ .ht-export-document dl > div:nth-child(even) { background: #f3f8f5; }
+ .ht-export-document dt { color: #3e624b; font-weight: 700; text-transform: capitalize; }
+ .ht-export-document dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+}
+.ht-report-tabs .ht-export-pdf-button { min-height: 2.5rem; padding: .55rem .9rem; border-radius: 10px; font-size: .86rem; }
+
+.ht-report-insights { display: grid; gap: 14px; margin: 0; }
+.ht-report-insights-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.ht-report-insights-heading h3 { margin: 0; font: 750 16px var(--font-sans); color: #254c36; }
+.ht-report-insights-heading > span { font-size: 12px; color: #6b7e71; }
+.ht-report-metrics { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.ht-report-metric { display: flex; flex-direction: column; gap: 7px; padding: 16px; border: 1px solid #d5e4da; border-radius: 10px; background: #fff; }
+.ht-report-metric > span { font-size: 12px; font-weight: 650; color: #5d7164; }
+.ht-report-metric > strong { font-size: 27px; line-height: 1.15; font-weight: 800; color: #1e6544; }
+.ht-report-metric > small { font-size: 11px; line-height: 1.5; color: #6d7f72; }
+.ht-report-metric.needs-attention { border-color: #edccc9; background: #fff7f5; }
+.ht-report-metric.needs-attention > strong { color: #b0443d; }
+.ht-report-facts-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.ht-report-facts { margin: 0; padding: 18px; border: 1px solid #d5e4da; border-radius: 10px; background: #fff; }
+.ht-report-facts h3 { margin: 0 0 12px; font: 750 14px var(--font-sans); color: #28533c; }
+.ht-report-facts dl { margin: 0; }
+.ht-report-facts dl > div { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 8px 0; border-top: 1px solid #e4ede7; }
+.ht-report-facts dt { font-size: 12px; color: #607366; }
+.ht-report-facts dd { margin: 0; font-size: 13px; font-weight: 750; color: #214c35; text-align: right; white-space: nowrap; }
+.ht-report-highlights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.ht-report-highlights > div { display: grid; gap: 6px; padding: 14px; border: 1px solid #d8e7dd; border-radius: 9px; background: #edf6f0; }
+.ht-report-highlights span { font-size: 11px; color: #62786a; }
+.ht-report-highlights strong { font-size: 14px; color: #295a3e; overflow-wrap: anywhere; }
+.ht-report-highlights small { font-size: 11px; color: #657d6d; }
+.ht-report-comparison { margin: 0; padding: 12px 14px; border-left: 3px solid #739e83; background: #f0f6f2; color: #506c59; font-size: 12px; line-height: 1.6; }
+.ht-report-definitions { margin: 0; font-size: 11px; line-height: 1.6; color: #738379; }
+@media (max-width: 1150px) { .ht-report-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 700px) { .ht-report-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ht-report-facts-grid, .ht-report-highlights { grid-template-columns: minmax(0, 1fr); } }
+@media print {
+ .ht-export-document .ht-report-insights { display: grid; gap: 9px; margin: 12px 0 16px; }
+ .ht-export-document .ht-report-insights-heading h3 { font: 750 10pt Inter, Arial, sans-serif; margin: 0; }
+ .ht-export-document .ht-report-insights-heading > span { font-size: 7pt; }
+ .ht-export-document .ht-report-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+ .ht-export-document .ht-report-metric { padding: 9px 10px; gap: 3px; border-radius: 5px; background: #f3f8f5; break-inside: avoid; }
+ .ht-export-document .ht-report-metric > span { font-size: 7.5pt; }
+ .ht-export-document .ht-report-metric > strong { font-size: 17pt; }
+ .ht-export-document .ht-report-metric > small { font-size: 6.5pt; line-height: 1.35; }
+ .ht-export-document .ht-report-metric.needs-attention { background: #fff2ef; }
+ .ht-export-document .ht-report-facts-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+ .ht-export-document .ht-report-facts { margin: 0; padding: 10px; border-radius: 5px; break-inside: avoid; }
+ .ht-export-document .ht-report-facts h3 { margin: 0 0 6px; font: 750 9pt Inter, Arial, sans-serif; }
+ .ht-export-document .ht-report-facts dl > div { display: flex; justify-content: space-between; gap: 8px; padding: 5px 0; background: transparent; border-bottom: none; break-inside: avoid; }
+ .ht-export-document .ht-report-facts dt { font-size: 7pt; font-weight: 500; text-transform: none; }
+ .ht-export-document .ht-report-facts dd { font-size: 7.5pt; margin: 0; white-space: nowrap; }
+ .ht-export-document .ht-report-highlights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+ .ht-export-document .ht-report-highlights > div { padding: 9px; gap: 4px; break-inside: avoid; }
+ .ht-export-document .ht-report-highlights span, .ht-export-document .ht-report-highlights small { font-size: 6.5pt; }
+ .ht-export-document .ht-report-highlights strong { font-size: 8pt; }
+ .ht-export-document .ht-report-comparison { margin: 0; padding: 7px 9px; font-size: 7pt; line-height: 1.4; break-inside: avoid; }
+ .ht-export-document .ht-report-definitions { margin: 0; font-size: 6.5pt; line-height: 1.4; }
+}
+@media print {
+ .ht-export-document .ht-print-period-content .ht-trend-chart { height: 145px; }
+ .ht-export-document .ht-report-list { break-inside: avoid; page-break-inside: avoid; }
+}
+.ht-export-option-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 10px; border: 1px solid #dce8e1; border-radius: 8px; }
+.ht-export-dialog .ht-export-option-row > label { display: flex; align-items: center; justify-content: flex-start; gap: 10px; flex: 1; margin: 0; padding: 0; text-align: left; cursor: pointer; font-size: inherit; }
+.ht-export-option-row select { flex: 0 0 120px; min-height: 34px; width: 120px; padding: 5px 8px; border: 1px solid #b9cfc0; border-radius: 6px; background: #fff; color: #294e38; font: inherit; font-size: 12px; }
+.ht-export-option-row select:focus-visible { outline: 2px solid #82b69a; outline-offset: 2px; }
+@media (max-width: 420px) { .ht-export-option-row { flex-wrap: wrap; } .ht-export-option-row select { margin-left: 26px; } }

@@ -40,20 +40,33 @@ import { Combobox, Field, Input, MultiCombobox, Select, Textarea } from "../../c
  * per-record-type branching.
  */
 
-export function ClinicalRecords({ patientId, type, role, readOnly = false, appointmentId, appointmentDate, appendOnly = false }) {
+export function ClinicalRecords({ patientId, type, role, readOnly = false, appointmentId, appointmentDate, appendOnly = false, embedded = false, draftMode = false, draft = {}, onDraftChange, disabled = false }) {
   const definition = RECORD_TYPES[type];
 
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [formVisible, setShowForm] = useState(false);
+  const showForm = draftMode || formVisible;
   const [perPage, setPerPage] = useState(10);
-  const [form, setForm] = useState({});
+  const [localForm, setLocalForm] = useState({});
+  const form = draftMode ? draft : localForm;
+  function setForm(value) {
+    if (draftMode) onDraftChange?.({ ...value, recordDate });
+    else setLocalForm(value);
+  }
   const [editingRecord, setEditingRecord] = useState(null);
-  const [recordDate, setRecordDate] = useState(
+  const [localRecordDate, setLocalRecordDate] = useState(
     appointmentDate || new Date().toLocaleDateString("en-CA")
   );
+  const today = new Date().toLocaleDateString("en-CA");
+  const draftDefaultDate = appointmentDate && appointmentDate < today ? appointmentDate : today;
+  const recordDate = draftMode ? draft.recordDate || draftDefaultDate : localRecordDate;
+  function setRecordDate(value) {
+    if (draftMode) onDraftChange?.({ ...form, recordDate: value });
+    else setLocalRecordDate(value);
+  }
   const [error, setError] = useState(null);
   const [healthOptions, setHealthOptions] = useState({});
 
@@ -81,10 +94,10 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
   }
 
   useEffect(() => {
-    load();
+    if (!draftMode) load();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patientId, type, perPage, appointmentId]);
+  }, [patientId, type, perPage, appointmentId, draftMode]);
 
   useEffect(() => {
     api.get("/patients/options")
@@ -354,12 +367,12 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
   const isMidwifeNotes = type === "midwife-notes";
 
   return (
-    <div className="ht-health-assessment">
+    <div className={`ht-health-assessment${embedded ? " ht-clinical-content" : ""}`}>
       {/* HEADER */}
-      <div className="ht-health-assessment-header">
-        <div>
+      {!draftMode && (canManage || !embedded) && <div className="ht-health-assessment-header">
+        {!embedded && <div>
           <h2>{definition.label}</h2>
-        </div>
+        </div>}
 
         <div className="ht-health-assessment-actions">
           {canManage && (
@@ -382,15 +395,15 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
             </button>
           )}
         </div>
-      </div>
+      </div>}
 
       {/* ADD FORM */}
       {showForm && canManage && (
         <div className="ht-health-form">
-          <div className="ht-health-form-title">
+          {!draftMode && <div className="ht-health-form-title">
             <ClipboardList size={18} />
             <h3>{editingRecord ? `Edit ${definition.singular}` : `New ${definition.singular}`}</h3>
-          </div>
+          </div>}
 
           {error && (
             <div className="ht-login-alert ht-login-alert-error">
@@ -398,7 +411,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
             </div>
           )}
 
-          <div className="ht-health-form-grid">
+          <fieldset className="ht-health-form-grid" disabled={disabled}>
             {Object.entries(definition.fields).map(
               ([column, field]) => (
                 <Field
@@ -408,6 +421,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
                 >
                   {field.type === "multi-combobox" ? (
                     <MultiCombobox
+                      aria-required={field.required}
                       id={column}
                       options={healthOptions[field.optionKey] || field.options}
                       value={form[column] || ""}
@@ -420,6 +434,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
                     />
                   ) : field.type === "textarea" ? (
                     <Textarea
+                      required={field.required}
                       value={form[column] || ""}
                       onChange={(e) =>
                         setForm({
@@ -430,6 +445,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
                     />
                   ) : field.type === "select" ? (
                     <Select
+                      required={field.required}
                       value={form[column] || ""}
                       onChange={(e) =>
                         setForm({
@@ -450,6 +466,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
                     </Select>
                   ) : field.type === "combobox" ? (
                     <Combobox
+                      required={field.required}
                       options={healthOptions[field.optionKey] || field.options}
                       value={form[column] || ""}
                       onChange={(e) =>
@@ -461,6 +478,8 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
                     />
                   ) : (
                     <Input
+                      required={field.required}
+                      step={field.type === "number" ? "any" : undefined}
                       type={
                         field.type === "number"
                           ? "number"
@@ -481,19 +500,18 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
 
             <Field label={definition.dateLabel} required>
               <Input
+                required
                 type="date"
                 value={recordDate}
                 onChange={(e) =>
                   setRecordDate(e.target.value)
                 }
-                max={new Date()
-                  .toISOString()
-                  .slice(0, 10)}
+                max={today}
               />
             </Field>
-          </div>
+          </fieldset>
 
-          <div className="ht-health-form-buttons">
+          {!draftMode && <div className="ht-health-form-buttons">
             <button
               type="button"
               disabled={saving}
@@ -510,16 +528,16 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
             >
               Cancel
             </button>
-          </div>
+          </div>}
         </div>
       )}
 
       {/* CONTENT */}
-      {loadError ? <div role="alert">{loadError}<button className="ht-small-button" onClick={load}>Retry</button></div> : loading ? (
+      {draftMode ? null : loadError ? <div role="alert">{loadError}<button className="ht-small-button" onClick={load}>Retry</button></div> : loading ? (
         <div className="ht-health-empty">
           <p>Loading clinical records…</p>
         </div>
-      ) : records.length === 0 ? (
+      ) : records.length === 0 && embedded ? <p className="ht-clinical-empty">No records recorded for this appointment.</p> : records.length === 0 ? (
         <div className="ht-health-empty">
           <div className="ht-health-empty-icon">
             <ClipboardList size={25} />
@@ -546,6 +564,16 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
               {`Add ${definition.singular}`}
             </button>
           )}
+        </div>
+      ) : embedded ? (
+        <div className="ht-clinical-records">
+          {records.map(record => <section className="ht-clinical-record" key={record.record_id}>
+            <div className="ht-clinical-record-meta"><span>{definition.dateLabel}: {getRecordDate(record)}</span>{getRecordedBy(record) && <span>Recorded by {getRecordedBy(record)}</span>}</div>
+            <dl className={`ht-clinical-fields${type === "vital-signs" ? " ht-clinical-vitals" : ""}`}>
+              {Object.entries(definition.fields).map(([column, field]) => <div key={column} className={field.type === "textarea" ? "ht-clinical-field-long" : ""}><dt>{field.label}</dt><dd>{formatValue(record[column], field)}</dd></div>)}
+            </dl>
+          </section>)}
+          {records.length >= perPage && <button type="button" className="ht-small-button" onClick={() => setPerPage(p => p + 10)}>Show more records</button>}
         </div>
       ) : isMidwifeNotes ? (
         <>

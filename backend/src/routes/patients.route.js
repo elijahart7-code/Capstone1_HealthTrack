@@ -8,6 +8,7 @@ import {
 } from "../controllers/patients/getRequests.controller.js";
 import {
   createAppointment,
+  createAppointmentRecords,
   createClinicalRecord,
   createPortalAccount,
   registerPatient,
@@ -34,6 +35,7 @@ router.post("/:patientId/restore", restorePatient);
 
 router.get("/:patientId/appointments", getPatientAppointments);
 router.post("/:patientId/appointments", createAppointment);
+router.post("/:patientId/appointments/:appointmentId/records", createAppointmentRecords);
 
 router.post("/:patientId/portal-account", createPortalAccount);
 

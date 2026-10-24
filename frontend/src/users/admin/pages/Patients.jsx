@@ -179,26 +179,28 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                         Open record
                       </button>
                     </Td>
-                    <Td>
-                      <PatientExportButton patient={p} />
-                      {showArchived ? (
-                        <button
-                          type="button"
-                          onClick={() => restorePatient(p)}
-                          className="ht-restore-row-action"
-                        >
-                          Restore
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => archivePatient(p)}
-                          className="ht-archive-row-action"
-                        >
-                          <Archive size={15} strokeWidth={2} />
-                          Archive
-                        </button>
-                      )}
+                    <Td className="ht-patient-actions-cell">
+                      <div className="ht-patient-row-actions">
+                        <PatientExportButton patient={p} />
+                        {showArchived ? (
+                          <button
+                            type="button"
+                            onClick={() => restorePatient(p)}
+                            className="ht-restore-row-action"
+                          >
+                            Restore
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => archivePatient(p)}
+                            className="ht-archive-row-action"
+                          >
+                            <Archive size={15} strokeWidth={2} />
+                            Archive
+                          </button>
+                        )}
+                      </div>
                     </Td>
                   </tr>
                 ))}

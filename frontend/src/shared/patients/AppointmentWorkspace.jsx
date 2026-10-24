@@ -1,44 +1,134 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
+import { CheckCircle2, CircleDot, ClipboardList } from "lucide-react";
 import { api } from "../../lib/axios";
+import { AppointmentDate } from "../appointments/AppointmentDate";
 import { ClinicalRecords } from "./ClinicalRecords";
 import { RECORD_TYPES } from "../../config/recordTypes";
-import { Combobox, Field, Input, Textarea } from "../../components/ui/Input";
+import { Combobox, Field, Input, Select, Textarea } from "../../components/ui/Input";
 import { APPOINTMENT_REASONS } from "../../config/healthOptions";
 import { EmptyState, Table, Th, Td, Badge } from "../../components/ui/Table";
 
 const TYPES = ["vital-signs", "health-assessment", "midwife-notes", "medical-history", "allergies"];
+const STATUSES = ["confirmed", "cancelled"];
 export function AppointmentWorkspace({ patientId, appointments, role, onSaved }) {
   const [params, setParams] = useSearchParams();
   const [selected, setSelected] = useState(params.get("appointmentId") || appointments[0]?.appointment_id);
   const [active, setActive] = useState(null);
   const [showNew, setShowNew] = useState(false);
+  const [drafts, setDrafts] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [recordVersion, setRecordVersion] = useState(0);
+  const [statusBusy, setStatusBusy] = useState(null);
+  const [error, setError] = useState("");
   useEffect(() => { if (params.get("appointmentId")) setSelected(params.get("appointmentId")); }, [params]);
   const appointment = appointments.find(a => a.appointment_id === selected);
+  const recording = active === selected && !!appointment && !["completed", "cancelled"].includes(appointment.status);
+  const missingRequired = TYPES.flatMap(type => Object.entries(RECORD_TYPES[type].fields)
+    .filter(([key, field]) => field.required && !String(drafts[type]?.[key] ?? "").trim())
+    .map(([, field]) => `${RECORD_TYPES[type].label}: ${field.label}`));
+  const recordingComplete = missingRequired.length === 0;
   function select(a) {
-    setSelected(a.appointment_id); setActive(null);
-    const next = new URLSearchParams(params); next.set("appointmentId", a.appointment_id); setParams(next, { replace: true });
+    if (a.appointment_id !== selected) setActive(null);
+    setSelected(a.appointment_id);
+    const next = new URLSearchParams(params);
+    next.set("appointmentId", a.appointment_id);
+    setParams(next, { replace: true });
   }
-  return <div>
-    <section className="ht-content-card"><div className="ht-card-heading"><h2>Appointments</h2>{role === "admin" && <button className="ht-small-button" onClick={() => setShowNew(true)}>+ New Appointment</button>}</div>
+  async function updateStatus(a, status) {
+    setStatusBusy(a.appointment_id); setError("");
+    try {
+      await api.patch(`/appointments/${a.appointment_id}/status`, { status });
+      if (["completed", "cancelled"].includes(status) && active === a.appointment_id) setActive(null);
+      await onSaved();
+    } catch (err) {
+      setError(err?.response?.data?.error || "Could not update the appointment status. Please try again.");
+    } finally { setStatusBusy(null); }
+  }
+  function activate(a) { select(a); setDrafts({}); setError(""); setActive(a.appointment_id); }
+  function cancelChanges() { setActive(null); setDrafts({}); setError(""); }
+  async function finishRecording(event) {
+    event.preventDefault();
+    if (!recording || saving) return;
+    setError("");
+    const records = {};
+    for (const type of TYPES) {
+      const draft = drafts[type] || {};
+      const definition = RECORD_TYPES[type];
+      for (const [key, field] of Object.entries(definition.fields)) {
+        if (field.required && !String(draft[key] ?? "").trim()) {
+          setError(`${definition.label}: ${field.label} is required. Complete all starred fields before finishing.`);
+          return;
+        }
+      }
+      records[type] = { ...draft, recordDate: draft.recordDate || String(appointment.scheduled_at).slice(0, 10) };
+    }
+    setSaving(true);
+    try {
+      await api.post(`/patients/${patientId}/appointments/${selected}/records`, { records });
+    } catch (err) {
+      setError(err?.response?.data?.error || "Could not save your changes. Your draft is still here; please try again.");
+      setSaving(false);
+      return;
+    }
+    setActive(null); setDrafts({}); setRecordVersion(v => v + 1);
+    try { await onSaved(); }
+    catch { setError("Records saved, but the appointment list could not refresh. Please refresh the page."); }
+    finally { setSaving(false); }
+  }
+  return <div className="ht-appointment-workspace">
+    {!recording && <section className="ht-content-card">
+      <div className="ht-card-heading"><h2>Appointments</h2>{role === "admin" && <button className="ht-small-button" onClick={() => setShowNew(true)}>+ New Appointment</button>}</div>
       <div className="ht-appointment-scroll" tabIndex="0" aria-label="Patient appointments, scroll for more">
-      {!appointments.length ? <EmptyState>No appointments yet.</EmptyState> : <Table><thead><tr><Th>Date and time</Th><Th>Reason</Th><Th>Status</Th><Th>Action</Th></tr></thead><tbody>{appointments.map(a => <tr key={a.appointment_id} style={selected === a.appointment_id ? { background: "#e2f2ea" } : {}}><Td><button className="ht-link-button" aria-pressed={selected === a.appointment_id} onClick={() => select(a)}>{new Date(a.scheduled_at).toLocaleString()}</button></Td><Td>{a.reason}</Td><Td><Badge>{a.status}</Badge></Td><Td>{role === "admin" && a.status !== "cancelled" && a.status !== "completed" && <button className="ht-small-button" onClick={() => { select(a); setActive(a.appointment_id); }}>Activate</button>}</Td></tr>)}</tbody></Table>}
+        {!appointments.length ? <EmptyState>No appointments yet.</EmptyState> : <Table>
+          <thead><tr><Th>Date and time</Th><Th>Reason</Th><Th>Status</Th><Th>Action</Th></tr></thead>
+          <tbody>{appointments.map(a => {
+            const isActive = active === a.appointment_id && !["completed", "cancelled"].includes(a.status);
+            return <tr key={a.appointment_id} className={isActive ? "ht-appointment-row-recording" : selected === a.appointment_id ? "ht-appointment-row-selected" : ""}>
+              <Td><button className="ht-link-button" aria-pressed={selected === a.appointment_id} onClick={() => select(a)}><AppointmentDate appointment={a} /></button></Td>
+              <Td>{a.reason}</Td>
+              <Td>{role === "admin" && a.status !== "completed" ? <Select aria-label={`Appointment status for ${new Date(a.scheduled_at).toLocaleString()}`} value={a.status === "pending" ? "confirmed" : a.status} disabled={statusBusy !== null} className={`ht-status-select ht-status-select-${a.status}`} onChange={e => updateStatus(a, e.target.value)}>
+                {STATUSES.map(status => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}
+              </Select> : <Badge>{a.status === "pending" ? "confirmed" : a.status}</Badge>}</Td>
+              <Td>{role === "admin" && !["completed", "cancelled"].includes(a.status) && <button className={`ht-small-button${isActive ? " ht-activate-button-active" : ""}`} disabled={isActive || statusBusy !== null} aria-pressed={isActive} onClick={() => activate(a)}>{isActive ? <><CircleDot size={14} /> Recording active</> : "Activate"}</button>}</Td>
+            </tr>;
+          })}</tbody>
+        </Table>}
       </div>
-    </section>
+    </section>}
+    {!recording && error && <p className="ht-login-alert ht-login-alert-error" role="alert">{error}</p>}
     {appointment && <>
-      <section className="ht-content-card" style={{ marginTop: 14 }}><h2>Appointment record · {new Date(appointment.scheduled_at).toLocaleString()}</h2><p>{appointment.reason} · {appointment.status}</p>{appointment.notes && <p>{appointment.notes}</p>}<p className="ht-muted">{active === selected ? "Active appointment: add clinical records below. Each saved section is preserved with this appointment." : "Showing records recorded for this appointment. Activate to add clinical information."}</p>{active === selected && <button className="ht-secondary-button" onClick={() => setActive(null)}>Finish recording</button>}</section>
-      {TYPES.map(type => <details className="ht-encounter-section" open key={`${selected}-${type}`}><summary>{RECORD_TYPES[type].label}</summary><ClinicalRecords patientId={patientId} appointmentId={selected} appointmentDate={String(appointment.scheduled_at).slice(0, 10)} type={type} role={role} readOnly={active !== selected} appendOnly /></details>)}
+      <section className={`ht-appointment-record ht-appointment-record-compact${recording ? " is-recording" : ""}`} aria-label="Selected appointment record">
+        <div className="ht-appointment-record-identity">
+          <span className="ht-appointment-record-label"><ClipboardList size={14} /> Appointment record</span>
+          <h2>{appointment.reason}</h2>
+          <div className="ht-appointment-record-meta"><AppointmentDate appointment={appointment} /><Badge>{appointment.status}</Badge></div>
+        </div>
+        <div className="ht-appointment-record-controls">
+          <span className={`ht-recording-state${recording ? " is-active" : ""}`} role="status">{recording ? <CircleDot size={14} /> : <CheckCircle2 size={14} />}{recording ? "Recording active" : "Viewing record"}</span>
+          {!recording && role === "admin" && !["completed", "cancelled"].includes(appointment.status) && <button type="button" className="ht-primary-button" onClick={() => activate(appointment)}>Activate appointment</button>}
+        </div>
+        {appointment.notes && <p className="ht-appointment-compact-notes">{appointment.notes}</p>}
+      </section>
+      <form onSubmit={finishRecording} className="ht-recording-form">
+      <div className={`ht-clinical-sections${recording ? " is-recording" : ""}`}>
+        {TYPES.map(type => <details className="ht-encounter-section" open={recording || undefined} key={`${selected}-${type}-${recording}-${recordVersion}`}>
+          <summary><span>{RECORD_TYPES[type].label}</span>{recording && <span className="ht-section-recording-hint">Ready to record</span>}</summary>
+          <ClinicalRecords patientId={patientId} appointmentId={selected} appointmentDate={String(appointment.scheduled_at).slice(0, 10)} type={type} role={role} readOnly={!recording} appendOnly embedded draftMode={recording} draft={drafts[type] || {}} onDraftChange={value => setDrafts(previous => ({ ...previous, [type]: value }))} disabled={saving} />
+        </details>)}
+      </div>
+      {recording && <div className="ht-recording-actions">
+        {error && <p className="ht-login-alert ht-login-alert-error" role="alert">{error}</p>}
+        <span>{recordingComplete ? "All required fields are complete. Finish recording to save and mark this appointment Completed." : `${missingRequired.length} required fields remaining. Complete all starred fields to finish recording.`}</span>
+        <div className="ht-form-buttons">
+          <button type="button" className="ht-secondary-button" disabled={saving} onClick={cancelChanges}>Cancel changes</button>
+          <button type="submit" className="ht-primary-button" disabled={saving || !recordingComplete}>{saving ? "Saving…" : "Finish recording"}</button>
+        </div>
+      </div>}
+      </form>
     </>}
-    <details className="ht-encounter-section"><summary>Earlier clinical history</summary><p>These records predate appointment linking. They are not assigned to the selected appointment.</p>{TYPES.map(type => <LegacyRecords key={type} patientId={patientId} type={type} />)}</details>
-    {showNew && <NewAppointment patientId={patientId} onClose={() => setShowNew(false)} onSaved={async a => { setShowNew(false); await onSaved(); setSelected(a.appointment_id); setActive(a.appointment_id); }} />}
+    {showNew && <NewAppointment patientId={patientId} onClose={() => setShowNew(false)} onSaved={async a => { await onSaved(a); activate(a); setShowNew(false); }} />}
   </div>;
-}
-function LegacyRecords({ patientId, type }) {
-  const [records, setRecords] = useState(null);
-  const [error, setError] = useState(false);
-  useEffect(() => { let alive = true; api.get(`/patients/${patientId}/records/${type}`, { params: { perPage: 1000 } }).then(({data}) => { if (alive) setRecords(data.records.filter(r => !r.appointment_id)); }).catch(() => { if (alive) setError(true); }); return () => { alive = false; }; }, [patientId, type]);
-  const def = RECORD_TYPES[type];
-  return <details className="ht-encounter-section"><summary>{def.label}</summary>{error ? <p role="alert">Could not load earlier records.</p> : records === null ? <p>Loading…</p> : !records.length ? <p>No earlier records.</p> : records.map(r => <section key={r.record_id}><h3>{String(r[def.dateField]).slice(0,10)}</h3><dl>{Object.entries(def.fields).map(([key,field]) => <div key={key}><dt>{field.label}</dt><dd>{field.options?.[r[key]] || r[key] || "—"}</dd></div>)}</dl></section>)}</details>;
 }
 function NewAppointment({ patientId, onClose, onSaved }) {
   const dialog = useRef(null);
@@ -52,7 +142,7 @@ function NewAppointment({ patientId, onClose, onSaved }) {
   async function save(e) {
     e.preventDefault(); if (busy) return;
     setBusy(true); setError("");
-    try { const {data} = await api.post(`/patients/${patientId}/appointments`, { scheduledAt, reason, notes, status: "pending" }); await onSaved(data.appointment); }
+    try { const {data} = await api.post(`/patients/${patientId}/appointments`, { scheduledAt, reason, notes, status: "confirmed" }); await onSaved(data.appointment); }
     catch(err) { setError(err?.response?.data?.error || "Could not save appointment."); }
     finally { setBusy(false); }
   }
