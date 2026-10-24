@@ -496,6 +496,7 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, childre
 }
 
 
+
 function LatestAppointment({
   appointment,
   hasAppointmentHistory,
@@ -525,8 +526,8 @@ function LatestAppointment({
     },
     {
       key: "reason",
-      label: "Reason for Visit",
-      value: appointment?.notes || appointment?.reason || "--",
+      label: "Reason",
+      value: appointment?.reason || "--",
     },
     {
       key: "status",
@@ -536,12 +537,10 @@ function LatestAppointment({
   ];
 
   return (
-    <section className="patient-healthinfo-card patient-latest-appointment-card">
+    <section className="patient-healthinfo-card patient-latest-card patient-latest-appointment-card">
       <header className="patient-latest-card-header">
         <div className="patient-latest-title">
-          <span className="patient-appointment-icon" aria-hidden="true">
-            <CalendarDays size={20} strokeWidth={1.8} />
-          </span>
+          <CalendarDays size={22} strokeWidth={2} />
           <h2>Latest Appointment</h2>
         </div>
 
@@ -551,52 +550,41 @@ function LatestAppointment({
           onClick={onViewAppointments}
         >
           View All Appointments
-          <ArrowRight size={16} strokeWidth={1.8} aria-hidden="true" />
+          <ArrowRight size={16} strokeWidth={1.8} />
         </button>
       </header>
 
-      {appointment ? (
-        <div className="patient-table-wrap">
-          <table className="patient-health-table">
-            <thead>
-              <tr>
-                {columns.map(({ key, label }) => (
-                  <th scope="col" key={key}>
-                    {label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
+      <div className="patient-latest-card-content">
+        {appointment ? (
+          <div className="patient-table-wrap">
+            <table className="patient-health-table">
+              <thead>
+                <tr>
+                  {columns.map(({ key, label }) => (
+                    <th scope="col" key={key}>
+                      {label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
 
-            <tbody>
-              <tr>
-                {columns.map(({ key, value }) => (
-                  <td key={key}>{value}</td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="patient-empty-state">
-          <strong>No Upcoming Appointments</strong>
-          <p>
-            You're all caught up! No upcoming visits are scheduled at the moment.
-          </p>
-
-          {hasAppointmentHistory && (
-            <button
-              type="button"
-              className="patient-appointment-link"
-              onClick={onViewAppointments}
-            >
-              <CalendarDays size={15} strokeWidth={1.8} />
-              View Appointment History
-              <ArrowRight size={15} strokeWidth={1.8} />
-            </button>
-          )}
-        </div>
-      )}
+              <tbody>
+                <tr>
+                  {columns.map(({ key, value }) => (
+                    <td key={key}>{value}</td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="patient-empty-state">
+            {hasAppointmentHistory
+              ? "No appointment details available."
+              : "No appointments recorded."}
+          </div>
+        )}
+      </div>
     </section>
   );
 }
