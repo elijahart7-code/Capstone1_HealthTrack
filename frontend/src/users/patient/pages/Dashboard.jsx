@@ -12,6 +12,7 @@ import {
   Landmark,
   Phone,
   Clock,
+  Eye,
   Droplet,
   Apple,
   Activity,
@@ -64,7 +65,7 @@ export function Dashboard({ dashboard }) {
     }
   >
     View Health Information
-    <ArrowRight size={18} />
+    <Eye size={18} />
   </button>
 </div>
       {/* ================= WELCOME ================= */}
