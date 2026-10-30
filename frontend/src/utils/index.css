@@ -5719,7 +5719,7 @@
 
     font-size: 15px !important;
 
-    line-height: 1.5 !important;
+    line-height: 1.3 !important;
 }
 
 .patient-contact-body span {
@@ -5730,6 +5730,7 @@
     color: #77827f;
 
     font-size: 15px;
+    line-height: 1.3;
 }
 
 
