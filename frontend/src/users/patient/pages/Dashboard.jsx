@@ -13,6 +13,7 @@ import {
   Phone,
   Clock,
   Droplet,
+  Eye,
   Apple,
   Activity,
   Moon,
