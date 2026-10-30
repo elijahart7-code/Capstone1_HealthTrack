@@ -4931,9 +4931,9 @@
 .patient-dashboard-header h1 {
     margin: 0 0 6px;
 
-    font-family: var(--font-sans);
+    font-family: "Inter", sans-serif;
 
-    font-size: 2rem;
+    font-size: 15px;
 
     font-weight: 800;
 
