@@ -6527,30 +6527,35 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     }
 
     .patient-dashboard-shell .patient-metric-copy {
-        display: grid;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
         align-content: start;
-        gap: 0.3rem;
+        gap: 5px !important;
         min-width: 0;
     }
 
     .patient-dashboard-shell .patient-metric-copy h3 {
-        margin: 0;
+        margin: 0 !important;
         color: #086B4D !important;
         font-size: 16px !important;
         font-family: "Inter", sans-serif !important;
         font-weight: 700 !important;
         line-height: 1.4 !important;
         letter-spacing: -0.3px;
+        min-height: 2.8em !important;
+        display: flex !important;
+        align-items: center !important;
         overflow-wrap: anywhere;
     }
 
     .patient-dashboard-shell .patient-metric-copy .patient-metric-description {
-        margin: 0;
+        margin: 0 !important;
         font-family: "Inter", sans-serif !important;
         color: #66736d !important;
         font-size: 15px !important;
         font-weight: 400 !important;
-        line-height: 1.55 !important;
+        line-height: 1.5 !important;
         letter-spacing: 0 !important;
     }
 
