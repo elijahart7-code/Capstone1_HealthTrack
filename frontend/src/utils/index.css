@@ -2700,7 +2700,7 @@
     .patient-contact-body h3 {
         margin: 0;
         color: #1f2a2c;
-        font-size: 0.98rem;
+        font-size: 16px;
         font-weight: 800;
     }
 
@@ -2708,7 +2708,7 @@
     .patient-contact-body span {
         margin: 0;
         color: #475451;
-        font-size: 0.82rem;
+        font-size: 16px;
         line-height: 1.5;
     }
 
