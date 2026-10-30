@@ -6668,7 +6668,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-contact-card {
         display: flex !important;
         align-items: flex-start !important;
-        gap: 12px !important;
+        gap: 10px !important;
         min-width: 0;
         min-height: 72px;
         padding: 0.4rem 0.65rem !important;
@@ -6688,7 +6688,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         flex: 0 0 30px !important;
         height: 30px !important;
         min-width: 42px !important;
-        margin-top: 2px;
+        margin-top: 0 !important;
+        align-self: flex-start !important;
         border-radius: 50% !important;
         background: #F0FBF7 !important;
         color: #086B4D !important;
@@ -6697,6 +6698,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-contact-body {
         display: flex !important;
         flex-direction: column !important;
+        flex: 1 !important;
+        margin: 0 !important;
         align-items: flex-start !important;
         align-self: flex-start !important;
         justify-content: flex-start !important;
