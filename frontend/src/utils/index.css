@@ -6667,8 +6667,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 
     .patient-dashboard-shell .patient-contact-card {
         display: flex !important;
-        align-items: center !important;
-        gap: 0.65rem !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
         min-width: 0;
         min-height: 72px;
         padding: 0.4rem 0.65rem !important;
