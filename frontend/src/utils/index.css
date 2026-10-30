@@ -4955,8 +4955,8 @@
 }
 /*Patient dashboard subtitle*/
 .patient-dashboard-shell > p{
-    font-size: 16px;
-    line-height: 1.6;
+    font-size: 18px;
+    line-height: 1.7;
 }
 /*Patient dashboard: feature card subtitles*/
 .patient-dashboard-shell .patient-feature-card p,
