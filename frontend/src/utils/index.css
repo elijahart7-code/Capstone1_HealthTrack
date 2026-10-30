@@ -2296,6 +2296,26 @@
         margin: 0 auto;
         padding: 0.25rem 0 0;
     }
+    
+/* ==========================================
+   PATIENT NAVIGATION - FONT ENHANCEMENT
+   ========================================== */
+
+.patient-dashboard-shell nav a,
+.patient-dashboard-shell nav button {
+    font-family: "Inter", sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    line-height: 1.5 !important;
+    letter-spacing: -0.1px;
+}
+
+/* Navigation icons */
+.patient-dashboard-shell nav a svg,
+.patient-dashboard-shell nav button svg {
+    width: 17px !important;
+    height: 17px !important;
+}
     .patient-header-button {
   display: inline-flex;
   align-items: center;
