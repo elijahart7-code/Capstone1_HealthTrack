@@ -65,7 +65,7 @@ export function Dashboard({ dashboard }) {
     }
   >
     View Health Information
-    <Eye size={18} />
+    <Eye size={20} />
   </button>
 </div>
       {/* ================= WELCOME ================= */}
@@ -293,7 +293,7 @@ function PatientMetricCard({
         onClick={onClick}
       >
         View Only
-        <Eye size={17} strokeWidth={2} />
+        <Eye size={20} strokeWidth={2} />
       </button>
 
     </div>
