@@ -6702,6 +6702,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         justify-content: flex-start !important;
         gap: 3px !important;
         min-width: 0;
+        height: 100%;
         padding: 0 !important;
     }
 
@@ -6723,9 +6724,12 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-contact-body span
     .patient-dashboard-shell .patient-contact-body small {
         margin: 0 !important;
+        min-height: 2.8em !important;
         font-size: 13px !important;
-        line-height: 1.45 !important;
+        line-height: 1.4 !important;
+        display: block !important;
     }
+
 
     .patient-dashboard-shell .patient-health-tips {
         display: grid;
