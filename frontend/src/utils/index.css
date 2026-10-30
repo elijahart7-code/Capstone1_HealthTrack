@@ -2762,6 +2762,82 @@
         font-weight: 600;
         line-height: 1.4;
     }
+    /* Emergency and Health Tips fontSize */
+.patient-dashboard-shell {
+    font-family: "Inter", sans-serif !important;
+}
+
+/* SECTION HEADINGS */
+.patient-dashboard-shell .patient-section-header h2,
+.patient-dashboard-shell .patient-tips-heading h2 {
+    font-family: "Inter", sans-serif !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    line-height: 1.4 !important;
+    letter-spacing: -0.4px;
+}
+
+/* SECTION SUBTITLES */
+.patient-dashboard-shell .patient-section-header p,
+.patient-dashboard-shell .patient-tips-heading p {
+    font-family: "Inter", sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+}
+
+/* CONTACT CARD TITLES */
+.patient-dashboard-shell .patient-contact-body h3 {
+    font-family: "Inter", sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1.4 !important;
+    color: #173D32 !important;
+}
+
+/* CONTACT DETAILS AND PHONE NUMBERS */
+.patient-dashboard-shell .patient-contact-body p,
+.patient-dashboard-shell .patient-contact-body span {
+    font-family: "Inter", sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    line-height: 1.55 !important;
+    color: #526C60 !important;
+}
+
+/* HEALTH TIPS TEXT */
+.patient-dashboard-shell .patient-tip-item span {
+    font-family: "Inter", sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+    color: #175B48 !important;
+}
+
+/* RESPONSIVE FONT SIZES */
+@media (max-width: 640px) {
+    .patient-dashboard-shell .patient-section-header h2,
+    .patient-dashboard-shell .patient-tips-heading h2 {
+        font-size: 18px !important;
+    }
+
+    .patient-dashboard-shell .patient-section-header p,
+    .patient-dashboard-shell .patient-tips-heading p {
+        font-size: 13px !important;
+    }
+
+    .patient-dashboard-shell .patient-contact-body h3 {
+        font-size: 13px !important;
+    }
+
+    .patient-dashboard-shell .patient-contact-body p,
+    .patient-dashboard-shell .patient-contact-body span {
+        font-size: 12px !important;
+    }
+
+    .patient-dashboard-shell .patient-tip-item span {
+        font-size: 13px !important;
+    }
 
     .patient-healthinfo-sidebar {
         display: grid;
