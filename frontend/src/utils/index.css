@@ -4945,13 +4945,13 @@
 }
 
 .patient-dashboard-header p {
-    margin: 0;
-
+    margin-top: 5px !important;
     color: #667875;
-
-    font-size: 0.9rem;
-
-    line-height: 1.45;
+    font-size: 16px !important;
+    font-family: "Inter", sans-serif;
+    font-weight: 400 !important;
+    line-height: 1.6 !important;
+    letter-spacing: 0 !important;
 }
 /*Patient dashboard subtitle*/
 .patient-dashboard-shell > p{
