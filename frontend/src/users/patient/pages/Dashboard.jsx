@@ -178,7 +178,7 @@ export function Dashboard({ dashboard }) {
 
           <ContactCard
             icon={<House size={22} strokeWidth={1.8} />}
-            title="Barangay Health Center"
+            title="Brgy. Health Center"
             line1="Brgy. Mambog I, Bacoor, Cavite"
             line2="(046) 123-4567"
           />
