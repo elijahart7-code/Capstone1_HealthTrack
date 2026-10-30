@@ -77,9 +77,10 @@ export function Dashboard({ dashboard }) {
 
         <div className="patient-welcome-text">
   <div className="patient-welcome-heading">
-    <span>Welcome back,</span>
-    <h1>{patientName}!</h1>
-  </div>
+    <h1>
+        Welcome back, {dashboard.patient.first_name}!
+    </h1>
+</div>
 
   <p className="patient-welcome-message">
     Your records at Barangay Health Center of Mambog I. Take care of your health today for a better tomorrow.
