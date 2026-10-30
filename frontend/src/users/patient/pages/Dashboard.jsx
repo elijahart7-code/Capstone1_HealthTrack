@@ -193,7 +193,7 @@ export function Dashboard({ dashboard }) {
           <ContactCard
             icon={<Phone size={22} strokeWidth={1.8} />}
             title="Emergency Hotline"
-            line1="(046) 123-4567"
+            line1="(+63) 912-345-6789"
             line2="24/7 Available"
           />
 
