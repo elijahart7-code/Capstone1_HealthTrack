@@ -16,7 +16,6 @@ import {
   Apple,
   Activity,
   Moon,
-  Eye,
 } from "lucide-react";
 
 export function Dashboard({ dashboard }) {
@@ -93,7 +92,7 @@ export function Dashboard({ dashboard }) {
       <div className="patient-metric-grid">
 
         <PatientMetricCard
-  icon={<CalendarDays size={25} Eye={1.6} />}
+  icon={<CalendarDays size={25} strokeWidth={1.6} />}
         iconClass="appointment"
   title="Upcoming Appointment"
   description="View your scheduled appointments."
