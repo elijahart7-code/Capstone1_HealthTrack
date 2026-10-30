@@ -5705,11 +5705,11 @@
 
     color: #243532 !important;
 
-    font-size: 17px !important;
+    font-size: 16px !important;
 
-    font-weight: 500 !important;
+    font-weight: 600 !important;
 
-    line-height: 1.5 !important;
+    line-height: 1.3 !important;
 }
 
 .patient-contact-body p {
@@ -5729,7 +5729,7 @@
 
     color: #77827f;
 
-    font-size: 14px;
+    font-size: 15px;
 }
 
 
