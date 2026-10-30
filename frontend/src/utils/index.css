@@ -5041,143 +5041,95 @@
 }
 
 
-
-/* ==========================================
-   PATIENT WELCOME BANNER - MODERN DESIGN
-   ========================================== */
-
-.patient-welcome-banner {
-    position: relative;
+/* WELCOME SECTION */
+.patient-welcome-simple {
     display: flex;
     align-items: center;
-    gap: 22px;
 
-    min-height: 145px;
-    padding: 26px 30px;
+    gap: 16px;
 
-    background: linear-gradient(
-        115deg,
-        #f0f8f4 0%,
-        #e5f3eb 100%
-    );
+    min-height: 82px;
 
-    border: 1px solid #dcece2;
+    margin: 0 !important;
+
+    padding: 14px 20px;
+
+    background: #e8f3ed !important;
+
+    border: 1px solid rgba(12, 79, 70, 0.05);
+
     border-radius: 18px;
 
-    box-shadow: 0 5px 18px rgba(15, 70, 50, 0.045);
+    position: relative;
 
     overflow: hidden;
 }
 
-/* Remove old decorative shapes */
-.patient-welcome-banner::before,
-.patient-welcome-banner::after {
-    display: none !important;
+.patient-welcome-simple::after {
+    content: "";
+
+    position: absolute;
+
+    right: -35px;
+    bottom: -60px;
+
+    width: 180px;
+    height: 150px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.18);
 }
 
-/* Profile icon */
-.patient-profile-circle {
-    position: relative;
-    z-index: 1;
+.patient-welcome-icon {
+    display: flex;
 
-    display: grid;
-    place-items: center;
+    align-items: center;
+    justify-content: center;
 
-    width: 68px;
-    height: 68px;
-    min-width: 68px;
+    width: 58px;
+    height: 58px;
 
-    background: #d5eee2;
+    flex: 0 0 58px;
+
+    border-radius: 14px;
+
+    background: #D5E8DF;
+
     color: #08755f;
 
-    border: 1px solid #c5e5d5;
-    border-radius: 50%;
-}
-
-/* Welcome text container */
-.patient-welcome-copy {
     position: relative;
+
     z-index: 1;
-
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-
-    flex: 1;
-    min-width: 0;
 }
 
-/* Greeting arrangement */
-.patient-welcome-heading {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 7px;
+.patient-welcome-simple > div:last-child {
+    position: relative;
+
+    z-index: 1;
 }
 
-/* Welcome back text */
-.patient-welcome-heading span {
-    font-family: "Inter", sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    color: #557267;
-}
+.patient-welcome-simple h2 {
+    margin: 0 0 4px !important;
 
-/* Patient name */
-.patient-welcome-heading h1 {
-    margin: 0;
+    color: #176B52;
 
-    font-family: "Inter", sans-serif !important;
-    font-size: 28px !important;
-    font-weight: 750;
+    font-family: var(--font-sans);
+
+    font-size: 16px;
+
+    font-weight: 800;
+
     line-height: 1.2;
-
-    letter-spacing: -1px;
-    color: #124B3B;
 }
 
-/* Description */
-.patient-welcome-copy p {
-    margin: 0;
-
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
+.patient-welcome-simple p {
+    margin: 0 !important;
+    color: #1F2421;
     font-weight: 400;
-    line-height: 1.6;
-
-    color: #64756D;
+    font-size: 18px;
+    line-height: 1.2;
 }
-
-/* Mobile layout */
-@media (max-width: 640px) {
-    .patient-welcome-banner {
-        align-items: flex-start;
-        gap: 14px;
-        padding: 20px 18px;
-        min-height: auto;
-    }
-
-    .patient-profile-circle {
-        width: 52px;
-        height: 52px;
-        min-width: 52px;
-    }
-
-    .patient-welcome-heading {
-        gap: 5px;
-    }
-
-    .patient-welcome-heading span {
-        font-size: 13px;
-    }
-
-    .patient-welcome-heading h1 {
-        font-size: 23px !important;
-    }
-
-    .patient-welcome-copy p {
-        font-size: 13px;
-    }
 
 .patient-latest-appointment {
     display: grid;
