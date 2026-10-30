@@ -292,7 +292,7 @@ function PatientMetricCard({
         onClick={onClick}
       >
         View Only
-        <Eye={17} strokeWidth={2} />
+        <Eye size={17} strokeWidth={2} />
       </button>
 
     </div>
