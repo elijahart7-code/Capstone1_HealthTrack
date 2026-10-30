@@ -6852,6 +6852,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         .patient-dashboard-shell .patient-health-summary {
             align-items: stretch;
             flex-direction: column;
+            font-family: "Inter", sans-serif !important;
             padding: 0.9rem !important;
         }
 
