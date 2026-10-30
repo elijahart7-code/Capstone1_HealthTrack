@@ -4949,9 +4949,9 @@
 
     color: #667875;
 
-    font-size: 0.9rem;
+    font-size: 15px;
 
-    line-height: 1.45;
+    line-height: 1.6;
 }
 /*Patient dashboard subtitle*/
 .patient-dashboard-shell > p{
