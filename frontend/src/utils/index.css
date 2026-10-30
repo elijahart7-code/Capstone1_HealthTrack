@@ -35,8 +35,8 @@
 
     --color-line: rgba(31, 36, 33, 0.12);
 
-    --font-display: "Palatino Linotype", "Book Antiqua", serif;
-    --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-display: "Inter", sans-serif;
+--font-sans: "Inter", sans-serif;
 
     --shadow-panel: 0 12px 30px rgba(15, 20, 16, 0.08);
     --radius-panel: 16px;
