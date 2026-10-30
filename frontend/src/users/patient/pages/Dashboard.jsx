@@ -13,7 +13,6 @@ import {
   Phone,
   Clock,
   Droplet,
-  Eye,
   Apple,
   Activity,
   Moon,
@@ -92,8 +91,8 @@ export function Dashboard({ dashboard }) {
       {/* ================= QUICK INFORMATION ================= */}
       <div className="patient-metric-grid">
 
-        <PatientMetricCard
-  icon={<CalendarDays size={25} Eye={1.6} />}
+<PatientMetricCard
+  icon={<CalendarDays size={25} strokeWidth={1.6} />}
         iconClass="appointment"
   title="Upcoming Appointment"
   description="View your scheduled appointments."
@@ -101,7 +100,7 @@ export function Dashboard({ dashboard }) {
 />
 
 <PatientMetricCard
-  icon={<HeartPulse size={25} Eye={1.6} />}
+  icon={<HeartPulse size={25} strokeWidth={1.6} />}
   iconClass="vitals"
   title="Updated Vital Signs"
   description="View your latest vital sign records."
@@ -109,7 +108,7 @@ export function Dashboard({ dashboard }) {
 />
 
 <PatientMetricCard
-  icon={<ClipboardList size={25} Eye={1.6} />}
+  icon={<ClipboardList size={25} strokeWidth={1.6} />}
   iconClass="assessment"
   title="Health Assessment"
   description="View your health assessment records."
@@ -117,7 +116,7 @@ export function Dashboard({ dashboard }) {
 />
 
 <PatientMetricCard
-  icon={<ShieldAlert size={25} Eye={1.6} />}
+  icon={<ShieldAlert size={25} strokeWidth={1.6} />}
   iconClass="allergies"
   title="Known Allergies"
   description="View your recorded allergy information."
