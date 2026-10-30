@@ -4961,7 +4961,7 @@
 /*Patient dashboard: feature card subtitles*/
 .patient-dashboard-shell .patient-feature-card p,
 .patient-dashboard-shell .patient-dashboard-card p{
-    font-size: 16px;
+    font-size: 20px;
     line-height:1.5;
 }
 .patient-dashboard-view-button {
