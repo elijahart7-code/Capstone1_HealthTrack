@@ -2381,16 +2381,19 @@
   gap: 6px;
 }
 
-.patient-welcome-heading span {
-  font-size: 1.25rem;
-  font-weight: 600;
+.patient-welcome-heading {
+    display: flex;
+    align-items: center;
 }
 
 .patient-welcome-heading h1 {
-  margin: 0;
-  font-size: 2.25rem;
-  font-weight: 700;
-  line-height: 1.2;
+    margin: 0;
+    font-family: "Inter", sans-serif !important;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.8px;
+    color: #124B3B;
 }
     .patient-welcome-simple {
   display: flex;
