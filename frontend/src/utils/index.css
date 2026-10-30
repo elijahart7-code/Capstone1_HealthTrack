@@ -6536,16 +6536,21 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-metric-copy h3 {
         margin: 0;
         color: #086B4D !important;
-        font-size: 0.88rem !important;
-        line-height: 1.35 !important;
+        font-size: 16px !important;
+        font-family: "Inter", sans-serif !important;
+        font-weight: 700 !important;
+        line-height: 1.4 !important;
+        letter-spacing: -0.3px;
         overflow-wrap: anywhere;
     }
 
     .patient-dashboard-shell .patient-metric-copy .patient-metric-description {
         margin: 0;
+        font-family: "Inter", sans-serif !important;
         color: #66736d !important;
-        font-size: 0.9rem !important;
-        line-height: 1.5;
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        line-height: 1.55 !important;
     }
 
     .patient-dashboard-shell .patient-view-button {
@@ -6554,13 +6559,22 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         justify-content: center;
         gap: 0.45rem;
         width: 100%;
-        min-height: 38px !important;
+        min-height: 40px !important;
         margin-top: auto !important;
         border: 1px solid #DDF7EF !important;
         border-radius: 8px !important;
         background: #DDF7EF !important;
         color: #086B4D !important;
         cursor: pointer !important;
+        font-family: "Inter", sans-serif !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        line-height: 1.4 !important;
+    
+    }
+    .patient-dashboard-shell .patient-view-button svg {
+        width: 18px !important;
+        height: 18px !important;
     }
 
     .patient-dashboard-shell .patient-view-button:hover,
