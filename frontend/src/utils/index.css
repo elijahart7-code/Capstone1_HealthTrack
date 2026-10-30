@@ -2755,7 +2755,7 @@
     .patient-tip-item span {
         display: block;
         color: #1f2a2c;
-        font-size: 0.9rem;
+        font-size: 12px;
         font-weight: 600;
         line-height: 1.4;
     }
