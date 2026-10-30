@@ -2647,7 +2647,7 @@
         border: none;
         cursor: pointer;
         text-decoration: none;
-        font-family: inherit;
+        font-family: "Inter", sans-serif;
     }
 
     .patient-health-illustration {
