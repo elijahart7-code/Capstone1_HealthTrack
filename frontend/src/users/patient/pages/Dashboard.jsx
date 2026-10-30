@@ -185,7 +185,7 @@ export function Dashboard({ dashboard }) {
 
           <ContactCard
             icon={<Landmark size={22} strokeWidth={1.8} />}
-            title="City Government of Bacoor"
+            title="City Gov. of Bacoor"
             line1="Bacoor City Hall, Bacoor, Cavite"
             line2="(046) 417-3000"
           />
