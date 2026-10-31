@@ -503,12 +503,15 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, action,
           <Icon size={22} strokeWidth={2} />
           <h2>{title}</h2>
         </div>
-        {record && headerDate && type !== "assessment" && (
-        <div className="patient-latest-date">
-        <Calendar size={16} strokeWidth={1.8} />
-        <span>Recorded on: {headerDate}</span>
-        </div>
-        )}
+        {record &&
+  headerDate &&
+  type !== "assessment" &&
+  type !== "vitals" && (
+    <div className="patient-latest-date">
+      <Calendar size={16} strokeWidth={1.8} />
+      <span>Recorded on: {headerDate}</span>
+    </div>
+)}
         {action}
       </header>
       <div className="patient-latest-card-content">
