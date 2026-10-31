@@ -209,7 +209,6 @@ const upcomingAppointment =
     />
   </div>
 )}
-          <SidebarItem icon={FileText} label="Medical History" active={section === "medical-history"} onClick={() => selectSection("medical-history")} />
         </nav>
 
       </aside>
