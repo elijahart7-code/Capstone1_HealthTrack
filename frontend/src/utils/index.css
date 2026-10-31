@@ -3396,17 +3396,21 @@
         line-height: 1.45;
         overflow-wrap: anywhere;
     }
-    /* Latest Appointment - Mint Green Header */
-    .patient-healthinfo-main .patient-latest-appointment-card .patient-latest-card-header {
-    min-height: 54px;
-    padding: 0.65rem 0.8rem !important;
-    background: #eaf7f1 !important;
-    border-radius: 8px;
+    /* Match Latest Appointment header with Latest Health Assessment */
+
+    .patient-healthinfo-main .patient-latest-appointment-card {
+    padding: 0 !important;
+   }
+
+   .patient-healthinfo-main .patient-latest-appointment-card .patient-latest-card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
-    }
+    min-height: 52px;
+    padding: 0.65rem 1rem !important;
+    background: #eaf7f1 !important;
+    border-radius: 0;
+  }
 
     .patient-latest-appointment-empty {
         display: grid;
