@@ -3642,15 +3642,9 @@
         gap: 0.8rem;
         min-width: 0;
     }
-    /* Midwife Notes - Table Layout */
-.patient-midwife-notes-table-wrap {
+    .patient-midwife-notes-table {
     width: 100%;
-    overflow-x: auto;
-}
-
-.patient-midwife-notes-table {
-    width: 100%;
-    min-width: 750px;
+    min-width: 650px;
     border-collapse: collapse;
 }
 
@@ -3658,7 +3652,7 @@
 .patient-midwife-notes-table td {
     padding: 12px 14px;
     text-align: left;
-    vertical-align: top;
+    vertical-align: middle;
 }
 
 .patient-midwife-notes-table th {
@@ -3667,13 +3661,9 @@
     font-weight: 700;
 }
 
-.patient-midwife-notes-table td {
-    color: #315f53;
-}
-
 .patient-midwife-notes-table .patient-midwife-notes-text {
+    min-width: 300px;
     white-space: pre-line;
-    min-width: 250px;
     line-height: 1.6;
 }
 
