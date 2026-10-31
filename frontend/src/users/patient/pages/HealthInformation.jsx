@@ -1224,11 +1224,7 @@ function AllergyRecordsSection({ definition, records, onViewAll }) {
             </table>
           </div>
           <footer className="patient-allergies-footer">
-            <span className="patient-allergies-recorded-date">
-              <CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" />
-              <span>Recorded on: {formatRecordDateTime(latestRecord?.[definition.dateField]) || "Not recorded"}</span>
-            </span>
-            <span>Showing latest allergies</span>
+            <span>Showing allergies</span>
           </footer>
         </>
       ) : (
@@ -1283,7 +1279,7 @@ function HealthAssessmentSection({ definition, records, onViewAll }) {
             </table>
           </div>
           <footer className="patient-health-assessment-footer">
-            <span>Showing latest health assessment</span>
+            <span>Showing health assessment</span>
           </footer>
         </>
       ) : (
