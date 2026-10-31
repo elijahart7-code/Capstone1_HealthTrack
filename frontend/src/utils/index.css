@@ -3396,6 +3396,11 @@
         line-height: 1.45;
         overflow-wrap: anywhere;
     }
+    /* Mint Green Header - Latest Appointment */
+    .patient-healthinfo-main .patient-latest-appointment-card .patient-latest-card-header {
+    background: #eaf7f1 !important;
+    color: #159467 !important;
+}
 
     .patient-latest-appointment-empty {
         display: grid;
