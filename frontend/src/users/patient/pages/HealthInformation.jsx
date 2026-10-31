@@ -45,7 +45,7 @@ const SECTION_ICONS = {
   allergies: Activity,
 };
 
-const HEALTH_ASSESSMENT_CHILD_SECTIONS = ["vital-signs", "midwife-notes", "allergies"];
+const HEALTH_ASSESSMENT_CHILD_SECTIONS = ["vital-signs", "midwife-notes", "allergies", "medical-histories"];
 
 /**
  * Port of resources/views/livewire/patient/health-information.blade.php --
