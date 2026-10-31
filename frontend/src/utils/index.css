@@ -3518,36 +3518,7 @@
         color: #dc4d62;
     }
 
-    /* Make Midwife Notes the same width as Vital Signs */
-.patient-healthinfo-main .patient-midwife-notes-section {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    max-width: none !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-    justify-self: stretch !important;
-    align-self: stretch !important;
-    grid-column: 1 / -1 !important;
-}
-
-/* Stretch all Midwife Notes contents */
-.patient-healthinfo-main .patient-midwife-notes-section > * {
-    width: 100% !important;
-    max-width: none !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-}
-
-/* Stretch the table */
-.patient-healthinfo-main .patient-midwife-notes-section .patient-table-wrap {
-    width: 100% !important;
-    max-width: none !important;
-}
-
-.patient-healthinfo-main .patient-midwife-notes-section .patient-midwife-notes-table {
-    width: 100% !important;
-}
+    
     .patient-midwife-note-layout {
         display: grid;
         grid-template-columns: 28px minmax(0, 1fr);
