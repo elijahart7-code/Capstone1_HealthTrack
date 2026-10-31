@@ -5941,6 +5941,12 @@
 
     .patient-healthinfo-main .patient-latest-appointment-card .patient-latest-card-header > .patient-appointment-link {
         margin-left: 2.75rem;
+        align-items: flex-start;
+        min-height: 0;
+        padding: 0.65rem 0.8rem;
+        background: #eaf7f1;
+        border-radius: 8px;
+        flex-wrap: wrap;
     }
 
     .patient-healthinfo-main .patient-latest-appointment-details {
