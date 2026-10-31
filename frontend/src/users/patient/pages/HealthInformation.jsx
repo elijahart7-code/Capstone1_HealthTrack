@@ -208,9 +208,8 @@ const upcomingAppointment =
             />
             <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} onViewAssessments={() => selectSection("health-assessment")} />
             <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("vital-signs")} />            
-            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("allergies")}
-/>          <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} />
-          </>
+            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("allergies")} />          
+            <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} onViewMidwifeNotes={() => selectSection("midwife-notes")} />          </>
         ) : (
           <>
 
@@ -828,7 +827,7 @@ function LatestAllergies({
   );
 }
 
-function LatestMidwifeNotes({ definition, record }) {
+function LatestMidwifeNotes({ definition, record, onViewMidWifeNotes }) {
   const noteItems = [
     { key: "notes", label: "Midwife Notes" },
     { key: "assessment", label: "Assessment" },
@@ -843,12 +842,22 @@ function LatestMidwifeNotes({ definition, record }) {
 
   return (
     <LatestRecordCard
-      title="Latest Midwife Notes"
-      icon={ClipboardList}
-      type="midwife-notes"
-      definition={definition}
-      record={record}
+  title="Latest Midwife Notes"
+  icon={ClipboardList}
+  type="midwife-notes"
+  definition={definition}
+  record={record}
+  action={
+    <button
+      type="button"
+      className="patient-appointment-link"
+      onClick={onViewMidwifeNotes}
     >
+      View All Midwife Notes
+      <ArrowRight size={16} strokeWidth={1.8} />
+    </button>
+  }
+>
       {noteItems.length > 0 ? (
         <div className="patient-table-wrap patient-midwife-horizontal-wrap">
           <table className="patient-health-table patient-midwife-horizontal-table">
