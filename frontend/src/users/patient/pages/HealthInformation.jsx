@@ -942,8 +942,8 @@ function AllergyDetailRows({ rows }) {
   );
 }
 
-function MedicalHistorySection({ definition, records }) {
-  const rows = [
+function MedicalHistorySection({ definition, records, onViewAll }) {
+  const fields = [
     { key: "past_illnesses", label: "Past Illnesses" },
     { key: "chronic_conditions", label: "Chronic Conditions" },
     { key: "past_surgeries", label: "Past Surgeries" },
@@ -961,53 +961,49 @@ function MedicalHistorySection({ definition, records }) {
           </span>
           <h2>Medical Histories</h2>
         </div>
-        <span className="patient-card-total">
-          {records.length} total
-        </span>
       </div>
+
+      <button
+        type="button"
+        className="patient-view-button"
+        onClick={onViewAll}
+      >
+        View All
+      </button>
 
       {records.length > 0 ? (
         <div className="patient-table-wrap patient-medical-history-table-wrap">
           <table className="patient-health-table patient-medical-history-table">
             <thead>
               <tr>
-                {rows.map(({ key, label }) => (
-                  <th scope="col" key={key}>
-                    {label}
-                  </th>
+                {fields.map((field) => (
+                  <th key={field.key}>{field.label}</th>
                 ))}
-                <th scope="col">
-                  Recorded On
-                </th>
-                <th scope="col">
-                  Recorded By
-                </th>
+                <th>Recorded By</th>
+                <th>Recorded On</th>
               </tr>
             </thead>
 
             <tbody>
               {records.map((record) => (
                 <tr key={record.record_id}>
-                  {rows.map(({ key }) => (
-                    <td key={key}>
-                      {record[key] || (
-                        ["past_illnesses", "chronic_conditions", "past_surgeries", "previous_hospitalizations"].includes(key)
-                          ? "None"
-                          : "Not provided"
-                      )}
+                  {fields.map((field) => (
+                    <td key={field.key}>
+                      {record[field.key] || "--"}
                     </td>
                   ))}
-
-                  <td>
-                    {formatRecordDate(
-                      record[definition.dateField]
-                    ) || "--"}
-                  </td>
 
                   <td>
                     {record.created_by_name ||
                       record.created_by ||
                       "--"}
+                  </td>
+
+                  <td>
+                    {formatRecordDateTime(
+                      record.created_at ||
+                      record[definition.dateField]
+                    ) || "--"}
                   </td>
                 </tr>
               ))}
