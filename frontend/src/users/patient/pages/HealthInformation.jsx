@@ -1174,6 +1174,9 @@ function AllergyRecordsSection({ definition, records, onViewAll }) {
           </span>
           <h2>{definition.label}</h2>
         </div>
+        <span className="patient-card-total">
+          {records.length} total
+        </span>
         <button type="button" className="patient-view-button" onClick={onViewAll}>
           View All
         </button>
