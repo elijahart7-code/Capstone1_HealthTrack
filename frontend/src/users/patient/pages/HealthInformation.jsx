@@ -1092,9 +1092,7 @@ function VitalSignsSection({ definition, records, onViewAll }) {
   );
 
   return (
-    <section className="patient-healthinfo-card patient-vitals-section patient-health-assessment-section">
-
-      {/* Section Header */}
+    <section className="patient-healthinfo-card patient-health-assessment-section">
       <div className="patient-card-header">
         <div className="patient-card-title">
           <span className="patient-panel-icon patient-panel-icon-small">
@@ -1102,21 +1100,19 @@ function VitalSignsSection({ definition, records, onViewAll }) {
           </span>
           <h2>{definition.label}</h2>
         </div>
+
+        <button
+          type="button"
+          className="patient-view-button"
+          onClick={onViewAll}
+        >
+          View All
+        </button>
       </div>
 
-      {/* View All Button */}
-      <button
-        type="button"
-        className="patient-view-button"
-        onClick={onViewAll}
-      >
-        View All
-      </button>
-
-      {/* Vital Signs Table */}
       {record ? (
-        <div className="patient-table-wrap patient-vitals-horizontal-wrap">
-          <table className="patient-health-table patient-vitals-horizontal-table">
+        <div className="patient-table-wrap patient-health-assessment-table-wrap">
+          <table className="patient-health-table patient-health-assessment-table">
             <thead>
               <tr>
                 {fields.map(([key]) => (
@@ -1134,17 +1130,11 @@ function VitalSignsSection({ definition, records, onViewAll }) {
 
                   return (
                     <td key={key}>
-                      <span className="patient-vitals-horizontal-value">
-                        {value !== null &&
-                        value !== undefined &&
-                        value !== ""
-                          ? value
-                          : "--"}
-                      </span>
-
-                      <span className="patient-vitals-horizontal-unit">
-                        {VITAL_SIGN_PRESENTATION[key].unit}
-                      </span>
+                      {value !== null &&
+                      value !== undefined &&
+                      value !== ""
+                        ? `${value}${VITAL_SIGN_PRESENTATION[key].unit || ""}`
+                        : "--"}
                     </td>
                   );
                 })}
