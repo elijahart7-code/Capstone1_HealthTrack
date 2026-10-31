@@ -1257,9 +1257,9 @@ function HealthAssessmentSection({ definition, records, onViewAll }) {
   );
 }
 
-function MidwifeNotesSection({ definition, records }) {
+function MidwifeNotesSection({ definition, records, onViewAll }) {
   return (
-    <section className="patient-healthinfo-card patient-midwife-notes-section">
+    <section className="patient-healthinfo-card patient-midwife-notes-section patient-health-assessment-section">
       <div className="patient-card-header">
         <div className="patient-card-title">
           <span className="patient-panel-icon patient-panel-icon-small">
@@ -1267,43 +1267,46 @@ function MidwifeNotesSection({ definition, records }) {
           </span>
           <h2>{definition.label}</h2>
         </div>
-        <span className="patient-card-total">
-          {records.length} total
-        </span>
       </div>
+
+      <button
+        type="button"
+        className="patient-view-button"
+        onClick={onViewAll}
+      >
+        View All
+      </button>
 
       {records.length > 0 ? (
         <div className="patient-table-wrap patient-midwife-notes-table-wrap">
-  <table className="patient-health-table patient-midwife-notes-table">
-    <thead>
-      <tr>
-        <th>Notes</th>
-        <th>Recorded By</th>
-        <th>Recorded On</th>
-      </tr>
-    </thead>
+          <table className="patient-health-table patient-midwife-notes-table">
+            <thead>
+              <tr>
+                <th>Notes</th>
+                <th>Recorded By</th>
+                <th>Recorded On</th>
+              </tr>
+            </thead>
 
-    <tbody>
-      {records.map((record) => (
-        <tr key={record.record_id}>
-          <td className="patient-midwife-notes-text">
-            {record.notes || "--"}
-          </td>
-
-          <td>
-            {record.created_by_name ||
-              record.created_by ||
-              "--"}
-          </td>
-
-          <td>
-            {formatRecordDateTime(record.created_at) || "--"}
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+            <tbody>
+              {records.map((record) => (
+                <tr key={record.record_id}>
+                  <td className="patient-midwife-notes-text">
+                    {record.notes || "--"}
+                  </td>
+                  <td>
+                    {record.created_by_name ||
+                      record.created_by ||
+                      "--"}
+                  </td>
+                  <td>
+                    {formatRecordDateTime(record.created_at) || "--"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <div className="patient-empty-state">
           No midwife notes recorded.
