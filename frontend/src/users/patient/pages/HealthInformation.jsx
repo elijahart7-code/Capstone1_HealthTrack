@@ -961,10 +961,6 @@ function MedicalHistorySection({ definition, records }) {
           </span>
           <h2>Medical Histories</h2>
         </div>
-
-        <span className="patient-card-total">
-          {records.length} total
-        </span>
       </div>
 
       {records.length > 0 ? (
@@ -1101,10 +1097,6 @@ function VitalSignsSection({ definition, records, onViewAll }) {
           </span>
           <h2>{definition.label}</h2>
         </div>
-
-        <span className="patient-card-total">
-          {records.length} total
-        </span>
       </div>
 
       <button
@@ -1154,21 +1146,6 @@ function VitalSignsSection({ definition, records, onViewAll }) {
               </tbody>
             </table>
           </div>
-
-          <footer className="patient-vitals-footer">
-            <span className="patient-vitals-recorded-date">
-              <CalendarDays
-                size={16}
-                strokeWidth={1.8}
-                aria-hidden="true"
-              />
-              Recorded on:{" "}
-              {formatRecordDate(record[definition.dateField]) ||
-                "Not recorded"}
-            </span>
-
-            <span>Showing latest vital signs.</span>
-          </footer>
         </>
       ) : (
         <div className="patient-empty-state">
@@ -1191,7 +1168,6 @@ function AllergyRecordsSection({ definition, records, onViewAll }) {
           </span>
           <h2>{definition.label}</h2>
         </div>
-        <span className="patient-card-total">{records.length} total</span>
         <button type="button" className="patient-view-button" onClick={onViewAll}>
           View All
         </button>
@@ -1223,9 +1199,6 @@ function AllergyRecordsSection({ definition, records, onViewAll }) {
               </tbody>
             </table>
           </div>
-          <footer className="patient-allergies-footer">
-            <span>Showing allergies</span>
-          </footer>
         </>
       ) : (
         <div className="patient-empty-state">No allergies recorded.</div>
@@ -1278,9 +1251,6 @@ function HealthAssessmentSection({ definition, records, onViewAll }) {
               </tbody>
             </table>
           </div>
-          <footer className="patient-health-assessment-footer">
-            <span>Showing health assessment</span>
-          </footer>
         </>
       ) : (
         <div className="patient-empty-state">No health assessment recorded.</div>
@@ -1299,10 +1269,6 @@ function MidwifeNotesSection({ definition, records }) {
           </span>
           <h2>{definition.label}</h2>
         </div>
-
-        <span className="patient-card-total">
-          {records.length} total
-        </span>
       </div>
 
       {records.length > 0 ? (
