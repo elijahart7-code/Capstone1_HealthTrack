@@ -858,6 +858,11 @@ function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes }) {
     </button>
   }
 >
+      View All Midwife Notes
+      <ArrowRight size={16} strokeWidth={1.8} />
+    </button>
+  }
+>
       {noteItems.length > 0 ? (
         <div className="patient-table-wrap patient-midwife-horizontal-wrap">
           <table className="patient-health-table patient-midwife-horizontal-table">
