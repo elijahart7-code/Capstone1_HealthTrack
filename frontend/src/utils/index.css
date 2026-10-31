@@ -3368,10 +3368,6 @@
         gap: 0.75rem 1.25rem;
         padding: 0.75rem 0 0;
     }
-    .patient-latest-appointments .patient-latest-card-header{
-        background: #eaf7f1;
-        color:#159467;
-    }
 
     .patient-healthinfo-main .patient-latest-appointment-details {
         grid-template-columns: minmax(0, 1fr) minmax(0, 0.75fr) minmax(0, 1.35fr);
@@ -3387,6 +3383,7 @@
     }
 
     .patient-latest-appointment-label {
+        background: #eaf7f1;
         color: #667875;
         font-size: 0.72rem;
         font-weight: 700;
