@@ -4067,54 +4067,7 @@
         overflow: hidden;
         background: #fff;
     }
-/* Make Vital Signs match Health Assessment */
 
-.patient-healthinfo-main .patient-vitals-section {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.65rem !important;
-    padding: 1rem !important;
-    background: #f0faf6 !important;
-    border-radius: 12px;
-}
-
-.patient-healthinfo-main .patient-vitals-section .patient-card-header {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-.patient-healthinfo-main .patient-vitals-section .patient-card-title {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-}
-
-.patient-healthinfo-main .patient-vitals-section .patient-card-title h2 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 800;
-}
-
-.patient-healthinfo-main .patient-vitals-section .patient-view-button {
-    width: 100% !important;
-    min-height: 40px !important;
-    margin: 0 !important;
-    background: #eaf7f1 !important;
-    border: 1px solid rgba(13, 74, 62, 0.12) !important;
-    border-radius: 8px !important;
-    color: #0d4a3e !important;
-    font-size: 0.8rem !important;
-    font-weight: 700 !important;
-}
-
-.patient-healthinfo-main .patient-vitals-section .patient-vitals-horizontal-wrap {
-    width: 100%;
-    overflow-x: auto;
-    border-radius: 10px;
-}
     .patient-vitals-section {
         display: grid;
         gap: 0.9rem;
