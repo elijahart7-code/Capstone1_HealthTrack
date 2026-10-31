@@ -207,8 +207,9 @@ const upcomingAppointment =
               onViewAppointments={() => selectSection("appointments")}
             />
             <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} onViewAssessments={() => selectSection("health-assessment")} />
-            <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("vital-signs")} />            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} />
-            <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} />
+            <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("vital-signs")} />            
+            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("allergies")}
+/>          <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} />
           </>
         ) : (
           <>
@@ -750,20 +751,78 @@ function LatestHealthAssessment({
 }
 
 
-function LatestAllergies({ definition, record }) {
-  const fields = getRecordFields(definition, record, Object.keys(definition?.fields || {}));
-  const fieldValues = Object.fromEntries(fields.map(({ key, value }) => [key, value]));
+function LatestAllergies({
+  definition,
+  record,
+  onViewAllergies,
+}) {
+  const fields = getRecordFields(
+    definition,
+    record,
+    Object.keys(definition?.fields || {})
+  );
+
+  const fieldValues = Object.fromEntries(
+    fields.map(({ key, value }) => [key, value])
+  );
+
   const rows = [
-    { key: "medication_allergies", label: "Drug Allergies", icon: Pill, value: fieldValues.medication_allergies },
-    { key: "food_allergies", label: "Food Allergies", icon: Utensils, value: fieldValues.food_allergies },
-    { key: "environmental_allergies", label: "Environmental Allergies", icon: Leaf, value: fieldValues.environmental_allergies },
-    { key: "reaction", label: "Reaction", icon: CircleAlert, value: fieldValues.reaction },
-    { key: "remarks", label: "Remarks", icon: MessageSquare, value: fieldValues.remarks },
-    { key: "recorded_by", label: "Recorded By", icon: User, value: record?.created_by_name || record?.created_by },
+    {
+      key: "medication_allergies",
+      label: "Drug Allergies",
+      icon: Pill,
+      value: fieldValues.medication_allergies,
+    },
+    {
+      key: "food_allergies",
+      label: "Food Allergies",
+      icon: Utensils,
+      value: fieldValues.food_allergies,
+    },
+    {
+      key: "environmental_allergies",
+      label: "Environmental Allergies",
+      icon: Leaf,
+      value: fieldValues.environmental_allergies,
+    },
+    {
+      key: "reaction",
+      label: "Reaction",
+      icon: CircleAlert,
+      value: fieldValues.reaction,
+    },
+    {
+      key: "remarks",
+      label: "Remarks",
+      icon: MessageSquare,
+      value: fieldValues.remarks,
+    },
+    {
+      key: "recorded_by",
+      label: "Recorded By",
+      icon: User,
+      value: record?.created_by_name || record?.created_by,
+    },
   ];
 
   return (
-    <LatestRecordCard title="Latest Allergies" icon={TriangleAlert} type="allergies" definition={definition} record={record}>
+    <LatestRecordCard
+      title="Latest Allergies"
+      icon={TriangleAlert}
+      type="allergies"
+      definition={definition}
+      record={record}
+      action={
+        <button
+          type="button"
+          className="patient-appointment-link"
+          onClick={onViewAllergies}
+        >
+          View All Allergies
+          <ArrowRight size={16} strokeWidth={1.8} />
+        </button>
+      }
+    >
       <AllergyDetailRows rows={rows} />
     </LatestRecordCard>
   );
