@@ -1282,7 +1282,9 @@ function HealthAssessmentSection({ definition, records, onViewAll }) {
               </tbody>
             </table>
           </div>
-        
+          <footer className="patient-health-assessment-footer">
+            <span>Showing latest health assessment</span>
+          </footer>
         </>
       ) : (
         <div className="patient-empty-state">No health assessment recorded.</div>
