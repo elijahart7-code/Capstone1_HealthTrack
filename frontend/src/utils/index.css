@@ -3518,7 +3518,6 @@
         color: #dc4d62;
     }
 
-    
     .patient-midwife-note-layout {
         display: grid;
         grid-template-columns: 28px minmax(0, 1fr);
@@ -3643,7 +3642,47 @@
         gap: 0.8rem;
         min-width: 0;
     }
-    .patient-midwife-notes-table {
+    /* Midwife Notes - Match Health Assessment Card */
+
+.patient-healthinfo-main .patient-midwife-notes-section {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    padding: 1rem !important;
+    background: #f0faf6 !important;
+    border-radius: 12px;
+}
+
+.patient-healthinfo-main .patient-midwife-notes-section > * {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.patient-healthinfo-main .patient-midwife-notes-section .patient-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0;
+}
+
+.patient-healthinfo-main .patient-midwife-notes-section .patient-view-button {
+    width: 100% !important;
+    min-height: 40px;
+    margin: 0;
+}
+
+.patient-midwife-notes-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.patient-midwife-notes-table {
     width: 100%;
     min-width: 650px;
     border-collapse: collapse;
@@ -3658,7 +3697,6 @@
 
 .patient-midwife-notes-table th {
     background: #f4f8f6;
-    color: #17312d;
     font-weight: 700;
 }
 
@@ -3667,7 +3705,6 @@
     white-space: pre-line;
     line-height: 1.6;
 }
-
     .patient-midwife-notes-heading-icon,
     .patient-midwife-note-card-header .patient-midwife-note-icon {
         position: relative;
