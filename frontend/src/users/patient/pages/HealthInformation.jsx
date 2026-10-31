@@ -924,17 +924,14 @@ function AllergyDetailRows({ rows }) {
 }
 
 function MedicalHistorySection({ definition, records }) {
-  const record = records[0] || null;
   const rows = [
-    { key: "past_illnesses", label: "Past Illnesses", icon: HeartPulse, emptyValue: "None" },
-    { key: "chronic_conditions", label: "Chronic Conditions", icon: Activity, emptyValue: "None" },
-    { key: "past_surgeries", label: "Past Surgeries", icon: Scissors, emptyValue: "None" },
-    { key: "previous_hospitalizations", label: "Previous Hospitalizations", icon: Hospital, emptyValue: "None" },
-    { key: "family_medical_history", label: "Family Medical History", icon: UsersRound, emptyValue: "Not provided" },
-    { key: "immunization_status", label: "Immunization Status", icon: Syringe, emptyValue: "Not provided" },
+    { key: "past_illnesses", label: "Past Illnesses" },
+    { key: "chronic_conditions", label: "Chronic Conditions" },
+    { key: "past_surgeries", label: "Past Surgeries" },
+    { key: "previous_hospitalizations", label: "Previous Hospitalizations" },
+    { key: "family_medical_history", label: "Family Medical History" },
+    { key: "immunization_status", label: "Immunization Status" },
   ];
-  const recordedOn = formatRecordDate(record?.[definition.dateField]);
-  const recordedBy = record?.created_by_name || record?.created_by;
 
   return (
     <section className="patient-healthinfo-card patient-medical-history-card">
@@ -945,36 +942,65 @@ function MedicalHistorySection({ definition, records }) {
           </span>
           <h2>Medical Histories</h2>
         </div>
-        {records.length > 1 && <span className="patient-card-total">Latest of {records.length}</span>}
+
+        <span className="patient-card-total">
+          {records.length} total
+        </span>
       </div>
-      <dl className="patient-medical-history-list">
-        {rows.map(({ key, label, icon: Icon, emptyValue }) => (
-          <div className="patient-medical-history-row" key={key}>
-            <span className="patient-medical-history-icon" aria-hidden="true">
-              <Icon size={17} strokeWidth={1.8} />
-            </span>
-            <dt>{label}</dt>
-            <span className="patient-medical-history-separator" aria-hidden="true">:</span>
-            <dd>{record?.[key] || emptyValue}</dd>
-          </div>
-        ))}
-        <div className="patient-medical-history-row patient-medical-history-meta">
-          <span className="patient-medical-history-icon" aria-hidden="true">
-            <CalendarDays size={17} strokeWidth={1.8} />
-          </span>
-          <dt>Recorded on</dt>
-          <span className="patient-medical-history-separator" aria-hidden="true">:</span>
-          <dd>{recordedOn || "Not provided"}</dd>
+
+      {records.length > 0 ? (
+        <div className="patient-table-wrap patient-medical-history-table-wrap">
+          <table className="patient-health-table patient-medical-history-table">
+            <thead>
+              <tr>
+                {rows.map(({ key, label }) => (
+                  <th scope="col" key={key}>
+                    {label}
+                  </th>
+                ))}
+                <th scope="col">
+                  Recorded On
+                </th>
+                <th scope="col">
+                  Recorded By
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {records.map((record) => (
+                <tr key={record.record_id}>
+                  {rows.map(({ key }) => (
+                    <td key={key}>
+                      {record[key] || (
+                        ["past_illnesses", "chronic_conditions", "past_surgeries", "previous_hospitalizations"].includes(key)
+                          ? "None"
+                          : "Not provided"
+                      )}
+                    </td>
+                  ))}
+
+                  <td>
+                    {formatRecordDate(
+                      record[definition.dateField]
+                    ) || "--"}
+                  </td>
+
+                  <td>
+                    {record.created_by_name ||
+                      record.created_by ||
+                      "--"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <div className="patient-medical-history-row patient-medical-history-meta">
-          <span className="patient-medical-history-icon" aria-hidden="true">
-            <UserRound size={17} strokeWidth={1.8} />
-          </span>
-          <dt>Recorded by</dt>
-          <span className="patient-medical-history-separator" aria-hidden="true">:</span>
-          <dd>{recordedBy || "Not provided"}</dd>
+      ) : (
+        <div className="patient-empty-state">
+          No medical history recorded.
         </div>
-      </dl>
+      )}
     </section>
   );
 }
