@@ -206,7 +206,7 @@ const upcomingAppointment =
               hasAppointmentHistory={appointments.length > 0}
               onViewAppointments={() => selectSection("appointments")}
             />
-            <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} />
+            <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} onViewAssessments={() => selectSection("health-assessment")} />
             <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} />
             <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} />
             <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} />
@@ -492,7 +492,7 @@ function getRecordFields(definition, record, keys) {
     });
 }
 
-function LatestRecordCard({ title, icon: Icon, type, definition, record, children }) {
+function LatestRecordCard({ title, icon: Icon, type, definition, record, action, children }) {
   const headerDate = type === "notes"
     ? formatRecordDateTime(record?.created_at)
     : formatRecordDate(record?.[definition.dateField]);
@@ -510,6 +510,7 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, childre
             <span>{type === "assessment" ? "Assessment date:" : "Recorded on:"} {headerDate}</span>
           </div>
         )}
+        {action}
       </header>
       <div className="patient-latest-card-content">
         {record ? children : <div className="patient-empty-state">No {definition.label.toLowerCase()} recorded yet.</div>}
@@ -679,7 +680,11 @@ function LatestVitalSigns({ definition, record }) {
 }
 
 
-function LatestHealthAssessment({ definition, record }) {
+function LatestHealthAssessment({
+  definition,
+  record,
+  onViewAssessments,
+}) {
   const assessmentItems = Object.entries(definition?.fields || {}).filter(
     ([, field]) => field.column || field.primary
   );
@@ -691,6 +696,16 @@ function LatestHealthAssessment({ definition, record }) {
       type="assessment"
       definition={definition}
       record={record}
+      action={
+        <button
+          type="button"
+          className="patient-appointment-link"
+          onClick={onViewAssessments}
+        >
+          View All Health Assessments
+          <ArrowRight size={16} strokeWidth={1.8} />
+        </button>
+      }
     >
       {record && assessmentItems.length > 0 ? (
         <div className="patient-table-wrap patient-assessment-horizontal-wrap">
@@ -710,20 +725,9 @@ function LatestHealthAssessment({ definition, record }) {
 
             <tbody>
               <tr>
-                {assessmentItems.map(([key, field]) => {
-                  const value = record[key];
-                  const displayValue =
-                    field.type === "select" && value
-                      ? field.options?.[value] || value
-                      : value;
-
-                  return (
-                    <td key={key}>
-                      {displayValue || "--"}
-                    </td>
-                  );
-                })}
-
+                {assessmentItems.map(([key]) => (
+                  <td key={key}>{record[key] || "--"}</td>
+                ))}
                 <td>
                   {formatRecordDate(record[definition.dateField]) || "--"}
                 </td>
@@ -731,11 +735,7 @@ function LatestHealthAssessment({ definition, record }) {
             </tbody>
           </table>
         </div>
-      ) : (
-        <div className="patient-empty-state">
-          No health assessment recorded yet.
-        </div>
-      )}
+      ) : null}
     </LatestRecordCard>
   );
 }
