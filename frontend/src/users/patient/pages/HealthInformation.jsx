@@ -1278,6 +1278,9 @@ function MidwifeNotesSection({ definition, records }) {
           </span>
           <h2>{definition.label}</h2>
         </div>
+        <span className="patient-card-total">
+          {records.length} total
+        </span>
       </div>
 
       {records.length > 0 ? (
