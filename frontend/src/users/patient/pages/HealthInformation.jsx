@@ -207,8 +207,7 @@ const upcomingAppointment =
               onViewAppointments={() => selectSection("appointments")}
             />
             <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} onViewAssessments={() => selectSection("health-assessment")} />
-            <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} />
-            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} />
+            <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("vital-signs")} />            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} />
             <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} />
           </>
         ) : (
@@ -615,7 +614,7 @@ function LatestAppointment({
 
 
 
-function LatestVitalSigns({ definition, record }) {
+function LatestVitalSigns({ definition, record, onViewVitalSigns }) {
   const vitalRows = [
     { key: "blood_pressure", label: "Blood Pressure", unit: "mmHg" },
     { key: "heart_rate", label: "Heart Rate", unit: "bpm" },
@@ -635,12 +634,22 @@ function LatestVitalSigns({ definition, record }) {
 
   return (
     <LatestRecordCard
-      title="Latest Vital Signs"
-      icon={Activity}
-      type="vitals"
-      definition={definition}
-      record={record}
+  title="Latest Vital Signs"
+  icon={Activity}
+  type="vitals"
+  definition={definition}
+  record={record}
+  action={
+    <button
+      type="button"
+      className="patient-appointment-link"
+      onClick={onViewVitalSigns}
     >
+      View All Vital Signs
+      <ArrowRight size={16} strokeWidth={1.8} />
+    </button>
+  }
+>
       {vitalRows.length > 0 ? (
         <div className="patient-table-wrap patient-vital-horizontal-wrap">
           <table className="patient-health-table patient-vital-horizontal-table">
