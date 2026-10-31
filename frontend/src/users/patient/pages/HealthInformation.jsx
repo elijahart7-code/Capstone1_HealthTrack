@@ -1282,13 +1282,7 @@ function HealthAssessmentSection({ definition, records, onViewAll }) {
               </tbody>
             </table>
           </div>
-          <footer className="patient-health-assessment-footer">
-            <span className="patient-health-assessment-recorded-date">
-              <CalendarDays size={16} strokeWidth={1.8} aria-hidden="true" />
-              <span>Recorded on: {formatRecordDateTime(latestRecord?.created_at) || "Not recorded"}</span>
-            </span>
-            <span>Showing latest health assessment</span>
-          </footer>
+        
         </>
       ) : (
         <div className="patient-empty-state">No health assessment recorded.</div>
