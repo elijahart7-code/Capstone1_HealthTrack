@@ -172,43 +172,11 @@ const upcomingAppointment =
           <SidebarItem icon={Calendar} label="Appointments" active={section === "appointments"} onClick={() => selectSection("appointments")} />
           <SidebarItem icon={User} label="General Information" active={section === "patient-information"} onClick={() => selectSection("patient-information")} />
           <SidebarItem
-            icon={Stethoscope}
-            label="Health Assessment"
-            active={section === "health-assessment"}
-            expanded={assessmentExpanded}
-            onClick={() => {
-              setAssessmentExpanded(true);
-              selectSection("health-assessment");
-            }}
-            onToggle={() => setAssessmentExpanded((expanded) => !expanded)}
-          />
-          {assessmentExpanded && (
-  <div className="patient-sidebar-children">
-    <SidebarChild
-      label="Vital Signs"
-      active={section === "vital-signs"}
-      onClick={() => selectSection("vital-signs")}
-    />
-
-    <SidebarChild
-      label="Midwife Notes"
-      active={section === "midwife-notes"}
-      onClick={() => selectSection("midwife-notes")}
-    />
-
-    <SidebarChild
-      label="Allergies"
-      active={section === "allergies"}
-      onClick={() => selectSection("allergies")}
-    />
-
-    <SidebarChild
-      label="Medical History"
-      active={section === "medical-history"}
-      onClick={() => selectSection("medical-history")}
-    />
-  </div>
-)}
+  icon={Stethoscope}
+  label="Health Assessment"
+  active={section === "health-assessment"}
+  onClick={() => selectSection("health-assessment")}
+/>
         </nav>
 
       </aside>
