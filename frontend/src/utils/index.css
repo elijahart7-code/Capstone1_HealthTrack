@@ -3642,6 +3642,40 @@
         gap: 0.8rem;
         min-width: 0;
     }
+    /* Midwife Notes - Table Layout */
+.patient-midwife-notes-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.patient-midwife-notes-table {
+    width: 100%;
+    min-width: 750px;
+    border-collapse: collapse;
+}
+
+.patient-midwife-notes-table th,
+.patient-midwife-notes-table td {
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.patient-midwife-notes-table th {
+    background: #f4f8f6;
+    color: #17312d;
+    font-weight: 700;
+}
+
+.patient-midwife-notes-table td {
+    color: #315f53;
+}
+
+.patient-midwife-notes-table .patient-midwife-notes-text {
+    white-space: pre-line;
+    min-width: 250px;
+    line-height: 1.6;
+}
 
     .patient-midwife-notes-heading-icon,
     .patient-midwife-note-card-header .patient-midwife-note-icon {
