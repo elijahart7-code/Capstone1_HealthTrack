@@ -183,12 +183,32 @@ const upcomingAppointment =
             onToggle={() => setAssessmentExpanded((expanded) => !expanded)}
           />
           {assessmentExpanded && (
-            <div className="patient-sidebar-children">
-              <SidebarChild label="Vital Signs" active={section === "vital-signs"} onClick={() => selectSection("vital-signs")} />
-              <SidebarChild label="Midwife Notes" active={section === "midwife-notes"} onClick={() => selectSection("midwife-notes")} />
-              <SidebarChild label="Allergies" active={section === "allergies"} onClick={() => selectSection("allergies")} />
-            </div>
-          )}
+  <div className="patient-sidebar-children">
+    <SidebarChild
+      label="Vital Signs"
+      active={section === "vital-signs"}
+      onClick={() => selectSection("vital-signs")}
+    />
+
+    <SidebarChild
+      label="Midwife Notes"
+      active={section === "midwife-notes"}
+      onClick={() => selectSection("midwife-notes")}
+    />
+
+    <SidebarChild
+      label="Allergies"
+      active={section === "allergies"}
+      onClick={() => selectSection("allergies")}
+    />
+
+    <SidebarChild
+      label="Medical History"
+      active={section === "medical-history"}
+      onClick={() => selectSection("medical-history")}
+    />
+  </div>
+)}
           <SidebarItem icon={FileText} label="Medical History" active={section === "medical-history"} onClick={() => selectSection("medical-history")} />
         </nav>
 
