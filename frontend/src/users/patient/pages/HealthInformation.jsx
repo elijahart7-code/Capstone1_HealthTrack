@@ -506,7 +506,8 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, action,
         {record &&
   headerDate &&
   type !== "assessment" &&
-  type !== "vitals" && (
+  type !== "vitals" &&
+  type !== "allergies" && (
     <div className="patient-latest-date">
       <Calendar size={16} strokeWidth={1.8} />
       <span>Recorded on: {headerDate}</span>
