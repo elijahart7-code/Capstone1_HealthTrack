@@ -172,11 +172,43 @@ const upcomingAppointment =
           <SidebarItem icon={Calendar} label="Appointments" active={section === "appointments"} onClick={() => selectSection("appointments")} />
           <SidebarItem icon={User} label="General Information" active={section === "patient-information"} onClick={() => selectSection("patient-information")} />
           <SidebarItem
-  icon={Stethoscope}
-  label="Health Assessment"
-  active={section === "health-assessment"}
-  onClick={() => selectSection("health-assessment")}
-/>
+            icon={Stethoscope}
+            label="Health Assessment"
+            active={section === "health-assessment"}
+            expanded={assessmentExpanded}
+            onClick={() => {
+              setAssessmentExpanded(true);
+              selectSection("health-assessment");
+            }}
+            onToggle={() => setAssessmentExpanded((expanded) => !expanded)}
+          />
+          {assessmentExpanded && (
+  <div className="patient-sidebar-children">
+    <SidebarChild
+      label="Vital Signs"
+      active={section === "vital-signs"}
+      onClick={() => selectSection("vital-signs")}
+    />
+
+    <SidebarChild
+      label="Midwife Notes"
+      active={section === "midwife-notes"}
+      onClick={() => selectSection("midwife-notes")}
+    />
+
+    <SidebarChild
+      label="Allergies"
+      active={section === "allergies"}
+      onClick={() => selectSection("allergies")}
+    />
+
+    <SidebarChild
+      label="Medical History"
+      active={section === "medical-history"}
+      onClick={() => selectSection("medical-history")}
+    />
+  </div>
+)}
         </nav>
 
       </aside>
@@ -298,32 +330,40 @@ const upcomingAppointment =
               records={records[key] || []}
             />
           ) : key === "health-assessment" ? (
-  <React.Fragment key={key}>
-    <HealthAssessmentSection
-      definition={recordTypes["health-assessment"]}
-      records={records["health-assessment"] || []}
-    />
-
-    <VitalSignsSection
-      definition={recordTypes["vital-signs"]}
-      records={records["vital-signs"] || []}
-    />
-
-    <MidwifeNotesSection
-      definition={recordTypes["midwife-notes"]}
-      records={records["midwife-notes"] || []}
-    />
-
-    <AllergyRecordsSection
-      definition={recordTypes["allergies"]}
-      records={records["allergies"] || []}
-    />
-
-    <MedicalHistorySection
-      definition={recordTypes["medical-history"]}
-      records={records["medical-history"] || []}
-    />
-  </React.Fragment>
+            <HealthAssessmentSection
+              key={key}
+              definition={definition}
+              records={records[key] || []}
+              onViewAll={() => selectSection(key)}
+            />
+          ) : key === "vital-signs" ? (
+            <VitalSignsSection
+              key={key}
+              definition={definition}
+              records={records[key] || []}
+              onViewAll={() => selectSection(key)}
+            />
+          ) : key === "midwife-notes" ? (
+            <MidwifeNotesSection
+              key={key}
+              definition={definition}
+              records={records[key] || []}
+            />
+          ) : key === "allergies" ? (
+            <AllergyRecordsSection
+              key={key}
+              definition={definition}
+              records={records[key] || []}
+              onViewAll={() => selectSection(key)}
+            />
+          ) : (
+            <RecordSection
+              key={key}
+              definition={definition}
+              records={records[key] || []}
+              onViewAll={() => selectSection(key)}
+            />
+          )
         ))}
           </>
         )}
