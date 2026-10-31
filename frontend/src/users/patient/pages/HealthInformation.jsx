@@ -324,34 +324,6 @@ const upcomingAppointment =
       records={records["medical-history"] || []}
     />
   </React.Fragment>
-          ) : key === "vital-signs" ? (
-            <VitalSignsSection
-              key={key}
-              definition={definition}
-              records={records[key] || []}
-              onViewAll={() => selectSection(key)}
-            />
-          ) : key === "midwife-notes" ? (
-            <MidwifeNotesSection
-              key={key}
-              definition={definition}
-              records={records[key] || []}
-            />
-          ) : key === "allergies" ? (
-            <AllergyRecordsSection
-              key={key}
-              definition={definition}
-              records={records[key] || []}
-              onViewAll={() => selectSection(key)}
-            />
-          ) : (
-            <RecordSection
-              key={key}
-              definition={definition}
-              records={records[key] || []}
-              onViewAll={() => selectSection(key)}
-            />
-          )
         ))}
           </>
         )}
