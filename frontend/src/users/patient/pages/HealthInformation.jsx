@@ -1092,67 +1092,66 @@ function VitalSignsSection({ definition, records, onViewAll }) {
   );
 
   return (
-    <section className="patient-healthinfo-card patient-vitals-section">
-      <div className="patient-vitals-heading">
+    <section className="patient-healthinfo-card patient-vitals-section patient-health-assessment-section">
+
+      {/* Section Header */}
+      <div className="patient-card-header">
         <div className="patient-card-title">
-          <span className="patient-vitals-document-icon" aria-hidden="true">
-            <FileText size={18} strokeWidth={1.8} />
+          <span className="patient-panel-icon patient-panel-icon-small">
+            <Activity size={18} strokeWidth={1.8} />
           </span>
           <h2>{definition.label}</h2>
         </div>
-        <span className="patient-card-total">
-          {records.length} total
-        </span>
       </div>
 
+      {/* View All Button */}
       <button
         type="button"
-        className="patient-vitals-view-all"
+        className="patient-view-button"
         onClick={onViewAll}
       >
         View All
       </button>
 
+      {/* Vital Signs Table */}
       {record ? (
-        <>
-          <div className="patient-table-wrap patient-vitals-horizontal-wrap">
-            <table className="patient-health-table patient-vitals-horizontal-table">
-              <thead>
-                <tr>
-                  {fields.map(([key]) => (
-                    <th scope="col" key={key}>
-                      {VITAL_SIGN_PRESENTATION[key].label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
+        <div className="patient-table-wrap patient-vitals-horizontal-wrap">
+          <table className="patient-health-table patient-vitals-horizontal-table">
+            <thead>
+              <tr>
+                {fields.map(([key]) => (
+                  <th scope="col" key={key}>
+                    {VITAL_SIGN_PRESENTATION[key].label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
 
-              <tbody>
-                <tr>
-                  {fields.map(([key]) => {
-                    const value = record[key];
+            <tbody>
+              <tr>
+                {fields.map(([key]) => {
+                  const value = record[key];
 
-                    return (
-                      <td key={key}>
-                        <span className="patient-vitals-horizontal-value">
-                          {value !== null &&
-                          value !== undefined &&
-                          value !== ""
-                            ? value
-                            : "--"}
-                        </span>
+                  return (
+                    <td key={key}>
+                      <span className="patient-vitals-horizontal-value">
+                        {value !== null &&
+                        value !== undefined &&
+                        value !== ""
+                          ? value
+                          : "--"}
+                      </span>
 
-                        <span className="patient-vitals-horizontal-unit">
-                          {VITAL_SIGN_PRESENTATION[key].unit}
-                        </span>
-                      </td>
-                    );
-                  })}
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </>
+                      <span className="patient-vitals-horizontal-unit">
+                        {VITAL_SIGN_PRESENTATION[key].unit}
+                      </span>
+                    </td>
+                  );
+                })}
+              </tr>
+            </tbody>
+          </table>
+        </div>
       ) : (
         <div className="patient-empty-state">
           No vital signs recorded.
