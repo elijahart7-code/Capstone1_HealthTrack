@@ -841,7 +841,7 @@ function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes }) {
   );
 
   return (
-    <LatestRecordCard
+     <LatestRecordCard
   title="Latest Midwife Notes"
   icon={ClipboardList}
   type="midwife-notes"
@@ -853,11 +853,6 @@ function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes }) {
       className="patient-appointment-link"
       onClick={onViewMidwifeNotes}
     >
-      View All Midwife Notes
-      <ArrowRight size={16} strokeWidth={1.8} />
-    </button>
-  }
->
       View All Midwife Notes
       <ArrowRight size={16} strokeWidth={1.8} />
     </button>
