@@ -827,7 +827,7 @@ function LatestAllergies({
   );
 }
 
-function LatestMidwifeNotes({ definition, record, onViewMidWifeNotes }) {
+function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes }) {
   const noteItems = [
     { key: "notes", label: "Midwife Notes" },
     { key: "assessment", label: "Assessment" },
