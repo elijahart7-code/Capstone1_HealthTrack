@@ -3112,6 +3112,24 @@
         padding: 0;
         background: #ffffff;
     }
+    .patient-medical-history-latest-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.patient-medical-history-latest-table {
+    width: 100%;
+    min-width: 900px;
+    table-layout: fixed;
+}
+
+.patient-medical-history-latest-table th,
+.patient-medical-history-latest-table td {
+    padding: 0.65rem 0.55rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+}
 
     .patient-healthinfo-main .patient-appointment-link {
         display: inline-flex;
