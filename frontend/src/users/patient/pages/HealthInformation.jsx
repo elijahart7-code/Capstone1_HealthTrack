@@ -45,8 +45,13 @@ const SECTION_ICONS = {
   allergies: Activity,
 };
 
-const HEALTH_ASSESSMENT_CHILD_SECTIONS = ["vital-signs", "midwife-notes", "allergies", "medical-histories"];
-
+const HEALTH_ASSESSMENT_CHILD_SECTIONS = [
+  "health-assessment",
+  "vital-signs",
+  "allergies",
+  "medical-history",
+  "midwife-notes",
+];
 /**
  * Port of resources/views/livewire/patient/health-information.blade.php --
  * the 250px sidebar of section links + main content column of read-only
@@ -185,28 +190,34 @@ const upcomingAppointment =
           {assessmentExpanded && (
   <div className="patient-sidebar-children">
     <SidebarChild
-      label="Vital Signs"
-      active={section === "vital-signs"}
-      onClick={() => selectSection("vital-signs")}
-    />
+  label="Health Assessment"
+  active={section === "health-assessment"}
+  onClick={() => selectSection("health-assessment")}
+/>
 
-    <SidebarChild
-      label="Midwife Notes"
-      active={section === "midwife-notes"}
-      onClick={() => selectSection("midwife-notes")}
-    />
+<SidebarChild
+  label="Vital Signs"
+  active={section === "vital-signs"}
+  onClick={() => selectSection("vital-signs")}
+/>
 
-    <SidebarChild
-      label="Allergies"
-      active={section === "allergies"}
-      onClick={() => selectSection("allergies")}
-    />
+<SidebarChild
+  label="Allergies"
+  active={section === "allergies"}
+  onClick={() => selectSection("allergies")}
+/>
 
-    <SidebarChild
-      label="Medical History"
-      active={section === "medical-history"}
-      onClick={() => selectSection("medical-history")}
-    />
+<SidebarChild
+  label="Medical Histories"
+  active={section === "medical-history"}
+  onClick={() => selectSection("medical-history")}
+/>
+
+<SidebarChild
+  label="Midwife Notes"
+  active={section === "midwife-notes"}
+  onClick={() => selectSection("midwife-notes")}
+/>
   </div>
 )}
         </nav>
@@ -322,49 +333,31 @@ const upcomingAppointment =
           <PatientPortalAccount patient={patient} currentUser={currentUser} />
         )}
 
-        {Object.entries(recordTypes).map(([key, definition]) => section === key && (
-          key === "medical-history" ? (
-            <MedicalHistorySection
-              key={key}
-              definition={definition}
-              records={records[key] || []}
-            />
-          ) : key === "health-assessment" ? (
-            <HealthAssessmentSection
-              key={key}
-              definition={definition}
-              records={records[key] || []}
-              onViewAll={() => selectSection(key)}
-            />
-          ) : key === "vital-signs" ? (
-            <VitalSignsSection
-              key={key}
-              definition={definition}
-              records={records[key] || []}
-              onViewAll={() => selectSection(key)}
-            />
-          ) : key === "midwife-notes" ? (
-            <MidwifeNotesSection
-              key={key}
-              definition={definition}
-              records={records[key] || []}
-            />
-          ) : key === "allergies" ? (
-            <AllergyRecordsSection
-              key={key}
-              definition={definition}
-              records={records[key] || []}
-              onViewAll={() => selectSection(key)}
-            />
-          ) : (
-            <RecordSection
-              key={key}
-              definition={definition}
-              records={records[key] || []}
-              onViewAll={() => selectSection(key)}
-            />
-          )
-        ))}
+        {[
+  "health-assessment",
+  "vital-signs",
+  "allergies",
+  "medical-history",
+  "midwife-notes",
+].includes(section) ? (
+  <HealthAssessmentHistory
+    recordTypes={recordTypes}
+    records={records}
+    section={section}
+    selectSection={selectSection}
+  />
+) : (
+  Object.entries(recordTypes).map(([key, definition]) =>
+    section === key ? (
+      <RecordSection
+        key={key}
+        definition={definition}
+        records={records[key] || []}
+        onViewAll={() => selectSection(key)}
+      />
+    ) : null
+  )
+)}
           </>
         )}
       </main>
@@ -939,6 +932,156 @@ function AllergyDetailRows({ rows }) {
     </tbody>
   </table>
 </div>
+  );
+}
+function HealthAssessmentHistory({
+  recordTypes,
+  records,
+  section,
+  selectSection,
+}) {
+  const [openSection, setOpenSection] = useState(
+    section || "health-assessment"
+  );
+
+  useEffect(() => {
+    if (
+      [
+        "health-assessment",
+        "vital-signs",
+        "allergies",
+        "medical-history",
+        "midwife-notes",
+      ].includes(section)
+    ) {
+      setOpenSection(section);
+    }
+  }, [section]);
+
+  const toggleSection = (key) => {
+    setOpenSection((current) =>
+      current === key ? null : key
+    );
+  };
+
+  const sections = [
+    {
+      key: "health-assessment",
+      label: "Health Assessment",
+      icon: ClipboardList,
+      records: records["health-assessment"] || [],
+      render: () => (
+        <HealthAssessmentSection
+          definition={recordTypes["health-assessment"]}
+          records={records["health-assessment"] || []}
+          onViewAll={() => selectSection("health-assessment")}
+        />
+      ),
+    },
+    {
+      key: "vital-signs",
+      label: "Vital Signs",
+      icon: Activity,
+      records: records["vital-signs"] || [],
+      render: () => (
+        <VitalSignsSection
+          definition={recordTypes["vital-signs"]}
+          records={records["vital-signs"] || []}
+          onViewAll={() => selectSection("vital-signs")}
+        />
+      ),
+    },
+    {
+      key: "allergies",
+      label: "Allergies",
+      icon: TriangleAlert,
+      records: records["allergies"] || [],
+      render: () => (
+        <AllergyRecordsSection
+          definition={recordTypes["allergies"]}
+          records={records["allergies"] || []}
+          onViewAll={() => selectSection("allergies")}
+        />
+      ),
+    },
+    {
+      key: "medical-history",
+      label: "Medical Histories",
+      icon: FileText,
+      records: records["medical-history"] || [],
+      render: () => (
+        <MedicalHistorySection
+          definition={recordTypes["medical-history"]}
+          records={records["medical-history"] || []}
+        />
+      ),
+    },
+    {
+      key: "midwife-notes",
+      label: "Midwife Notes",
+      icon: FileText,
+      records: records["midwife-notes"] || [],
+      render: () => (
+        <MidwifeNotesSection
+          definition={recordTypes["midwife-notes"]}
+          records={records["midwife-notes"] || []}
+          onViewAll={() => selectSection("midwife-notes")}
+        />
+      ),
+    },
+  ];
+
+  return (
+    <section className="patient-health-assessment-history">
+      {sections.map(
+        ({ key, label, icon: Icon, records: sectionRecords, render }) => {
+          const isOpen = openSection === key;
+
+          return (
+            <div
+              key={key}
+              className={`patient-health-history-accordion ${
+                isOpen ? "is-open" : ""
+              }`}
+            >
+              <button
+                type="button"
+                className="patient-health-history-accordion-header"
+                onClick={() => toggleSection(key)}
+                aria-expanded={isOpen}
+              >
+                <span className="patient-health-history-accordion-title">
+                  <span className="patient-panel-icon patient-panel-icon-small">
+                    <Icon size={18} strokeWidth={1.8} />
+                  </span>
+
+                  <span>{label}</span>
+                </span>
+
+                <span className="patient-health-history-accordion-right">
+                  <span className="patient-card-total">
+                    {sectionRecords.length} total
+                  </span>
+
+                  <ChevronDown
+                    size={18}
+                    className={`patient-health-history-chevron ${
+                      isOpen ? "is-expanded" : ""
+                    }`}
+                  />
+                </span>
+              </button>
+
+              {isOpen && (
+                <div className="patient-health-history-accordion-content">
+                  {render()}
+                </div>
+              )}
+            </div>
+          );
+        }
+      )}
+    </section>
   );
 }
 
