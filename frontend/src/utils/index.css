@@ -2976,6 +2976,8 @@
     .patient-healthinfo-main {
         display: grid;
         gap: 1rem;
+        width: 100%;
+        min-width: 0;
     }
 
     .patient-overview-heading h1 {
@@ -4331,6 +4333,8 @@
     border: 1px solid rgba(12, 79, 70, 0.1);
     border-radius: 16px;
     overflow: hidden;
+    max-width: none;
+    box-sizing: border-box;
 }
 
 .patient-health-history-accordion {
