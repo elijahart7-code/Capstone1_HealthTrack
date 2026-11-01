@@ -4814,7 +4814,7 @@
 }
 
 .patient-medical-history-card .patient-medical-history-table {
-    width: 100%;
+    width: 100% !important;
     min-width: 1120px !important;
     max-width: none !important;
     table-layout: fixed !important;
@@ -4823,6 +4823,7 @@
 .patient-medical-history-card .patient-medical-history-table th {
     background: #eaf7f1;
     color: #17483e;
+    font-size: 15px !important;
     font-weight: 800;
 }
 
