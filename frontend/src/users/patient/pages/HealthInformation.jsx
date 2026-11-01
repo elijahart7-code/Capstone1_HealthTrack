@@ -1162,7 +1162,17 @@ function HealthAssessmentHistory({
                   </span>
 
                   <span>{label}</span>
-                
+                </span>
+
+                <span className="patient-health-history-accordion-right">
+                  
+                  <ChevronDown
+                    size={18}
+                    className={`patient-health-history-chevron ${
+                      isOpen ? "is-expanded" : ""
+                    }`}
+                  />
+                </span>
               </button>
 
               {isOpen && (
