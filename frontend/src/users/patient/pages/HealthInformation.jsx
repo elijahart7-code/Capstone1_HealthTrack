@@ -1273,7 +1273,6 @@ function MidwifeNotesSection({ definition, records, onViewAll }) {
           </span>
           <h2>{definition.label}</h2>
         </div>
-        </span>
       </div>
 
       <button
