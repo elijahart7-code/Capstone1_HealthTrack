@@ -4419,11 +4419,15 @@
 
     .patient-health-assessment-table-wrap {
         border-radius: 10px;
+        overflow-x: hidden;
+        width: 100%;
     }
 
     .patient-health-assessment-table {
-        min-width: 980px;
         table-layout: fixed;
+        width: 100%;
+        min-width: 0;
+
     }
 
     .patient-health-assessment-table th,
