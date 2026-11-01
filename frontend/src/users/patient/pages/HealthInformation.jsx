@@ -1162,20 +1162,7 @@ function HealthAssessmentHistory({
                   </span>
 
                   <span>{label}</span>
-                </span>
-
-                <span className="patient-health-history-accordion-right">
-                  <span className="patient-card-total">
-                    {sectionRecords.length} total
-                  </span>
-
-                  <ChevronDown
-                    size={18}
-                    className={`patient-health-history-chevron ${
-                      isOpen ? "is-expanded" : ""
-                    }`}
-                  />
-                </span>
+                
               </button>
 
               {isOpen && (
@@ -1210,9 +1197,6 @@ function MedicalHistorySection({ definition, records }) {
           </span>
           <h2>Medical Histories</h2>
         </div>
-        <span className="patient-card-total">
-          {records.length} total
-        </span>
       </div>
 
       {records.length > 0 ? (
