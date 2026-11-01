@@ -161,7 +161,7 @@ const upcomingAppointment =
     <div className="patient-healthinfo-page">
       <aside className="patient-healthinfo-sidebar">
         <nav className="patient-healthinfo-nav" aria-label="Health information navigation">
-          <button
+          {/*<button
             type="button"
             onClick={showOverview}
             className={`patient-sidebar-item ${section === null ? "is-active" : ""}`}
@@ -170,7 +170,7 @@ const upcomingAppointment =
               <Home size={18} strokeWidth={1.8} />
             </span>
             <span>Patient Profile</span>
-          </button>
+          </button> */}
 
           <div className="patient-sidebar-label">MY HEALTH INFORMATION</div>
 
