@@ -1350,7 +1350,7 @@ function VitalSignsSection({ definition, records, onViewAll }) {
           <h2>{definition.label}</h2>
         </div>
         <span className="patient-card-total">
-          {record ? 1 : 0} total
+          {records.length} records
         </span>
 
         <button
