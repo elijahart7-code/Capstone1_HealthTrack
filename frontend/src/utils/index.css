@@ -4482,17 +4482,7 @@
         
     }
 
-    .patient-vital-measurement-column {
-        width: 45%;
-    }
-
-    .patient-vital-result-column {
-        width: 25%;
-    }
-
-    .patient-vital-unit-column {
-        width: 30%;
-    }
+    
 
     .patient-vital-table th,
     .patient-vital-table td {
