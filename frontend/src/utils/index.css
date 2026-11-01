@@ -3980,12 +3980,20 @@
     }
 
     .patient-healthinfo-card.patient-medical-history-card {
-        overflow: hidden;
-        padding: 0;
-        border: 1px solid rgba(12, 79, 70, 0.1);
-        border-radius: 12px;
-        background: #ffffff;
-    }
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+
+    overflow: hidden;
+    padding: 0;
+
+    border: 1px solid rgba(12, 79, 70, 0.08);
+    border-radius: 18px;
+
+    background: #F2FAF6;
+    box-shadow: 0 4px 18px rgba(15, 29, 26, 0.04);
+}
     
     .patient-medical-history-card .patient-card-header {
         margin: 0;
@@ -4799,6 +4807,32 @@
             gap: 0.7rem;
             padding: 0.8rem;
         }
+        .patient-medical-history-card .patient-medical-history-table-wrap {
+    width: 100%;
+    max-width: none;
+    overflow-x: auto;
+}
+
+.patient-medical-history-card .patient-medical-history-table {
+    width: 100%;
+    min-width: 1120px;
+    max-width: none;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+.patient-medical-history-card .patient-medical-history-table th {
+    background: #eaf7f1;
+    color: #17483e;
+    font-weight: 800;
+}
+
+.patient-medical-history-card .patient-medical-history-table th,
+.patient-medical-history-card .patient-medical-history-table td {
+    padding: 0.75rem 0.7rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+}
 
         .patient-midwife-note-card-header .patient-midwife-note-icon {
             flex-basis: 40px;
