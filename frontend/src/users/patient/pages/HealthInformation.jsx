@@ -187,7 +187,7 @@ const upcomingAppointment =
             }}
             onToggle={() => setAssessmentExpanded((expanded) => !expanded)}
           />
-          {assessmentExpanded && (
+         {/* {assessmentExpanded && (
   <div className="patient-sidebar-children">
     <SidebarChild
   label="Health Assessment"
@@ -219,7 +219,7 @@ const upcomingAppointment =
   onClick={() => selectSection("midwife-notes")}
 />
   </div>
-)}
+)} */}
         </nav>
 
       </aside>
