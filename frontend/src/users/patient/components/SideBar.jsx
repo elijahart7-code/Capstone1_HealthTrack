@@ -1,9 +1,9 @@
 import { useSearchParams } from "react-router";
-import { LayoutGrid, FileText } from "lucide-react";
+
 
 const NAV = [
   { key: "dashboard", label: "Dashboard"},
-  { key: "health-information", label: "My Health Information" },
+  { key: "health-information", label: "My Health Information"},
 ];
 
 /**
