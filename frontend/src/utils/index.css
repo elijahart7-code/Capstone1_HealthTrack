@@ -4277,22 +4277,32 @@
         color: #0d8069;
     }
 
-    .patient-allergies-table-wrap {
-        border-radius: 10px;
-    }
+    
+/* Latest Allergies - remove horizontal scrollbar */
+.patient-allergies-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    border-radius: 10px;
+}
 
-    .patient-allergies-table {
-        min-width: 1120px;
-        table-layout: fixed;
-    }
+.patient-allergies-table {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
 
-    .patient-allergies-table th,
-    .patient-allergies-table td {
-        padding: 0.75rem 0.7rem;
-        white-space: normal;
-        overflow-wrap: anywhere;
-        line-height: 1.45;
-    }
+.patient-allergies-table th,
+.patient-allergies-table td {
+    padding: 0.5rem 0.4rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    line-height: 1.4;
+}
+
 
     .patient-allergies-table th {
         background: #eaf7f1;
