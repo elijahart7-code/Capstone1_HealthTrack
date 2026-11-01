@@ -4815,10 +4815,10 @@
 
 .patient-medical-history-card .patient-medical-history-table {
     width: 100%;
-    min-width: 1120px;
-    max-width: none;
-    table-layout: fixed;
-    border-collapse: collapse;
+    min-width: 1120px !important;
+    max-width: none !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
 }
 .patient-medical-history-card .patient-medical-history-table th {
     background: #eaf7f1;
@@ -4828,9 +4828,9 @@
 
 .patient-medical-history-card .patient-medical-history-table th,
 .patient-medical-history-card .patient-medical-history-table td {
-    padding: 0.75rem 0.7rem;
+    padding: 0.75rem 0.7rem !important;
     white-space: normal;
-    overflow-wrap: anywhere;
+    overflow-wrap: anywhere !important;
     line-height: 1.45;
 }
 
