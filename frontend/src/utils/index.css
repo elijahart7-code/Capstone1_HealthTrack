@@ -3986,59 +3986,6 @@
         border-radius: 12px;
         background: #ffffff;
     }
-    /* =========================================================
-   MEDICAL HISTORIES - MATCH ALLERGIES
-   ========================================================= */
-
-.patient-healthinfo-main .patient-medical-history-card {
-    width: 100%;
-    max-width: none;
-    min-width: 0;
-    box-sizing: border-box;
-
-    /* Match the Allergies card */
-    background: #F2FAF6;
-
-    border: 1px solid rgba(12, 79, 70, 0.08);
-    border-radius: 18px;
-    box-shadow: 0 4px 18px rgba(15, 29, 26, 0.04);
-
-    overflow: hidden;
-}
-
-/* Make the Medical Histories table fill the card */
-.patient-medical-history-card .patient-table-wrap {
-    width: 100%;
-    overflow-x: auto;
-}
-
-/* Give Medical Histories the same table width behavior as Allergies */
-.patient-medical-history-card .patient-health-table {
-    width: 100%;
-    min-width: 1120px;
-    table-layout: fixed;
-}
-
-/* Match the Allergies table header color */
-.patient-medical-history-card .patient-health-table th {
-    background: #eaf7f1;
-    color: #17483e;
-    font-weight: 800;
-}
-
-/* Match Allergies table spacing */
-.patient-medical-history-card .patient-health-table th,
-.patient-medical-history-card .patient-health-table td {
-    padding: 0.75rem 0.7rem;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    line-height: 1.45;
-}
-
-/* Keep the table rows clean */
-.patient-medical-history-card .patient-health-table tbody tr:last-child td {
-    border-bottom: 0;
-}
 
     .patient-medical-history-card .patient-card-header {
         margin: 0;
