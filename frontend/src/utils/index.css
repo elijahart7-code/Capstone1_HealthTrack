@@ -4807,33 +4807,32 @@
             gap: 0.7rem;
             padding: 0.8rem;
         }
-        .patient-medical-history-card .patient-medical-history-table-wrap {
-    width: 100%;
-    max-width: none;
-    overflow-x: auto;
-}
+        .patient-medical-history-table-wrap {
+        border-radius: 10px;
+    }
 
-.patient-medical-history-card .patient-medical-history-table {
-    
-    
-    max-width: none !important;
-    table-layout: fixed !important;
-    border-collapse: collapse !important;
-}
-.patient-medical-history-card .patient-medical-history-table th {
-    background: #eaf7f1;
-    color: #17483e;
-    font-size: 15px !important;
-    font-weight: 800;
-}
+    .patient-medical-history-table {
+        min-width: 1120px;
+        table-layout: fixed;
+    }
 
-.patient-medical-history-card .patient-medical-history-table th,
-.patient-medical-history-card .patient-medical-history-table td {
-    padding: 0.75rem 0.7rem !important;
-    white-space: normal;
-    overflow-wrap: anywhere !important;
-    line-height: 1.45;
-}
+    .patient-medical-history-table th,
+    .patient-medical-history-table td {
+        padding: 0.75rem 0.7rem;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.45;
+    }
+
+    .patient-medical-history-table th {
+        background: #eaf7f1;
+        color: #17483e;
+    }
+
+    .patient-medical-history-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
 
         .patient-midwife-note-card-header .patient-midwife-note-icon {
             flex-basis: 40px;
