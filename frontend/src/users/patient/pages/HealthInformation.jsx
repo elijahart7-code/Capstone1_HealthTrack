@@ -185,7 +185,7 @@ const upcomingAppointment =
               setAssessmentExpanded(true);
               selectSection("health-assessment");
             }}
-            {/*onToggle={() => setAssessmentExpanded((expanded) => !expanded)} */}
+            onToggle={() => setAssessmentExpanded((expanded) => !expanded)}
           />
          {/* {assessmentExpanded && (
   <div className="patient-sidebar-children">
@@ -430,15 +430,7 @@ function SidebarItem({ icon: Icon, label, active, expanded, onClick, onToggle })
           <span className="patient-sidebar-icon"><Icon size={18} strokeWidth={1.8} /></span>
           <span>{label}</span>
         </button>
-        <button
-          type="button"
-          onClick={onToggle}
-          className="patient-sidebar-toggle"
-          aria-label={`${expanded ? "Collapse" : "Expand"} ${label}`}
-          aria-expanded={expanded}
-        >
-          <ChevronDown className={`patient-sidebar-chevron ${expanded ? "is-expanded" : "is-collapsed"}`} size={16} />
-        </button>
+        
       </div>
     );
   }
