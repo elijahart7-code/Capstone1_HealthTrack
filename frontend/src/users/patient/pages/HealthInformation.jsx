@@ -185,7 +185,7 @@ const upcomingAppointment =
               setAssessmentExpanded(true);
               selectSection("health-assessment");
             }}
-            onToggle={() => setAssessmentExpanded((expanded) => !expanded)}
+            {/*onToggle={() => setAssessmentExpanded((expanded) => !expanded)} */}
           />
          {/* {assessmentExpanded && (
   <div className="patient-sidebar-children">
