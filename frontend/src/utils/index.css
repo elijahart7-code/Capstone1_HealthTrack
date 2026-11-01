@@ -4471,26 +4471,42 @@
         color: #0d8069;
     }
 
-    .patient-vital-signs-table-wrap {
+    /* Remove horizontal scrollbar from Vital Signs */
+.patient-vital-signs-table-wrap,
+.patient-table-wrap.patient-vital-signs-table-wrap {
     width: 100%;
-    overflow-x: hidden;
-    }
-    .patient-vital-table {
-        width: 100%;
-        min-width: 0;
-        table-layout: fixed;
-        
+    max-width: 100%;
+    overflow-x: hidden !important;
+    overflow-y: hidden;
+}
+
+.patient-vital-signs-table-wrap .patient-vital-table,
+.patient-table-wrap.patient-vital-signs-table-wrap .patient-vital-table {
+    width: 100% !important;
+    max-width: 100%;
+    min-width: 0 !important;
+    table-layout: fixed;
+}
+
+    .patient-vital-measurement-column {
+        width: 45%;
     }
 
-    
+    .patient-vital-result-column {
+        width: 25%;
+    }
+
+    .patient-vital-unit-column {
+        width: 30%;
+    }
 
     .patient-vital-table th,
     .patient-vital-table td {
-        height: 44px;
-        box-sizing: border-box;
-        text-align: left;
-        overflow-wrap: anywhere;
-    }
+    padding: 8px 10px;
+    box-sizing: border-box;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
 
     .patient-health-table th,
     .patient-health-table td {
