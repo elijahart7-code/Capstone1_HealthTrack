@@ -1,5 +1,5 @@
 import { useSearchParams } from "react-router";
-{import { LayoutGrid, FileText } from "lucide-react";
+import { LayoutGrid, FileText } from "lucide-react";
 
 const NAV = [
   { key: "dashboard", label: "Dashboard", icon: LayoutGrid },
