@@ -3986,7 +3986,54 @@
         border-radius: 12px;
         background: #ffffff;
     }
+    /* =========================================================
+   MEDICAL HISTORIES - SAME SIZE & COLOR AS ALLERGIES
+   ========================================================= */
 
+.patient-healthinfo-main .patient-medical-history-card {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+
+    background: #F2FAF6 !important;
+    border: 1px solid rgba(12, 79, 70, 0.08) !important;
+    border-radius: 18px !important;
+    box-shadow: 0 4px 18px rgba(15, 29, 26, 0.04) !important;
+}
+
+/* Medical Histories table */
+.patient-healthinfo-main .patient-medical-history-table-wrap {
+    width: 100% !important;
+    max-width: none !important;
+    overflow-x: auto;
+}
+
+.patient-healthinfo-main .patient-medical-history-table {
+    width: 100% !important;
+    min-width: 1120px !important;
+    max-width: none !important;
+    table-layout: fixed !important;
+}
+
+/* Same table appearance as Allergies */
+.patient-healthinfo-main .patient-medical-history-table th,
+.patient-healthinfo-main .patient-medical-history-table td {
+    padding: 0.75rem 0.7rem !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+}
+
+.patient-healthinfo-main .patient-medical-history-table th {
+    background: #eaf7f1 !important;
+    color: #17483e !important;
+    font-weight: 800;
+}
+
+.patient-healthinfo-main .patient-medical-history-table tbody tr:last-child td {
+    border-bottom: 0;
+}
     .patient-medical-history-card .patient-card-header {
         margin: 0;
         padding: 0.85rem 1rem;
