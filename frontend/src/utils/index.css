@@ -4417,31 +4417,63 @@
     display: none;
 }
 
-    .patient-health-assessment-table-wrap {
-        border-radius: 10px;
-    }
+    /* Health Assessment */
+.patient-health-assessment-table-wrap {
+  width: 100%;
+  overflow-x: hidden;
+}
 
-    .patient-health-assessment-table {
-        min-width: 980px;
-        table-layout: fixed;
-    }
+.patient-health-assessment-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
 
-    .patient-health-assessment-table th,
-    .patient-health-assessment-table td {
-        padding: 0.75rem 0.8rem;
-        white-space: normal;
-        overflow-wrap: anywhere;
-        line-height: 1.45;
-    }
+.patient-health-assessment-table th,
+.patient-health-assessment-table td {
+  padding: 10px 9px;
+  text-align: left;
+  vertical-align: top;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 
-    .patient-health-assessment-table th {
-        background: #eaf7f1;
-        color: #17483e;
-    }
+.patient-health-assessment-table th {
+  font-size: 11px;
+  font-weight: 600;
+}
 
-    .patient-health-assessment-table tbody tr:last-child td {
-        border-bottom: 0;
-    }
+.patient-health-assessment-table td {
+  font-size: 11px;
+}
+
+/* Give each column a reasonable amount of space */
+.patient-health-assessment-table th:nth-child(1),
+.patient-health-assessment-table td:nth-child(1) {
+  width: 20%;
+}
+
+.patient-health-assessment-table th:nth-child(2),
+.patient-health-assessment-table td:nth-child(2) {
+  width: 20%;
+}
+
+.patient-health-assessment-table th:nth-child(3),
+.patient-health-assessment-table td:nth-child(3) {
+  width: 18%;
+}
+
+.patient-health-assessment-table th:nth-child(4),
+.patient-health-assessment-table td:nth-child(4) {
+  width: 20%;
+}
+
+.patient-health-assessment-table th:nth-child(5),
+.patient-health-assessment-table td:nth-child(5) {
+  width: 22%;
+}
 
     .patient-health-assessment-footer {
         display: flex;
