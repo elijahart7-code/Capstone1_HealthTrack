@@ -4307,6 +4307,93 @@
         flex: 0 0 auto;
         color: #0d8069;
     }
+    .patient-health-assessment-history {
+    width: 100%;
+    background: #f2faf6;
+    border: 1px solid rgba(12, 79, 70, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.patient-health-history-accordion {
+    width: 100%;
+    border-bottom: 1px solid rgba(12, 79, 70, 0.1);
+}
+
+.patient-health-history-accordion:last-child {
+    border-bottom: 0;
+}
+
+.patient-health-history-accordion-header {
+    width: 100%;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border: 0;
+    background: #f2faf6;
+    color: #17483e;
+    cursor: pointer;
+    text-align: left;
+}
+
+.patient-health-history-accordion-header:hover {
+    background: #eaf7f1;
+}
+
+.patient-health-history-accordion-title {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-weight: 800;
+}
+
+.patient-health-history-accordion-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.patient-health-history-chevron {
+    transition: transform 0.2s ease;
+}
+
+.patient-health-history-chevron.is-expanded {
+    transform: rotate(180deg);
+}
+
+.patient-health-history-accordion-content {
+    padding: 0 0.75rem 0.75rem;
+    background: #f2faf6;
+}
+
+.patient-health-history-accordion-content
+.patient-healthinfo-card {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+.patient-health-history-accordion-content
+.patient-healthinfo-card
+.patient-card-header {
+    display: none;
+}
+
+.patient-health-history-accordion-content
+.patient-healthinfo-card
+.patient-view-button {
+    display: none;
+}
+
+.patient-health-history-accordion-content
+.patient-midwife-notes-section
+> .patient-view-button {
+    display: none;
+}
 
     .patient-health-assessment-table-wrap {
         border-radius: 10px;
