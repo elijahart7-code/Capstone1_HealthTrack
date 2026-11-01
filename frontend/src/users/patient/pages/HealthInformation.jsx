@@ -908,6 +908,110 @@ function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes }) {
     </LatestRecordCard>
   );
 }
+function LatestMedicalHistory({
+  definition,
+  record,
+  onViewMedicalHistory,
+}) {
+  const rows = [
+    {
+      key: "past_illnesses",
+      label: "Past Illnesses",
+    },
+    {
+      key: "chronic_conditions",
+      label: "Chronic Conditions",
+    },
+    {
+      key: "past_surgeries",
+      label: "Past Surgeries",
+    },
+    {
+      key: "previous_hospitalizations",
+      label: "Previous Hospitalizations",
+    },
+    {
+      key: "family_medical_history",
+      label: "Family Medical History",
+    },
+    {
+      key: "immunization_status",
+      label: "Immunization Status",
+    },
+  ];
+
+  return (
+    <LatestRecordCard
+      title="Latest Medical History"
+      icon={FileText}
+      type="medical-history"
+      definition={definition}
+      record={record}
+      action={
+        <button
+          type="button"
+          className="patient-appointment-link"
+          onClick={onViewMedicalHistory}
+        >
+          View All Medical Histories
+          <ArrowRight size={16} strokeWidth={1.8} />
+        </button>
+      }
+    >
+      {record ? (
+        <div className="patient-table-wrap patient-medical-history-latest-wrap">
+          <table className="patient-health-table patient-medical-history-latest-table">
+            <thead>
+              <tr>
+                {rows.map(({ key, label }) => (
+                  <th scope="col" key={key}>
+                    {label}
+                  </th>
+                ))}
+                <th scope="col">
+                  {definition.dateLabel || "Recorded On"}
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                {rows.map(({ key }) => {
+                  const value = record[key];
+
+                  return (
+                    <td key={key}>
+                      {value || (
+                        [
+                          "past_illnesses",
+                          "chronic_conditions",
+                          "past_surgeries",
+                          "previous_hospitalizations",
+                        ].includes(key)
+                          ? "None"
+                          : "Not provided"
+                      )}
+                    </td>
+                  );
+                })}
+
+                <td>
+                  {formatRecordDate(
+                    record[definition.dateField]
+                  ) || "--"}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="patient-empty-state">
+          No medical history recorded yet.
+        </div>
+      )}
+    </LatestRecordCard>
+  );
+}
 function AllergyDetailRows({ rows }) {
   return (
     <div className="patient-table-wrap patient-allergies-horizontal-wrap">
