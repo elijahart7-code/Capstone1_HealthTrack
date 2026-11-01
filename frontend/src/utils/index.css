@@ -4814,7 +4814,7 @@
 }
 
 .patient-medical-history-card .patient-medical-history-table {
-    width: 100% !important;
+    
     min-width: 1400px !important;
     max-width: none !important;
     table-layout: fixed !important;
