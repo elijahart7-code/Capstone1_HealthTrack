@@ -126,7 +126,7 @@ const upcomingAppointment =
     .filter(Boolean)
     .join(" ");
   const latestRecords = Object.fromEntries(
-    ["vital-signs", "health-assessment", "allergies", "midwife-notes"].map((key) => [
+    ["vital-signs", "health-assessment", "allergies", "medical-history", "midwife-notes"].map((key) => [
       key,
       getLatestRecord(records[key] || [], recordTypes[key]?.dateField),
     ])
@@ -239,6 +239,7 @@ const upcomingAppointment =
             <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} onViewAssessments={() => selectSection("health-assessment")} />
             <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("vital-signs")} />            
             <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("allergies")} />          
+            <LatestMedicalHistory definition={recordTypes["medical-history"]} record={latestRecords["medical-history"]} onViewMedicalHistory={() => selectSection("medical-history")} />
             <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} onViewMidwifeNotes={() => selectSection("midwife-notes")} />          </>
         ) : (
           <>
