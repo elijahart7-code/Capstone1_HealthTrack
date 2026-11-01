@@ -4471,10 +4471,15 @@
         color: #0d8069;
     }
 
+    .patient-vital-signs-table-wrap {
+    width: 100%;
+    overflow-x: hidden;
+    }
     .patient-vital-table {
         width: 100%;
-        min-width: 640px;
+        min-width: 0;
         table-layout: fixed;
+        
     }
 
     .patient-vital-measurement-column {
