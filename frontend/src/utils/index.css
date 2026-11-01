@@ -3666,7 +3666,7 @@
 .patient-healthinfo-main .patient-midwife-notes-section .patient-card-header {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between !important;
     margin: 0;
     padding: 0;
 }
