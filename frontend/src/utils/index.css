@@ -4685,15 +4685,17 @@ table.patient-medical-history-latest-table {
     }
 
     .patient-healthinfo-main .patient-general-account-card {
-        padding: 1.15rem 1.35rem 1.25rem;
-        border: 1px solid #DDF3EA;
-        border-radius: 12px;
+        width: 100%;
+        padding: 0.75rem 0.9rem 0.65rem;
+        border: 0;
+        border-bottom: 2px solid #DDF3EA;
+        border-radius: 0;
         background: #FFFFFF;
-        box-shadow: 0 3px 12px rgba(7, 59, 42, 0.035);
+        box-shadow: none;
     }
 
     .patient-healthinfo-main .patient-general-account-card > h2 {
-        margin: 0 0 1.1rem;
+        margin: 0 0 0.55rem;
         color: #073B2A;
         font-family: var(--font-sans);
         font-size: 1rem;
@@ -4703,10 +4705,10 @@ table.patient-medical-history-latest-table {
 
     .patient-general-account-content {
         display: grid;
-        grid-template-columns: 170px minmax(0, 1fr);
+        grid-template-columns: 128px minmax(0, 1fr);
         align-items: center;
-        gap: 1rem;
-        min-height: 112px;
+        gap: 0.5rem;
+        min-height: 104px;
     }
 
     .patient-general-account-avatar {
@@ -4714,19 +4716,19 @@ table.patient-medical-history-latest-table {
         display: grid;
         place-items: center;
         justify-self: center;
-        width: 74px;
-        height: 74px;
+        width: 64px;
+        height: 64px;
         color: #073B2A;
     }
 
     .patient-general-account-verified {
         position: absolute;
-        right: -3px;
-        bottom: -2px;
+        right: 0;
+        bottom: 0;
         display: grid;
         place-items: center;
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
         border: 2px solid #FFFFFF;
         border-radius: 50%;
         background: #0F513F;
@@ -4742,10 +4744,10 @@ table.patient-medical-history-latest-table {
 
     .patient-general-account-details > div {
         display: grid;
-        grid-template-columns: minmax(170px, 0.72fr) minmax(0, 1.28fr);
+        grid-template-columns: minmax(120px, 0.65fr) minmax(0, 1.35fr);
         align-items: center;
-        gap: 1rem;
-        min-height: 35px;
+        gap: 0.75rem;
+        min-height: 31px;
     }
 
     .patient-general-account-details dt,
@@ -4767,8 +4769,24 @@ table.patient-medical-history-latest-table {
     }
 
     .patient-general-account-details .patient-general-account-status {
-        color: #0F513F;
+        justify-self: start;
+        padding: 0.18rem 0.6rem;
+        border: 1px solid #d5eee2;
+        border-radius: 999px;
+        font-size: 0.72rem;
         font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .patient-general-account-details .patient-general-account-status.is-active {
+        background: #eff9f3;
+        color: #0F513F;
+    }
+
+    .patient-general-account-details .patient-general-account-status.is-inactive {
+        border-color: #e4e9e5;
+        background: #f5f7f5;
+        color: #5e6b64;
     }
 
     .patient-portal-info-card {
@@ -4940,27 +4958,28 @@ table.patient-medical-history-latest-table {
 
     @media (max-width: 640px) {
         .patient-healthinfo-main .patient-general-account-card {
-            padding: 1rem;
+            padding: 0.75rem 0.65rem 0.6rem;
         }
 
         .patient-healthinfo-main .patient-general-account-card > h2 {
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .patient-healthinfo-main .patient-general-account-content {
-            grid-template-columns: minmax(0, 1fr);
-            gap: 0.75rem;
+            grid-template-columns: 76px minmax(0, 1fr);
+            gap: 0.5rem;
+            min-height: 94px;
         }
 
         .patient-healthinfo-main .patient-general-account-avatar {
-            justify-self: start;
-            width: 58px;
-            height: 58px;
+            justify-self: center;
+            width: 52px;
+            height: 52px;
         }
 
         .patient-healthinfo-main .patient-general-account-avatar > svg {
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
         }
 
         .patient-healthinfo-main .patient-general-account-details {
@@ -4968,9 +4987,9 @@ table.patient-medical-history-latest-table {
         }
 
         .patient-healthinfo-main .patient-general-account-details > div {
-            grid-template-columns: minmax(112px, 0.78fr) minmax(0, 1.22fr);
-            gap: 0.65rem;
-            min-height: 38px;
+            grid-template-columns: minmax(92px, 0.78fr) minmax(0, 1.22fr);
+            gap: 0.5rem;
+            min-height: 34px;
         }
 
         .patient-healthinfo-main .patient-general-account-details dt,

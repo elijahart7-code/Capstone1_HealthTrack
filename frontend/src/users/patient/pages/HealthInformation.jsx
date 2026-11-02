@@ -188,7 +188,7 @@ const upcomingAppointment =
         {section === null ? (
           <>
             <header className="patient-overview-heading">
-              <h1>Patient Profile</h1>
+              <h1>Latest Health Summary</h1>
               <p>Your latest health information from your most recent checkup.</p>
             </header>
             <LatestAppointment
@@ -353,7 +353,9 @@ function PatientPortalAccount({ patient, currentUser }) {
         <dl className="patient-general-account-details">
           <div>
             <dt>Account Status:</dt>
-            <dd className="patient-general-account-status">Active</dd>
+            <dd className={`patient-general-account-status ${patient.user_id ? "is-active" : "is-inactive"}`}>
+              {patient.user_id ? "Active" : "Inactive"}
+            </dd>
           </div>
           <div>
             <dt>Email Address:</dt>
