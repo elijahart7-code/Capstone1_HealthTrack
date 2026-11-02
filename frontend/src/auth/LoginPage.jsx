@@ -72,7 +72,7 @@ export default function LoginPage() {
 
   const accounts = [
     { key: "patient", label: "Patient", icon: "patient" },
-    { key: "admin", label: "Admin", icon: "admin" },
+    { key: "adminn", label: "Adminn", icon: "adminn" },
     { key: "health_worker", label: "Health Worker", icon: "health_worker" },
   ];
 
