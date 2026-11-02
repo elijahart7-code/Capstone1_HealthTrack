@@ -176,7 +176,6 @@ export function RegisterPatient({ loadData, onRegistered }) {
                 <option value="" disabled>Select sex</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Other">Other</option>
               </Select>
             </Field>
 
