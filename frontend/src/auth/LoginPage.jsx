@@ -122,7 +122,6 @@ export default function LoginPage() {
         <div className="ht-auth-card">
           <div className="ht-login-panel">
             <div className="ht-login-header">
-              {portal && <span className="ht-portal-eyebrow">HEALTHTRACK / {portal.title}</span>}
               <h1>{portal?.title || "Welcome to HealthTrack!"}</h1>
               <p>{portal?.description || "Sign in to access your account."}</p>
             </div>
