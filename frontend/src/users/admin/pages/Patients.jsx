@@ -153,6 +153,7 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                   <Th>Portal Account</Th>
                   <Th>Patient Records</Th>
                   <Th>Action</Th>
+                  <Th>Download File</Th>
                 </tr>
               </thead>
               <tbody>
@@ -181,7 +182,6 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                     </Td>
                     <Td className="ht-patient-actions-cell">
                       <div className="ht-patient-row-actions">
-                        <PatientExportButton patient={p} />
                         {showArchived ? (
                           <button
                             type="button"
@@ -202,6 +202,7 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                         )}
                       </div>
                     </Td>
+                    <Td><PatientExportButton patient={p} /></Td>
                   </tr>
                 ))}
               </tbody>

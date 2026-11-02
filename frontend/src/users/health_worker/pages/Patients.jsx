@@ -110,12 +110,13 @@ export function Patients({ patients, loadData }) {
                 <Th>Occupation</Th>
                 <Th>Portal Account</Th>
                 <Th>Action</Th>
+                <Th>Download File</Th>
               </tr>
             </thead>
             <tbody>
               {pageItems.map((p) => (
                 <tr key={p.patient_id}>
-                  <Td className="font-bold" style={{ color: "var(--color-brand-strong)" }}>
+                  <Td className="font-bold whitespace-nowrap" style={{ color: "var(--color-brand-strong)" }}>
                     {p.full_name}
                   </Td>
                   <Td>{calculateAge(p.birthdate)}</Td>
@@ -124,7 +125,7 @@ export function Patients({ patients, loadData }) {
                     {new Date(p.birthdate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                   </Td>
                   <Td>{p.contact_number || "--"}</Td>
-                  <Td className="capitalize">{p.civil_status || "--"}</Td>
+                  <Td className="capitalize whitespace-nowrap">{p.civil_status || "--"}</Td>
                   <Td>{p.blood_type || "--"}</Td>
                   <Td>{p.occupation || "--"}</Td>
                   <Td>
@@ -135,7 +136,6 @@ export function Patients({ patients, loadData }) {
                     )}
                   </Td>
                   <Td>
-                    <PatientExportButton patient={p} />
                     <button
                       type="button"
                       onClick={() => setSearchParams({ page: "patients", patientId: p.patient_id })}
@@ -147,6 +147,7 @@ export function Patients({ patients, loadData }) {
                       View Record Only
                     </button>
                   </Td>
+                  <Td><PatientExportButton patient={p} /></Td>
                 </tr>
               ))}
             </tbody>
