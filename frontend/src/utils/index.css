@@ -1185,6 +1185,15 @@
         text-align: center;
     }
 
+    .ht-healthworker-patients-panel .ht-table,
+    .ht-healthworker-patients-panel .ht-table th,
+    .ht-healthworker-patients-panel .ht-table td,
+    .ht-healthworker-patients-panel .ht-table tbody tr,
+    .ht-healthworker-patients-panel .ht-table tbody tr:nth-child(even),
+    .ht-healthworker-patients-panel .ht-table tbody tr:hover {
+        background: #F2FAF7;
+    }
+
     .ht-empty {
         display: grid;
         place-content: center;
