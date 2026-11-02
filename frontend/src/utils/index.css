@@ -1175,6 +1175,11 @@
         overflow-x: auto;
     }
 
+    .ht-healthworker-patients-panel .ht-table th,
+    .ht-healthworker-patients-panel .ht-table td {
+        white-space: nowrap;
+    }
+
     .ht-empty {
         display: grid;
         place-content: center;
