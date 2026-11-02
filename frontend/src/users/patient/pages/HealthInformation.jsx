@@ -1047,9 +1047,9 @@ function HealthAssessmentHistory({
       [
         "health-assessment",
         "vital-signs",
+        "midwife-notes",
         "allergies",
         "medical-history",
-        "midwife-notes",
       ].includes(section)
     ) {
       setOpenSection(section);
