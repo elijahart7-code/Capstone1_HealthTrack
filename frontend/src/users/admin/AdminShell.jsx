@@ -7,10 +7,6 @@ import { Dashboard } from "./pages/Dashboard";
 import { Patients } from "./pages/Patients";
 import { Appointments } from "./pages/Appointments";
 
-/**
- * Signed-in shell for the admin role. It owns page-level state and the data
- * fetch flow used across the admin dashboard and patient screens.
- */
 export function AdminShell() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();

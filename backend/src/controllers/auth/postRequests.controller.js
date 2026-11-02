@@ -3,13 +3,6 @@ import jwt from "jsonwebtoken";
 import { sql } from "../../config/db.js";
 import { ENV } from "../../config/env.js";
 
-/**
- * POST /api/auth/login
- *
- * Login only -- staff account registration and password resets are handled by
- * admin setup and patient portal accounts are created from the patient record
- * screen. This app does not expose a public sign-up route.
- */
 export async function login(req, res) {
   const { email, password, accountType } = req.body;
 

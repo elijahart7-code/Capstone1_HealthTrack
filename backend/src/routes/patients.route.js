@@ -17,11 +17,6 @@ import { updateClinicalRecord, updatePatient } from "../controllers/patients/upd
 import { archivePatient, deleteClinicalRecord, restorePatient } from "../controllers/patients/deleteRequest.controller.js";
 import { getHealthOptions } from "../controllers/options.controller.js";
 
-/**
- * Shared by admin and health worker roles. The route group handles the
- * registry workflow while each controller enforces role-specific rules via
- * policies/policies.js.
- */
 const router = Router();
 
 router.get("/record-types", getRecordTypes);

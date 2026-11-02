@@ -221,7 +221,6 @@ function NotableEvents({ appointments, onAppointmentClick, limit = 100 }) {
   );
 }
 
-/** Admin dashboard and complete reporting workspace. */
 export function Dashboard({ dashboard, appointments, loadData }) {
   const [, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("overview");

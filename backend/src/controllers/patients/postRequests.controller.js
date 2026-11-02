@@ -5,12 +5,6 @@ import { isRecordType, RECORD_TYPES } from "../../config/recordTypes.js";
 import { AppointmentPolicy, ClinicalRecordPolicy, PatientPolicy } from "../../policies/policies.js";
 import { validatePlaceOfBirth } from "../../utils/placeOfBirth.js";
 
-/**
- * POST /api/patients
- *
- * Handles patient demographics and creates the patient portal login from the
- * supplied registration email.
- */
 export async function registerPatient(req, res) {
   if (!PatientPolicy.register(req.user)) {
     return res.status(403).json({ error: "Only a health worker may register patients." });
@@ -69,9 +63,6 @@ export async function registerPatient(req, res) {
   return res.status(201).json({ message: `${lastName}, ${firstName} registered.`, patient: rows[0] });
 }
 
-/**
- * POST /api/patients/:patientId/appointments
- */
 export async function createAppointment(req, res) {
   if (!AppointmentPolicy.create(req.user)) {
     return res.status(403).json({ error: "Only an admin may schedule appointments." });
@@ -99,11 +90,6 @@ export async function createAppointment(req, res) {
   return res.status(201).json({ message: "Appointment scheduled.", appointment: rows[0] });
 }
 
-/**
- * POST /api/patients/:patientId/portal-account
- *
- * Patient portal accounts use the required default password "password".
- */
 export async function createPortalAccount(req, res) {
   if (!PatientPolicy.createAccount(req.user)) {
     return res.status(403).json({ error: "Only an admin may create a portal account." });
@@ -118,7 +104,6 @@ export async function createPortalAccount(req, res) {
   const patient = patientRows[0];
   if (!patient) return res.status(404).json({ error: "Patient not found." });
 
-  // Nothing to do if a login already exists.
   if (patient.user_id) {
     return res.status(200).json({ message: "This patient already has a portal account.", patient });
   }
@@ -157,10 +142,6 @@ export async function createPortalAccount(req, res) {
   });
 }
 
-/**
- * POST /api/patients/:patientId/records/:type
- * Generic handler for all five record tables, driven by RECORD_TYPES.
- */
 export async function createClinicalRecord(req, res) {
   const { patientId, type } = req.params;
   if (!isRecordType(type)) return res.status(404).json({ error: "Unknown record type." });
@@ -193,9 +174,6 @@ export async function createClinicalRecord(req, res) {
   const columns = Object.keys(definition.fields);
   const values = columns.map((c) => body[c] ?? null);
 
-  // Column list is dynamic (driven by RECORD_TYPES), so this uses
-  // sql.query() with positional params rather than the tagged template --
-  // every value is still bound as a parameter, never string-concatenated.
   const allColumns = ["record_id", "patient_id", "appointment_id", "created_by", ...columns, definition.dateField];
   const placeholders = allColumns.map((_, i) => `$${i + 1}`).join(", ");
   const params = [recordId, patientId, appointmentId, req.user.user_id, ...values, recordDate];
@@ -208,7 +186,6 @@ export async function createClinicalRecord(req, res) {
   return res.status(201).json({ message: `${definition.singular} added.`, record: rows[0] });
 }
 
-/** Save all required sections and complete the appointment in one transaction. */
 export async function createAppointmentRecords(req, res) {
   if (!ClinicalRecordPolicy.create(req.user)) {
     return res.status(403).json({ error: "Only an admin may add clinical records." });
@@ -222,7 +199,6 @@ export async function createAppointmentRecords(req, res) {
   if (Object.keys(RECORD_TYPES).some(type => !Object.hasOwn(records, type))) {
     return res.status(422).json({ error: "Complete all required clinical sections before finishing recording." });
   }
-  // Validate every section before generating IDs or inserting any rows.
   for (const [type, body] of entries) {
     if (!isRecordType(type) || !body || typeof body !== "object" || Array.isArray(body)) {
       return res.status(422).json({ error: "Unknown clinical section." });
@@ -266,8 +242,6 @@ export async function createAppointmentRecords(req, res) {
     WHERE appointment_id IN (SELECT appointment_id FROM eligible)
     AND ${entries.map((_, i) => `(SELECT COUNT(*) FROM saved_${i}) = 1`).join(" AND ")}
     RETURNING appointment_id)`);
-  // A single data-modifying CTE is a single PostgreSQL transaction on both
-  // local pg and Neon. Any insertion failure rolls back the whole session.
   const result = await sql.query(`WITH ${ctes.join(",\n")}
     SELECT (SELECT COUNT(*) FROM eligible)::int AS eligible, (SELECT COUNT(*) FROM finished)::int AS finished,
       ${entries.map((_, i) => `(SELECT COUNT(*) FROM saved_${i})::int AS saved_${i}`).join(", ")}`, params);

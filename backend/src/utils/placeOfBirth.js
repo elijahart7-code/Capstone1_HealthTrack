@@ -26,7 +26,6 @@ export function loadPsgcArea(code) {
   return areaPromises.get(code);
 }
 
-/** Validate every supplied code against its actual PSGC parent; derive names server-side. */
 export async function validatePlaceOfBirth(input) {
   if (!input || typeof input !== "object") return { error: "Place of birth details are required." };
   const index = await loadPsgcIndex();

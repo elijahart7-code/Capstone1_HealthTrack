@@ -1,11 +1,3 @@
-/**
- * The single place where the shape of every clinical record type is defined.
- *
- * The generic clinical-records controller (controllers/patients/*) reads this
- * to know which table to query and which fields to validate; the frontend's
- * config/recordTypes.js mirrors it to render the matching forms and tabs.
- * Add a field, or a whole new record type, here and keep both copies in sync.
- */
 export const RECORD_TYPES = {
   "health-assessment": {
     label: "Health Assessment",

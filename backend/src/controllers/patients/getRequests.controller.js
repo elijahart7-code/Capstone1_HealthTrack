@@ -11,14 +11,6 @@ function withComputed(patient) {
   };
 }
 
-/**
- * GET /api/patients
- * Shared by admin and health worker, both authorized via PatientPolicy.viewAny.
- *
- * Returns the full patient roster in one payload so the frontend can search,
- * sort, and paginate client-side rather than exposing a growing set of query
- * parameters for a small local registry.
- */
 export async function getAllPatients(req, res) {
   if (!PatientPolicy.viewAny(req.user)) {
     return res.status(403).json({ error: "You do not have access to the patient registry." });
@@ -32,7 +24,6 @@ export async function getAllPatients(req, res) {
   return res.status(200).json({ message: "Patients retrieved.", patients: patients.map(withComputed) });
 }
 
-/** GET /api/patients/:patientId -- one patient's demographic record. */
 export async function getPatient(req, res) {
   const rows = await sql`
     SELECT p.*, u.email, u.created_at AS account_created_at
@@ -51,7 +42,6 @@ export async function getPatient(req, res) {
   return res.status(200).json({ message: "Patient retrieved.", patient: withComputed(patient) });
 }
 
-/** GET /api/patients/:patientId/appointments -- newest first, like Record::render(). */
 export async function getPatientAppointments(req, res) {
   const rows = await sql.query(
     `SELECT * FROM patients WHERE patient_id = $1 AND (archived_at IS NULL OR $2 = 'admin')`,
@@ -70,15 +60,10 @@ export async function getPatientAppointments(req, res) {
   return res.status(200).json({ message: "Appointments retrieved.", appointments });
 }
 
-/** GET /api/patients/record-types -- config exposed for the frontend's tabs/forms. */
 export async function getRecordTypes(_req, res) {
   return res.status(200).json({ message: "Record types retrieved.", recordTypes: RECORD_TYPES });
 }
 
-/**
- * GET /api/patients/:patientId/records/:type?perPage=10
- * Generic handler for all five clinical record tables, driven by RECORD_TYPES.
- */
 export async function getClinicalRecords(req, res) {
   const { patientId, type } = req.params;
 
@@ -98,9 +83,6 @@ export async function getClinicalRecords(req, res) {
   const perPage = Math.max(1, Math.min(10000, Number(req.query.perPage) || 10));
   const appointmentId = req.query.appointmentId || null;
 
-  // definition.table / definition.dateField come from our own fixed
-  // RECORD_TYPES map, never from user input, so interpolating them into the
-  // query text is safe; patientId and perPage are still bound params.
   const records = await sql.query(
     `SELECT * FROM ${definition.table} WHERE patient_id = $1 AND ($3::text IS NULL OR appointment_id = $3) ORDER BY ${definition.dateField} DESC, id DESC LIMIT $2`,
     [patientId, perPage, appointmentId]

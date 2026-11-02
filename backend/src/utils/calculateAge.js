@@ -1,7 +1,3 @@
-/**
- * Age in whole years from a birthdate.
- * Keep the frontend and backend copies in sync when updating this logic.
- */
 export function calculateAge(birthdate) {
   const dob = typeof birthdate === "string" ? new Date(birthdate) : birthdate;
   const today = new Date();

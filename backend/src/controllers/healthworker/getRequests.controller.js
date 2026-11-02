@@ -1,6 +1,5 @@
 import { sql } from "../../config/db.js";
 
-/** GET /api/health-worker/dashboard. */
 export async function getDashboard(_req, res) {
   const [{ count: patientCount }] = await sql`SELECT COUNT(*)::int AS count FROM patients WHERE archived_at IS NULL`;
 

@@ -1,6 +1,5 @@
 import { sql } from "../../config/db.js";
 
-/** GET /api/admin/dashboard -- admin dashboard. */
 export async function getDashboard(_req, res) {
   const [{ count: patientCount }] = await sql`SELECT COUNT(*)::int AS count FROM patients WHERE archived_at IS NULL`;
 
@@ -33,13 +32,6 @@ export async function getDashboard(_req, res) {
   });
 }
 
-/**
- * GET /api/admin/appointments
- * Admin appointment list.
- *
- * Returns the full appointment list in a single ordered payload so the
- * frontend can filter and group it client-side as needed.
- */
 export async function getAppointments(_req, res) {
   const appointments = await sql`
     SELECT a.*, p.first_name, p.last_name FROM appointments a
@@ -54,7 +46,6 @@ export async function getAppointments(_req, res) {
   });
 }
 
-/** GET /api/admin/reports -- aggregate dashboard data for charts and exports. */
 export async function getReports(req, res) {
   const period = ["hour", "day", "week", "month", "quarter", "year"].includes(req.query.period) ? req.query.period : "month";
   const status = ["confirmed", "completed", "cancelled"].includes(req.query.status)

@@ -47,7 +47,6 @@ function SearchableSelect({ label, value, options, onChange, disabled, loading, 
   );
 }
 
-/** PSGC-backed birthplace cascade. Codes remain strings to retain leading zeroes. */
 export function PlaceOfBirthField({ value = null, onChange, required = false }) {
   const [regions, setRegions] = useState([]);
   const [selection, setSelection] = useState({
@@ -149,9 +148,6 @@ export function PlaceOfBirthField({ value = null, onChange, required = false }) 
     const nextRegion = regions.find((item) => item.code === nextSelection.regionCode);
     const nextScope = scopes.find((item) => item.code === nextSelection.scopeCode);
     const nextArea = area?.code === nextSelection.scopeCode ? area : null;
-    // NCR choices come from the region's independent list, but barangays are
-    // loaded from the selected city's area file. Use that loaded hierarchy
-    // here as well so NCR barangay codes/names are resolved and retained.
     const nextCity = nextRegion?.code === "1300000000"
       ? nextRegion.independent?.find((item) => item.code === nextSelection.cityCode)
       : nextArea?.cities?.find((item) => item.code === nextSelection.cityCode);

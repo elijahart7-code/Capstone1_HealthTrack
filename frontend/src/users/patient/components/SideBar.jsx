@@ -6,10 +6,6 @@ const NAV = [
   { key: "health-information", label: "My Health Information"},
 ];
 
-/**
- * Patient portal navigation for the main dashboard and health information
- * screens.
- */
 export function SideBar() {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get("page") || "dashboard";

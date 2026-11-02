@@ -6,7 +6,6 @@ import { StatCard } from "../../../components/ui/Card";
 import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 import { calculateAge } from "../../../utils/calculateAge";
 
-/** Dashboard screen for health workers. */
 export function Dashboard({ dashboard, onRegisterClick }) {
   const [, setSearchParams] = useSearchParams();
   const [page, setPage] = useState(1);

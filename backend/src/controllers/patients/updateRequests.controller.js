@@ -5,10 +5,6 @@ import { validatePlaceOfBirth } from "../../utils/placeOfBirth.js";
 
 const VALID_STATUSES = ["confirmed", "cancelled"];
 
-/**
- * PATCH /api/appointments/:appointmentId/status
- * Updates an appointment status from the admin appointment screen.
- */
 export async function updateAppointmentStatus(req, res) {
   if (!AppointmentPolicy.update(req.user)) {
     return res.status(403).json({ error: "Only an admin may update an appointment." });
@@ -31,7 +27,6 @@ export async function updateAppointmentStatus(req, res) {
   return res.status(200).json({ message: "Appointment updated.", appointment: rows[0] });
 }
 
-/** PATCH /api/patients/:patientId -- update a patient's demographic record. */
 export async function updatePatient(req, res) {
   if (!PatientPolicy.update(req.user)) {
     return res.status(403).json({ error: "You do not have access to edit patients." });
@@ -69,7 +64,6 @@ export async function updatePatient(req, res) {
   return res.status(200).json({ message: "Patient updated.", patient: rows[0] });
 }
 
-/** PATCH /api/patients/:patientId/records/:type/:recordId -- update a clinical record. */
 export async function updateClinicalRecord(req, res) {
   const { patientId, type, recordId } = req.params;
   if (!isRecordType(type)) return res.status(404).json({ error: "Unknown record type." });

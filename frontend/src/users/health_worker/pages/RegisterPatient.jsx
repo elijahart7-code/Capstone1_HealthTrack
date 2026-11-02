@@ -6,9 +6,6 @@ import { PageHeader } from "../../../components/ui/PageHeader";
 import { Field, Input, Select, Textarea } from "../../../components/ui/Input";
 import { PlaceOfBirthField } from "../../../shared/patients/PlaceOfBirthField";
 
-/**
- * Registers a patient and creates their portal login from the required email.
- */
 export function RegisterPatient({ loadData, onRegistered }) {
   const [, setSearchParams] = useSearchParams();
   const [form, setForm] = useState({
