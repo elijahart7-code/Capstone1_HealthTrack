@@ -93,7 +93,7 @@ export function Dashboard({ dashboard }) {
 <PatientMetricCard
   icon={<CalendarDays size={25} strokeWidth={1.6} />}
         iconClass="appointment"
-  title="Upcoming Appointment"
+  title="Appointment"
   description="View your scheduled appointments."
   onClick={() => setSearchParams({ page: "health-information", section: "appointments" })}
 />
@@ -101,7 +101,7 @@ export function Dashboard({ dashboard }) {
 <PatientMetricCard
   icon={<HeartPulse size={25} strokeWidth={1.6} />}
   iconClass="vitals"
-  title="Updated Vital Signs"
+  title="Vital Signs"
   description="View your latest vital sign records."
   onClick={() => setSearchParams({ page: "health-information", section: "vital-signs" })}
 />
