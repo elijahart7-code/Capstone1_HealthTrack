@@ -978,6 +978,11 @@
         background: #F2FAF7;
     }
 
+    .ht-healthworker-shell .ht-content {
+        box-sizing: border-box;
+        min-width: 0;
+    }
+
     .ht-admin-shell .ht-topbar,
     .ht-admin-shell .ht-table,
     .ht-admin-shell .ht-table th,
@@ -1172,12 +1177,24 @@
     }
 
     .ht-table-scroll {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
         overflow-x: auto;
+    }
+
+    .ht-healthworker-patients-panel {
+        min-width: 0;
     }
 
     .ht-healthworker-patients-panel .ht-table th,
     .ht-healthworker-patients-panel .ht-table td {
         white-space: nowrap;
+    }
+
+    .ht-healthworker-patients-panel .ht-table {
+        width: max-content;
+        min-width: 100%;
     }
 
     .ht-healthworker-patients-panel .ht-table th:nth-child(10),
