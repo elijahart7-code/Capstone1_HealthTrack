@@ -174,8 +174,8 @@ const upcomingAppointment =
 
           <div className="patient-sidebar-label">MY HEALTH INFORMATION</div>
 
+          <SidebarItem icon={User} label="Patient Information" active={section === "patient-information"} onClick={() => selectSection("patient-information")} />
           <SidebarItem icon={Calendar} label="Appointments" active={section === "appointments"} onClick={() => selectSection("appointments")} />
-          <SidebarItem icon={User} label="General Information" active={section === "patient-information"} onClick={() => selectSection("patient-information")} />
           <SidebarItem
             icon={Stethoscope}
             label="Health Assessment"
