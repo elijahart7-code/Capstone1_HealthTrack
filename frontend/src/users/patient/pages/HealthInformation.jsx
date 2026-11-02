@@ -169,7 +169,7 @@ const upcomingAppointment =
             <span className="patient-sidebar-icon">
               <Home size={18} strokeWidth={1.8} />
             </span>
-            <span>Patient Profile</span>
+            <span>Latest Health Summary</span>
           </button>
 
           <div className="patient-sidebar-label">MY HEALTH INFORMATION</div>
