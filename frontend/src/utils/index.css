@@ -2073,12 +2073,15 @@
     }
 
     .ht-account-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.7rem;
+        position: relative;
+        height: 106px;
     }
 
     .ht-account-card {
+        position: absolute;
+        top: 0;
+        left: calc(var(--account-index) * (100% + 0.7rem) / 3);
+        width: calc((100% - 1.4rem) / 3);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -2092,7 +2095,47 @@
         color: var(--color-ink-soft);
         cursor: pointer;
         text-align: center;
-        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, transform 0.2s;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s,
+            opacity 0.25s ease, transform 0.3s ease, left 0.35s ease,
+            visibility 0s;
+    }
+
+    .ht-account-grid.has-selection .ht-account-card.is-selected {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .ht-account-card.is-hidden {
+        opacity: 0;
+        transform: translateY(8px) scale(0.85);
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.25s ease, transform 0.25s ease,
+            visibility 0s 0.25s;
+    }
+
+    .ht-account-change {
+        display: block;
+        margin: 0.65rem auto 0;
+        padding: 0.2rem 0.4rem;
+        border: 0;
+        background: transparent;
+        color: var(--color-brand-strong);
+        font-size: 0.8rem;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+    }
+
+    .ht-account-change:disabled {
+        opacity: 0.6;
+        cursor: wait;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ht-account-grid .ht-account-card {
+            transition: none;
+        }
     }
 
     .ht-account-card:hover {

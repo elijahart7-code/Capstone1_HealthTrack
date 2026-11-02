@@ -97,17 +97,25 @@ export default function LoginPage() {
             <div className="ht-login-divider" />
 
             <div className="ht-select-account">
-              <p>Select your account type</p>
-              <div className="ht-account-grid">
-                {accounts.map((account) => {
+              <p>{accountType ? "Selected account type" : "Select your account type"}</p>
+              <div className={`ht-account-grid ${accountType ? "has-selection" : ""}`}>
+                {accounts.map((account, index) => {
                   const selected = accountType === account.key;
+                  const hidden = Boolean(accountType && !selected);
                   return (
                     <button
                       key={account.key}
                       type="button"
-                      className={`ht-account-card ${selected ? "is-selected" : ""}`}
+                      className={`ht-account-card ${selected ? "is-selected" : ""} ${hidden ? "is-hidden" : ""}`}
+                      style={{ "--account-index": index }}
                       aria-pressed={selected}
-                      onClick={() => setAccountType(account.key)}
+                      aria-hidden={hidden}
+                      tabIndex={hidden ? -1 : 0}
+                      disabled={hidden || loading}
+                      onClick={() => {
+                        setAccountType(account.key);
+                        setError(null);
+                      }}
                     >
                       <span className="ht-account-icon" aria-hidden="true">
                         <AccountRoleIcon role={account.icon} />
@@ -117,6 +125,19 @@ export default function LoginPage() {
                   );
                 })}
               </div>
+              {accountType && (
+                <button
+                  type="button"
+                  className="ht-account-change"
+                  disabled={loading}
+                  onClick={() => {
+                    setAccountType(null);
+                    setError(null);
+                  }}
+                >
+                  Change account type
+                </button>
+              )}
             </div>
 
             {error && <div className="ht-login-alert ht-login-alert-error">{error}</div>}
