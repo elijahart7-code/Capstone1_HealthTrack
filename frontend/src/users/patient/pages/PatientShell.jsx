@@ -43,7 +43,7 @@ export function PatientShell() {
         </div>
       </header>
 
-      <main className="ht-content">
+      <main className={`ht-content${page === "health-information" ? " ht-content-health-information" : ""}`}>
         {loading || !dashboard || !healthInfo ? (
           <p className="ht-muted text-sm">Loading...</p>
         ) : page === "health-information" ? (
