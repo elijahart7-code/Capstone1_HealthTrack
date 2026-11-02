@@ -2043,22 +2043,12 @@
         transition: background-color 0.6s ease;
     }
 
-    .ht-auth-shell[data-portal="patient"] {
+    .ht-auth-shell[data-portal="patient"],
+    .ht-auth-shell[data-portal="admin"],
+    .ht-auth-shell[data-portal="health_worker"] {
         --portal-accent: #0f6b5f;
         --portal-tint: #eaf5f1;
         --portal-background: #edf8f3;
-    }
-
-    .ht-auth-shell[data-portal="admin"] {
-        --portal-accent: #354f91;
-        --portal-tint: #edf1fb;
-        --portal-background: #f0f3fa;
-    }
-
-    .ht-auth-shell[data-portal="health_worker"] {
-        --portal-accent: #815329;
-        --portal-tint: #fbf2e7;
-        --portal-background: #faf5ed;
     }
 
     .ht-auth-shell[data-portal] {
