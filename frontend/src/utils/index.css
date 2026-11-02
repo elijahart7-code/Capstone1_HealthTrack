@@ -7518,14 +7518,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
   font-size: 12px;
   font-weight: 400;
 }
-/* Hide the horizontal scrollbar in the Patients table */
-.ht-healthworker-patients-panel * {
-  scrollbar-width: none;
-}
-
-.ht-healthworker-patients-panel *::-webkit-scrollbar {
-  display: none;
-}
 
     }
 .ht-export-dialog { width: min(600px, 94vw); max-height: 85vh; overflow: auto; margin: auto; border: 1px solid #cbd8d1; border-radius: 14px; padding: 26px; color: #243c32; background: white; }
