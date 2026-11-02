@@ -7508,6 +7508,14 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
   font-size: 12px;
   font-weight: 400;
 }
+/* Hide the horizontal scrollbar in the Patients table */
+.ht-healthworker-patients-panel * {
+  scrollbar-width: none;
+}
+
+.ht-healthworker-patients-panel *::-webkit-scrollbar {
+  display: none;
+}
 
     }
 .ht-export-dialog { width: min(600px, 94vw); max-height: 85vh; overflow: auto; margin: auto; border: 1px solid #cbd8d1; border-radius: 14px; padding: 26px; color: #243c32; background: white; }
@@ -7598,6 +7606,17 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
           display: flex;
           gap: 8px;
         }
+        /* Center the download button inside its table cell */
+.ht-healthworker-patients-panel td:last-child {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.ht-healthworker-patients-panel td:last-child .ht-export-pdf-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 .ht-small-button:hover, .ht-secondary-button:hover { background: #edf6f1; border-color: #6f9b83; }
 .ht-primary-button:hover { background: #295a42; }
 .ht-small-button:focus-visible, .ht-primary-button:focus-visible, .ht-secondary-button:focus-visible { outline: 3px solid #82b69a; outline-offset: 2px; }
