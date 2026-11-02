@@ -2032,105 +2032,11 @@
     /* --- Auth pages --------------------------------------------------- */
 
     .ht-auth-shell {
-        --portal-accent: #0f6b5f;
-        --portal-tint: #eaf5f1;
-        --portal-background: #f2faf6;
         display: grid;
         place-items: center;
         min-height: 100vh;
         padding: 1.5rem 1rem;
-        background: var(--portal-background);
-        transition: background-color 0.6s ease;
-    }
-
-    .ht-auth-shell[data-portal="patient"],
-    .ht-auth-shell[data-portal="admin"],
-    .ht-auth-shell[data-portal="health_worker"] {
-        --portal-accent: #0f6b5f;
-        --portal-tint: #eaf5f1;
-        --portal-background: #edf8f3;
-    }
-
-    .ht-auth-shell[data-portal] {
-        --color-brand: var(--portal-accent);
-        --color-brand-strong: var(--portal-accent);
-    }
-
-    .ht-auth-wrap[data-phase="exiting"] {
-        animation: ht-portal-exit 240ms ease-in both;
-    }
-
-    .ht-auth-wrap[data-phase="entering"] {
-        animation: ht-portal-enter 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    .ht-auth-wrap[data-phase="entering"] .ht-auth-branding,
-    .ht-auth-wrap[data-phase="entering"] .ht-login-header,
-    .ht-auth-wrap[data-phase="entering"] .ht-select-account,
-    .ht-auth-wrap[data-phase="entering"] .ht-login-form,
-    .ht-auth-wrap[data-phase="entering"] .ht-auth-footer {
-        animation: ht-portal-content 360ms ease-out both;
-    }
-
-    .ht-auth-wrap[data-phase="entering"] .ht-login-header { animation-delay: 50ms; }
-    .ht-auth-wrap[data-phase="entering"] .ht-select-account { animation-delay: 100ms; }
-    .ht-auth-wrap[data-phase="entering"] .ht-login-form { animation-delay: 150ms; }
-    .ht-auth-wrap[data-phase="entering"] .ht-auth-footer { animation-delay: 200ms; }
-
-    .ht-portal-eyebrow {
-        display: block;
-        margin-bottom: 0.7rem;
-        color: var(--portal-accent);
-        font-size: 0.65rem;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-    }
-
-    .ht-auth-shell .ht-login-header h1 {
-        color: var(--portal-accent);
-    }
-
-    .ht-auth-shell .ht-account-card.is-selected {
-        color: var(--portal-accent);
-        border-color: var(--portal-accent);
-        background: var(--portal-tint);
-        box-shadow: none;
-    }
-
-    .ht-auth-shell .ht-account-icon {
-        color: var(--portal-accent);
-        background: var(--portal-tint);
-    }
-
-    .ht-auth-shell .ht-input-wrap svg {
-        color: var(--portal-accent);
-    }
-
-    .ht-auth-shell .ht-input-wrap .ht-input:focus {
-        border-color: var(--portal-accent);
-        box-shadow: 0 0 0 3px var(--portal-tint);
-    }
-
-    @keyframes ht-portal-exit {
-        to { opacity: 0; transform: translateY(-14px) scale(0.97); }
-    }
-
-    @keyframes ht-portal-enter {
-        from { opacity: 0; transform: translateY(24px) scale(0.97); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    @keyframes ht-portal-content {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .ht-auth-shell { transition: none; }
-        .ht-auth-shell .ht-auth-wrap,
-        .ht-auth-shell .ht-auth-wrap[data-phase] * {
-            animation: none;
-        }
+        background: #F2FAF6;
     }
 
     .ht-auth-wrap {
