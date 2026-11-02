@@ -261,7 +261,6 @@ const upcomingAppointment =
               </div>
             )}
 
-            <div className="patient-table-footer">Showing 1 to {appointments.length} of {appointments.length} appointments</div>
         </section>}
 
         {section === "patient-information" && <section className="patient-healthinfo-card patient-information-card">
