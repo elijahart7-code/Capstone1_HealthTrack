@@ -2108,13 +2108,15 @@
         cursor: pointer;
         text-align: center;
         transition: border-color 0.2s, box-shadow 0.2s, background 0.2s,
-            opacity 0.25s ease, transform 0.3s ease, left 0.35s ease,
+            opacity 0.25s ease, transform 0.3s ease, left 0.35s ease, width 0.35s ease,
             visibility 0s;
     }
 
     .ht-account-grid.has-selection .ht-account-card.is-selected {
-        left: 50%;
-        transform: translateX(-50%);
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transform: none;
     }
 
     .ht-account-card.is-hidden {
