@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
 import { api } from "../lib/axios";
@@ -50,9 +50,40 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [transitionPhase, setTransitionPhase] = useState("entering");
+  const nextAccountType = useRef(null);
+  const emailInput = useRef(null);
+  const accountGrid = useRef(null);
+  const transitioning = transitionPhase !== "idle";
+
+  useEffect(() => {
+    if (transitionPhase === "idle") {
+      if (accountType) emailInput.current?.focus({ preventScroll: true });
+      else accountGrid.current?.querySelector("button")?.focus({ preventScroll: true });
+      return;
+    }
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const timer = window.setTimeout(() => {
+      if (transitionPhase === "exiting") {
+        setAccountType(nextAccountType.current);
+        setError(null);
+        setTransitionPhase("entering");
+      } else {
+        setTransitionPhase("idle");
+      }
+    }, reduceMotion ? 0 : transitionPhase === "exiting" ? 240 : 560);
+    return () => window.clearTimeout(timer);
+  }, [transitionPhase, accountType]);
+
+  function changeAccountType(role) {
+    if (loading || transitioning || role === accountType) return;
+    nextAccountType.current = role;
+    setTransitionPhase("exiting");
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (loading || transitioning) return;
     setError(null);
     if (!accountType) {
       setError("Select your account type to continue.");
@@ -75,10 +106,15 @@ export default function LoginPage() {
     { key: "admin", label: "Admin", icon: "admin" },
     { key: "health_worker", label: "Health Worker", icon: "health_worker" },
   ];
+  const portal = {
+    patient: { title: "Patient Portal", description: "Sign in to view your health information and appointments." },
+    admin: { title: "Admin Portal", description: "Sign in to manage your health center." },
+    health_worker: { title: "Health Worker Portal", description: "Sign in to manage patient care and health records." },
+  }[accountType];
 
   return (
-    <div className="ht-auth-shell">
-      <div className="ht-auth-wrap">
+    <div className="ht-auth-shell" data-portal={accountType || "welcome"} aria-busy={transitioning}>
+      <div className="ht-auth-wrap" data-phase={transitionPhase} inert={transitioning}>
         <div className="ht-auth-branding">
           <div className="ht-brand justify-center">
             <span className="ht-brand-mark">HT</span>
@@ -90,15 +126,16 @@ export default function LoginPage() {
         <div className="ht-auth-card">
           <div className="ht-login-panel">
             <div className="ht-login-header">
-              <h1>Welcome to HealthTrack!</h1>
-              <p>Sign in to access your account.</p>
+              {portal && <span className="ht-portal-eyebrow">HEALTHTRACK / {portal.title}</span>}
+              <h1>{portal?.title || "Welcome to HealthTrack!"}</h1>
+              <p>{portal?.description || "Sign in to access your account."}</p>
             </div>
 
             <div className="ht-login-divider" />
 
             <div className="ht-select-account">
               <p>{accountType ? "Selected account type" : "Select your account type"}</p>
-              <div className={`ht-account-grid ${accountType ? "has-selection" : ""}`}>
+              <div ref={accountGrid} className={`ht-account-grid ${accountType ? "has-selection" : ""}`}>
                 {accounts.map((account, index) => {
                   const selected = accountType === account.key;
                   const hidden = Boolean(accountType && !selected);
@@ -111,11 +148,8 @@ export default function LoginPage() {
                       aria-pressed={selected}
                       aria-hidden={hidden}
                       tabIndex={hidden ? -1 : 0}
-                      disabled={hidden || loading}
-                      onClick={() => {
-                        setAccountType(account.key);
-                        setError(null);
-                      }}
+                      disabled={hidden || loading || transitioning}
+                      onClick={() => changeAccountType(account.key)}
                     >
                       <span className="ht-account-icon" aria-hidden="true">
                         <AccountRoleIcon role={account.icon} />
@@ -129,11 +163,8 @@ export default function LoginPage() {
                 <button
                   type="button"
                   className="ht-account-change"
-                  disabled={loading}
-                  onClick={() => {
-                    setAccountType(null);
-                    setError(null);
-                  }}
+                  disabled={loading || transitioning}
+                  onClick={() => changeAccountType(null)}
                 >
                   Change account type
                 </button>
@@ -148,11 +179,11 @@ export default function LoginPage() {
                 <div className="ht-input-wrap">
                   <Mail aria-hidden="true" />
                   <input
+                    ref={emailInput}
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    autoFocus
                     autoComplete="username"
                     placeholder="Enter your email address"
                     className="ht-input"
@@ -187,7 +218,7 @@ export default function LoginPage() {
 
               <button type="submit" className="ht-button ht-auth-submit" disabled={loading}>
                 <LogIn size={20} strokeWidth={1.8} />
-                {loading ? "Signing In..." : "Sign In"}
+                {loading ? "Signing In..." : portal ? `Sign In as ${accounts.find((account) => account.key === accountType).label}` : "Sign In"}
               </button>
 
               <button
