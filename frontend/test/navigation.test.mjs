@@ -8,16 +8,12 @@ import { build } from 'esbuild';
 import { JSDOM } from 'jsdom';
 import { MessageChannel as NodeMessageChannel } from 'node:worker_threads';
 
-// Browser-bundled React act() schedules tasks through MessageChannel. Close its
-// ports after the suite so Node can exit cleanly.
 const channels = [];
 const originalMessageChannel = globalThis.MessageChannel;
 globalThis.MessageChannel = class extends NodeMessageChannel {
   constructor() { super(); channels.push(this); }
 };
 
-// Exercise the real React screens and query-param navigation without a browser
-// or a live patient database. Only the API transport is replaced with fixtures.
 const frontend = fileURLToPath(new URL('..', import.meta.url));
 const scratch = await mkdtemp(path.join(tmpdir(), 'healthtrack-ui-'));
 const dom = new JSDOM('<div id="root"></div>', { url: 'http://healthtrack-test.invalid/admin' });
@@ -384,7 +380,6 @@ test('PDF exports retain styled topics with page breaks only between top-level s
   assert.match(css, /\.ht-export-document th\s*\{[^}]*background:\s*#e1eee5/);
   if (process.env.HEALTHTRACK_PRINT_FIXTURE) {
     const sample = printed.cloneNode(true);
-    // Stress pagination with a long detail table and a following topic.
     const tbody = sample.querySelector('[data-report-section="details"] tbody');
     const row = tbody.firstElementChild.cloneNode(true);
     for (let i = 1; i < 45; i++) tbody.append(row.cloneNode(true));

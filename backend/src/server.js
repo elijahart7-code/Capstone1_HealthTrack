@@ -74,12 +74,10 @@ app.use((error, _req, res, _next) => {
   res.status(500).json({ error: "An internal server error occurred." });
 });
 
-// Serve React frontend
 const frontendPath = path.join(__dirname, "../../frontend/dist");
 
 app.use(express.static(frontendPath));
 
-// Express 5 SPA fallback
 app.get("/{*splat}", (_req, res) => {
   res.sendFile(path.join(frontendPath, "index.html"));
 });

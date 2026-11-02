@@ -52,14 +52,6 @@ const HEALTH_ASSESSMENT_CHILD_SECTIONS = [
   "medical-history",
   "midwife-notes",
 ];
-/**
- * Port of resources/views/livewire/patient/health-information.blade.php --
- * the 250px sidebar of section links + main content column of read-only
- * cards, one per clinical record type (plus Appointments and Patient
- * Information). The original only wired up 3 sections (appointments,
- * patient info, vital signs) with a static "Page 1 of 2" footer; this
- * covers every record type we actually have, so that footer is dropped.
- */
 export function HealthInformation({ healthInfo }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentSection = searchParams.get("section");
@@ -187,39 +179,6 @@ const upcomingAppointment =
             }}
             onToggle={() => setAssessmentExpanded((expanded) => !expanded)}
           />
-         {/* {assessmentExpanded && (
-  <div className="patient-sidebar-children">
-    <SidebarChild
-  label="Health Assessment"
-  active={section === "health-assessment"}
-  onClick={() => selectSection("health-assessment")}
-/>
-
-<SidebarChild
-  label="Vital Signs"
-  active={section === "vital-signs"}
-  onClick={() => selectSection("vital-signs")}
-/>
-
-<SidebarChild
-  label="Allergies"
-  active={section === "allergies"}
-  onClick={() => selectSection("allergies")}
-/>
-
-<SidebarChild
-  label="Medical Histories"
-  active={section === "medical-history"}
-  onClick={() => selectSection("medical-history")}
-/>
-
-<SidebarChild
-  label="Midwife Notes"
-  active={section === "midwife-notes"}
-  onClick={() => selectSection("midwife-notes")}
-/>
-  </div>
-)} */}
         </nav>
 
       </aside>

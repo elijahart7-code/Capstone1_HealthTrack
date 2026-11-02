@@ -1,9 +1,5 @@
 import "dotenv/config";
 
-/**
- * Single place every other file reads environment variables from.
- * Centralizes config values used across the server.
- */
 const defaultCorsOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",

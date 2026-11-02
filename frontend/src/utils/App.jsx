@@ -7,12 +7,6 @@ import { AdminShell } from "../users/admin/AdminShell";
 import { HealthWorkerShell } from "../users/health_worker/HealthWorkerShell";
 import { PatientShell } from "../users/patient/pages/PatientShell";
 
-/**
- * One route per role root (`/admin`, `/health_worker`, `/patient`). Each
- * shell manages its own page state via the `?page=` query param so the whole
- * role's UI lives under a single route and still behaves like a multi-page
- * dashboard in the browser.
- */
 function DashboardRedirect() {
   const user = getCurrentUser();
   return <Navigate to={user ? homeRouteForRole(user.role) : "/login"} replace />;

@@ -1,6 +1,5 @@
 import { cn } from "../../lib/utils";
 
-/** .ht-pill -- small rounded label, used for statuses/counts/booleans. */
 export function Badge({ children, tone }) {
   const style =
     tone === "warm"

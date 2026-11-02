@@ -14,7 +14,6 @@ const STATUS_COLORS = {
   cancelled: "ht-status-badge-cancelled",
 };
 
-/** Admin appointment management. */
 export function Appointments({ appointments, loadData }) {
   const [filter, setFilter] = useState("all");
   const [page, setPage] = useState(1);

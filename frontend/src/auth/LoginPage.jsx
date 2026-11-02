@@ -38,10 +38,6 @@ function AccountRoleIcon({ role }) {
   );
 }
 
-/**
- * Login screen for the app. The selected account type is sent to the backend
- * and must match the role assigned to the submitted account.
- */
 export default function LoginPage() {
   const navigate = useNavigate();
   const [accountType, setAccountType] = useState(null);

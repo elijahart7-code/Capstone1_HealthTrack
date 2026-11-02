@@ -1,19 +1,6 @@
 import crypto from "node:crypto";
 import { sql } from "../config/db.js";
 
-/**
- * Human-readable IDs generated as short random codes with collision checks.
- *
- *   PAT-7K4QXNPF, USR-B2FZM9WT, APT-H8CDRV3K, DGX-2QNFT6JX, ...
- *
- * This avoids the race condition and scan-heavy behavior of a counter-based
- * scheme. A random code sidesteps both problems while still checking for a
- * collision and retrying if needed.
- *
- * CODE_ALPHABET is Crockford's base32: no 0/O, 1/I/L, or U, so a code read
- * aloud or copied by hand can't be misread. 8 characters from a 30-symbol
- * alphabet is ~39 bits of randomness (~600 billion combinations) per ID.
- */
 const CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTVWXYZ";
 const CODE_LENGTH = 8;
 
@@ -27,8 +14,6 @@ function randomCode() {
 }
 
 async function generateUniqueId(table, idColumn, prefix) {
-  // Collisions are astronomically unlikely at this length, but check
-  // anyway and retry rather than trust probability alone.
   for (let attempt = 0; attempt < 5; attempt++) {
     const candidate = `${prefix}-${randomCode()}`;
 
@@ -44,7 +29,6 @@ export const generateUserId = () => generateUniqueId("users", "user_id", "USR");
 export const generatePatientId = () => generateUniqueId("patients", "patient_id", "PAT");
 export const generateAppointmentId = () => generateUniqueId("appointments", "appointment_id", "APT");
 
-/** One prefix per clinical-record table, keyed the same way RECORD_TYPES is. */
 const RECORD_TABLE_PREFIX = {
   midwife_notes: "NOTE",
   medical_histories: "HIST",

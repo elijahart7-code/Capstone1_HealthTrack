@@ -1,10 +1,3 @@
-/**
- * Optional demo-data seed, run with: npm run seed.
- *
- * This script creates a few demo accounts for local testing and development.
- * Every seeded account uses the password "password" and is intended only for
- * local/demo use, never for a real deployment.
- */
 import bcrypt from "bcryptjs";
 import { connectNeon, sql } from "../config/db.js";
 import { generateUserId } from "../utils/generateId.js";

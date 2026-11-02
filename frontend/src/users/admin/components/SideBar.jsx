@@ -6,12 +6,6 @@ const NAV = [
   { key: "appointments", label: "Appointments" },
 ];
 
-/**
- * Primary nav, rendered inside the shared topbar -- mirrors the plain-text
- * nav links for the admin workspace
- * (no icons for staff nav; the patient portal nav is the one with icons).
- * Drives the active page via the `?page=` query param.
- */
 export function SideBar() {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get("page") || "dashboard";

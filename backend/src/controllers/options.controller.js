@@ -1,6 +1,5 @@
 import { sql } from "../config/db.js";
 
-/** GET /api/patients/options -- active master values for controlled inputs. */
 export async function getHealthOptions(_req, res) {
   const rows = await sql`
     SELECT option_key, value

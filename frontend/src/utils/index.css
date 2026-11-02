@@ -4,20 +4,6 @@
 @import "@fontsource/inter/800.css";
 @import "tailwindcss";
 
-/*
-|------------------------------------------------------------------------------
-| HealthTrack stylesheet
-|------------------------------------------------------------------------------
-|
-| Shared design tokens and reusable component classes live here so consistent
-| styling can be reused across the app. Tailwind is configured here in CSS,
-| and the .ht-* utility classes are used for repeated UI patterns.
-|
-| Use the .ht-* classes for anything that repeats, plain Tailwind utilities
-| for one-off spacing/layout. Keep new component classes here rather than
-| copy-pasted inline styles.
-|
-*/
 
 :root {
     --color-parchment: #f6f1e8;
@@ -58,7 +44,6 @@
 
 @layer components {
 
-    /* --- Surfaces ---------------------------------------------------- */
 
     .ht-card,
     .ht-panel,
@@ -196,7 +181,6 @@
         color: var(--color-ink-soft);
     }
 
-    /* --- Page header -------------------------------------------------- */
 
     .ht-page-header {
         display: flex;
@@ -228,7 +212,6 @@
         align-items: center;
     }
 
-    /* --- Pills and badges --------------------------------------------- */
 
     .ht-pill {
         display: inline-flex;
@@ -256,7 +239,6 @@
     .ht-pill-warm { color: var(--color-brand-warm); }
     .ht-pill-danger { color: var(--color-danger); }
 
-    /* --- Metrics ------------------------------------------------------ */
 
     .ht-metric-grid {
         display: grid;
@@ -389,7 +371,6 @@
         stroke: currentColor;
     }
 
-    /* --- Forms -------------------------------------------------------- */
 
     .ht-field {
         display: grid;
@@ -500,7 +481,6 @@
         font-weight: 400;
     }
 
-    /* --- Buttons ------------------------------------------------------ */
 
     .ht-button {
         display: inline-flex;
@@ -970,7 +950,6 @@
         }
     }
 
-    /* --- Tables ------------------------------------------------------- */
 
     .ht-admin-shell,
     .ht-healthworker-shell {
@@ -1674,7 +1653,6 @@
         background: rgba(255, 255, 255, 0.7);
     }
 
-    /* --- App shell ---------------------------------------------------- */
 
     .ht-topbar {
         position: sticky;
@@ -1969,7 +1947,6 @@
         }
     }
 
-    /* --- Record sidebar (patient record screen) ----------------------- */
 
     .ht-record-layout {
         display: grid;
@@ -2029,7 +2006,6 @@
         }
     }
 
-    /* --- Auth pages --------------------------------------------------- */
 
     .ht-auth-shell {
         --portal-accent: #0f6b5f;
@@ -2460,7 +2436,6 @@
         }
     }
 
-    /* --- Patient portal ------------------------------------------------ */
 
     .patient-dashboard-shell {
         display: grid;
@@ -2470,9 +2445,6 @@
         padding: 0.25rem 0 0;
     }
     
-/* ==========================================
-   PATIENT NAVIGATION - FONT ENHANCEMENT
-   ========================================== */
 
 .patient-dashboard-shell nav a,
 .patient-dashboard-shell nav button {
@@ -2483,7 +2455,6 @@
     letter-spacing: -0.1px;
 }
 
-/* Navigation icons */
 .patient-dashboard-shell nav a svg,
 .patient-dashboard-shell nav button svg {
     width: 17px !important;
@@ -3288,7 +3259,6 @@
         background: #ffffff;
     }
     
-/* Latest Medical History - fix horizontal scrollbar on all screens */
 .patient-medical-history-latest-wrap {
     display: block !important;
     width: 100% !important;
@@ -3847,7 +3817,6 @@ table.patient-medical-history-latest-table {
         gap: 0.8rem;
         min-width: 0;
     }
-    /* Midwife Notes - Match Health Assessment Card */
 
 .patient-healthinfo-main .patient-midwife-notes-section {
     display: flex !important;
@@ -4463,7 +4432,6 @@ table.patient-medical-history-latest-table {
     }
 
     
-/* Latest Allergies - remove horizontal scrollbar */
 .patient-allergies-table-wrap {
     width: 100%;
     max-width: 100%;
@@ -5117,7 +5085,6 @@ table.patient-medical-history-latest-table {
             padding: 0.8rem;
         }
         
-/* FIX: Latest Medical History horizontal scrollbar */
 .patient-healthinfo-main .patient-medical-history-latest-wrap {
     width: 100% !important;
     max-width: 100% !important;
@@ -5269,9 +5236,6 @@ table.patient-medical-history-latest-table {
             padding-bottom: 0.9rem;
         }
     }
-    /* =====================================================
-   FIX: YOUR HEALTH INFORMATION HEADER
-   ===================================================== */
 
 .patient-health-heading {
     display: flex !important;
@@ -5339,15 +5303,8 @@ table.patient-medical-history-latest-table {
   margin: 0 !important;
   padding: 0 !important;
 }
-/* =========================================================
-   HEALTH TRACK PATIENT DASHBOARD
-   REFERENCE DESIGN
-   ========================================================= */
 
 
-/* =========================================================
-   DASHBOARD HEADER
-   ========================================================= */
 
 .patient-dashboard-header {
     display: flex;
@@ -5400,12 +5357,10 @@ table.patient-medical-history-latest-table {
     line-height: 1.6 !important;
     letter-spacing: 0 !important;
 }
-/*Patient dashboard subtitle*/
 .patient-dashboard-shell > p{
     font-size: 20px;
     line-height: 1.7;
 }
-/*Patient dashboard: feature card subtitles*/
 .patient-dashboard-shell .patient-feature-card p,
 .patient-dashboard-shell .patient-dashboard-card p{
     font-size: 50px;
@@ -5442,9 +5397,6 @@ table.patient-medical-history-latest-table {
   }
 }
 
-/* =========================================================
-   VIEW HEALTH INFORMATION BUTTON
-   ========================================================= */
 
 .patient-summary-button {
     display: inline-flex;
@@ -5488,7 +5440,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* WELCOME SECTION */
 .patient-welcome-simple {
     display: flex;
     align-items: center;
@@ -5718,9 +5669,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   QUICK INFORMATION GRID
-   ========================================================= */
 
 .patient-metric-grid {
     display: grid !important;
@@ -5735,9 +5683,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   QUICK INFORMATION CARD
-   ========================================================= */
 
 .patient-metric-card {
     display: flex !important;
@@ -5764,9 +5709,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   CARD HEADER
-   ========================================================= */
 
 .patient-metric-header {
     display: flex !important;
@@ -5783,9 +5725,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   CARD ICON
-   ========================================================= */
 
 .patient-metric-title-icon {
     display: flex !important;
@@ -5813,7 +5752,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* GREEN — APPOINTMENT */
 
 .patient-metric-title-icon.appointment {
     background: #e3f5ed !important;
@@ -5822,7 +5760,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* VITAL SIGNS */
 
 .patient-metric-title-icon.vitals {
     background: #e3f5ed !important;
@@ -5831,7 +5768,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* ASSESSMENT */
 
 .patient-metric-title-icon.assessment {
     background: #e3f5ed !important;
@@ -5840,16 +5776,12 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* ALLERGIES */
 
 .patient-metric-title-icon.allergies {
     background: #e3f5ed !important;
 
     color: #08755f!important;
 }
-/* =========================================================
-   CARD TITLE
-   ========================================================= */
 
 .patient-metric-header h3 {
     display: block !important;
@@ -5873,9 +5805,6 @@ table.patient-medical-history-latest-table {
     line-height: 1.3 !important;
 }
 
-/* =========================================================
-   EMPTY CARD AREA
-   ========================================================= */
 
 .patient-metric-space {
     flex: 1;
@@ -5884,9 +5813,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   VIEW DETAILS BUTTON
-   ========================================================= */
 
 .patient-view-button {
     display: flex !important;
@@ -5938,9 +5864,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   YOUR HEALTH INFORMATION
-   ========================================================= */
 
 .patient-health-summary {
     display: block !important;
@@ -6030,9 +5953,6 @@ table.patient-medical-history-latest-table {
     line-height: 1.7;
     color: #66736D;
 }
-/* =========================================================
-   EMERGENCY CONTACT
-   ========================================================= */
 
 .patient-panel {
     padding: 17px 20px 19px !important;
@@ -6093,9 +6013,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   EMERGENCY CONTACT GRID
-   ========================================================= */
 
 .patient-emergency-grid {
     display: grid !important;
@@ -6180,9 +6097,6 @@ table.patient-medical-history-latest-table {
     line-height: 1.3 !important;
 }
 
-/* =========================================================
-   HEALTH TIPS
-   ========================================================= */
 
 .patient-tip-grid {
     display: grid !important;
@@ -6230,7 +6144,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* WATER */
 
 .patient-tip-item.water {
     background: #e8f2ff !important;
@@ -6243,7 +6156,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* FOOD */
 
 .patient-tip-item.food {
     background: #fff0f2 !important;
@@ -6256,7 +6168,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* ACTIVITY */
 
 .patient-tip-item.activity {
     background: #e8f7ef !important;
@@ -6269,7 +6180,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* SLEEP */
 
 .patient-tip-item.sleep {
     background: #f0edff !important;
@@ -6298,9 +6208,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
 
 @media (max-width: 980px) {
 
@@ -6390,7 +6297,6 @@ table.patient-medical-history-latest-table {
     }
 }
 
-/* Patient dashboard only */
 .patient-dashboard-shell {
     --dashboard-white: #FFFFFF;
     --dashboard-pale: #F0FBF7;
@@ -7323,7 +7229,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         .patient-dashboard-shell .patient-contact-card:last-child {
             border-bottom: 0 !important;
         }
-/* Latest Health Assessment - horizontal table */
 .patient-assessment-horizontal-wrap {
   width: 100%;
   overflow-x: auto;
@@ -7364,7 +7269,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
-/* Latest Vital Signs - horizontal table */
 .patient-vital-horizontal-wrap {
   width: 100%;
   overflow-x: auto;
@@ -7415,7 +7319,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
   font-weight: 400;
 }
 
-/* Latest Midwife Notes - horizontal table */
 .patient-midwife-horizontal-wrap {
   width: 100%;
   overflow-x: auto;
@@ -7457,7 +7360,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
-/* Sidebar Vital Signs - horizontal table layout */
 .patient-vitals-horizontal-wrap {
   width: 100%;
   overflow-x: auto;
@@ -7508,7 +7410,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
   font-size: 12px;
   font-weight: 400;
 }
-/* Hide the horizontal scrollbar in the Patients table */
 .ht-healthworker-patients-panel * {
   scrollbar-width: none;
 }
@@ -7554,7 +7455,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-appointment-scroll .ht-table th { height: 46px; }
 .ht-appointment-scroll { max-height: 262px; }
 
-/* Keep dashboard sections on the same spacing rhythm as the card grids. */
 .ht-dashboard-screen { display: grid; gap: 1rem; }
 .ht-dashboard-screen .ht-page-header { margin-bottom: 0; }
 .ht-dashboard-screen .ht-metric-grid { gap: 1rem; }
@@ -7564,7 +7464,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-dashboard-events-grid .ht-table-scroll { max-height: 350px; overflow: auto; }
 @media (max-width: 1000px) { .ht-dashboard-events-grid { grid-template-columns: minmax(0, 1fr); } }
 
-/* Shared controls used by registry rows, appointment forms, and export dialogs. */
 .ht-small-button {
           display: inline-flex;
           align-items: center;
@@ -7606,7 +7505,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
           display: flex;
           gap: 8px;
         }
-        /* Center the download button inside its table cell */
 .ht-healthworker-patients-panel td:last-child {
   text-align: center;
   vertical-align: middle;
@@ -7629,7 +7527,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-legacy-record dt { font-size: .75rem; color: #56645d; font-weight: 700; margin-bottom: 4px; }
 .ht-legacy-record dd { margin: 0; font-size: .875rem; color: #28352f; white-space: pre-wrap; overflow-wrap: anywhere; }
 
-/* Consistent actions, including before a patient record has been opened. */
 .ht-patient-row-actions { display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; }
 .ht-patient-row-actions > button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 112px; min-width: 112px; height: 36px; min-height: 36px; margin: 0; padding: 0 12px; border-radius: 8px; font: inherit; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; }
 .ht-patient-panel th:last-child, .ht-patient-actions-cell { text-align: left !important; }
@@ -7640,7 +7537,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-export-dialog .ht-export-limit { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; text-align: left; }
 .ht-export-dialog .ht-export-limit input { margin: 0; }
 
-/* Give the selected visit and its recording state a clear visual hierarchy. */
 .ht-appointment-record { margin-top: 16px; padding: 22px; border: 1px solid #b6d2c2; border-left: 5px solid #5a8c71; border-radius: 12px; background: linear-gradient(120deg, #eaf5ef, #fff 80%); box-shadow: 0 3px 12px #163c2810; }
 .ht-appointment-record.is-recording { border-color: #16815a; border-left-width: 6px; background: linear-gradient(120deg, #dff5e9, #f5fcf8); box-shadow: 0 0 0 3px #16815a15; }
 .ht-appointment-record-topline { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
@@ -7661,7 +7557,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-appointment-row-recording > td:first-child { box-shadow: inset 4px 0 #14734c; }
 .ht-activate-button-active:disabled { opacity: 1; border-color: #14734c; color: #146441; background: #e3f6eb; gap: 6px; cursor: default; }
 
-/* Clinical data belongs directly to each collapsible section. */
 .ht-clinical-sections .ht-encounter-section { margin-top: 12px; padding: 0; overflow: hidden; }
 .ht-clinical-sections .ht-encounter-section > summary { padding: 16px 18px; background: #f5f9f6; }
 .ht-clinical-sections .ht-encounter-section[open] > summary { border-bottom: 1px solid #dce8e1; }
@@ -7713,8 +7608,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-export-pdf-button:focus-visible { outline: 3px solid #d8a3a0; outline-offset: 2px; }
 .ht-export-pdf-button:disabled { opacity: .55; cursor: not-allowed; }
 
-/* The print portal lives under body, so its design must not rely on app-shell
-   ancestors. Only top-level report topics start new pages; their tables flow. */
 @media print {
  @page { size: A4; margin: 14mm; }
  .ht-export-document, .ht-export-document * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }

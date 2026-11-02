@@ -1,10 +1,6 @@
 import axios from "axios";
 import { clearSession } from "./auth";
 
-/**
- * Single axios instance -- inject the session token from localStorage on
- * every request.
- */
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
 });

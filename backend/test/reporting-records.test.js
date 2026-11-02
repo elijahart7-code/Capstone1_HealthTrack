@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
 
 async function controller(path, context) {
-  const source = (await readFile(new URL(`../src/controllers/${path}`, import.meta.url), 'utf8')).replace(/^import .*;\n/gm, '').replace(/export /g, '');
+  const source = (await readFile(new URL(`../src/controllers/${path}`, import.meta.url), 'utf8')).replace(/^import .*;\r?\n/gm, '').replace(/export /g, '');
   return vm.runInNewContext(`${source}\n;({ ${context.names.join(',')} });`, context);
 }
 function response() { return { code: 200, status(code) { this.code = code; return this; }, json(data) { this.data = data; return this; } }; }

@@ -9,7 +9,6 @@ import { Input, Select } from "../../../components/ui/Input";
 import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 import { PatientRecord } from "../../../shared/patients/PatientRecord";
 
-/** Patient list screen for the admin role. */
 export function Patients({ patients, loadData, showArchived, onArchivedChange }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedId = searchParams.get("patientId");

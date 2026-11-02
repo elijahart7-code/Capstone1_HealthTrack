@@ -8,7 +8,6 @@ import { Field, Input, Select } from "../../../components/ui/Input";
 import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 import { PatientRecord } from "../../../shared/patients/PatientRecord";
 
-/** Patient list screen for health workers. */
 export function Patients({ patients, loadData }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedId = searchParams.get("patientId");

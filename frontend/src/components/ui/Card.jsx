@@ -1,6 +1,5 @@
 import { cn } from "../../lib/utils";
 
-/** Maps to .ht-panel -- the shared surface used for every content block. */
 export function Card({ children, className, title, icon: Icon, aside }) {
   return (
     <div className={cn("ht-panel", className)}>
@@ -20,12 +19,10 @@ export function Card({ children, className, title, icon: Icon, aside }) {
   );
 }
 
-/** Plain surface with no built-in padding/header, for custom layouts. */
 export function CardBody({ children, className }) {
   return <div className={cn("ht-card p-4", className)}>{children}</div>;
 }
 
-/** .ht-metric -- one number in the metrics row on a dashboard. */
 export function StatCard({ label, value, tone, icon: Icon }) {
   const toneColor = tone === "brand" ? "var(--color-brand)" : tone === "warm" ? "var(--color-brand-warm)" : undefined;
   const iconBackground = tone === "brand" ? "rgba(15, 107, 95, 0.12)" : tone === "warm" ? "rgba(208, 116, 42, 0.12)" : "rgba(15, 107, 95, 0.08)";
