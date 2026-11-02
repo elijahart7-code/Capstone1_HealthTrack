@@ -238,9 +238,9 @@ const upcomingAppointment =
             />
             <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} onViewAssessments={() => selectSection("health-assessment")} />
             <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("vital-signs")} />            
+            <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} onViewMidwifeNotes={() => selectSection("midwife-notes")} />          
             <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("allergies")} />          
-            <LatestMedicalHistory definition={recordTypes["medical-history"]} record={latestRecords["medical-history"]} onViewMedicalHistory={() => selectSection("medical-history")} />
-            <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} onViewMidwifeNotes={() => selectSection("midwife-notes")} />          </>
+            <LatestMedicalHistory definition={recordTypes["medical-history"]} record={latestRecords["medical-history"]} onViewMedicalHistory={() => selectSection("medical-history")} /> </>
         ) : (
           <>
 
