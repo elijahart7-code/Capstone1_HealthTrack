@@ -178,7 +178,7 @@ const upcomingAppointment =
           <SidebarItem icon={Calendar} label="Appointments" active={section === "appointments"} onClick={() => selectSection("appointments")} />
           <SidebarItem
             icon={Stethoscope}
-            label="Health Assessment"
+            label="Health Records"
             active={section === "health-assessment"}
             expanded={assessmentExpanded}
             onClick={() => {
