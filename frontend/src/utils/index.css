@@ -4397,19 +4397,22 @@ table.patient-medical-history-latest-table {
         color: #0d8069;
     }
     .patient-health-assessment-history {
-    width: 100%;
-    background: #f2faf6;
-    border: 1px solid rgba(12, 79, 70, 0.1);
-    border-radius: 16px;
-    overflow: hidden;
-    max-width: none;
-    box-sizing: border-box;
-}
+        display: block;
+        width: 100%;
+        min-width: 0;
+        background: #f2faf6;
+        border: 1px solid rgba(12, 79, 70, 0.1);
+        border-radius: 14px;
+        overflow: hidden;
+        max-width: none;
+        box-sizing: border-box;
+    }
 
-.patient-health-history-accordion {
-    width: 100%;
-    border-bottom: 1px solid rgba(12, 79, 70, 0.1);
-}
+    .patient-health-history-accordion {
+        width: 100%;
+        min-width: 0;
+        border-bottom: 1px solid rgba(12, 79, 70, 0.1);
+    }
 
 .patient-health-history-accordion:last-child {
     border-bottom: 0;
@@ -4417,37 +4420,65 @@ table.patient-medical-history-latest-table {
 
 .patient-health-history-accordion-header {
     width: 100%;
-    min-height: 58px;
+    min-height: 52px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.75rem 1rem;
+    padding: 0.55rem 0.75rem;
     border: 0;
     background: #f2faf6;
     color: #17483e;
+    font: inherit;
     cursor: pointer;
     text-align: left;
+    transition: background-color 0.16s ease;
 }
 
 .patient-health-history-accordion-header:hover {
     background: #eaf7f1;
 }
 
+.patient-health-history-accordion-header:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid #0d8069;
+    outline-offset: -3px;
+    border-radius: 6px;
+}
+
 .patient-health-history-accordion-title {
     display: flex;
     align-items: center;
     gap: 0.65rem;
+    flex: 1;
+    min-width: 0;
+    color: #17483e;
+    font-size: 0.9rem;
     font-weight: 800;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.patient-health-history-accordion-header .patient-record-accordion-icon {
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: #e4f5ee;
+    color: #08755f;
 }
 
 .patient-health-history-accordion-right {
     display: flex;
     align-items: center;
+    flex: 0 0 auto;
     gap: 0.75rem;
+    color: #397c64;
 }
 
 .patient-health-history-chevron {
+    flex: 0 0 auto;
     transition: transform 0.2s ease;
 }
 
@@ -4456,8 +4487,14 @@ table.patient-medical-history-latest-table {
 }
 
 .patient-health-history-accordion-content {
+    min-width: 0;
+    max-width: 100%;
     padding: 0 0.75rem 0.75rem;
     background: #f2faf6;
+}
+
+.patient-health-history-accordion-content[hidden] {
+    display: none;
 }
 
 .patient-health-history-accordion-content

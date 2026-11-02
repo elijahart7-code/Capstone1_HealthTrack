@@ -892,7 +892,7 @@ function LatestMedicalHistory({
     },
     {
       key: "family_medical_history",
-      label: "Family Medical History",
+      label: "Family Health History",
     },
     {
       key: "immunization_status",
@@ -902,7 +902,7 @@ function LatestMedicalHistory({
 
   return (
     <LatestRecordCard
-      title="Latest Medical History"
+      title="Latest Health History"
       icon={FileText}
       type="medical-history"
       definition={definition}
@@ -913,7 +913,7 @@ function LatestMedicalHistory({
           className="patient-appointment-link"
           onClick={onViewMedicalHistory}
         >
-          View All Medical Histories
+          View Health History
           <ArrowRight size={16} strokeWidth={1.8} />
         </button>
       }
@@ -966,7 +966,7 @@ function LatestMedicalHistory({
         </div>
       ) : (
         <div className="patient-empty-state">
-          No medical history recorded yet.
+          No health history recorded yet.
         </div>
       )}
     </LatestRecordCard>
@@ -1070,7 +1070,7 @@ function HealthAssessmentHistory({
     },
     {
       key: "medical-history",
-      label: "Medical Histories",
+      label: "Health History",
       icon: FileText,
       records: records["medical-history"] || [],
       render: () => (
@@ -1113,9 +1113,10 @@ function HealthAssessmentHistory({
                 className="patient-health-history-accordion-header"
                 onClick={() => toggleSection(key)}
                 aria-expanded={isOpen}
+                aria-controls={`patient-health-history-${key}`}
               >
                 <span className="patient-health-history-accordion-title">
-                  <span className="patient-panel-icon patient-panel-icon-small">
+                  <span className="patient-panel-icon patient-record-accordion-icon">
                     <Icon size={18} strokeWidth={1.8} />
                   </span>
 
@@ -1133,11 +1134,13 @@ function HealthAssessmentHistory({
                 </span>
               </button>
 
-              {isOpen && (
-                <div className="patient-health-history-accordion-content">
-                  {render()}
-                </div>
-              )}
+              <div
+                id={`patient-health-history-${key}`}
+                className="patient-health-history-accordion-content"
+                hidden={!isOpen}
+              >
+                {isOpen && render()}
+              </div>
             </div>
           );
         }
@@ -1152,7 +1155,7 @@ function MedicalHistorySection({ definition, records }) {
     { key: "chronic_conditions", label: "Chronic Conditions" },
     { key: "past_surgeries", label: "Past Surgeries" },
     { key: "previous_hospitalizations", label: "Previous Hospitalizations" },
-    { key: "family_medical_history", label: "Family Medical History" },
+    { key: "family_medical_history", label: "Family Health History" },
     { key: "immunization_status", label: "Immunization Status" },
   ];
 
@@ -1163,7 +1166,7 @@ function MedicalHistorySection({ definition, records }) {
           <span className="patient-panel-icon patient-panel-icon-small">
             <FileText size={18} strokeWidth={1.8} />
           </span>
-          <h2>Medical Histories</h2>
+          <h2>Health History</h2>
         </div>
       </div>
 
@@ -1217,7 +1220,7 @@ function MedicalHistorySection({ definition, records }) {
         </div>
       ) : (
         <div className="patient-empty-state">
-          No medical history recorded.
+          No health history recorded.
         </div>
       )}
     </section>
