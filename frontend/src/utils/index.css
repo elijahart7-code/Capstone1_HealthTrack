@@ -4641,11 +4641,8 @@ table.patient-medical-history-latest-table {
 
     .patient-information-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 0;
-        border: 1px solid rgba(13, 74, 62, 0.08);
-        border-radius: 14px;
-        overflow: hidden;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem 1.25rem;
     }
 
     .patient-information-card {
@@ -4805,51 +4802,52 @@ table.patient-medical-history-latest-table {
     }
 
     .patient-info-field {
-        display: grid;
-        align-content: start;
-        gap: 0.3rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
         min-width: 0;
-        min-height: 86px;
-        padding: 0.8rem 0.9rem;
-        border-right: 1px solid rgba(13, 74, 62, 0.08);
-        border-bottom: 1px solid rgba(13, 74, 62, 0.08);
-        background: #fff;
+        min-height: 48px;
+        padding: 0.25rem 0;
     }
 
-    .patient-info-field:nth-child(4n) {
-        border-right: none;
+    .patient-info-icon {
+        display: grid;
+        flex: 0 0 36px;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: #e9f5ef;
+        color: #397c64;
     }
 
-    .patient-info-field:nth-last-child(-n+4) {
-        border-bottom: none;
+    .patient-info-copy {
+        display: grid;
+        gap: 0.2rem;
+        min-width: 0;
     }
 
-    .patient-info-field-wide {
-        grid-column: span 2;
+    .patient-information-divider {
+        grid-column: 1 / -1;
+        height: 1px;
+        margin: 0.1rem 0;
+        background: rgba(13, 74, 62, 0.14);
     }
 
     .patient-info-label {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
         min-width: 0;
-        color: #596764;
-        font-size: 0.72rem;
+        color: #46665a;
+        font-size: 0.75rem;
         line-height: 1.35;
         font-weight: 700;
-    }
-
-    .patient-info-label svg {
-        flex: 0 0 auto;
-        color: #0d8069;
     }
 
     .patient-info-value {
         min-width: 0;
         overflow-wrap: anywhere;
-        color: #1c2a2a;
-        font-size: 0.86rem;
-        font-weight: 700;
+        color: #173d31;
+        font-size: 0.85rem;
+        font-weight: 600;
         line-height: 1.5;
     }
 
@@ -4879,14 +4877,6 @@ table.patient-medical-history-latest-table {
 
         .patient-information-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .patient-info-field:nth-child(4n) {
-            border-right: 1px solid rgba(13, 74, 62, 0.08);
-        }
-
-        .patient-info-field:nth-child(2n) {
-            border-right: none;
         }
 
         .patient-metric-grid,
@@ -5067,7 +5057,6 @@ table.patient-medical-history-latest-table {
         }
 
         .patient-information-grid {
-            display: grid;
             grid-template-columns: 1fr;
         }
 
@@ -5079,14 +5068,6 @@ table.patient-medical-history-latest-table {
         .patient-portal-info-button {
             grid-column: 1 / -1;
             width: 100%;
-        }
-
-        .patient-info-field,
-        .patient-info-field-wide,
-        .patient-info-field:nth-child(2n),
-        .patient-info-field:nth-child(4n) {
-            grid-column: auto;
-            border-right: none;
         }
 
         .patient-sidebar-item {

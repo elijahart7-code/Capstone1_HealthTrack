@@ -34,6 +34,7 @@ import {
   MapPin,
   Phone,
   PhoneCall,
+  Flag,
 } from "lucide-react";
 
 const SECTION_ICONS = {
@@ -276,16 +277,20 @@ const upcomingAppointment =
             <div className="patient-information-grid">
               <InfoField icon={User} label="Full Name" value={patientName} />
               <InfoField icon={UserRound} label="Sex" value={patient.sex} />
+              <InfoField icon={MapPin} label="Address" value={patient.address} />
               <InfoField icon={CalendarDays} label="Date of Birth" value={patient.birthdate ? new Date(patient.birthdate).toLocaleDateString() : null} />
               <InfoField icon={Clock3} label="Age" value={patient.age != null ? `${patient.age} years old` : null} />
-              <InfoField icon={MapPin} label="Address" value={patient.address} />
+              <InfoField icon={Phone} label="Contact Number" value={patient.contact_number} />
               <InfoField icon={HeartPulse} label="Civil Status" value={patient.civil_status} />
               <InfoField icon={Droplets} label="Blood Type" value={patient.blood_type} />
-              <InfoField icon={Phone} label="Contact Number" value={patient.contact_number} />
               <InfoField icon={Briefcase} label="Occupation" value={patient.occupation} />
+              <InfoField icon={IdCard} label="Barangay ID Number" value={patient.barangay_id_number} />
+              <InfoField icon={Flag} label="Nationality" value={patient.nationality} />
+              <InfoField icon={MapPin} label="Place of Birth" value={patient.place_of_birth} />
+              <div className="patient-information-divider" role="separator" aria-hidden="true" />
               <InfoField icon={UsersRound} label="Emergency Contact" value={patient.emergency_contact_name} />
               <InfoField icon={PhoneCall} label="Emergency Contact Number" value={patient.emergency_contact_number} />
-              <InfoField icon={IdCard} label="Barangay ID Number" value={patient.barangay_id_number} />
+              <InfoField icon={UserRound} label="Relationship" value={patient.emergency_contact_relationship} />
             </div>
         </section>}
 
@@ -367,11 +372,13 @@ function PatientPortalAccount({ patient, currentUser }) {
 function InfoField({ icon: Icon, label, value }) {
   return (
     <div className="patient-info-field">
-      <span className="patient-info-label">
-        <Icon size={15} strokeWidth={1.8} aria-hidden="true" />
-        <span>{label}</span>
+      <span className="patient-info-icon" aria-hidden="true">
+        <Icon size={16} strokeWidth={1.8} />
       </span>
-      <span className="patient-info-value">{value || "Not provided"}</span>
+      <span className="patient-info-copy">
+        <span className="patient-info-label">{label}</span>
+        <span className="patient-info-value">{value || "Not provided"}</span>
+      </span>
     </div>
   );
 }
