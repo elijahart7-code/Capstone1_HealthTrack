@@ -7,7 +7,6 @@ import {
   MEDICATION_ALLERGIES,
 } from "./healthOptions";
 
-/** Mirrors backend/src/config/recordTypes.js -- drives the clinical-record tabs/forms. */
 export const RECORD_TYPES = {
   "health-assessment": {
     label: "Health Assessment",

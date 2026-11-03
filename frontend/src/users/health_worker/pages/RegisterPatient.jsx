@@ -6,9 +6,6 @@ import { PageHeader } from "../../../components/ui/PageHeader";
 import { Field, Input, Select, Textarea } from "../../../components/ui/Input";
 import { PlaceOfBirthField } from "../../../shared/patients/PlaceOfBirthField";
 
-/**
- * Registers a patient and creates their portal login from the required email.
- */
 export function RegisterPatient({ loadData, onRegistered }) {
   const [, setSearchParams] = useSearchParams();
   const [form, setForm] = useState({
@@ -176,7 +173,6 @@ export function RegisterPatient({ loadData, onRegistered }) {
                 <option value="" disabled>Select sex</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Other">Other</option>
               </Select>
             </Field>
 
@@ -221,15 +217,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <Select value={form.civil_status} onChange={(e) => set("civil_status", e.target.value)} required>
                 <option value="" disabled>Select civil status</option>
                 <option value="Single">Single</option>
-                <option value="In a relationship">In a relationship</option>
-                <option value="Engaged">Engaged</option>
                 <option value="Married">Married</option>
-                <option value="In a civil union">In a civil union</option>
-                <option value="In a domestic partnership">In a domestic partnership</option>
-                <option value="In an open relationship">In an open relationship</option>
-                <option value="It's complicated">It's complicated</option>
-                <option value="Separated">Separated</option>
-                <option value="Divorced">Divorced</option>
                 <option value="Widowed">Widowed</option>
               </Select>
             </Field>

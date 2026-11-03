@@ -1,24 +1,12 @@
 @import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
 @import "@fontsource/inter/600.css";
 @import "@fontsource/inter/700.css";
 @import "@fontsource/inter/800.css";
 @import "tailwindcss";
 
-/*
-|------------------------------------------------------------------------------
-| HealthTrack stylesheet
-|------------------------------------------------------------------------------
-|
-| Shared design tokens and reusable component classes live here so consistent
-| styling can be reused across the app. Tailwind is configured here in CSS,
-| and the .ht-* utility classes are used for repeated UI patterns.
-|
-| Use the .ht-* classes for anything that repeats, plain Tailwind utilities
-| for one-off spacing/layout. Keep new component classes here rather than
-| copy-pasted inline styles.
-|
-*/
 
+/* GLOBAL DESIGN VARIABLES Shared color, type, border, shadow, and radius tokens. */
 :root {
     --color-parchment: #f6f1e8;
     --color-parchment-deep: #e8e0d1;
@@ -42,6 +30,10 @@
     --radius-panel: 16px;
 }
 
+/* =========================================================
+GLOBAL / BASE STYLES
+Document defaults and shared page-level typography.
+========================================================= */
 @layer base {
     body {
         min-height: 100vh;
@@ -56,9 +48,12 @@
     }
 }
 
+/* =========================================================
+GENERAL CARDS AND PANELS
+Reusable surfaces, panel headings, metrics, and section icons.
+========================================================= */
 @layer components {
 
-    /* --- Surfaces ---------------------------------------------------- */
 
     .ht-card,
     .ht-panel,
@@ -137,6 +132,10 @@
         display: none;
     }
 
+    /* ---------------------------------------------------------
+    FORMS AND INPUTS
+    Registration form grids, field controls, and validation text.
+    --------------------------------------------------------- */
     .ht-register-form {
         display: grid;
         gap: 1rem;
@@ -196,7 +195,6 @@
         color: var(--color-ink-soft);
     }
 
-    /* --- Page header -------------------------------------------------- */
 
     .ht-page-header {
         display: flex;
@@ -228,7 +226,6 @@
         align-items: center;
     }
 
-    /* --- Pills and badges --------------------------------------------- */
 
     .ht-pill {
         display: inline-flex;
@@ -256,7 +253,6 @@
     .ht-pill-warm { color: var(--color-brand-warm); }
     .ht-pill-danger { color: var(--color-danger); }
 
-    /* --- Metrics ------------------------------------------------------ */
 
     .ht-metric-grid {
         display: grid;
@@ -389,7 +385,6 @@
         stroke: currentColor;
     }
 
-    /* --- Forms -------------------------------------------------------- */
 
     .ht-field {
         display: grid;
@@ -481,6 +476,12 @@
         min-width: 0;
     }
 
+    /* =========================================================
+    RESPONSIVE DESIGN
+    Desktop uses the base rules; tablet breakpoints adjust columns
+    and navigation, while mobile breakpoints stack forms, cards,
+    and controls for narrower screens.
+    ========================================================= */
     @media (max-width: 700px) {
         .ht-place-of-birth-grid {
             grid-template-columns: minmax(0, 1fr);
@@ -500,8 +501,11 @@
         font-weight: 400;
     }
 
-    /* --- Buttons ------------------------------------------------------ */
 
+    /* ---------------------------------------------------------
+    BUTTONS
+    Shared primary, secondary, danger, and full-width actions.
+    --------------------------------------------------------- */
     .ht-button {
         display: inline-flex;
         align-items: center;
@@ -620,6 +624,10 @@
         background: rgba(178, 69, 62, 0.08);
     }
 
+    /* =========================================================
+    REPORTS / CHARTS
+    Report navigation, filters, charts, lists, and printable views.
+    ========================================================= */
     .ht-report-tabs {
         display: flex;
         flex-wrap: wrap;
@@ -874,6 +882,7 @@
         display: none;
     }
 
+    /* Report export controls fill the row on narrow screens. */
     @media (max-width: 700px) {
         .ht-report-tabs .ht-report-export {
             width: 100%;
@@ -881,6 +890,10 @@
         }
     }
 
+    /* ---------------------------------------------------------
+    PRINT STYLES
+    Hide interactive report controls and format report output.
+    --------------------------------------------------------- */
     @media print {
         @page {
             margin: 1.4cm;
@@ -970,12 +983,20 @@
         }
     }
 
-    /* --- Tables ------------------------------------------------------- */
 
+    /* =========================================================
+    TABLES AND RECORD MANAGEMENT
+    Admin/health-worker tables, filters, status controls, and actions.
+    ========================================================= */
     .ht-admin-shell,
     .ht-healthworker-shell {
         min-height: 100vh;
         background: #F2FAF7;
+    }
+
+    .ht-healthworker-shell .ht-content {
+        box-sizing: border-box;
+        min-width: 0;
     }
 
     .ht-admin-shell .ht-topbar,
@@ -1172,7 +1193,38 @@
     }
 
     .ht-table-scroll {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
         overflow-x: auto;
+    }
+
+    .ht-healthworker-patients-panel {
+        min-width: 0;
+    }
+
+    .ht-healthworker-patients-panel .ht-table th,
+    .ht-healthworker-patients-panel .ht-table td {
+        white-space: nowrap;
+    }
+
+    .ht-healthworker-patients-panel .ht-table {
+        width: max-content;
+        min-width: 100%;
+    }
+
+    .ht-healthworker-patients-panel .ht-table th:nth-child(10),
+    .ht-healthworker-patients-panel .ht-table td:nth-child(10) {
+        text-align: center;
+    }
+
+    .ht-healthworker-patients-panel .ht-table,
+    .ht-healthworker-patients-panel .ht-table th,
+    .ht-healthworker-patients-panel .ht-table td,
+    .ht-healthworker-patients-panel .ht-table tbody tr,
+    .ht-healthworker-patients-panel .ht-table tbody tr:nth-child(even),
+    .ht-healthworker-patients-panel .ht-table tbody tr:hover {
+        background: #F2FAF7;
     }
 
     .ht-empty {
@@ -1332,6 +1384,10 @@
         vertical-align: middle;
     }
 
+    /* ---------------------------------------------------------
+    APPOINTMENTS
+    Appointment status indicators, filters, tables, and actions.
+    --------------------------------------------------------- */
     .ht-status-badge {
         display: inline-flex;
         align-items: center;
@@ -1638,8 +1694,11 @@
         background: rgba(255, 255, 255, 0.7);
     }
 
-    /* --- App shell ---------------------------------------------------- */
 
+    /* =========================================================
+    NAVIGATION / TOP BAR
+    Brand badge, navigation links, user details, and logout action.
+    ========================================================= */
     .ht-topbar {
         position: sticky;
         top: 0;
@@ -1790,6 +1849,11 @@
         padding: 1.5rem;
     }
 
+    .ht-content-health-information {
+        width: min(100%, 1480px);
+        box-sizing: border-box;
+    }
+
     .ht-portal-layout {
         display: grid;
         grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
@@ -1920,6 +1984,7 @@
         accent-color: var(--color-brand);
     }
 
+    /* Tablet navigation wraps; record navigation becomes horizontal. */
     @media (max-width: 980px) {
         .ht-topbar-inner {
             flex-wrap: wrap;
@@ -1933,8 +1998,11 @@
         }
     }
 
-    /* --- Record sidebar (patient record screen) ----------------------- */
 
+    /* ---------------------------------------------------------
+    RECORD NAVIGATION
+    Layout and responsive behavior for record section navigation.
+    --------------------------------------------------------- */
     .ht-record-layout {
         display: grid;
         grid-template-columns: 200px 1fr;
@@ -1976,6 +2044,7 @@
         color: var(--color-brand-strong);
     }
 
+    /* Tablet record pages stack navigation above the record content. */
     @media (max-width: 980px) {
         .ht-record-layout {
             grid-template-columns: 1fr;
@@ -1993,8 +2062,11 @@
         }
     }
 
-    /* --- Auth pages --------------------------------------------------- */
 
+    /* ---------------------------------------------------------
+    AUTHENTICATION
+    Login and account-selection form surfaces.
+    --------------------------------------------------------- */
     .ht-auth-shell {
         display: grid;
         place-items: center;
@@ -2073,12 +2145,15 @@
     }
 
     .ht-account-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0.7rem;
+        position: relative;
+        height: 106px;
     }
 
     .ht-account-card {
+        position: absolute;
+        top: 0;
+        left: calc(var(--account-index) * (100% + 0.7rem) / 3);
+        width: calc((100% - 1.4rem) / 3);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -2092,7 +2167,47 @@
         color: var(--color-ink-soft);
         cursor: pointer;
         text-align: center;
-        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, transform 0.2s;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s,
+            opacity 0.25s ease, transform 0.3s ease, left 0.35s ease,
+            visibility 0s;
+    }
+
+    .ht-account-grid.has-selection .ht-account-card.is-selected {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .ht-account-card.is-hidden {
+        opacity: 0;
+        transform: translateY(8px) scale(0.85);
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.25s ease, transform 0.25s ease,
+            visibility 0s 0.25s;
+    }
+
+    .ht-account-change {
+        display: block;
+        margin: 0.65rem auto 0;
+        padding: 0.2rem 0.4rem;
+        border: 0;
+        background: transparent;
+        color: var(--color-brand-strong);
+        font-size: 0.8rem;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+    }
+
+    .ht-account-change:disabled {
+        opacity: 0.6;
+        cursor: wait;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ht-account-grid .ht-account-card {
+            transition: none;
+        }
     }
 
     .ht-account-card:hover {
@@ -2287,8 +2402,11 @@
         }
     }
 
-    /* --- Patient portal ------------------------------------------------ */
 
+    /* =========================================================
+    PATIENT DASHBOARD
+    Welcome, summary cards, health information, contacts, and tips.
+    ========================================================= */
     .patient-dashboard-shell {
         display: grid;
         gap: 1.25rem;
@@ -2297,20 +2415,16 @@
         padding: 0.25rem 0 0;
     }
     
-/* ==========================================
-   PATIENT NAVIGATION - FONT ENHANCEMENT
-   ========================================== */
 
-.patient-dashboard-shell nav a,
-.patient-dashboard-shell nav button {
+body:has(.patient-dashboard-shell) .ht-nav a,
+body:has(.patient-dashboard-shell) .ht-nav button {
     font-family: "Inter", sans-serif !important;
-    font-size: 16px !important;
+    font-size: 15px !important;
     font-weight: 600 !important;
     line-height: 1.5 !important;
     letter-spacing: -0.1px;
 }
 
-/* Navigation icons */
 .patient-dashboard-shell nav a svg,
 .patient-dashboard-shell nav button svg {
     width: 17px !important;
@@ -2343,13 +2457,18 @@
 
     .patient-healthinfo-page {
         display: grid;
-        grid-template-columns: 250px minmax(0, 1fr);
-        gap: 1rem;
-        width: min(100%, 1180px);
+        grid-template-columns: minmax(250px, 280px) minmax(0, 1fr);
+        gap: 1.5rem;
+        width: 100%;
+        max-width: 1440px;
         margin: 0 auto;
         padding: 0.25rem 0 0;
     }
 
+    /* ---------------------------------------------------------
+    WELCOME SECTION
+    Banner surface, profile icon, and greeting content.
+    --------------------------------------------------------- */
     .patient-welcome-banner,
     .patient-panel,
     .patient-metric-card,
@@ -2408,7 +2527,9 @@
 
 .patient-welcome-heading h1 {
   margin: 0;
-  font-size: 2.25rem;
+  color: #064e43;
+  font-family: var(--font-sans);
+  font-size: calc(2.25rem + 1px);
   font-weight: 700;
   line-height: 1.2;
 }
@@ -2434,7 +2555,9 @@
 
 .patient-welcome-simple p {
   margin: 0;
-  font-size: 14px;
+  color: #315b55;
+  font-family: var(--font-sans);
+  font-size: 15px;
 }
 
     .patient-profile-circle {
@@ -2515,6 +2638,10 @@
         stroke-linejoin: round;
     }
 
+    /* ---------------------------------------------------------
+    DASHBOARD SUMMARY CARDS
+    Appointment, vital signs, assessment, and allergy summaries.
+    --------------------------------------------------------- */
     .patient-metric-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -2588,6 +2715,10 @@
         padding: 1.1rem 1.25rem 1.25rem;
     }
 
+    /* ---------------------------------------------------------
+    HEALTH INFORMATION SUMMARY
+    Summary copy and related actions.
+    --------------------------------------------------------- */
     .patient-health-summary {
         display: grid;
         grid-template-columns: 1.3fr 0.7fr;
@@ -2683,6 +2814,10 @@
         height: auto;
     }
 
+    /* ---------------------------------------------------------
+    EMERGENCY CONTACTS
+    Contact cards, phone details, and section layout.
+    --------------------------------------------------------- */
     .patient-emergency-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -2732,6 +2867,10 @@
         line-height: 1.5;
     }
 
+    /* ---------------------------------------------------------
+    HEALTH TIPS
+    Tip-card grid, icons, and supporting text.
+    --------------------------------------------------------- */
     .patient-health-tips {
         display: grid;
         gap: 1rem;
@@ -2780,6 +2919,10 @@
         line-height: 1.4;
     }
 
+    /* ---------------------------------------------------------
+    HEALTH INFORMATION NAVIGATION
+    Sidebar links, nested record sections, and help card.
+    --------------------------------------------------------- */
     .patient-healthinfo-sidebar {
         display: grid;
         align-content: start;
@@ -2973,6 +3116,10 @@
         line-height: 1.5;
     }
 
+    /* ---------------------------------------------------------
+    HEALTH INFORMATION PAGE
+    Overview, record headings, and shared record-card surfaces.
+    --------------------------------------------------------- */
     .patient-healthinfo-main {
         display: grid;
         gap: 1rem;
@@ -3001,14 +3148,15 @@
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 1rem;
-        padding: 0.9rem 1.1rem;
+        gap: 1.25rem;
+        min-height: 104px;
+        padding: 1.35rem 1.6rem;
     }
 
     .patient-healthinfo-header-copy {
         display: flex;
         align-items: center;
-        gap: 0.8rem;
+        gap: 1rem;
         min-width: 0;
     }
 
@@ -3022,9 +3170,10 @@
     }
 
     .patient-healthinfo-header-copy p {
-        margin: 0.2rem 0 0;
+        margin: 0.4rem 0 0;
         color: #53615f;
         font-size: 0.96rem;
+        line-height: 1.5;
     }
 
     .patient-readonly-pill {
@@ -3046,6 +3195,10 @@
         padding: 1rem 1.1rem 0.9rem;
     }
 
+    /* ---------------------------------------------------------
+    LATEST HEALTH RECORD CARDS
+    Shared card headers, dates, and overview record details.
+    --------------------------------------------------------- */
     .patient-healthinfo-card.patient-latest-card {
         overflow: hidden;
         padding: 0;
@@ -3115,7 +3268,6 @@
         background: #ffffff;
     }
     
-/* Latest Medical History - fix horizontal scrollbar on all screens */
 .patient-medical-history-latest-wrap {
     display: block !important;
     width: 100% !important;
@@ -3394,6 +3546,10 @@ table.patient-medical-history-latest-table {
         background: #4f86b5;
     }
 
+    /* ---------------------------------------------------------
+    APPOINTMENTS
+    Latest appointment summary, status, details, and empty state.
+    --------------------------------------------------------- */
     .patient-latest-appointment-details {
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 0.75fr) minmax(0, 1.35fr);
@@ -3496,6 +3652,10 @@ table.patient-medical-history-latest-table {
         color: #159467;
     }
 
+    /* ---------------------------------------------------------
+    ALLERGIES
+    Allergy detail rows and recorded allergy presentation.
+    --------------------------------------------------------- */
     .patient-allergy-detail-list {
         width: 100%;
         margin: 0;
@@ -3550,6 +3710,10 @@ table.patient-medical-history-latest-table {
         color: #dc4d62;
     }
 
+    /* ---------------------------------------------------------
+    MIDWIFE NOTES
+    Note metadata, note content, and recorded-date footer.
+    --------------------------------------------------------- */
     .patient-midwife-note-layout {
         display: grid;
         grid-template-columns: 28px minmax(0, 1fr);
@@ -3674,7 +3838,6 @@ table.patient-medical-history-latest-table {
         gap: 0.8rem;
         min-width: 0;
     }
-    /* Midwife Notes - Match Health Assessment Card */
 
 .patient-healthinfo-main .patient-midwife-notes-section {
     display: flex !important;
@@ -3871,6 +4034,10 @@ table.patient-medical-history-latest-table {
         text-align: right;
     }
 
+    /* ---------------------------------------------------------
+    VITAL SIGNS
+    Vital metric tiles and measurement details.
+    --------------------------------------------------------- */
     .patient-vital-grid {
         display: grid;
         grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -3962,6 +4129,10 @@ table.patient-medical-history-latest-table {
         background: #ffffff;
     }
 
+    /* ---------------------------------------------------------
+    HEALTH ASSESSMENT
+    Assessment record rows and accordion content.
+    --------------------------------------------------------- */
     .patient-assessment-record-list {
         width: 100%;
         margin: 0;
@@ -4011,6 +4182,10 @@ table.patient-medical-history-latest-table {
         text-align: center;
     }
 
+    /* ---------------------------------------------------------
+    MEDICAL / HEALTH INFORMATION
+    Medical history records and key/value row presentation.
+    --------------------------------------------------------- */
     .patient-healthinfo-card.patient-medical-history-card {
     width: 100%;
     max-width: none;
@@ -4146,6 +4321,10 @@ table.patient-medical-history-latest-table {
         background: #fff;
     }
 
+    /* ---------------------------------------------------------
+    VITAL SIGNS TABLE
+    Table columns, result rows, and recorded-date footer.
+    --------------------------------------------------------- */
     .patient-vitals-section {
         display: grid;
         gap: 0.9rem;
@@ -4290,7 +4469,10 @@ table.patient-medical-history-latest-table {
     }
 
     
-/* Latest Allergies - remove horizontal scrollbar */
+/* ---------------------------------------------------------
+ALLERGIES TABLE
+Table layout, recorded-date information, and footer.
+--------------------------------------------------------- */
 .patient-allergies-table-wrap {
     width: 100%;
     max-width: 100%;
@@ -4349,20 +4531,27 @@ table.patient-medical-history-latest-table {
         flex: 0 0 auto;
         color: #0d8069;
     }
+    /* ---------------------------------------------------------
+    HEALTH ASSESSMENT HISTORY
+    Accordion panels, assessment tables, and record dates.
+    --------------------------------------------------------- */
     .patient-health-assessment-history {
-    width: 100%;
-    background: #f2faf6;
-    border: 1px solid rgba(12, 79, 70, 0.1);
-    border-radius: 16px;
-    overflow: hidden;
-    max-width: none;
-    box-sizing: border-box;
-}
+        display: block;
+        width: 100%;
+        min-width: 0;
+        background: #f2faf6;
+        border: 1px solid rgba(12, 79, 70, 0.1);
+        border-radius: 16px;
+        overflow: hidden;
+        max-width: none;
+        box-sizing: border-box;
+    }
 
-.patient-health-history-accordion {
-    width: 100%;
-    border-bottom: 1px solid rgba(12, 79, 70, 0.1);
-}
+    .patient-health-history-accordion {
+        width: 100%;
+        min-width: 0;
+        border-bottom: 1px solid rgba(12, 79, 70, 0.1);
+    }
 
 .patient-health-history-accordion:last-child {
     border-bottom: 0;
@@ -4370,37 +4559,65 @@ table.patient-medical-history-latest-table {
 
 .patient-health-history-accordion-header {
     width: 100%;
-    min-height: 58px;
+    min-height: 68px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 0.75rem 1rem;
+    gap: 1.25rem;
+    padding: 0.85rem 1.2rem;
     border: 0;
     background: #f2faf6;
     color: #17483e;
+    font: inherit;
     cursor: pointer;
     text-align: left;
+    transition: background-color 0.16s ease;
 }
 
 .patient-health-history-accordion-header:hover {
     background: #eaf7f1;
 }
 
+.patient-health-history-accordion-header:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid #0d8069;
+    outline-offset: -3px;
+    border-radius: 6px;
+}
+
 .patient-health-history-accordion-title {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
+    gap: 0.9rem;
+    flex: 1;
+    min-width: 0;
+    color: #17483e;
+    font-size: 1rem;
     font-weight: 800;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.patient-health-history-accordion-header .patient-record-accordion-icon {
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: #e4f5ee;
+    color: #08755f;
 }
 
 .patient-health-history-accordion-right {
     display: flex;
     align-items: center;
+    flex: 0 0 auto;
     gap: 0.75rem;
+    color: #397c64;
 }
 
 .patient-health-history-chevron {
+    flex: 0 0 auto;
     transition: transform 0.2s ease;
 }
 
@@ -4409,14 +4626,21 @@ table.patient-medical-history-latest-table {
 }
 
 .patient-health-history-accordion-content {
-    padding: 0 0.75rem 0.75rem;
+    min-width: 0;
+    max-width: 100%;
+    padding: 0 1.2rem 1.2rem;
     background: #f2faf6;
+}
+
+.patient-health-history-accordion-content[hidden] {
+    display: none;
 }
 
 .patient-health-history-accordion-content
 .patient-healthinfo-card {
     width: 100%;
     max-width: none;
+    min-width: 0;
     margin: 0;
     border-radius: 12px;
     box-sizing: border-box;
@@ -4590,13 +4814,14 @@ table.patient-medical-history-latest-table {
         font-family: inherit;
     }
 
+    /* ---------------------------------------------------------
+    PERSONAL INFORMATION
+    Patient detail cards, field groups, and dividers.
+    --------------------------------------------------------- */
     .patient-information-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 0;
-        border: 1px solid rgba(13, 74, 62, 0.08);
-        border-radius: 14px;
-        overflow: hidden;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem 1.25rem;
     }
 
     .patient-information-card {
@@ -4604,15 +4829,17 @@ table.patient-medical-history-latest-table {
     }
 
     .patient-healthinfo-main .patient-general-account-card {
-        padding: 1.15rem 1.35rem 1.25rem;
-        border: 1px solid #DDF3EA;
-        border-radius: 12px;
+        width: 100%;
+        padding: 0.75rem 0.9rem 0.65rem;
+        border: 0;
+        border-bottom: 2px solid #DDF3EA;
+        border-radius: 0;
         background: #FFFFFF;
-        box-shadow: 0 3px 12px rgba(7, 59, 42, 0.035);
+        box-shadow: none;
     }
 
     .patient-healthinfo-main .patient-general-account-card > h2 {
-        margin: 0 0 1.1rem;
+        margin: 0 0 0.55rem;
         color: #073B2A;
         font-family: var(--font-sans);
         font-size: 1rem;
@@ -4622,10 +4849,10 @@ table.patient-medical-history-latest-table {
 
     .patient-general-account-content {
         display: grid;
-        grid-template-columns: 170px minmax(0, 1fr);
+        grid-template-columns: 128px minmax(0, 1fr);
         align-items: center;
-        gap: 1rem;
-        min-height: 112px;
+        gap: 0.5rem;
+        min-height: 104px;
     }
 
     .patient-general-account-avatar {
@@ -4633,19 +4860,19 @@ table.patient-medical-history-latest-table {
         display: grid;
         place-items: center;
         justify-self: center;
-        width: 74px;
-        height: 74px;
+        width: 64px;
+        height: 64px;
         color: #073B2A;
     }
 
     .patient-general-account-verified {
         position: absolute;
-        right: -3px;
-        bottom: -2px;
+        right: 0;
+        bottom: 0;
         display: grid;
         place-items: center;
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
         border: 2px solid #FFFFFF;
         border-radius: 50%;
         background: #0F513F;
@@ -4661,10 +4888,10 @@ table.patient-medical-history-latest-table {
 
     .patient-general-account-details > div {
         display: grid;
-        grid-template-columns: minmax(170px, 0.72fr) minmax(0, 1.28fr);
+        grid-template-columns: minmax(120px, 0.65fr) minmax(0, 1.35fr);
         align-items: center;
-        gap: 1rem;
-        min-height: 35px;
+        gap: 0.75rem;
+        min-height: 31px;
     }
 
     .patient-general-account-details dt,
@@ -4686,8 +4913,24 @@ table.patient-medical-history-latest-table {
     }
 
     .patient-general-account-details .patient-general-account-status {
-        color: #0F513F;
+        justify-self: start;
+        padding: 0.18rem 0.6rem;
+        border: 1px solid #d5eee2;
+        border-radius: 999px;
+        font-size: 0.72rem;
         font-weight: 700;
+        line-height: 1.35;
+    }
+
+    .patient-general-account-details .patient-general-account-status.is-active {
+        background: #eff9f3;
+        color: #0F513F;
+    }
+
+    .patient-general-account-details .patient-general-account-status.is-inactive {
+        border-color: #e4e9e5;
+        background: #f5f7f5;
+        color: #5e6b64;
     }
 
     .patient-portal-info-card {
@@ -4756,51 +4999,52 @@ table.patient-medical-history-latest-table {
     }
 
     .patient-info-field {
-        display: grid;
-        align-content: start;
-        gap: 0.3rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
         min-width: 0;
-        min-height: 86px;
-        padding: 0.8rem 0.9rem;
-        border-right: 1px solid rgba(13, 74, 62, 0.08);
-        border-bottom: 1px solid rgba(13, 74, 62, 0.08);
-        background: #fff;
+        min-height: 48px;
+        padding: 0.25rem 0;
     }
 
-    .patient-info-field:nth-child(4n) {
-        border-right: none;
+    .patient-info-icon {
+        display: grid;
+        flex: 0 0 36px;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: #e9f5ef;
+        color: #397c64;
     }
 
-    .patient-info-field:nth-last-child(-n+4) {
-        border-bottom: none;
+    .patient-info-copy {
+        display: grid;
+        gap: 0.2rem;
+        min-width: 0;
     }
 
-    .patient-info-field-wide {
-        grid-column: span 2;
+    .patient-information-divider {
+        grid-column: 1 / -1;
+        height: 1px;
+        margin: 0.1rem 0;
+        background: rgba(13, 74, 62, 0.14);
     }
 
     .patient-info-label {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
         min-width: 0;
-        color: #596764;
-        font-size: 0.72rem;
+        color: #46665a;
+        font-size: 0.75rem;
         line-height: 1.35;
         font-weight: 700;
-    }
-
-    .patient-info-label svg {
-        flex: 0 0 auto;
-        color: #0d8069;
     }
 
     .patient-info-value {
         min-width: 0;
         overflow-wrap: anywhere;
-        color: #1c2a2a;
-        font-size: 0.86rem;
-        font-weight: 700;
+        color: #173d31;
+        font-size: 0.85rem;
+        font-weight: 600;
         line-height: 1.5;
     }
 
@@ -4815,6 +5059,7 @@ table.patient-medical-history-latest-table {
         font-size: 0.82rem;
     }
 
+    /* Tablet health-information pages collapse the sidebar and use two-column cards. */
     @media (max-width: 980px) {
         .patient-healthinfo-page {
             grid-template-columns: 1fr;
@@ -4830,14 +5075,6 @@ table.patient-medical-history-latest-table {
 
         .patient-information-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .patient-info-field:nth-child(4n) {
-            border-right: 1px solid rgba(13, 74, 62, 0.08);
-        }
-
-        .patient-info-field:nth-child(2n) {
-            border-right: none;
         }
 
         .patient-metric-grid,
@@ -4864,29 +5101,31 @@ table.patient-medical-history-latest-table {
         }
     }
 
+    /* Mobile health-information details use compact field layouts. */
     @media (max-width: 640px) {
         .patient-healthinfo-main .patient-general-account-card {
-            padding: 1rem;
+            padding: 0.75rem 0.65rem 0.6rem;
         }
 
         .patient-healthinfo-main .patient-general-account-card > h2 {
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .patient-healthinfo-main .patient-general-account-content {
-            grid-template-columns: minmax(0, 1fr);
-            gap: 0.75rem;
+            grid-template-columns: 76px minmax(0, 1fr);
+            gap: 0.5rem;
+            min-height: 94px;
         }
 
         .patient-healthinfo-main .patient-general-account-avatar {
-            justify-self: start;
-            width: 58px;
-            height: 58px;
+            justify-self: center;
+            width: 52px;
+            height: 52px;
         }
 
         .patient-healthinfo-main .patient-general-account-avatar > svg {
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
         }
 
         .patient-healthinfo-main .patient-general-account-details {
@@ -4894,9 +5133,9 @@ table.patient-medical-history-latest-table {
         }
 
         .patient-healthinfo-main .patient-general-account-details > div {
-            grid-template-columns: minmax(112px, 0.78fr) minmax(0, 1.22fr);
-            gap: 0.65rem;
-            min-height: 38px;
+            grid-template-columns: minmax(92px, 0.78fr) minmax(0, 1.22fr);
+            gap: 0.5rem;
+            min-height: 34px;
         }
 
         .patient-healthinfo-main .patient-general-account-details dt,
@@ -4944,7 +5183,6 @@ table.patient-medical-history-latest-table {
             padding: 0.8rem;
         }
         
-/* FIX: Latest Medical History horizontal scrollbar */
 .patient-healthinfo-main .patient-medical-history-latest-wrap {
     width: 100% !important;
     max-width: 100% !important;
@@ -5019,7 +5257,6 @@ table.patient-medical-history-latest-table {
         }
 
         .patient-information-grid {
-            display: grid;
             grid-template-columns: 1fr;
         }
 
@@ -5031,14 +5268,6 @@ table.patient-medical-history-latest-table {
         .patient-portal-info-button {
             grid-column: 1 / -1;
             width: 100%;
-        }
-
-        .patient-info-field,
-        .patient-info-field-wide,
-        .patient-info-field:nth-child(2n),
-        .patient-info-field:nth-child(4n) {
-            grid-column: auto;
-            border-right: none;
         }
 
         .patient-sidebar-item {
@@ -5096,9 +5325,6 @@ table.patient-medical-history-latest-table {
             padding-bottom: 0.9rem;
         }
     }
-    /* =====================================================
-   FIX: YOUR HEALTH INFORMATION HEADER
-   ===================================================== */
 
 .patient-health-heading {
     display: flex !important;
@@ -5166,15 +5392,8 @@ table.patient-medical-history-latest-table {
   margin: 0 !important;
   padding: 0 !important;
 }
-/* =========================================================
-   HEALTH TRACK PATIENT DASHBOARD
-   REFERENCE DESIGN
-   ========================================================= */
 
 
-/* =========================================================
-   DASHBOARD HEADER
-   ========================================================= */
 
 .patient-dashboard-header {
     display: flex;
@@ -5187,13 +5406,13 @@ table.patient-medical-history-latest-table {
 
     padding: 22px 28px;
 
-    background: #ffffff;
+    background: linear-gradient(110deg, #ffffff 0%, #effaf5 55%, #dff5eb 100%);
 
-    border: 1px solid rgba(12, 79, 70, 0.08);
+    border: 1px solid #cce9dd;
 
     border-radius: 18px;
 
-    box-shadow: 0 4px 18px rgba(15, 29, 26, 0.035);
+    box-shadow: 0 4px 16px rgba(8, 107, 77, 0.07);
 
     overflow: hidden;
 }
@@ -5207,7 +5426,7 @@ table.patient-medical-history-latest-table {
 
     font-family: "Inter", sans-serif;
 
-    font-size: 2rem;
+    font-size: calc(2rem + 1px);
 
     font-weight: 800;
 
@@ -5215,24 +5434,22 @@ table.patient-medical-history-latest-table {
 
     letter-spacing: -0.035em;
 
-    color: #073f35;
+    color: #064e43;
 }
 
 .patient-dashboard-header p {
     margin-top: 5px !important;
-    color: #667875;
-    font-size: 16px !important;
+    color: #54716b;
+    font-size: 17px !important;
     font-family: "Inter", sans-serif;
     font-weight: 400 !important;
     line-height: 1.6 !important;
     letter-spacing: 0 !important;
 }
-/*Patient dashboard subtitle*/
 .patient-dashboard-shell > p{
     font-size: 20px;
     line-height: 1.7;
 }
-/*Patient dashboard: feature card subtitles*/
 .patient-dashboard-shell .patient-feature-card p,
 .patient-dashboard-shell .patient-dashboard-card p{
     font-size: 50px;
@@ -5246,16 +5463,19 @@ table.patient-medical-history-latest-table {
   gap: 10px;
   padding: 12px 18px;
   color: #ffffff;
-  background: #087f5b;
-  border: none;
+  background: #07815f;
+  border: 1px solid #07815f;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
+  font-family: var(--font-sans);
   cursor: pointer;
+  transition: background 180ms ease, box-shadow 180ms ease;
 }
 
 .patient-dashboard-view-button:hover {
-  background: #066b4d;
+  background: #064e43;
+  box-shadow: 0 2px 8px rgba(8, 107, 77, 0.1);
 }
 
 @media (max-width: 640px) {
@@ -5269,9 +5489,6 @@ table.patient-medical-history-latest-table {
   }
 }
 
-/* =========================================================
-   VIEW HEALTH INFORMATION BUTTON
-   ========================================================= */
 
 .patient-summary-button {
     display: inline-flex;
@@ -5315,7 +5532,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* WELCOME SECTION */
 .patient-welcome-simple {
     display: flex;
     align-items: center;
@@ -5545,9 +5761,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   QUICK INFORMATION GRID
-   ========================================================= */
 
 .patient-metric-grid {
     display: grid !important;
@@ -5562,9 +5775,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   QUICK INFORMATION CARD
-   ========================================================= */
 
 .patient-metric-card {
     display: flex !important;
@@ -5591,9 +5801,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   CARD HEADER
-   ========================================================= */
 
 .patient-metric-header {
     display: flex !important;
@@ -5610,9 +5817,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   CARD ICON
-   ========================================================= */
 
 .patient-metric-title-icon {
     display: flex !important;
@@ -5640,7 +5844,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* GREEN — APPOINTMENT */
 
 .patient-metric-title-icon.appointment {
     background: #e3f5ed !important;
@@ -5649,7 +5852,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* VITAL SIGNS */
 
 .patient-metric-title-icon.vitals {
     background: #e3f5ed !important;
@@ -5658,7 +5860,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* ASSESSMENT */
 
 .patient-metric-title-icon.assessment {
     background: #e3f5ed !important;
@@ -5667,16 +5868,12 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* ALLERGIES */
 
 .patient-metric-title-icon.allergies {
     background: #e3f5ed !important;
 
     color: #08755f!important;
 }
-/* =========================================================
-   CARD TITLE
-   ========================================================= */
 
 .patient-metric-header h3 {
     display: block !important;
@@ -5700,9 +5897,6 @@ table.patient-medical-history-latest-table {
     line-height: 1.3 !important;
 }
 
-/* =========================================================
-   EMPTY CARD AREA
-   ========================================================= */
 
 .patient-metric-space {
     flex: 1;
@@ -5711,9 +5905,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   VIEW DETAILS BUTTON
-   ========================================================= */
 
 .patient-view-button {
     display: flex !important;
@@ -5765,9 +5956,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   YOUR HEALTH INFORMATION
-   ========================================================= */
 
 .patient-health-summary {
     display: block !important;
@@ -5857,9 +6045,6 @@ table.patient-medical-history-latest-table {
     line-height: 1.7;
     color: #66736D;
 }
-/* =========================================================
-   EMERGENCY CONTACT
-   ========================================================= */
 
 .patient-panel {
     padding: 17px 20px 19px !important;
@@ -5920,9 +6105,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   EMERGENCY CONTACT GRID
-   ========================================================= */
 
 .patient-emergency-grid {
     display: grid !important;
@@ -6007,9 +6189,6 @@ table.patient-medical-history-latest-table {
     line-height: 1.3 !important;
 }
 
-/* =========================================================
-   HEALTH TIPS
-   ========================================================= */
 
 .patient-tip-grid {
     display: grid !important;
@@ -6057,7 +6236,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* WATER */
 
 .patient-tip-item.water {
     background: #e8f2ff !important;
@@ -6070,7 +6248,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* FOOD */
 
 .patient-tip-item.food {
     background: #fff0f2 !important;
@@ -6083,7 +6260,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* ACTIVITY */
 
 .patient-tip-item.activity {
     background: #e8f7ef !important;
@@ -6096,7 +6272,6 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* SLEEP */
 
 .patient-tip-item.sleep {
     background: #f0edff !important;
@@ -6125,10 +6300,8 @@ table.patient-medical-history-latest-table {
 }
 
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
 
+/* Tablet dashboard cards use two columns; mobile rules below stack them. */
 @media (max-width: 980px) {
 
     .patient-metric-grid,
@@ -6139,6 +6312,7 @@ table.patient-medical-history-latest-table {
 
 }
 
+/* Mobile dashboard cards and summary content stack into one column. */
 @media (max-width: 640px) {
 
     .patient-dashboard-header {
@@ -6217,24 +6391,51 @@ table.patient-medical-history-latest-table {
     }
 }
 
-/* Patient dashboard only */
 .patient-dashboard-shell {
     --dashboard-white: #FFFFFF;
-    --dashboard-pale: #F0FBF7;
-    --dashboard-mint: #DDF7EF;
-    --dashboard-green: #086B4D;
-    --dashboard-deep: #086B4D;
+    --dashboard-pale: #D8F4E8;
+    --dashboard-mint: #CCE9DD;
+    --dashboard-green: #07815F;
+    --dashboard-deep: #064E43;
 
     gap: 0.9rem;
+    font-family: "Inter", sans-serif;
 }
 
 body:has(.patient-dashboard-shell) {
-    background: #F0FBF7;
+    --patient-page-max-width: 1400px;
+    --patient-page-gutter: clamp(24px, 3vw, 40px);
+    background: linear-gradient(135deg, #f0faf5 0%, #ffffff 50%, #e6f7ef 100%);
+    background-attachment: fixed;
+}
+
+body:has(.patient-dashboard-shell) .ht-content {
+    width: 100%;
+    max-width: var(--patient-page-max-width);
+    box-sizing: border-box;
+    padding: 1.5rem var(--patient-page-gutter);
 }
 
 body:has(.patient-dashboard-shell) .ht-topbar {
-    background: #FFFFFF;
-    border-bottom: 1px solid #DDF7EF;
+    padding-right: 0;
+    padding-left: 0;
+    background: linear-gradient(110deg, #ffffff 0%, #effaf5 55%, #dff5eb 100%);
+    border-bottom: 1px solid #cce9dd;
+    font-family: "Inter", sans-serif !important;
+}
+
+body:has(.patient-dashboard-shell) .ht-topbar-inner {
+    width: 100%;
+    max-width: var(--patient-page-max-width);
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding-right: var(--patient-page-gutter);
+    padding-left: var(--patient-page-gutter);
+}
+
+.patient-dashboard-shell *,
+body:has(.patient-dashboard-shell) .ht-topbar * {
+    font-family: "Inter", sans-serif !important;
 }
 
 body:has(.patient-dashboard-shell) .ht-brand,
@@ -6242,23 +6443,23 @@ body:has(.patient-dashboard-shell) .ht-user-name,
 body:has(.patient-dashboard-shell) .ht-user-role,
 body:has(.patient-dashboard-shell) .ht-nav button,
 body:has(.patient-dashboard-shell) .ht-header-logout {
-    color: #086B4D;
+    color: #064E43;
 }
 
 body:has(.patient-dashboard-shell) .ht-brand-mark {
-    background: #086B4D;
+    background: #009B77;
     color: #FFFFFF;
 }
 
 body:has(.patient-dashboard-shell) .ht-nav button:hover,
 body:has(.patient-dashboard-shell) .ht-nav button[aria-current="page"] {
-    background: #F0FBF7;
-    color: #086B4D;
+    background: #D8F4E8;
+    color: #064E43;
 }
 
 body:has(.patient-dashboard-shell) .ht-header-logout {
-    background: #DDF7EF;
-    border-color: #DDF7EF;
+    background: #D8F4E8;
+    border-color: #CCE9DD;
 }
 
 .patient-dashboard-shell .patient-welcome-simple {
@@ -6268,9 +6469,9 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     gap: 1.1rem;
     min-height: 150px;
     padding: 1.1rem 1.4rem;
-    border: 1px solid var(--dashboard-mint);
+    border: 1px solid #cce9dd;
     border-radius: 14px;
-    background: var(--dashboard-mint);
+    background: linear-gradient(110deg, #c8f1df 0%, #eafaf2 50%, #a9e8d2 100%);
 }
 
 .patient-dashboard-shell .patient-welcome-simple::after {
@@ -6653,9 +6854,13 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 }
 
     .patient-dashboard-shell {
-        width: min(100%, 1200px);
+        width: 100%;
+        max-width: 1400px;
+        box-sizing: border-box;
+        margin: 0 auto;
         gap: 0.9rem;
-        color: #086B4D;
+        color: #315b55;
+        font-family: "Inter", sans-serif;
     }
 
     .patient-dashboard-shell .patient-welcome-simple {
@@ -6667,9 +6872,9 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         min-height: 146px;
         padding: 1.1rem 1.4rem;
         overflow: hidden;
-        border: 1px solid #DDF7EF;
+        border: 1px solid #cce9dd;
         border-radius: 12px;
-        background: #D5E8DF;
+        background: linear-gradient(110deg, #c8f1df 0%, #eafaf2 50%, #a9e8d2 100%);
     }
 
     .patient-dashboard-shell .patient-welcome-simple::before,
@@ -6705,8 +6910,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         height: 76px;
         border: 5px solid #FFFFFF;
         border-radius: 50%;
-        background: #F0FBF7;
-        color: #086B4D;
+        background: #d8f4e8;
+        color: #087f64;
     }
 
     .patient-dashboard-shell .patient-welcome-copy {
@@ -6765,10 +6970,15 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         min-width: 0;
         min-height: 148px !important;
         padding: 0.9rem !important;
-        border: 1px solid #DDF7EF !important;
+        border: 1px solid #cce9dd !important;
         border-radius: 10px !important;
-        background: #FFFFFF !important;
-        box-shadow: 0 3px 12px rgba(8, 107, 77, 0.06) !important;
+        background: linear-gradient(145deg, #ffffff 0%, #f0faf5 100%) !important;
+        box-shadow: 0 3px 12px rgba(8, 107, 77, 0.08) !important;
+        transition: background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .patient-dashboard-shell .patient-metric-card:hover {
+        box-shadow: 0 5px 16px rgba(8, 107, 77, 0.12) !important;
     }
 
     .patient-dashboard-shell .patient-metric-content {
@@ -6791,8 +7001,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         min-width: 50px !important;
         flex: 0 0 50px !important;
         border-radius: 50% !important;
-        background: #F0FBF7 !important;
-        color: #086B4D !important;
+        background: #d8f4e8 !important;
+        color: #087f64 !important;
     }
 
     .patient-dashboard-shell .patient-metric-title-icon svg {
@@ -6811,8 +7021,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 
     .patient-dashboard-shell .patient-metric-copy h3 {
         margin: 0 !important;
-        color: #086B4D !important;
-        font-size: 16px !important;
+        color: #064e43 !important;
+        font-size: 17px !important;
         font-family: "Inter", sans-serif !important;
         font-weight: 700 !important;
         line-height: 1.4 !important;
@@ -6826,8 +7036,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-metric-copy .patient-metric-description {
         margin: 0 !important;
         font-family: "Inter", sans-serif !important;
-        color: #66736d !important;
-        font-size: 15px !important;
+        color: #54716b !important;
+        font-size: 16px !important;
         font-weight: 400 !important;
         line-height: 1.5 !important;
         letter-spacing: 0 !important;
@@ -6841,16 +7051,16 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         width: 100%;
         min-height: 40px !important;
         margin-top: auto !important;
-        border: 1px solid #DDF7EF !important;
+        border: 1px solid #cce9dd !important;
         border-radius: 8px !important;
-        background: #DDF7EF !important;
-        color: #086B4D !important;
+        background: linear-gradient(135deg, #d5f5e7 0%, #b8ead7 100%) !important;
+        color: #064e43 !important;
         cursor: pointer !important;
         font-family: "Inter", sans-serif !important;
-        font-size: 14px !important;
+        font-size: 15px !important;
         font-weight: 600 !important;
         line-height: 1.4 !important;
-    
+        transition: background 180ms ease, box-shadow 180ms ease;
     }
     .patient-dashboard-shell .patient-view-button svg {
         width: 18px !important;
@@ -6859,8 +7069,9 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 
     .patient-dashboard-shell .patient-view-button:hover,
     .patient-dashboard-shell .patient-view-button:focus-visible {
-        background: #F0FBF7 !important;
-        outline-color: #086B4D;
+        background: linear-gradient(135deg, #b8ead7 0%, #a3dfc9 100%) !important;
+        outline-color: #07815f;
+        box-shadow: 0 2px 8px rgba(8, 107, 77, 0.1);
     }
 
     .patient-dashboard-shell .patient-health-summary {
@@ -6869,9 +7080,9 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         justify-content: space-between;
         gap: 1rem;
         padding: 1rem 1.2rem !important;
-        border: 1px solid #DDF7EF !important;
+        border: 1px solid #cce9dd !important;
         border-radius: 10px !important;
-        background: #FFFFFF !important;
+        background: linear-gradient(110deg, #ffffff 0%, #e9f8f0 100%) !important;
         box-shadow: 0 3px 12px rgba(8, 107, 77, 0.06) !important;
     }
 
@@ -6889,18 +7100,20 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         min-width: 58px !important;
         flex: 0 0 58px !important;
         border-radius: 50% !important;
-        background: #DDF7EF !important;
-        color: #086B4D !important;
+        background: #d8f4e8 !important;
+        color: #087f64 !important;
     }
 
-    .patient-dashboard-shell .patient-health-copy,
     .patient-dashboard-shell .patient-health-copy h2,
-    .patient-dashboard-shell .patient-health-copy p,
     .patient-dashboard-shell .patient-section-header h2,
+    .patient-dashboard-shell .patient-tips-heading h2 {
+        color: #064e43 !important;
+    }
+
+    .patient-dashboard-shell .patient-health-copy p,
     .patient-dashboard-shell .patient-section-header p,
-    .patient-dashboard-shell .patient-tips-heading h2,
     .patient-dashboard-shell .patient-tips-heading p {
-        color: #086B4D !important;
+        color: #54716b !important;
     }
 
     .patient-dashboard-shell .patient-health-copy {
@@ -6911,7 +7124,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-section-header h2,
     .patient-dashboard-shell .patient-tips-heading h2 {
         font-family: var(--font-sans) !important;
-        font-size: 1.2rem !important;
+        font-size: 1.3rem !important;
         font-weight: 800 !important;
         line-height: 1.3;
     }
@@ -6919,7 +7132,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-health-copy p,
     .patient-dashboard-shell .patient-section-header p,
     .patient-dashboard-shell .patient-tips-heading p {
-        font-size: 1.1rem !important;
+        font-size: 1.15rem !important;
         line-height: 1.48;
     }
 
@@ -6928,22 +7141,29 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         padding: 0.7rem 1.15rem;
         border: 0;
         border-radius: 8px;
-        background: #086B4D;
+        background: #07815f;
         color: #FFFFFF;
-        font-size: 0.82rem;
+        font-size: 0.9rem;
+        transition: background 180ms ease, box-shadow 180ms ease;
     }
 
     .patient-dashboard-shell .patient-summary-button:hover,
     .patient-dashboard-shell .patient-summary-button:focus-visible {
-        background: #086B4D;
+        background: #064e43;
+        box-shadow: 0 2px 8px rgba(8, 107, 77, 0.1);
     }
 
     .patient-dashboard-shell .patient-panel {
         padding: 1rem 1.2rem !important;
-        border: 1px solid #DDF7EF !important;
+        border: 1px solid #cce9dd !important;
         border-radius: 10px !important;
-        background: #FFFFFF !important;
-        box-shadow: 0 3px 12px rgba(8, 107, 77, 0.06) !important;
+        background: linear-gradient(135deg, #ffffff 0%, #f0faf5 100%) !important;
+        box-shadow: 0 3px 12px rgba(8, 107, 77, 0.08) !important;
+        transition: background 180ms ease, box-shadow 180ms ease;
+    }
+
+    .patient-dashboard-shell .patient-panel:not(.patient-health-tips):hover {
+        box-shadow: 0 5px 16px rgba(8, 107, 77, 0.11) !important;
     }
 
     .patient-dashboard-shell .patient-section-header,
@@ -6955,8 +7175,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-panel-icon-small {
         display: grid;
         place-items: center;
-        background: #F0FBF7 !important;
-        color: #086B4D !important;
+        background: #d8f4e8 !important;
+        color: #087f64 !important;
     }
 
     .patient-dashboard-shell .patient-contact-card {
@@ -6966,13 +7186,13 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         min-width: 0;
         min-height: 72px;
         padding: 0.4rem 0.65rem !important;
-        border: 0 !important;
-        border-radius: 0 !important;
-        background: #FFFFFF !important;
+        border: 1px solid #cce9dd !important;
+        border-radius: 10px !important;
+        background: linear-gradient(135deg, #ffffff 0%, #f0faf5 100%) !important;
     }
 
     .patient-dashboard-shell .patient-contact-card + .patient-contact-card {
-        border-left: 1px solid #DDF7EF !important;
+        border-left: 1px solid #cce9dd !important;
     }
 
     .patient-dashboard-shell .patient-contact-icon {
@@ -6985,8 +7205,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         margin-top: 0 !important;
         align-self: flex-start !important;
         border-radius: 50% !important;
-        background: #F0FBF7 !important;
-        color: #086B4D !important;
+        background: #d8f4e8 !important;
+        color: #087f64 !important;
     }
 
     .patient-dashboard-shell .patient-contact-body {
@@ -7006,23 +7226,24 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-contact-body h3,
     .patient-dashboard-shell .patient-contact-body p,
     .patient-dashboard-shell .patient-contact-body span {
-        color: #086B4D !important;
+        color: #315b55 !important;
         overflow-wrap: anywhere;
     }
 
     .patient-dashboard-shell .patient-contact-body h3 {
         margin: 0 !important;
+        color: #064e43 !important;
         font-weight: 700 !important;
         font-size: 14px !important;
         line-height: 1.4 !important;
     }
 
     .patient-dashboard-shell .patient-contact-body p,
-    .patient-dashboard-shell .patient-contact-body span
+    .patient-dashboard-shell .patient-contact-body span,
     .patient-dashboard-shell .patient-contact-body small {
         margin: 0 !important;
         min-height: 2.8em !important;
-        font-size: 13px !important;
+        font-size: 14px !important;
         line-height: 1.4 !important;
         display: block !important;
     }
@@ -7031,6 +7252,11 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-health-tips {
         display: grid;
         gap: 0;
+        background: linear-gradient(110deg, #f5fcf8 0%, #e3f7ed 100%) !important;
+    }
+
+    .patient-dashboard-shell .patient-health-tips:hover {
+        box-shadow: 0 5px 16px rgba(8, 107, 77, 0.1) !important;
     }
 
     .patient-dashboard-shell .patient-tip-item,
@@ -7046,11 +7272,16 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         min-width: 0;
         min-height: 70px;
         padding: 0.6rem 0.75rem !important;
-        border: 1px solid #DDF7EF !important;
+        border: 1px solid #cce9dd !important;
         border-radius: 9px !important;
-        background: #FFFFFF !important;
-        color: #086B4D !important;
+        background: linear-gradient(135deg, #e5f8ef 0%, #d1f1e3 100%) !important;
+        color: #315b55 !important;
+        transition: background 180ms ease, box-shadow 180ms ease;
         text-align: left;
+    }
+
+    .patient-dashboard-shell .patient-tip-item:hover {
+        box-shadow: 0 3px 10px rgba(8, 107, 77, 0.09);
     }
 
     .patient-dashboard-shell .patient-tip-icon {
@@ -7060,13 +7291,13 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         height: 42px !important;
         min-width: 42px !important;
         border-radius: 50% !important;
-        background: #F0FBF7 !important;
-        color: #086B4D !important;
+        background: #d8f4e8 !important;
+        color: #087f64 !important;
     }
 
     .patient-dashboard-shell .patient-tip-item span {
-        color: #086B4D !important;
-        font-size: 15px !important;
+        color: #315b55 !important;
+        font-size: 16px !important;
         line-height: 1.3 !important;
     }
 
@@ -7082,7 +7313,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         }
 
         .patient-dashboard-shell .patient-contact-card:nth-child(even) {
-            border-left: 1px solid #DDF7EF !important;
+            border-left: 1px solid #cce9dd !important;
         }
     }
 
@@ -7144,13 +7375,12 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         .patient-dashboard-shell .patient-contact-card,
         .patient-dashboard-shell .patient-contact-card:nth-child(even) {
             border-left: 0 !important;
-            border-bottom: 1px solid #DDF7EF !important;
+            border-bottom: 1px solid #cce9dd !important;
         }
 
         .patient-dashboard-shell .patient-contact-card:last-child {
             border-bottom: 0 !important;
         }
-/* Latest Health Assessment - horizontal table */
 .patient-assessment-horizontal-wrap {
   width: 100%;
   overflow-x: auto;
@@ -7191,7 +7421,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
-/* Latest Vital Signs - horizontal table */
 .patient-vital-horizontal-wrap {
   width: 100%;
   overflow-x: auto;
@@ -7242,7 +7471,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
   font-weight: 400;
 }
 
-/* Latest Midwife Notes - horizontal table */
 .patient-midwife-horizontal-wrap {
   width: 100%;
   overflow-x: auto;
@@ -7284,7 +7512,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
-/* Sidebar Vital Signs - horizontal table layout */
 .patient-vitals-horizontal-wrap {
   width: 100%;
   overflow-x: auto;
@@ -7337,6 +7564,11 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 }
 
     }
+
+/* =========================================================
+REPORTS, CHARTS, AND EXPORTS
+Dashboard charts, report records, export dialogs, and print output.
+========================================================= */
 .ht-export-dialog { width: min(600px, 94vw); max-height: 85vh; overflow: auto; margin: auto; border: 1px solid #cbd8d1; border-radius: 14px; padding: 26px; color: #243c32; background: white; }
 .ht-export-dialog::backdrop { background: #10251db0; }
 .ht-export-dialog h2 { font-size: 1.3rem; font-weight: 750; margin-bottom: 12px; }
@@ -7356,6 +7588,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-encounter-section { border: 1px solid #dce8e1; border-radius: 10px; margin-top: 14px; padding: 14px; background: white; }
 .ht-encounter-section > summary { cursor: pointer; font-weight: 750; color: #235c43; }
 @media(max-width:700px) { .ht-activity-layout { grid-template-columns: 1fr; } .ht-dashboard-screen .ht-metric-grid { grid-template-columns:1fr; } }
+/* Print-only document presentation for downloaded/exported reports. */
 @media print {
  body.ht-exporting > :not(.ht-export-document) { display: none !important; }
  body.ht-exporting > .ht-export-document { display:block!important; color: #111; font: 11px Arial,sans-serif; }
@@ -7373,7 +7606,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-appointment-scroll .ht-table th { height: 46px; }
 .ht-appointment-scroll { max-height: 262px; }
 
-/* Keep dashboard sections on the same spacing rhythm as the card grids. */
 .ht-dashboard-screen { display: grid; gap: 1rem; }
 .ht-dashboard-screen .ht-page-header { margin-bottom: 0; }
 .ht-dashboard-screen .ht-metric-grid { gap: 1rem; }
@@ -7383,7 +7615,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-dashboard-events-grid .ht-table-scroll { max-height: 350px; overflow: auto; }
 @media (max-width: 1000px) { .ht-dashboard-events-grid { grid-template-columns: minmax(0, 1fr); } }
 
-/* Shared controls used by registry rows, appointment forms, and export dialogs. */
 .ht-small-button {
           display: inline-flex;
           align-items: center;
@@ -7425,6 +7656,16 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
           display: flex;
           gap: 8px;
         }
+.ht-healthworker-patients-panel td:last-child {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.ht-healthworker-patients-panel td:last-child .ht-export-pdf-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 .ht-small-button:hover, .ht-secondary-button:hover { background: #edf6f1; border-color: #6f9b83; }
 .ht-primary-button:hover { background: #295a42; }
 .ht-small-button:focus-visible, .ht-primary-button:focus-visible, .ht-secondary-button:focus-visible { outline: 3px solid #82b69a; outline-offset: 2px; }
@@ -7437,7 +7678,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-legacy-record dt { font-size: .75rem; color: #56645d; font-weight: 700; margin-bottom: 4px; }
 .ht-legacy-record dd { margin: 0; font-size: .875rem; color: #28352f; white-space: pre-wrap; overflow-wrap: anywhere; }
 
-/* Consistent actions, including before a patient record has been opened. */
 .ht-patient-row-actions { display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; }
 .ht-patient-row-actions > button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 112px; min-width: 112px; height: 36px; min-height: 36px; margin: 0; padding: 0 12px; border-radius: 8px; font: inherit; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; }
 .ht-patient-panel th:last-child, .ht-patient-actions-cell { text-align: left !important; }
@@ -7448,7 +7688,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-export-dialog .ht-export-limit { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 12px; text-align: left; }
 .ht-export-dialog .ht-export-limit input { margin: 0; }
 
-/* Give the selected visit and its recording state a clear visual hierarchy. */
 .ht-appointment-record { margin-top: 16px; padding: 22px; border: 1px solid #b6d2c2; border-left: 5px solid #5a8c71; border-radius: 12px; background: linear-gradient(120deg, #eaf5ef, #fff 80%); box-shadow: 0 3px 12px #163c2810; }
 .ht-appointment-record.is-recording { border-color: #16815a; border-left-width: 6px; background: linear-gradient(120deg, #dff5e9, #f5fcf8); box-shadow: 0 0 0 3px #16815a15; }
 .ht-appointment-record-topline { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
@@ -7469,7 +7708,6 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-appointment-row-recording > td:first-child { box-shadow: inset 4px 0 #14734c; }
 .ht-activate-button-active:disabled { opacity: 1; border-color: #14734c; color: #146441; background: #e3f6eb; gap: 6px; cursor: default; }
 
-/* Clinical data belongs directly to each collapsible section. */
 .ht-clinical-sections .ht-encounter-section { margin-top: 12px; padding: 0; overflow: hidden; }
 .ht-clinical-sections .ht-encounter-section > summary { padding: 16px 18px; background: #f5f9f6; }
 .ht-clinical-sections .ht-encounter-section[open] > summary { border-bottom: 1px solid #dce8e1; }
@@ -7521,8 +7759,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 .ht-export-pdf-button:focus-visible { outline: 3px solid #d8a3a0; outline-offset: 2px; }
 .ht-export-pdf-button:disabled { opacity: .55; cursor: not-allowed; }
 
-/* The print portal lives under body, so its design must not rely on app-shell
-   ancestors. Only top-level report topics start new pages; their tables flow. */
+/* Print styles preserve report colors and split large export sections across pages. */
 @media print {
  @page { size: A4; margin: 14mm; }
  .ht-export-document, .ht-export-document * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }

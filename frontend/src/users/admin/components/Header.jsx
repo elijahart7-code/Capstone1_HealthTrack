@@ -2,7 +2,6 @@ import { useNavigate } from "react-router";
 import { LogOut } from "lucide-react";
 import { clearSession, getCurrentUser, roleLabel } from "../../../lib/auth";
 
-/** User name/role + logout, the right-hand side of the topbar (.ht-user-wrap). */
 export function Header() {
   const navigate = useNavigate();
   const user = getCurrentUser();

@@ -34,11 +34,6 @@ import {
 } from "lucide-react";
 import { Combobox, Field, Input, MultiCombobox, Select, Textarea } from "../../components/ui/Input";
 
-/**
- * Table + form for one clinical record type. It is driven entirely by the
- * shared `RECORD_TYPES` config and renders generic fields without any
- * per-record-type branching.
- */
 
 export function ClinicalRecords({ patientId, type, role, readOnly = false, appointmentId, appointmentDate, appendOnly = false, embedded = false, draftMode = false, draft = {}, onDraftChange, disabled = false }) {
   const definition = RECORD_TYPES[type];
@@ -368,7 +363,6 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
 
   return (
     <div className={`ht-health-assessment${embedded ? " ht-clinical-content" : ""}`}>
-      {/* HEADER */}
       {!draftMode && (canManage || !embedded) && <div className="ht-health-assessment-header">
         {!embedded && <div>
           <h2>{definition.label}</h2>
@@ -397,7 +391,6 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
         </div>
       </div>}
 
-      {/* ADD FORM */}
       {showForm && canManage && (
         <div className="ht-health-form">
           {!draftMode && <div className="ht-health-form-title">
@@ -532,7 +525,6 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
         </div>
       )}
 
-      {/* CONTENT */}
       {draftMode ? null : loadError ? <div role="alert">{loadError}<button className="ht-small-button" onClick={load}>Retry</button></div> : loading ? (
         <div className="ht-health-empty">
           <p>Loading clinical records…</p>
@@ -879,7 +871,6 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
   </>
 )}
 
-      {/* DESIGN CSS */}
 
       <style>{`
       .ht-vital-record-card {

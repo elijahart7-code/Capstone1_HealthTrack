@@ -2,10 +2,6 @@ import jwt from "jsonwebtoken";
 import { sql } from "../config/db.js";
 import { ENV } from "../config/env.js";
 
-/**
- * Bearer JWT -> looks up the user row -> sets req.user. Every protected
- * route in this app goes through this single middleware.
- */
 export async function authMiddleware(req, res, next) {
   try {
     const header = req.headers.authorization;
@@ -32,10 +28,6 @@ export async function authMiddleware(req, res, next) {
   }
 }
 
-/**
- * Coarse access check for section-level visibility. Whether a user may touch
- * a specific record is then decided in policies/policies.js.
- */
 export function requireRole(...roles) {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {

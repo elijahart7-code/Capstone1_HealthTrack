@@ -31,8 +31,6 @@ function createLocalSql(connectionString) {
 function createNeonSql(connectionString) {
   const neonSql = neon(connectionString);
 
-  // Keep the tagged-template API and the positional-query API identical
-  // across local PostgreSQL and Neon deployments.
   const sql = (strings, ...values) => neonSql(strings, ...values);
   sql.query = (text, values = []) => neonSql.query(text, values);
 
@@ -44,20 +42,6 @@ export const sql = ["localhost", "127.0.0.1", "::1"].includes(databaseUrl.hostna
   ? createLocalSql(DATABASE_URL)
   : createNeonSql(DATABASE_URL);
 
-// =======================================================================
-// TABLE DEFINITIONS
-//
-// This is the single source of truth for the schema. Every table lists both
-// a `createSQL` string (for a brand-new database) and a `columns` map (so
-// syncSchema() can diff an existing database against it). These tables cover
-// patients, appointments, users, and the five clinical-record tables
-// (health_assessments, vital_signs, midwife_notes, medical_histories,
-// allergies) with matching relationships and fields.
-//
-// All tables use a SERIAL `id` primary key plus a separate human-readable
-// string id (see utils/generateId.js). Foreign keys reference the string
-// id columns, not the serial id.
-// =======================================================================
 
 const TABLES = [
   {
@@ -79,10 +63,6 @@ const TABLES = [
     },
   },
   {
-    // A login account. role is one of "admin", "health_worker",
-    // "patient" -- enforced in application code (controllers/auth), not a
-    // DB CHECK constraint, so that syncSchema() never has to reconcile a
-    // changed constraint.
     table: "users",
     createSQL: `CREATE TABLE IF NOT EXISTS users (
       id           SERIAL PRIMARY KEY,
@@ -107,9 +87,6 @@ const TABLES = [
   },
 
   {
-    // The person registered at the health centre. user_id is the optional
-    // portal login -- nullable, because a health worker can register a
-    // walk-in patient who has no account yet; an admin grants one later.
     table: "patients",
     createSQL: `CREATE TABLE IF NOT EXISTS patients (
       id                        SERIAL PRIMARY KEY,
@@ -166,7 +143,6 @@ const TABLES = [
   },
 
   {
-    // Created from a patient's record screen by an admin.
     table: "appointments",
     createSQL: `CREATE TABLE IF NOT EXISTS appointments (
       id             SERIAL PRIMARY KEY,
@@ -194,12 +170,6 @@ const TABLES = [
     },
   },
 
-  // ---------------------------------------------------------------------
-  // The five clinical-record tables. Same skeleton (patient, author, one
-  // date), differing only in their content columns -- which fields exist
-  // per type is also mirrored in config/recordTypes.js, so a new record
-  // type means editing both that file and this one.
-  // ---------------------------------------------------------------------
 
   {
     table: "health_assessments",
@@ -376,21 +346,13 @@ const TABLES = [
   },
 ];
 
-// -----------------------------------------------------------------------
-// CONNECT TO DATABASE
-//
-// Creates tables that don't exist. Does NOT modify existing tables.
-// Use syncSchema() when you want the database to exactly match TABLES.
-// -----------------------------------------------------------------------
 export async function connectNeon() {
   try {
     for (const { createSQL } of TABLES) {
       await sql.query(createSQL);
     }
-    // Pending is retired: scheduled appointments now start as confirmed.
     await sql`ALTER TABLE appointments ALTER COLUMN status SET DEFAULT 'confirmed'`;
     await sql`UPDATE appointments SET status = 'confirmed', updated_at = NOW() WHERE status = 'pending'`;
-    // Additive migration: preserve earlier records with a NULL appointment link.
     for (const table of ["health_assessments", "vital_signs", "midwife_notes", "medical_histories", "allergies"]) {
       await sql.query(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS appointment_id VARCHAR(255) REFERENCES appointments(appointment_id)`);
       await sql.query(`CREATE INDEX IF NOT EXISTS ${table}_appointment_idx ON ${table} (patient_id, appointment_id)`);
@@ -619,7 +581,6 @@ export async function connectNeon() {
       END $$;
     `;
 
-    // Preserve existing accounts after the old staff role was renamed to admin.
     await sql`UPDATE users SET role = 'admin' WHERE role = 'midwife'`;
 
     const optionSeeds = {
@@ -674,32 +635,10 @@ export async function connectNeon() {
   }
 }
 
-// -----------------------------------------------------------------------
-// SYNC DATABASE SCHEMA
-//
-// TABLES is the source of truth.
-//
-// This function will:
-//
-//   1. Create missing tables
-//   2. Drop tables that are not defined in TABLES
-//   3. Add missing columns
-//   4. Drop extra columns
-//
-// IMPORTANT:
-// - Existing data is preserved whenever possible.
-// - Tables are NOT dropped/recreated just because a column changed.
-// - If nothing changed, no ALTER TABLE is executed.
-// - Adding a NOT NULL column to a table with existing rows requires
-//   either a DEFAULT or existing rows must be populated first.
-// -----------------------------------------------------------------------
 export async function syncSchema(onlyTables) {
   try {
     console.log("[schema-sync] starting...");
 
-    // ---------------------------------------------------------------
-    // Determine which tables we are synchronizing
-    // ---------------------------------------------------------------
 
     const configuredTables = onlyTables
       ? TABLES.filter((table) => onlyTables.includes(table.table))
@@ -707,9 +646,6 @@ export async function syncSchema(onlyTables) {
 
     const configuredTableNames = configuredTables.map((table) => table.table);
 
-    // ---------------------------------------------------------------
-    // 1. GET EXISTING TABLES
-    // ---------------------------------------------------------------
 
     const existingTableRows = await sql`
       SELECT table_name
@@ -720,12 +656,6 @@ export async function syncSchema(onlyTables) {
 
     const existingTableNames = existingTableRows.map((row) => row.table_name);
 
-    // ---------------------------------------------------------------
-    // 2. DROP EXTRA TABLES
-    //
-    // Example: TABLES contains users, patients. Database contains
-    // users, patients, consultations. consultations will be dropped.
-    // ---------------------------------------------------------------
 
     const tablesToDrop = existingTableNames.filter(
       (tableName) => !configuredTableNames.includes(tableName)
@@ -736,14 +666,10 @@ export async function syncSchema(onlyTables) {
       await sql.query(`DROP TABLE IF EXISTS "${tableName}" CASCADE`);
     }
 
-    // ---------------------------------------------------------------
-    // 3. PROCESS EACH CONFIGURED TABLE
-    // ---------------------------------------------------------------
 
     for (const tableDefinition of configuredTables) {
       const { table: tableName, createSQL, columns: desiredColumns } = tableDefinition;
 
-      // TABLE DOES NOT EXIST
       if (!existingTableNames.includes(tableName)) {
         console.log(`[schema-sync] ${tableName}: table does not exist, creating...`);
         await sql.query(createSQL);
@@ -751,7 +677,6 @@ export async function syncSchema(onlyTables) {
         continue;
       }
 
-      // TABLE EXISTS -- get current columns
       const existingColumnRows = await sql`
         SELECT column_name
         FROM information_schema.columns
@@ -771,7 +696,6 @@ export async function syncSchema(onlyTables) {
         continue;
       }
 
-      // ADD MISSING COLUMNS
       for (const columnName of columnsToAdd) {
         const definition = desiredColumns[columnName];
 
@@ -780,14 +704,11 @@ export async function syncSchema(onlyTables) {
         const isNotNull = /\bNOT\s+NULL\b/i.test(definition);
         const hasDefault = /\bDEFAULT\b/i.test(definition);
 
-        // CASE 1: NOT NULL + DEFAULT -- safe, Postgres backfills existing rows.
         if (isNotNull && hasDefault) {
           await sql.query(`ALTER TABLE "${tableName}" ADD COLUMN "${columnName}" ${definition}`);
           continue;
         }
 
-        // CASE 2: NOT NULL without DEFAULT -- add nullable first, then
-        // tighten to NOT NULL only if no existing row would violate it.
         if (isNotNull && !hasDefault) {
           const nullableDefinition = definition.replace(/\s+NOT\s+NULL\b/gi, "");
 
@@ -811,11 +732,9 @@ export async function syncSchema(onlyTables) {
           continue;
         }
 
-        // CASE 3: nullable column -- safe to add directly.
         await sql.query(`ALTER TABLE "${tableName}" ADD COLUMN "${columnName}" ${definition}`);
       }
 
-      // DROP EXTRA COLUMNS
       for (const columnName of columnsToDrop) {
         console.log(`[schema-sync] ${tableName}: dropping extra column "${columnName}"`);
         await sql.query(`ALTER TABLE "${tableName}" DROP COLUMN "${columnName}" CASCADE`);
@@ -831,18 +750,3 @@ export async function syncSchema(onlyTables) {
   }
 }
 
-// To change columns, do this:
-//
-// 1. Edit two spots for the table you're changing, inside the `TABLES` array:
-//    - The `createSQL` string (so a brand-new DB gets it right from scratch)
-//    - The `columns` object (so `syncSchema()` knows what to add/drop on an existing DB)
-//
-//    Example -- adding a `notes` column to `patients`:
-//      createSQL: `CREATE TABLE IF NOT EXISTS patients ( ... notes TEXT, ... )`,
-//      columns:   { ... notes: "TEXT", ... },
-//
-//    To remove a column, just delete it from both places.
-//
-// 2. Run `syncSchema()` to apply it to the actual Neon DB:
-//      npm run sync-schema
-//    or `await syncSchema(["patients"])` to only touch that one table.

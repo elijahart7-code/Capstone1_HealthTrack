@@ -23,7 +23,6 @@ export function ReportMetrics({ data }) {
     </div>;
 }
 
-/** The dashboard and PDF intentionally share the same definitions and data. */
 export function ReportInsights({ data, heading = 'Period summary', includeMetrics = true }) {
   const s = data?.summary;
   if (!s) return <p className="ht-muted">Summary information is unavailable for this period.</p>;

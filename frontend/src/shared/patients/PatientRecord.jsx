@@ -175,7 +175,6 @@ export function PatientRecord({
     <div className="ht-patient-page">
 
 
-      {/* ================= PATIENT HEADER ================= */}
       <section className="ht-patient-header">
 
         <div className="ht-patient-profile">
@@ -226,10 +225,8 @@ export function PatientRecord({
         </div>
       </section>
       {deleteError && <div className="ht-login-alert ht-login-alert-error">{deleteError}</div>}
-      {/* ================= MAIN CONTENT ================= */}
       <div className="ht-patient-content">
 
-        {/* SIDEBAR */}
         <aside className="ht-patient-sidebar">
 
           {sidebarItems.map((item) => {
@@ -263,12 +260,10 @@ export function PatientRecord({
         </aside>
 
 
-        {/* ================= RIGHT CONTENT ================= */}
         <main className="ht-patient-main">
 
           {section === "appointments" && <AppointmentWorkspace patientId={patientId} appointments={appointments} role={role} onSaved={async () => { const {data} = await api.get(`/patients/${patientId}/appointments`); setAppointments(data.appointments || []); onPatientUpdated?.(); }} />}
 
-          {/* GENERAL / PATIENT INFORMATION */}
           {section === "general" && (
             <div className="grid gap-4">
 
@@ -312,7 +307,6 @@ export function PatientRecord({
 
                 <dl className="ht-detail-grid">
 
-                      {/* ROW 1 */}
             <Detail
                 icon={<UserRound size={20} />}
                 label="Full Name"
@@ -333,7 +327,6 @@ export function PatientRecord({
                 label="Address"
                 value={patient.address}
             />
-                    {/* ROW 2 */}
             <Detail
                 icon={<Calendar size={20} />}
                 label="Date of Birth"
@@ -360,7 +353,6 @@ export function PatientRecord({
                 label="Contact Number"
                 value={patient.contact_number}
             />
-                {/* ROW 3 */}
             <Detail
                 icon={<Heart size={20} />}
                 label="Civil Status"
@@ -376,7 +368,6 @@ export function PatientRecord({
                 label="Occupation"
                 value={patient.occupation}
             />
-                {/* ROW 4 */}
             <Detail
                 icon={<IdCard size={20} />}
                 label="Barangay ID Number"
@@ -392,7 +383,6 @@ export function PatientRecord({
                 label="Place of Birth"
                 value={`${patient.place_of_birth || "--"}${patient.place_of_birth_data?.verified === false ? " (unverified location)" : ""}`}
             />
-                {/* ROW 5 - EMERGENCY INFORMATION */}
             <div className="ht-emergency-row">
             <Detail
                 icon={<UserRound size={20} />}
@@ -412,7 +402,6 @@ export function PatientRecord({
             </div>
           </dl>
         </div>
-                {/* PORTAL ACCOUNT */}
            <div className="ht-content-card ht-portal-card">
              <div className="ht-card-heading">
                 <h2>Patient Portal Account</h2>
@@ -431,14 +420,12 @@ export function PatientRecord({
        </div>
                {patient.user_id ? (
           <div className="ht-portal-info">
-                {/* Account Icon */}
           <div className="ht-portal-avatar">
           <UserRound size={46} strokeWidth={1.8} />
           <span className="ht-portal-check">
            ✓
           </span>
           </div>
-              {/* Account Details */}
           <div className="ht-portal-details">
           <div className="ht-portal-detail">
           <span>Account Status:</span>
@@ -541,7 +528,6 @@ export function PatientRecord({
       </div>
 
 
-      {/* ================= DESIGN ================= */}
       <style>{`
 
         * {
@@ -557,7 +543,6 @@ export function PatientRecord({
           padding-bottom: 40px;
         }
 
-        /* PATIENT HEADER */
 
         .ht-patient-header {
           margin: 24px 42px 16px;
@@ -603,7 +588,6 @@ export function PatientRecord({
           font-size: 12px;
         }
 
-          /* Patient header actions */
 .ht-patient-actions {
   display: flex;
   align-items: center;
@@ -624,7 +608,6 @@ export function PatientRecord({
   letter-spacing: 0.02em;
 }
 
-/* Edit Information button */
 .ht-edit-button {
   display: inline-flex;
   align-items: center;
@@ -653,7 +636,6 @@ export function PatientRecord({
   border-color: #315f4b;
 }
 
-/* Back button */
 .ht-back-button {
   display: inline-flex;
   align-items: center;
@@ -682,7 +664,6 @@ export function PatientRecord({
 }
 
 
-        /* MAIN */
 
         .ht-patient-content {
           display: grid;
@@ -692,7 +673,6 @@ export function PatientRecord({
           align-items: start;
         }
 
-        /* SIDEBAR */
 
         .ht-patient-sidebar {
           background: #ffffff;
@@ -745,7 +725,6 @@ export function PatientRecord({
           color: #226b50;
         }
 
-        /* MAIN CARD */
 
         .ht-patient-main {
           min-width: 0;
@@ -860,7 +839,6 @@ export function PatientRecord({
           white-space: pre-wrap;
           overflow-wrap: anywhere;
         }
-        /* ================= PORTAL ACCOUNT ================= */
 
         .ht-portal-card {
           width: 100%;
@@ -886,7 +864,6 @@ export function PatientRecord({
           gap: 18px;
           min-height: 150px;
         }
-         /* Large account icon */
         .ht-portal-avatar {
           position: relative;
           width: 96px;
@@ -900,7 +877,6 @@ export function PatientRecord({
           align-items: center;
           justify-content: center;
         }
-         /* Green check */
         .ht-portal-check {
           position: absolute;
           right: 2px;
@@ -917,7 +893,6 @@ export function PatientRecord({
           font-weight: 800;
           border: 3px solid #FFFFFF;
         }
-         /* Details */
         .ht-portal-details {
           display: grid;
           grid-template-columns: minmax(0, 1fr);
@@ -942,7 +917,6 @@ export function PatientRecord({
           font-weight: 600;
           overflow-wrap: anywhere;
         }
-            /* Active badge */
         .ht-account-status {
           display: inline-flex;
           align-items: center;
@@ -1018,7 +992,6 @@ export function PatientRecord({
           border-top: 1px solid #dfeae4;
           padding-top: 24px;
         }
-        /* BUTTONS */
 
         .ht-delete-patient-button {
   display: inline-flex;
@@ -1050,7 +1023,6 @@ export function PatientRecord({
   border-color: #d9993a;
 }
 
-        /* FORMS */
 
         .ht-form-box {
           display: grid;

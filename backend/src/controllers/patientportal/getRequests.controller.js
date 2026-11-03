@@ -12,12 +12,9 @@ async function findMyPatient(userId) {
   return rows[0] ?? null;
 }
 
-/** GET /api/patient/dashboard. */
 export async function getDashboard(req, res) {
   const patient = await findMyPatient(req.user.user_id);
 
-  // A patient account should always have a matching patient record; if the
-  // link is missing, return an empty-state payload rather than a 500.
   if (!patient) return res.status(200).json({ message: "No linked patient record.", patient: null });
 
   const upcomingAppointments = await sql`
@@ -44,11 +41,6 @@ export async function getDashboard(req, res) {
   });
 }
 
-/**
- * GET /api/patient/health-information
- * Read-only view of every clinical record type plus the full appointment
- * history for the linked patient.
- */
 export async function getHealthInformation(req, res) {
   const patient = await findMyPatient(req.user.user_id);
   if (!patient) return res.status(200).json({ message: "No linked patient record.", patient: null });

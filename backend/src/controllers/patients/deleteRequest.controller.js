@@ -2,7 +2,6 @@ import { sql } from "../../config/db.js";
 import { AppointmentPolicy, ClinicalRecordPolicy, PatientPolicy } from "../../policies/policies.js";
 import { isRecordType, RECORD_TYPES } from "../../config/recordTypes.js";
 
-/** DELETE /api/appointments/:appointmentId -- Record::deleteAppointment(). */
 export async function deleteAppointment(req, res) {
   if (!AppointmentPolicy.delete(req.user)) {
     return res.status(403).json({ error: "Only an admin may remove an appointment." });
@@ -14,7 +13,6 @@ export async function deleteAppointment(req, res) {
   return res.status(200).json({ message: "Appointment removed." });
 }
 
-/** DELETE /api/patients/:patientId/records/:type/:recordId -- ClinicalRecords::delete(). */
 export async function deleteClinicalRecord(req, res) {
   const { type, recordId, patientId } = req.params;
   if (!isRecordType(type)) return res.status(404).json({ error: "Unknown record type." });
@@ -33,7 +31,6 @@ export async function deleteClinicalRecord(req, res) {
   return res.status(200).json({ message: `${definition.singular} removed.` });
 }
 
-/** POST /api/patients/:patientId/archive -- archives without deleting history. */
 export async function archivePatient(req, res) {
   if (!PatientPolicy.delete(req.user)) {
     return res.status(403).json({ error: "Only an admin may remove a patient." });
@@ -57,7 +54,6 @@ export async function archivePatient(req, res) {
   return res.status(200).json({ message: "Patient archived.", patient: rows[0] });
 }
 
-/** POST /api/patients/:patientId/restore -- makes an archived patient active again. */
 export async function restorePatient(req, res) {
   if (!PatientPolicy.delete(req.user)) {
     return res.status(403).json({ error: "Only an admin may restore a patient." });

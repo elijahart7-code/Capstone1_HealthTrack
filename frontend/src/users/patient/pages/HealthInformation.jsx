@@ -34,6 +34,7 @@ import {
   MapPin,
   Phone,
   PhoneCall,
+  Flag,
 } from "lucide-react";
 
 const SECTION_ICONS = {
@@ -52,14 +53,6 @@ const HEALTH_ASSESSMENT_CHILD_SECTIONS = [
   "medical-history",
   "midwife-notes",
 ];
-/**
- * Port of resources/views/livewire/patient/health-information.blade.php --
- * the 250px sidebar of section links + main content column of read-only
- * cards, one per clinical record type (plus Appointments and Patient
- * Information). The original only wired up 3 sections (appointments,
- * patient info, vital signs) with a static "Page 1 of 2" footer; this
- * covers every record type we actually have, so that footer is dropped.
- */
 export function HealthInformation({ healthInfo }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentSection = searchParams.get("section");
@@ -187,39 +180,6 @@ const upcomingAppointment =
             }}
             onToggle={() => setAssessmentExpanded((expanded) => !expanded)}
           />
-         {/* {assessmentExpanded && (
-  <div className="patient-sidebar-children">
-    <SidebarChild
-  label="Health Assessment"
-  active={section === "health-assessment"}
-  onClick={() => selectSection("health-assessment")}
-/>
-
-<SidebarChild
-  label="Vital Signs"
-  active={section === "vital-signs"}
-  onClick={() => selectSection("vital-signs")}
-/>
-
-<SidebarChild
-  label="Allergies"
-  active={section === "allergies"}
-  onClick={() => selectSection("allergies")}
-/>
-
-<SidebarChild
-  label="Medical Histories"
-  active={section === "medical-history"}
-  onClick={() => selectSection("medical-history")}
-/>
-
-<SidebarChild
-  label="Midwife Notes"
-  active={section === "midwife-notes"}
-  onClick={() => selectSection("midwife-notes")}
-/>
-  </div>
-)} */}
         </nav>
 
       </aside>
@@ -228,7 +188,7 @@ const upcomingAppointment =
         {section === null ? (
           <>
             <header className="patient-overview-heading">
-              <h1>Patient Profile</h1>
+              <h1>Latest Health Summary</h1>
               <p>Your latest health information from your most recent checkup.</p>
             </header>
             <LatestAppointment
@@ -238,9 +198,9 @@ const upcomingAppointment =
             />
             <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} onViewAssessments={() => selectSection("health-assessment")} />
             <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("vital-signs")} />            
+            <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} onViewMidwifeNotes={() => selectSection("midwife-notes")} />          
             <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("allergies")} />          
-            <LatestMedicalHistory definition={recordTypes["medical-history"]} record={latestRecords["medical-history"]} onViewMedicalHistory={() => selectSection("medical-history")} />
-            <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} onViewMidwifeNotes={() => selectSection("midwife-notes")} />          </>
+            <LatestMedicalHistory definition={recordTypes["medical-history"]} record={latestRecords["medical-history"]} onViewMedicalHistory={() => selectSection("medical-history")} /> </>
         ) : (
           <>
 
@@ -268,7 +228,6 @@ const upcomingAppointment =
                 </span>
                 <h2>Appointments</h2>
               </div>
-              <span className="patient-card-total">{appointments.length} total</span>
               <button type="button" className="patient-view-button" onClick={() => selectSection("appointments")}>
                 View All
               </button>
@@ -301,7 +260,6 @@ const upcomingAppointment =
               </div>
             )}
 
-            <div className="patient-table-footer">Showing 1 to {appointments.length} of {appointments.length} appointments</div>
         </section>}
 
         {section === "patient-information" && <section className="patient-healthinfo-card patient-information-card">
@@ -317,16 +275,20 @@ const upcomingAppointment =
             <div className="patient-information-grid">
               <InfoField icon={User} label="Full Name" value={patientName} />
               <InfoField icon={UserRound} label="Sex" value={patient.sex} />
+              <InfoField icon={MapPin} label="Address" value={patient.address} />
               <InfoField icon={CalendarDays} label="Date of Birth" value={patient.birthdate ? new Date(patient.birthdate).toLocaleDateString() : null} />
               <InfoField icon={Clock3} label="Age" value={patient.age != null ? `${patient.age} years old` : null} />
-              <InfoField icon={MapPin} label="Address" value={patient.address} />
+              <InfoField icon={Phone} label="Contact Number" value={patient.contact_number} />
               <InfoField icon={HeartPulse} label="Civil Status" value={patient.civil_status} />
               <InfoField icon={Droplets} label="Blood Type" value={patient.blood_type} />
-              <InfoField icon={Phone} label="Contact Number" value={patient.contact_number} />
               <InfoField icon={Briefcase} label="Occupation" value={patient.occupation} />
+              <InfoField icon={IdCard} label="Barangay ID Number" value={patient.barangay_id_number} />
+              <InfoField icon={Flag} label="Nationality" value={patient.nationality} />
+              <InfoField icon={MapPin} label="Place of Birth" value={patient.place_of_birth} />
+              <div className="patient-information-divider" role="separator" aria-hidden="true" />
               <InfoField icon={UsersRound} label="Emergency Contact" value={patient.emergency_contact_name} />
               <InfoField icon={PhoneCall} label="Emergency Contact Number" value={patient.emergency_contact_number} />
-              <InfoField icon={IdCard} label="Barangay ID Number" value={patient.barangay_id_number} />
+              <InfoField icon={UserRound} label="Relationship" value={patient.emergency_contact_relationship} />
             </div>
         </section>}
 
@@ -389,7 +351,9 @@ function PatientPortalAccount({ patient, currentUser }) {
         <dl className="patient-general-account-details">
           <div>
             <dt>Account Status:</dt>
-            <dd className="patient-general-account-status">Active</dd>
+            <dd className={`patient-general-account-status ${patient.user_id ? "is-active" : "is-inactive"}`}>
+              {patient.user_id ? "Active" : "Inactive"}
+            </dd>
           </div>
           <div>
             <dt>Email Address:</dt>
@@ -408,11 +372,13 @@ function PatientPortalAccount({ patient, currentUser }) {
 function InfoField({ icon: Icon, label, value }) {
   return (
     <div className="patient-info-field">
-      <span className="patient-info-label">
-        <Icon size={15} strokeWidth={1.8} aria-hidden="true" />
-        <span>{label}</span>
+      <span className="patient-info-icon" aria-hidden="true">
+        <Icon size={16} strokeWidth={1.8} />
       </span>
-      <span className="patient-info-value">{value || "Not provided"}</span>
+      <span className="patient-info-copy">
+        <span className="patient-info-label">{label}</span>
+        <span className="patient-info-value">{value || "Not provided"}</span>
+      </span>
     </div>
   );
 }
@@ -926,7 +892,7 @@ function LatestMedicalHistory({
     },
     {
       key: "family_medical_history",
-      label: "Family Medical History",
+      label: "Family Health History",
     },
     {
       key: "immunization_status",
@@ -936,7 +902,7 @@ function LatestMedicalHistory({
 
   return (
     <LatestRecordCard
-      title="Latest Medical History"
+      title="Latest Health History"
       icon={FileText}
       type="medical-history"
       definition={definition}
@@ -947,7 +913,7 @@ function LatestMedicalHistory({
           className="patient-appointment-link"
           onClick={onViewMedicalHistory}
         >
-          View All Medical Histories
+          View Health History
           <ArrowRight size={16} strokeWidth={1.8} />
         </button>
       }
@@ -1000,7 +966,7 @@ function LatestMedicalHistory({
         </div>
       ) : (
         <div className="patient-empty-state">
-          No medical history recorded yet.
+          No health history recorded yet.
         </div>
       )}
     </LatestRecordCard>
@@ -1047,9 +1013,9 @@ function HealthAssessmentHistory({
       [
         "health-assessment",
         "vital-signs",
+        "midwife-notes",
         "allergies",
         "medical-history",
-        "midwife-notes",
       ].includes(section)
     ) {
       setOpenSection(section);
@@ -1104,7 +1070,7 @@ function HealthAssessmentHistory({
     },
     {
       key: "medical-history",
-      label: "Medical Histories",
+      label: "Health History",
       icon: FileText,
       records: records["medical-history"] || [],
       render: () => (
@@ -1147,9 +1113,10 @@ function HealthAssessmentHistory({
                 className="patient-health-history-accordion-header"
                 onClick={() => toggleSection(key)}
                 aria-expanded={isOpen}
+                aria-controls={`patient-health-history-${key}`}
               >
                 <span className="patient-health-history-accordion-title">
-                  <span className="patient-panel-icon patient-panel-icon-small">
+                  <span className="patient-panel-icon patient-record-accordion-icon">
                     <Icon size={18} strokeWidth={1.8} />
                   </span>
 
@@ -1167,11 +1134,13 @@ function HealthAssessmentHistory({
                 </span>
               </button>
 
-              {isOpen && (
-                <div className="patient-health-history-accordion-content">
-                  {render()}
-                </div>
-              )}
+              <div
+                id={`patient-health-history-${key}`}
+                className="patient-health-history-accordion-content"
+                hidden={!isOpen}
+              >
+                {isOpen && render()}
+              </div>
             </div>
           );
         }
@@ -1186,7 +1155,7 @@ function MedicalHistorySection({ definition, records }) {
     { key: "chronic_conditions", label: "Chronic Conditions" },
     { key: "past_surgeries", label: "Past Surgeries" },
     { key: "previous_hospitalizations", label: "Previous Hospitalizations" },
-    { key: "family_medical_history", label: "Family Medical History" },
+    { key: "family_medical_history", label: "Family Health History" },
     { key: "immunization_status", label: "Immunization Status" },
   ];
 
@@ -1197,7 +1166,7 @@ function MedicalHistorySection({ definition, records }) {
           <span className="patient-panel-icon patient-panel-icon-small">
             <FileText size={18} strokeWidth={1.8} />
           </span>
-          <h2>Medical Histories</h2>
+          <h2>Health History</h2>
         </div>
       </div>
 
@@ -1251,7 +1220,7 @@ function MedicalHistorySection({ definition, records }) {
         </div>
       ) : (
         <div className="patient-empty-state">
-          No medical history recorded.
+          No health history recorded.
         </div>
       )}
     </section>

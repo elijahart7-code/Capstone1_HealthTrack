@@ -1,10 +1,6 @@
 import { Navigate } from "react-router";
 import { getCurrentUser, homeRouteForRole } from "./auth.js";
 
-/**
- * Route guard that enforces a valid session and required user role before
- * showing a protected screen.
- */
 
 export function ProtectRoute({ roles, children }) {
   const user = getCurrentUser();

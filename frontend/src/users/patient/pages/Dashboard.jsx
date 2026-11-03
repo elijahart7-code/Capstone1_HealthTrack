@@ -51,7 +51,6 @@ export function Dashboard({ dashboard }) {
 
   return (
     <div className="patient-dashboard-shell">
-      {/*Patient Dashboard*/}
       <div className="patient-dashboard-header">
   <div>
     <h1>Patient Dashboard</h1>
@@ -68,7 +67,6 @@ export function Dashboard({ dashboard }) {
     <Eye size={20} />
   </button>
 </div>
-      {/* ================= WELCOME ================= */}
       <section className="patient-welcome-simple">
 
         <div className="patient-welcome-icon">
@@ -90,13 +88,12 @@ export function Dashboard({ dashboard }) {
       </section>
 
 
-      {/* ================= QUICK INFORMATION ================= */}
       <div className="patient-metric-grid">
 
 <PatientMetricCard
   icon={<CalendarDays size={25} strokeWidth={1.6} />}
         iconClass="appointment"
-  title="Upcoming Appointment"
+  title="Appointment"
   description="View your scheduled appointments."
   onClick={() => setSearchParams({ page: "health-information", section: "appointments" })}
 />
@@ -104,7 +101,7 @@ export function Dashboard({ dashboard }) {
 <PatientMetricCard
   icon={<HeartPulse size={25} strokeWidth={1.6} />}
   iconClass="vitals"
-  title="Updated Vital Signs"
+  title="Vital Signs"
   description="View your latest vital sign records."
   onClick={() => setSearchParams({ page: "health-information", section: "vital-signs" })}
 />
@@ -128,7 +125,6 @@ export function Dashboard({ dashboard }) {
       </div>
 
 
-      {/* ================= HEALTH INFORMATION ================= */}
       <section className="patient-health-summary">
 
         <div className="patient-health-heading">
@@ -143,7 +139,7 @@ export function Dashboard({ dashboard }) {
 
             <p>
               Your personal information, Vital Signs, Health Assessment,
-              Midwife Notes, Medical History and Allergies are all
+              Midwife Notes, Health History and Allergies are all
               recorded by the Midwife and shown in one place.
             </p>
 
@@ -154,7 +150,6 @@ export function Dashboard({ dashboard }) {
       </section>
 
 
-      {/* ================= EMERGENCY CONTACT ================= */}
       <section className="patient-panel">
 
         <div className="patient-section-header">
@@ -209,7 +204,6 @@ export function Dashboard({ dashboard }) {
       </section>
 
 
-      {/* ================= HEALTH TIPS ================= */}
       <section className="patient-panel patient-health-tips">
 
         <div className="patient-tips-heading">
@@ -261,9 +255,6 @@ export function Dashboard({ dashboard }) {
 }
 
 
-/* =====================================================
-   QUICK INFORMATION CARD
-   ===================================================== */
 
 function PatientMetricCard({
   icon,
@@ -301,9 +292,6 @@ function PatientMetricCard({
 }
 
 
-/* =====================================================
-   EMERGENCY CONTACT CARD
-   ===================================================== */
 
 function ContactCard({
   icon,
@@ -333,9 +321,6 @@ function ContactCard({
 }
 
 
-/* =====================================================
-   HEALTH TIP
-   ===================================================== */
 
 function TipItem({
   icon,
