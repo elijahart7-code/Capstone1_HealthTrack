@@ -2117,6 +2117,7 @@ Reusable surfaces, panel headings, metrics, and section icons.
         padding: 4px;
         border: 1px solid rgba(15, 107, 95, 0.14);
         border-radius: 12px;
+        outline: 2px solid #1f2421;
         background: #ffffff;
         box-shadow: 0 4px 12px rgba(15, 20, 16, 0.04);
     }
@@ -2160,6 +2161,22 @@ Reusable surfaces, panel headings, metrics, and section icons.
 
     .ht-login-header {
         text-align: center;
+    }
+
+    .ht-auth-wrap[data-phase="entering"] .ht-login-header {
+        animation: ht-login-header-enter 0.45s ease both;
+    }
+
+    @keyframes ht-login-header-enter {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .ht-login-header h1 {
@@ -2263,6 +2280,10 @@ Reusable surfaces, panel headings, metrics, and section icons.
     @media (prefers-reduced-motion: reduce) {
         .ht-account-grid .ht-account-card {
             transition: none;
+        }
+
+        .ht-auth-wrap[data-phase="entering"] .ht-login-header {
+            animation: none;
         }
     }
 
