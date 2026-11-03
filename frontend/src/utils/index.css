@@ -6273,6 +6273,13 @@ body:has(.patient-dashboard-shell) {
     background-attachment: fixed;
 }
 
+body:has(.patient-dashboard-shell) .ht-content {
+    width: 100%;
+    max-width: 1400px;
+    box-sizing: border-box;
+    padding: 1.5rem clamp(24px, 3vw, 40px);
+}
+
 body:has(.patient-dashboard-shell) .ht-topbar {
     background: linear-gradient(110deg, #ffffff 0%, #effaf5 55%, #dff5eb 100%);
     border-bottom: 1px solid #cce9dd;
@@ -6700,7 +6707,10 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 }
 
     .patient-dashboard-shell {
-        width: min(100%, 1200px);
+        width: 100%;
+        max-width: 1400px;
+        box-sizing: border-box;
+        margin: 0 auto;
         gap: 0.9rem;
         color: #315b55;
         font-family: "Inter", sans-serif;
