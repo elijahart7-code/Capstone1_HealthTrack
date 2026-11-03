@@ -1785,7 +1785,7 @@
     .ht-content {
         display: grid;
         gap: 1rem;
-        width: min(100%, 1200px);
+        width: min(100%, 1400px);
         margin: 0 auto;
         padding: 1.5rem;
     }
