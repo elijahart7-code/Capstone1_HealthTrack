@@ -6313,8 +6313,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 }
 
 body:has(.patient-dashboard-shell) .ht-brand-mark {
-    background: #D8F4E8;
-    color: #087F64;
+    background: #009B77;
+    color: #FFFFFF;
 }
 
 body:has(.patient-dashboard-shell) .ht-nav button:hover,
