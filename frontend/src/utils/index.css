@@ -1752,6 +1752,19 @@ Reusable surfaces, panel headings, metrics, and section icons.
         font-weight: 800;
     }
 
+    .ht-brand-image-mark {
+        overflow: hidden;
+        border: 1px solid rgba(15, 107, 95, 0.14);
+        background: #ffffff;
+    }
+
+    .ht-brand-image-mark img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
     .ht-nav {
         display: flex;
         gap: 0.9rem;
@@ -6483,7 +6496,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     color: #064E43;
 }
 
-body:has(.patient-dashboard-shell) .ht-brand-mark {
+body:has(.patient-dashboard-shell) .ht-brand-mark:not(.ht-brand-image-mark) {
     background: #009B77;
     color: #FFFFFF;
 }

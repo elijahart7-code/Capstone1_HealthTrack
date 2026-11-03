@@ -62,7 +62,9 @@ export function AdminShell() {
       <header className="ht-topbar">
         <div className="ht-topbar-inner">
           <button className="ht-brand" onClick={() => navigate("/admin")}>
-            <span className="ht-brand-mark">HT</span>
+            <span className="ht-brand-mark ht-brand-image-mark">
+              <img src="/images/healthtrack-symbol.png" alt="" />
+            </span>
             <span>HealthTrack</span>
           </button>
           <SideBar />
