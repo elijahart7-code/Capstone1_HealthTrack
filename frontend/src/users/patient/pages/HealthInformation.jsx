@@ -228,7 +228,6 @@ const upcomingAppointment =
                 </span>
                 <h2>Appointments</h2>
               </div>
-              <span className="patient-card-total">{appointments.length} total</span>
               <button type="button" className="patient-view-button" onClick={() => selectSection("appointments")}>
                 View All
               </button>
