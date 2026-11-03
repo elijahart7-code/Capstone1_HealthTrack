@@ -2358,10 +2358,10 @@
     }
     
 
-.patient-dashboard-shell nav a,
-.patient-dashboard-shell nav button {
+body:has(.patient-dashboard-shell) .ht-nav a,
+body:has(.patient-dashboard-shell) .ht-nav button {
     font-family: "Inter", sans-serif !important;
-    font-size: 16px !important;
+    font-size: 15px !important;
     font-weight: 600 !important;
     line-height: 1.5 !important;
     letter-spacing: -0.1px;
@@ -2467,7 +2467,7 @@
   margin: 0;
   color: #064e43;
   font-family: var(--font-sans);
-  font-size: 2.25rem;
+  font-size: calc(2.25rem + 1px);
   font-weight: 700;
   line-height: 1.2;
 }
@@ -2495,7 +2495,7 @@
   margin: 0;
   color: #315b55;
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 15px;
 }
 
     .patient-profile-circle {
@@ -5294,7 +5294,7 @@ table.patient-medical-history-latest-table {
 
     font-family: "Inter", sans-serif;
 
-    font-size: 2rem;
+    font-size: calc(2rem + 1px);
 
     font-weight: 800;
 
@@ -5308,7 +5308,7 @@ table.patient-medical-history-latest-table {
 .patient-dashboard-header p {
     margin-top: 5px !important;
     color: #54716b;
-    font-size: 16px !important;
+    font-size: 17px !important;
     font-family: "Inter", sans-serif;
     font-weight: 400 !important;
     line-height: 1.6 !important;
@@ -5334,7 +5334,7 @@ table.patient-medical-history-latest-table {
   background: #07815f;
   border: 1px solid #07815f;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 800;
   font-family: var(--font-sans);
   cursor: pointer;
@@ -6888,7 +6888,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-metric-copy h3 {
         margin: 0 !important;
         color: #064e43 !important;
-        font-size: 16px !important;
+        font-size: 17px !important;
         font-family: "Inter", sans-serif !important;
         font-weight: 700 !important;
         line-height: 1.4 !important;
@@ -6903,7 +6903,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         margin: 0 !important;
         font-family: "Inter", sans-serif !important;
         color: #54716b !important;
-        font-size: 15px !important;
+        font-size: 16px !important;
         font-weight: 400 !important;
         line-height: 1.5 !important;
         letter-spacing: 0 !important;
@@ -6923,7 +6923,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         color: #064e43 !important;
         cursor: pointer !important;
         font-family: "Inter", sans-serif !important;
-        font-size: 14px !important;
+        font-size: 15px !important;
         font-weight: 600 !important;
         line-height: 1.4 !important;
         transition: background 180ms ease, box-shadow 180ms ease;
@@ -6990,7 +6990,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-section-header h2,
     .patient-dashboard-shell .patient-tips-heading h2 {
         font-family: var(--font-sans) !important;
-        font-size: 1.2rem !important;
+        font-size: 1.3rem !important;
         font-weight: 800 !important;
         line-height: 1.3;
     }
@@ -6998,7 +6998,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-health-copy p,
     .patient-dashboard-shell .patient-section-header p,
     .patient-dashboard-shell .patient-tips-heading p {
-        font-size: 1.1rem !important;
+        font-size: 1.15rem !important;
         line-height: 1.48;
     }
 
@@ -7009,7 +7009,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         border-radius: 8px;
         background: #07815f;
         color: #FFFFFF;
-        font-size: 0.82rem;
+        font-size: 0.9rem;
         transition: background 180ms ease, box-shadow 180ms ease;
     }
 
@@ -7105,11 +7105,11 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     }
 
     .patient-dashboard-shell .patient-contact-body p,
-    .patient-dashboard-shell .patient-contact-body span
+    .patient-dashboard-shell .patient-contact-body span,
     .patient-dashboard-shell .patient-contact-body small {
         margin: 0 !important;
         min-height: 2.8em !important;
-        font-size: 13px !important;
+        font-size: 14px !important;
         line-height: 1.4 !important;
         display: block !important;
     }
@@ -7163,7 +7163,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 
     .patient-dashboard-shell .patient-tip-item span {
         color: #315b55 !important;
-        font-size: 15px !important;
+        font-size: 16px !important;
         line-height: 1.3 !important;
     }
 
