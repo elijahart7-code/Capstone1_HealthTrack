@@ -1,4 +1,5 @@
 @import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
 @import "@fontsource/inter/600.css";
 @import "@fontsource/inter/700.css";
 @import "@fontsource/inter/800.css";
@@ -2464,6 +2465,8 @@
 
 .patient-welcome-heading h1 {
   margin: 0;
+  color: #075447;
+  font-family: var(--font-sans);
   font-size: 2.25rem;
   font-weight: 700;
   line-height: 1.2;
@@ -2490,6 +2493,8 @@
 
 .patient-welcome-simple p {
   margin: 0;
+  color: #365f55;
+  font-family: var(--font-sans);
   font-size: 14px;
 }
 
@@ -5269,13 +5274,13 @@ table.patient-medical-history-latest-table {
 
     padding: 22px 28px;
 
-    background: #ffffff;
+    background: linear-gradient(110deg, #ffffff 0%, #f5fcf9 100%);
 
-    border: 1px solid rgba(12, 79, 70, 0.08);
+    border: 1px solid #d9eee6;
 
     border-radius: 18px;
 
-    box-shadow: 0 4px 18px rgba(15, 29, 26, 0.035);
+    box-shadow: 0 3px 12px rgba(8, 107, 77, 0.06);
 
     overflow: hidden;
 }
@@ -5297,12 +5302,12 @@ table.patient-medical-history-latest-table {
 
     letter-spacing: -0.035em;
 
-    color: #073f35;
+    color: #075447;
 }
 
 .patient-dashboard-header p {
     margin-top: 5px !important;
-    color: #667875;
+    color: #536f68;
     font-size: 16px !important;
     font-family: "Inter", sans-serif;
     font-weight: 400 !important;
@@ -5326,16 +5331,17 @@ table.patient-medical-history-latest-table {
   gap: 10px;
   padding: 12px 18px;
   color: #ffffff;
-  background: #087f5b;
-  border: none;
+  background: linear-gradient(135deg, #0b8d69 0%, #08755f 100%);
+  border: 1px solid #08755f;
   border-radius: 10px;
   font-size: 16px;
   font-weight: 800;
+  font-family: var(--font-sans);
   cursor: pointer;
 }
 
 .patient-dashboard-view-button:hover {
-  background: #066b4d;
+  background: linear-gradient(135deg, #08755f 0%, #075c4b 100%);
 }
 
 @media (max-width: 640px) {
@@ -6251,16 +6257,17 @@ table.patient-medical-history-latest-table {
 
 .patient-dashboard-shell {
     --dashboard-white: #FFFFFF;
-    --dashboard-pale: #F0FBF7;
+    --dashboard-pale: #F2FBF7;
     --dashboard-mint: #DDF7EF;
-    --dashboard-green: #086B4D;
-    --dashboard-deep: #086B4D;
+    --dashboard-green: #0B7258;
+    --dashboard-deep: #075447;
 
     gap: 0.9rem;
 }
 
 body:has(.patient-dashboard-shell) {
-    background: #F0FBF7;
+    background: linear-gradient(135deg, #EAF8F2 0%, #FFFFFF 58%, #F1FBF7 100%);
+    background-attachment: fixed;
 }
 
 body:has(.patient-dashboard-shell) .ht-topbar {
@@ -6687,6 +6694,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         width: min(100%, 1200px);
         gap: 0.9rem;
         color: #086B4D;
+        font-family: var(--font-sans);
     }
 
     .patient-dashboard-shell .patient-welcome-simple {
@@ -6698,9 +6706,9 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         min-height: 146px;
         padding: 1.1rem 1.4rem;
         overflow: hidden;
-        border: 1px solid #DDF7EF;
+        border: 1px solid #CDEEE1;
         border-radius: 12px;
-        background: #D5E8DF;
+        background: linear-gradient(112deg, #DDF7EF 0%, #C9F1E4 58%, #B8EBDD 100%);
     }
 
     .patient-dashboard-shell .patient-welcome-simple::before,
@@ -6798,8 +6806,8 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         padding: 0.9rem !important;
         border: 1px solid #DDF7EF !important;
         border-radius: 10px !important;
-        background: #FFFFFF !important;
-        box-shadow: 0 3px 12px rgba(8, 107, 77, 0.06) !important;
+        background: linear-gradient(145deg, #FFFFFF 0%, #F7FCFA 100%) !important;
+        box-shadow: 0 3px 12px rgba(8, 107, 77, 0.07) !important;
     }
 
     .patient-dashboard-shell .patient-metric-content {
@@ -6874,7 +6882,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         margin-top: auto !important;
         border: 1px solid #DDF7EF !important;
         border-radius: 8px !important;
-        background: #DDF7EF !important;
+        background: linear-gradient(135deg, #E8FAF3 0%, #D7F4E9 100%) !important;
         color: #086B4D !important;
         cursor: pointer !important;
         font-family: "Inter", sans-serif !important;
@@ -6890,7 +6898,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
 
     .patient-dashboard-shell .patient-view-button:hover,
     .patient-dashboard-shell .patient-view-button:focus-visible {
-        background: #F0FBF7 !important;
+        background: linear-gradient(135deg, #F2FBF7 0%, #E6F8F0 100%) !important;
         outline-color: #086B4D;
     }
 
@@ -6902,7 +6910,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         padding: 1rem 1.2rem !important;
         border: 1px solid #DDF7EF !important;
         border-radius: 10px !important;
-        background: #FFFFFF !important;
+        background: linear-gradient(110deg, #FFFFFF 0%, #F7FCFA 100%) !important;
         box-shadow: 0 3px 12px rgba(8, 107, 77, 0.06) !important;
     }
 
@@ -6973,7 +6981,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         padding: 1rem 1.2rem !important;
         border: 1px solid #DDF7EF !important;
         border-radius: 10px !important;
-        background: #FFFFFF !important;
+        background: linear-gradient(145deg, #FFFFFF 0%, #F8FCFA 100%) !important;
         box-shadow: 0 3px 12px rgba(8, 107, 77, 0.06) !important;
     }
 
@@ -6997,9 +7005,9 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         min-width: 0;
         min-height: 72px;
         padding: 0.4rem 0.65rem !important;
-        border: 0 !important;
-        border-radius: 0 !important;
-        background: #FFFFFF !important;
+        border: 1px solid #DDF7EF !important;
+        border-radius: 10px !important;
+        background: linear-gradient(145deg, #FFFFFF 0%, #F8FCFA 100%) !important;
     }
 
     .patient-dashboard-shell .patient-contact-card + .patient-contact-card {
@@ -7037,7 +7045,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-contact-body h3,
     .patient-dashboard-shell .patient-contact-body p,
     .patient-dashboard-shell .patient-contact-body span {
-        color: #086B4D !important;
+        color: #365F55 !important;
         overflow-wrap: anywhere;
     }
 
@@ -7062,6 +7070,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
     .patient-dashboard-shell .patient-health-tips {
         display: grid;
         gap: 0;
+        background: linear-gradient(120deg, #FFFFFF 0%, #F0FBF7 100%) !important;
     }
 
     .patient-dashboard-shell .patient-tip-item,
@@ -7079,7 +7088,7 @@ body:has(.patient-dashboard-shell) .ht-header-logout {
         padding: 0.6rem 0.75rem !important;
         border: 1px solid #DDF7EF !important;
         border-radius: 9px !important;
-        background: #FFFFFF !important;
+        background: linear-gradient(135deg, #F3FCF8 0%, #E8F8F1 100%) !important;
         color: #086B4D !important;
         text-align: left;
     }
