@@ -103,18 +103,20 @@ export default function LoginPage() {
     { key: "health_worker", label: "Health Worker", icon: "health_worker" },
   ];
   const portal = {
-    patient: { title: "Patient Portal", description: "Sign in to view your health information and appointments." },
-    admin: { title: "Admin Portal", description: "Sign in to manage your health center." },
-    health_worker: { title: "Health Worker Portal", description: "Sign in to manage patient care and health records." },
+    patient: { title: "Patient Portal", description: "Sign in to view your personal health records and appointments." },
+    admin: { title: "Admin Portal", description: "Sign in to manage patient info, medical records, and appointments." },
+    health_worker: { title: "Health Worker Portal", description: "Sign in to register patients and review patient health records." },
   }[accountType];
 
   return (
     <div className="ht-auth-shell" data-portal={accountType || "welcome"} aria-busy={transitioning}>
       <div className="ht-auth-wrap" data-phase={transitionPhase} inert={transitioning}>
         <div className="ht-auth-branding">
-          <div className="ht-brand justify-center">
-            <span className="ht-brand-mark">HT</span>
-            <span>HealthTrack</span>
+          <div className="ht-login-brand">
+            <div className="ht-login-logo-box">
+              <img className="ht-login-logo" src="/images/healthtrack-symbol.png" alt="" />
+            </div>
+            <span className="ht-login-brand-name">HealthTrack</span>
           </div>
           <p className="ht-muted mt-2 text-sm">Barangay Health Center of Mambog I</p>
         </div>
@@ -129,7 +131,7 @@ export default function LoginPage() {
             <div className="ht-login-divider" />
 
             <div className="ht-select-account">
-              <p>{accountType ? "Selected account type" : "Select your account type"}</p>
+              <p>{accountType ? "Selected Account!" : "Select your Account!"}</p>
               <div ref={accountGrid} className={`ht-account-grid ${accountType ? "has-selection" : ""}`}>
                 {accounts.map((account, index) => {
                   const selected = accountType === account.key;
