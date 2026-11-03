@@ -4,40 +4,6 @@ import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
 import { api } from "../lib/axios";
 import { homeRouteForRole, saveSession } from "../lib/auth";
 
-function AccountRoleIcon({ role }) {
-  if (role === "patient") {
-    return (
-      <svg viewBox="0 0 64 64" aria-hidden="true">
-        <path d="M21 19c0-9 4-15 11-15s11 6 11 15v7c0 10-5 16-11 16s-11-6-11-16z" />
-        <path d="M21 20c5 0 10-2 15-7 2 4 4 6 7 7M10 61v-4c0-8 5-13 13-15l9 6 9-6c8 2 13 7 13 15v4" />
-        <path d="M32 50c-3-4-8 0-4 4l4 4 4-4c4-4-1-8-4-4z" />
-      </svg>
-    );
-  }
-
-  if (role === "admin") {
-    return (
-      <svg viewBox="0 0 64 64" aria-hidden="true">
-        <path d="M20 15V9c0-4 5-6 12-6s12 2 12 6v6l-5-2H25z" />
-        <path d="M32 6v8m-4-4h8" />
-        <path d="M22 17c0-7 4-11 10-11s10 4 10 11v9c0 9-4 14-10 14s-10-5-10-14z" />
-        <path d="M18 24h4m20 0h4M12 61l2-13c1-6 5-9 12-11l6 7 6-7c7 2 11 5 12 11l2 13H12z" />
-        <path d="m25 39 7 9 7-9M20 43v11m24-11v11M46 48v7m-3.5-3.5h7" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg viewBox="0 0 64 64" aria-hidden="true">
-      <circle cx="14" cy="20" r="7" />
-      <circle cx="32" cy="15" r="9" />
-      <circle cx="50" cy="20" r="7" />
-      <path d="M6 31c-3 1-5 4-5 8v6h14M58 31c3 1 5 4 5 8v6H49M23 30c-5 2-8 6-8 12v7h34v-7c0-6-3-10-8-12" />
-      <path d="M28 5V2m-4 3h8M32 37v9m-4.5-4.5h9" />
-    </svg>
-  );
-}
-
 export default function LoginPage() {
   const navigate = useNavigate();
   const [accountType, setAccountType] = useState(null);
@@ -49,13 +15,11 @@ export default function LoginPage() {
   const [transitionPhase, setTransitionPhase] = useState("entering");
   const nextAccountType = useRef(null);
   const emailInput = useRef(null);
-  const accountGrid = useRef(null);
   const transitioning = transitionPhase !== "idle";
 
   useEffect(() => {
     if (transitionPhase === "idle") {
       if (accountType) emailInput.current?.focus({ preventScroll: true });
-      else accountGrid.current?.querySelector("button")?.focus({ preventScroll: true });
       return;
     }
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -98,9 +62,9 @@ export default function LoginPage() {
   }
 
   const accounts = [
-    { key: "patient", label: "Patient", icon: "patient" },
-    { key: "admin", label: "Admin", icon: "admin" },
-    { key: "health_worker", label: "Health Worker", icon: "health_worker" },
+    { key: "patient", label: "Patient", image: "/images/account-patient.png" },
+    { key: "admin", label: "Admin", image: "/images/account-admin.png" },
+    { key: "health_worker", label: "Health Worker", image: "/images/account-health-worker.png" },
   ];
   const portal = {
     patient: { title: "Patient Portal", description: "Sign in to view your personal health records and appointments." },
@@ -132,7 +96,7 @@ export default function LoginPage() {
 
             <div className="ht-select-account">
               <p>{accountType ? "Selected Account!" : "Select your Account!"}</p>
-              <div ref={accountGrid} className={`ht-account-grid ${accountType ? "has-selection" : ""}`}>
+              <div className={`ht-account-grid ${accountType ? "has-selection" : ""}`}>
                 {accounts.map((account, index) => {
                   const selected = accountType === account.key;
                   const hidden = Boolean(accountType && !selected);
@@ -148,8 +112,8 @@ export default function LoginPage() {
                       disabled={hidden || loading || transitioning}
                       onClick={() => changeAccountType(account.key)}
                     >
-                      <span className="ht-account-icon" aria-hidden="true">
-                        <AccountRoleIcon role={account.icon} />
+                      <span className="ht-account-icon-bg" aria-hidden="true">
+                        <img className="ht-account-icon" src={account.image} alt="" />
                       </span>
                       <span>{account.label}</span>
                     </button>
