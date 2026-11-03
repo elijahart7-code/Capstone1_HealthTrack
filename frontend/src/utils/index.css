@@ -6269,21 +6269,34 @@ table.patient-medical-history-latest-table {
 }
 
 body:has(.patient-dashboard-shell) {
+    --patient-page-max-width: 1400px;
+    --patient-page-gutter: clamp(24px, 3vw, 40px);
     background: linear-gradient(135deg, #f0faf5 0%, #ffffff 50%, #e6f7ef 100%);
     background-attachment: fixed;
 }
 
 body:has(.patient-dashboard-shell) .ht-content {
     width: 100%;
-    max-width: 1400px;
+    max-width: var(--patient-page-max-width);
     box-sizing: border-box;
-    padding: 1.5rem clamp(24px, 3vw, 40px);
+    padding: 1.5rem var(--patient-page-gutter);
 }
 
 body:has(.patient-dashboard-shell) .ht-topbar {
+    padding-right: 0;
+    padding-left: 0;
     background: linear-gradient(110deg, #ffffff 0%, #effaf5 55%, #dff5eb 100%);
     border-bottom: 1px solid #cce9dd;
     font-family: "Inter", sans-serif !important;
+}
+
+body:has(.patient-dashboard-shell) .ht-topbar-inner {
+    width: 100%;
+    max-width: var(--patient-page-max-width);
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding-right: var(--patient-page-gutter);
+    padding-left: var(--patient-page-gutter);
 }
 
 .patient-dashboard-shell *,
