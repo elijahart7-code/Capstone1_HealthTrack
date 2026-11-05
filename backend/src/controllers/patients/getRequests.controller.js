@@ -18,7 +18,10 @@ export async function getAllPatients(req, res) {
 
   const showArchived = req.user.role === "admin" && req.query.archived === "true";
   const patients = await sql.query(
-    `SELECT * FROM patients WHERE archived_at ${showArchived ? "IS NOT NULL" : "IS NULL"} ORDER BY last_name ASC, first_name ASC`
+    `SELECT p.*, COALESCE(u.is_verified, FALSE) AS is_verified
+     FROM patients p LEFT JOIN users u ON u.user_id = p.user_id
+     WHERE p.archived_at ${showArchived ? "IS NOT NULL" : "IS NULL"}
+     ORDER BY p.last_name ASC, p.first_name ASC`
   );
 
   return res.status(200).json({ message: "Patients retrieved.", patients: patients.map(withComputed) });

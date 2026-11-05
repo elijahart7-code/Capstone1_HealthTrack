@@ -218,6 +218,119 @@ test("protected APIs reject even a validly signed JWT for an unverified account"
   assert.equal(allowed, true);
 });
 
+test("patient registry exposes verification state instead of equating a linked account with activation", async () => {
+  await provision({ email: "pending@example.com" });
+  await provision({ email: "active@example.com", verified: true });
+  await provision({ email: "archived@example.com", verified: true, archived: true });
+  await sql`INSERT INTO patients (patient_id, first_name, last_name, sex, birthdate, address)
+    VALUES ('no-account', 'Walk-in', 'Patient', 'female', '2000-01-01', 'Test address')`;
+  const { getAllPatients } = await loadSource("controllers/patients/getRequests.controller.js", ["getAllPatients"], {
+    sql, PatientPolicy: { viewAny: () => true }, calculateAge: () => 26,
+  });
+  const result = response();
+  await getAllPatients({ user: { role: "admin" }, query: {} }, result);
+  assert.equal(result.code, 200); assert.equal(result.data.patients.length, 3);
+  const pending = result.data.patients.find(patient => patient.is_verified === false && patient.user_id);
+  const active = result.data.patients.find(patient => patient.is_verified === true);
+  const noAccount = result.data.patients.find(patient => patient.patient_id === "no-account");
+  assert.ok(pending); assert.ok(active); assert.equal(noAccount.is_verified, false);
+  assert.ok(result.data.patients.every(patient => !Object.hasOwn(patient, "password") && !Object.hasOwn(patient, "verification_token")));
+  const archived = response();
+  await getAllPatients({ user: { role: "admin" }, query: { archived: "true" } }, archived);
+  assert.equal(archived.data.patients.length, 1); assert.equal(archived.data.patients[0].is_verified, true);
+});
+
+async function emailCorrectionHandler(deliver = async email => {
+  const sent = await service.initiate(email);
+  return { status: sent ? "sent" : "pending", message: "Confirmation email sent." };
+}, database = sql) {
+  return (await loadSource("controllers/patients/updateRequests.controller.js", ["updatePendingPortalEmail"], {
+    sql: database, normalizeEmail, isValidEmail, deliverAccountSetup: deliver,
+    PatientPolicy: { createAccount: user => ["admin", "health_worker"].includes(user.role) },
+  })).updatePendingPortalEmail;
+}
+const emailCorrectionRequest = (id, email = "corrected@example.com", role = "health_worker", current = "patient@example.com") => ({
+  user: { user_id: "staff", role }, params: { patientId: id }, body: { email, current_email: current },
+});
+
+test("staff can correct a pending email, invalidating the old link and verifying only through the new link", async () => {
+  const id = await provision(); await service.initiate("patient@example.com");
+  const oldToken = mail[0].token;
+  const correct = await emailCorrectionHandler(); const result = response();
+  await correct(emailCorrectionRequest(id, " CORRECTED@Example.com "), result);
+  assert.equal(result.code, 200); assert.equal(result.data.patient.email, "corrected@example.com");
+  assert.equal(result.data.patient.is_verified, false); assert.equal(result.data.verification.status, "sent");
+  assert.equal(mail.length, 2); assert.equal(mail[1].email, "corrected@example.com");
+  assert.equal(await service.complete(oldToken, password), null);
+  assert.equal((await sql`SELECT COUNT(*)::int AS count FROM patients`)[0].count, 1);
+  assert.equal((await sql`SELECT COUNT(*)::int AS count FROM users`)[0].count, 1);
+  const completed = await service.complete(mail[1].token, password);
+  assert.equal(completed.email, "corrected@example.com");
+});
+
+test("email correction rejects non-staff, bad addresses, duplicates, stale edits, and verified or archived accounts", async () => {
+  const id = await provision();
+  const correct = await emailCorrectionHandler();
+  await provision({ email: "other@example.com" });
+  for (const [req, code] of [
+    [emailCorrectionRequest(id, "corrected@example.com", "patient"), 403],
+    [emailCorrectionRequest(id, "not-an-email"), 422],
+    [emailCorrectionRequest(id, "other@example.com"), 422],
+    [emailCorrectionRequest(id, "patient@example.com"), 422],
+    [emailCorrectionRequest(id, "corrected@example.com", "admin", "stale@example.com"), 409],
+    [emailCorrectionRequest("missing"), 404],
+  ]) {
+    const result = response(); await correct(req, result); assert.equal(result.code, code);
+  }
+  await sql`UPDATE users SET is_verified = TRUE WHERE user_id = ${id}`;
+  const verified = response(); await correct(emailCorrectionRequest(id), verified); assert.equal(verified.code, 409);
+  await sql`UPDATE users SET is_verified = FALSE WHERE user_id = ${id}`;
+  await sql`UPDATE patients SET archived_at = NOW() WHERE patient_id = ${id}`;
+  const archived = response(); await correct(emailCorrectionRequest(id), archived); assert.equal(archived.code, 404);
+  assert.equal(mail.length, 0);
+  assert.equal((await sql`SELECT email FROM users WHERE user_id = ${id}`)[0].email, "patient@example.com");
+});
+
+test("failed delivery keeps the corrected email pending and leaves the previous link invalid", async () => {
+  const id = await provision(); await service.initiate("patient@example.com");
+  const oldToken = mail[0].token;
+  const correct = await emailCorrectionHandler(async () => ({ status: "failed", message: "Email unavailable." }));
+  const result = response(); await correct(emailCorrectionRequest(id, "corrected@example.com", "admin"), result);
+  assert.equal(result.code, 200); assert.equal(result.data.verification.status, "failed");
+  assert.match(result.data.verification.message, /Email updated/);
+  const user = (await sql`SELECT * FROM users WHERE user_id = ${id}`)[0];
+  assert.equal(user.email, "corrected@example.com"); assert.equal(user.is_verified, false);
+  assert.equal(user.verification_token, null); assert.equal(user.verification_sent_at, null);
+  assert.equal(await service.complete(oldToken, password), null);
+  assert.equal(await service.initiate("corrected@example.com"), true);
+});
+
+test("confirmation winning a race prevents a staff correction from changing an active account", async () => {
+  const id = await provision(); await service.initiate("patient@example.com");
+  let completed;
+  const database = async (strings, ...params) => {
+    if (strings.join("").includes("UPDATE users u SET email")) completed = await service.complete(mail[0].token, password);
+    return sql(strings, ...params);
+  };
+  const correct = await emailCorrectionHandler(async () => { throw new Error("Must not send after losing the race"); }, database);
+  const result = response(); await correct(emailCorrectionRequest(id), result);
+  assert.ok(completed); assert.equal(result.code, 409);
+  const user = (await sql`SELECT email, is_verified FROM users WHERE user_id = ${id}`)[0];
+  assert.equal(user.email, "patient@example.com"); assert.equal(user.is_verified, true);
+});
+
+test("concurrent staff email corrections cannot silently overwrite each other", async () => {
+  const id = await provision(); const correct = await emailCorrectionHandler();
+  const first = response(), second = response();
+  await Promise.all([
+    correct(emailCorrectionRequest(id, "first@example.com"), first),
+    correct(emailCorrectionRequest(id, "second@example.com", "admin"), second),
+  ]);
+  assert.deepEqual([first.code, second.code].sort(), [200, 409]);
+  assert.equal(mail.length, 1);
+  assert.equal((await sql`SELECT email FROM users WHERE user_id = ${id}`)[0].email, mail[0].email);
+});
+
 test("SMTP uses encrypted Gmail transport and sends a confirmation link without a password", async () => {
   let transportOptions, message;
   const ENV = { GMAIL_USER: "sender@gmail.com", GMAIL_APP_PASSWORD: "test-app-password", FRONTEND_URL: "https://healthtrack.example", NODE_ENV: "production" };

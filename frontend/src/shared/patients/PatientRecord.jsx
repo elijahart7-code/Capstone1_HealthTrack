@@ -43,6 +43,8 @@ export function PatientRecord({
   const [accountError, setAccountError] = useState(null);
   const [accountMessage, setAccountMessage] = useState("");
   const [accountBusy, setAccountBusy] = useState(false);
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [correctedEmail, setCorrectedEmail] = useState("");
   const [deleteError, setDeleteError] = useState(null);
 
   async function load() {
@@ -113,6 +115,23 @@ export function PatientRecord({
       setAccountMessage(data.message);
     } catch (err) {
       setAccountError(err?.response?.data?.error || "Could not send the setup email.");
+    } finally { setAccountBusy(false); }
+  }
+
+  async function changePendingEmail(event) {
+    event.preventDefault();
+    setAccountError(null); setAccountMessage(""); setAccountBusy(true);
+    try {
+      const { data } = await api.patch(`/patients/${patientId}/portal-account/email`, {
+        email: correctedEmail, current_email: patient.email,
+      });
+      setPatient(data.patient);
+      setShowEmailForm(false);
+      setCorrectedEmail("");
+      setAccountMessage(data.verification?.message || data.message);
+      onPatientUpdated?.();
+    } catch (err) {
+      setAccountError(err?.response?.data?.error || "Could not change the portal email.");
     } finally { setAccountBusy(false); }
   }
 
@@ -393,12 +412,17 @@ export function PatientRecord({
           </span>
         </div>
 
-        {!patient.is_verified && (
+        {!patient.is_verified && (isAdmin || role === "health_worker") && (
           <div className="ht-portal-detail">
             <span>Account Setup:</span>
+            <div className="flex flex-wrap gap-2">
             <button type="button" className="ht-small-button" disabled={accountBusy || !patient.email} onClick={resendSetupEmail}>
               {accountBusy ? "Sending..." : "Resend setup email"}
             </button>
+            <button type="button" className="ht-small-button" disabled={accountBusy} onClick={() => {
+              setCorrectedEmail(patient.email || ""); setAccountError(null); setAccountMessage(""); setShowEmailForm(true);
+            }}>Change email</button>
+            </div>
           </div>
         )}
 
@@ -411,6 +435,19 @@ export function PatientRecord({
               "--"}
           </strong>
         </div>
+
+        {showEmailForm && !patient.is_verified && (isAdmin || role === "health_worker") && (
+          <form onSubmit={changePendingEmail} className="ht-form-box">
+            <p className="ht-muted text-sm">The previous confirmation link will stop working. A new link will be sent to the corrected address.</p>
+            <Field label="New email address" required>
+              <Input type="email" required maxLength={255} autoComplete="off" value={correctedEmail} disabled={accountBusy} onChange={(event) => setCorrectedEmail(event.target.value)} />
+            </Field>
+            <div className="flex flex-wrap gap-2">
+              <button type="submit" className="ht-primary-button" disabled={accountBusy}>{accountBusy ? "Saving..." : "Save email & send confirmation"}</button>
+              <button type="button" className="ht-secondary-button" disabled={accountBusy} onClick={() => { setShowEmailForm(false); setCorrectedEmail(""); setAccountError(null); }}>Cancel</button>
+            </div>
+          </form>
+        )}
 
         <div className="ht-portal-detail">
           <span>Account Created:</span>

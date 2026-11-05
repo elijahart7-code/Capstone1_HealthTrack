@@ -2,8 +2,68 @@ import { sql } from "../../config/db.js";
 import { AppointmentPolicy, ClinicalRecordPolicy, PatientPolicy } from "../../policies/policies.js";
 import { isRecordType, RECORD_TYPES } from "../../config/recordTypes.js";
 import { validatePlaceOfBirth } from "../../utils/placeOfBirth.js";
+import { deliverAccountSetup } from "../../services/accountSetup.js";
+import { isValidEmail, normalizeEmail } from "../../services/accountSetup.service.js";
 
 const VALID_STATUSES = ["confirmed", "cancelled"];
+
+export async function updatePendingPortalEmail(req, res) {
+  if (!PatientPolicy.createAccount(req.user)) {
+    return res.status(403).json({ error: "Only staff may correct a pending portal email." });
+  }
+  const email = normalizeEmail(req.body?.email);
+  const currentEmail = normalizeEmail(req.body?.current_email);
+  if (!isValidEmail(email) || !isValidEmail(currentEmail)) {
+    return res.status(422).json({ error: "Enter a valid new email address and the current account email." });
+  }
+  if (email === currentEmail) {
+    return res.status(422).json({ error: "Enter a different email address, or use Resend setup email." });
+  }
+  const accounts = await sql`
+    SELECT u.user_id, u.is_verified, u.email FROM patients p
+    JOIN users u ON u.user_id = p.user_id
+    WHERE p.patient_id = ${req.params.patientId} AND p.archived_at IS NULL AND u.role = 'patient'
+  `;
+  const account = accounts[0];
+  if (!account) return res.status(404).json({ error: "Active patient portal account not found." });
+  if (account.is_verified || normalizeEmail(account.email) !== currentEmail) {
+    return res.status(409).json({ error: "This account is already verified or its email has changed. Refresh the record before continuing." });
+  }
+  const duplicate = await sql`SELECT user_id FROM users WHERE LOWER(email) = ${email} AND user_id <> ${account.user_id}`;
+  if (duplicate.length) return res.status(422).json({ error: "That email address is already in use." });
+
+  // Updating the email and clearing its old token are one write. A concurrent
+  // confirmation or another staff correction must win or lose as a whole.
+  let updated;
+  try {
+    updated = await sql`
+      UPDATE users u SET email = ${email}, verification_token = NULL,
+        token_expires_at = NULL, verification_sent_at = NULL, updated_at = NOW()
+      WHERE user_id = ${account.user_id} AND LOWER(email) = ${currentEmail}
+        AND is_verified = FALSE AND role = 'patient'
+        AND EXISTS (SELECT 1 FROM patients p WHERE p.patient_id = ${req.params.patientId}
+          AND p.user_id = u.user_id AND p.archived_at IS NULL)
+      RETURNING user_id
+    `;
+  } catch (error) {
+    if (error.code === "23505") return res.status(422).json({ error: "That email address is already in use." });
+    throw error;
+  }
+  if (!updated.length) {
+    return res.status(409).json({ error: "This account changed while saving. Refresh the record before continuing." });
+  }
+
+  const verification = await deliverAccountSetup(email);
+  if (verification.status === "failed") {
+    verification.message = "Email updated, but the confirmation email could not be sent. Check the email provider settings, then use Resend setup email.";
+  }
+  const patients = await sql`
+    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at
+    FROM patients p JOIN users u ON u.user_id = p.user_id
+    WHERE p.patient_id = ${req.params.patientId}
+  `;
+  return res.json({ message: "Portal email updated. The patient must confirm the new email and set a password.", patient: patients[0], verification });
+}
 
 export async function updateAppointmentStatus(req, res) {
   if (!AppointmentPolicy.update(req.user)) {

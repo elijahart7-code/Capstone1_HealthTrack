@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { rateLimit } from "express-rate-limit";
 import {
   getAllPatients,
   getClinicalRecords,
@@ -13,7 +14,7 @@ import {
   createPortalAccount,
   registerPatient,
 } from "../controllers/patients/postRequests.controller.js";
-import { updateClinicalRecord, updatePatient } from "../controllers/patients/updateRequests.controller.js";
+import { updateClinicalRecord, updatePatient, updatePendingPortalEmail } from "../controllers/patients/updateRequests.controller.js";
 import { archivePatient, deleteClinicalRecord, restorePatient } from "../controllers/patients/deleteRequest.controller.js";
 import { getHealthOptions } from "../controllers/options.controller.js";
 
@@ -33,6 +34,14 @@ router.post("/:patientId/appointments", createAppointment);
 router.post("/:patientId/appointments/:appointmentId/records", createAppointmentRecords);
 
 router.post("/:patientId/portal-account", createPortalAccount);
+router.patch("/:patientId/portal-account/email", rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  keyGenerator: (req) => req.user.user_id,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: { error: "Too many email corrections. Try again in 15 minutes." },
+}), updatePendingPortalEmail);
 
 router.get("/:patientId/records/:type", getClinicalRecords);
 router.post("/:patientId/records/:type", createClinicalRecord);

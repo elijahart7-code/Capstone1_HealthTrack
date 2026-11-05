@@ -8,6 +8,7 @@ import { PageHeader } from "../../../components/ui/PageHeader";
 import { Input, Select } from "../../../components/ui/Input";
 import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 import { PatientRecord } from "../../../shared/patients/PatientRecord";
+import { PortalAccountBadge } from "../../../shared/patients/PortalAccountBadge";
 
 export function Patients({ patients, loadData, showArchived, onArchivedChange }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -190,7 +191,7 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                     <Td>{p.contact_number || "--"}</Td>
                     <Td>{calculateAge(p.birthdate)}</Td>
                     <Td>
-                      {p.user_id ? <span className="ht-status-badge ht-status-badge-active">Active</span> : <span className="ht-status-badge ht-status-badge-inactive">Inactive</span>}
+                      <PortalAccountBadge patient={p} />
                     </Td>
                     <Td>
                       <button
