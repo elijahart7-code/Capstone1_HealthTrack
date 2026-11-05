@@ -173,7 +173,7 @@ test('creating an appointment refreshes data without unmounting the active patie
   };
   await setValue(dialog.querySelector('input[type="datetime-local"]'), '2026-10-25T10:00');
   await setValue(dialog.querySelector('input[list]'), 'New test consultation');
-  assert.equal(button('Save and activate', dialog).disabled, false);
+  assert.equal(button('Save & Activate', dialog).disabled, false);
   await act(async () => dialog.querySelector('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })));
   assert.equal(posted.length, 1);
   assert.equal(document.querySelector('dialog'), null);

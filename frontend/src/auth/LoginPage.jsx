@@ -12,10 +12,31 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showForgotPasswordMessage, setShowForgotPasswordMessage] = useState(false);
+  const [isClosingForgotPasswordMessage, setIsClosingForgotPasswordMessage] = useState(false);
   const [transitionPhase, setTransitionPhase] = useState("entering");
   const nextAccountType = useRef(null);
   const emailInput = useRef(null);
+  const forgotPasswordCloseTimer = useRef(null);
   const transitioning = transitionPhase !== "idle";
+
+  useEffect(() => () => window.clearTimeout(forgotPasswordCloseTimer.current), []);
+
+  function openForgotPasswordMessage() {
+    window.clearTimeout(forgotPasswordCloseTimer.current);
+    setIsClosingForgotPasswordMessage(false);
+    setShowForgotPasswordMessage(true);
+  }
+
+  function closeForgotPasswordMessage() {
+    if (isClosingForgotPasswordMessage) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setIsClosingForgotPasswordMessage(true);
+    forgotPasswordCloseTimer.current = window.setTimeout(() => {
+      setShowForgotPasswordMessage(false);
+      setIsClosingForgotPasswordMessage(false);
+    }, reduceMotion ? 0 : 220);
+  }
 
   useEffect(() => {
     if (transitionPhase === "idle") {
@@ -185,7 +206,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 className="ht-login-link"
-                onClick={() => alert("Contact your admin or health worker to reset your password.")}
+                onClick={openForgotPasswordMessage}
               >
                 Forgot your password?
               </button>
@@ -195,6 +216,36 @@ export default function LoginPage() {
 
         <div className="ht-auth-footer">© 2026 HealthTrack. All rights reserved.</div>
       </div>
+      {showForgotPasswordMessage && (
+        <div
+          className={`ht-confirm-backdrop ht-login-confirm-backdrop ${isClosingForgotPasswordMessage ? "is-closing" : ""}`}
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !isClosingForgotPasswordMessage) {
+              closeForgotPasswordMessage();
+            }
+          }}
+        >
+          <section
+            aria-labelledby="forgot-password-title"
+            aria-modal="true"
+            className={`ht-confirm-dialog ht-login-confirm-dialog ${isClosingForgotPasswordMessage ? "is-closing" : ""}`}
+            role="dialog"
+          >
+            <h2 id="forgot-password-title">Forgot Password?</h2>
+            <p>Please contact the barangay admin or health worker to reset your password. Thanks for using HealthTrack!</p>
+            <div className="ht-confirm-actions ht-login-confirm-actions">
+              <button
+                autoFocus
+                className="ht-confirm-submit"
+                onClick={closeForgotPasswordMessage}
+                type="button"
+              >
+                Exit
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   );
 }
