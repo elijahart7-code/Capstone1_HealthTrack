@@ -1,11 +1,9 @@
 import { AppointmentWorkspace } from "./AppointmentWorkspace";
-import { PatientExportButton } from "../ExportDialog";
 import { useSearchParams } from "react-router";
 import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { calculateAge } from "../../utils/calculateAge";
 import { Field, Input } from "../../components/ui/Input";
-import { PlaceOfBirthField } from "./PlaceOfBirthField";
 
 import {
   UserRound,
@@ -43,10 +41,6 @@ export function PatientRecord({
   const [showAccountForm, setShowAccountForm] = useState(false);
   const [portalEmail, setPortalEmail] = useState("");
   const [accountError, setAccountError] = useState(null);
-  const [showEditInformation, setShowEditInformation] = useState(false);
-  const [birthplaceDraft, setBirthplaceDraft] = useState(null);
-  const [birthplaceSaving, setBirthplaceSaving] = useState(false);
-  const [birthplaceError, setBirthplaceError] = useState(null);
   const [deleteError, setDeleteError] = useState(null);
 
   async function load() {
@@ -77,25 +71,6 @@ export function PatientRecord({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId]);
-
-  async function saveBirthplace() {
-    setBirthplaceError(null);
-    if (!birthplaceDraft?.region_code || (!birthplaceDraft.city_code && !birthplaceDraft.custom_city?.trim())) {
-      setBirthplaceError("Select the birthplace region and city or municipality.");
-      return;
-    }
-    setBirthplaceSaving(true);
-    try {
-      const { data } = await api.patch(`/patients/${patientId}`, { place_of_birth_data: birthplaceDraft });
-      setPatient(data.patient);
-      setShowEditInformation(false);
-      onPatientUpdated?.();
-    } catch (err) {
-      setBirthplaceError(err?.response?.data?.error || "Could not update the place of birth.");
-    } finally {
-      setBirthplaceSaving(false);
-    }
-  }
 
   async function createPortalAccount() {
     setAccountError(null);
@@ -190,7 +165,6 @@ export function PatientRecord({
         </div>
 
          <div className="ht-patient-actions">
-          <PatientExportButton patient={patient} />
           <button
             type="button"
             onClick={onBack}
@@ -246,7 +220,7 @@ export function PatientRecord({
               >
 
                 <span className="ht-sidebar-icon">
-                  <Icon size={18} />
+                  <Icon size={30} />
                 </span>
 
                 <span>
@@ -271,49 +245,17 @@ export function PatientRecord({
 
                 <div className="ht-card-heading">
                   <h2>General Information</h2>
-                  {(isAdmin || role === "health_worker") && (
-                    <button
-                      type="button"
-                      className="ht-small-button"
-                      onClick={() => {
-                        setBirthplaceError(null);
-                        setBirthplaceDraft(patient.place_of_birth_data || { specific: patient.place_of_birth || "" });
-                        setShowEditInformation((current) => !current);
-                      }}
-                    >
-                      {showEditInformation ? "Cancel edit" : "Edit place of birth"}
-                    </button>
-                  )}
                 </div>
-
-                {showEditInformation && (
-                  <div className="ht-form-box ht-birthplace-edit">
-                    {birthplaceError && <div className="ht-login-alert ht-login-alert-error">{birthplaceError}</div>}
-                    <PlaceOfBirthField
-                      required
-                      value={birthplaceDraft}
-                      onChange={setBirthplaceDraft}
-                    />
-                    <div className="ht-form-buttons">
-                      <button type="button" className="ht-primary-button" onClick={saveBirthplace} disabled={birthplaceSaving}>
-                        {birthplaceSaving ? "Saving…" : "Save place of birth"}
-                      </button>
-                      <button type="button" className="ht-secondary-button" onClick={() => setShowEditInformation(false)}>
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
 
                 <dl className="ht-detail-grid">
 
             <Detail
-                icon={<UserRound size={20} />}
+                icon={<UserRound size={30} />}
                 label="Full Name"
                 value={patient.full_name}
             />
             <Detail
-                icon={<User size={20} />}
+                icon={<User size={30} />}
                 label="Sex"
                 value={
                 patient.sex
@@ -323,12 +265,12 @@ export function PatientRecord({
                 }
             />
             <Detail
-                icon={<MapPin size={20} />}
+                icon={<MapPin size={30} />}
                 label="Address"
                 value={patient.address}
             />
             <Detail
-                icon={<Calendar size={20} />}
+                icon={<Calendar size={30} />}
                 label="Date of Birth"
                 value={
                 patient.birthdate
@@ -344,58 +286,58 @@ export function PatientRecord({
             }
             />
             <Detail
-                icon={<UserRound size={20} />}
+                icon={<UserRound size={30} />}
                 label="Age"
                 value={`${calculateAge(patient.birthdate)} years old`}
             />
             <Detail
-                icon={<Phone size={20} />}
+                icon={<Phone size={30} />}
                 label="Contact Number"
                 value={patient.contact_number}
             />
             <Detail
-                icon={<Heart size={20} />}
+                icon={<Heart size={30} />}
                 label="Civil Status"
                 value={patient.civil_status}
             />
             <Detail
-                icon={<Droplet size={20} />}
+                icon={<Droplet size={30} />}
                 label="Blood Type"
                 value={patient.blood_type}
             />
             <Detail
-                icon={<BriefcaseMedical size={20} />}
+                icon={<BriefcaseMedical size={30} />}
                 label="Occupation"
                 value={patient.occupation}
             />
             <Detail
-                icon={<IdCard size={20} />}
+                icon={<IdCard size={30} />}
                 label="Barangay ID Number"
                 value={patient.barangay_id_number}
             />
             <Detail
-                icon={<Flag size={20} />}
+                icon={<Flag size={30} />}
                 label="Nationality"
                 value={patient.nationality}
             />
             <Detail
-                icon={<MapPin size={20} />}
+                icon={<MapPin size={30} />}
                 label="Place of Birth"
                 value={`${patient.place_of_birth || "--"}${patient.place_of_birth_data?.verified === false ? " (unverified location)" : ""}`}
             />
             <div className="ht-emergency-row">
             <Detail
-                icon={<UserRound size={20} />}
+                icon={<UserRound size={30} />}
                 label="Emergency Contact"
                 value={patient.emergency_contact_name}
             />
             <Detail
-                icon={<Phone size={20} />}
+                icon={<Phone size={30} />}
                 label="Emergency Number"
                 value={patient.emergency_contact_number}
             />
             <Detail
-                icon={<User size={20} />}
+                icon={<User size={30} />}
                 label="Relationship"
                 value={patient.emergency_contact_relationship}
             />
@@ -405,7 +347,7 @@ export function PatientRecord({
            <div className="ht-content-card ht-portal-card">
              <div className="ht-card-heading">
                 <h2>Patient Portal Account</h2>
-                   {!patient.user_id && (isAdmin || role === "health_worker") && (
+                   {!patient.user_id && role === "health_worker" && (
                   <button
                   onClick={() =>
                   setShowAccountForm((value) => !value)
@@ -464,7 +406,7 @@ export function PatientRecord({
 
     </div>
 
-  ) : showAccountForm && (isAdmin || role === "health_worker") ? (
+  ) : showAccountForm && role === "health_worker" ? (
 
     <div className="ht-form-box">
 
@@ -511,8 +453,18 @@ export function PatientRecord({
 
   ) : (
 
-    <div className="ht-empty">
-      No portal account.
+    <div
+      className="ht-empty"
+      style={isAdmin ? {
+        border: 0,
+        background: "transparent",
+        color: "var(--color-danger)",
+        fontSize: "1.25rem",
+      } : undefined}
+    >
+      {isAdmin
+        ? "Portal Account Not Available. Please coordinate with the Health Worker as soon as possible to create your account. Thank you!"
+        : "No portal account."}
     </div>
 
   )}
@@ -614,7 +566,8 @@ export function PatientRecord({
   justify-content: center;
   gap: 7px;
 
-  height: 40px;
+  width: 180px;
+  height: 42px;
   padding: 0 16px;
 
   border: 1px solid #3f725b;
@@ -642,7 +595,8 @@ export function PatientRecord({
   justify-content: center;
   gap: 8px;
 
-  height: 40px;
+  width: 180px;
+  height: 42px;
   padding: 0 16px;
 
   border: 1px solid #b8c9c0;
@@ -679,7 +633,6 @@ export function PatientRecord({
           border: 1px solid #dfeae4;
           border-radius: 12px;
           padding: 10px;
-          min-height: 430px;
         }
 
         .ht-sidebar-item {
@@ -905,7 +858,7 @@ export function PatientRecord({
           align-items: center;
           gap: 18px;
           min-height: 50px;
-          font-size: 0.9rem;
+          font-size: 1rem;
         }
         .ht-portal-detail > span:first-child {
           color: #073B2A;
@@ -922,12 +875,12 @@ export function PatientRecord({
           align-items: center;
           justify-content: center;
           justify-self: start;
-          padding: 5px 12px;
-          border: 1px solid #DDF3EA;
-          border-radius: 999px;
-          background: #F2FAF6;
+          padding: 8px 24px;
+          border: 0;
+          border-radius: 10px;
+          background: #E0EFED;
           color: #0F513F;
-          font-size: 0.75rem;
+          font-size: 0.875rem;
           font-weight: 700;
         }
         .ht-card-heading {
@@ -972,14 +925,14 @@ export function PatientRecord({
         }
         .ht-detail-grid dt {
           margin-bottom: 5px;
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 700;
           color: #56645d;
           line-height: 1.4;
         }
         .ht-detail-grid dd {
           margin: 0;
-          font-size: 14px;
+          font-size: 15px;
           color: #28352f;
           line-height: 1.5;
           word-break: break-word;
