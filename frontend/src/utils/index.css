@@ -1368,9 +1368,20 @@ Reusable surfaces, panel headings, metrics, and section icons.
 
     .ht-patient-panel .ht-table {
         width: 100%;
-        table-layout: auto;
+        table-layout: fixed;
         border-radius: 12px 12px 0 0;
     }
+
+    .ht-patient-panel .ht-table th:nth-child(1),
+    .ht-patient-panel .ht-table td:nth-child(1) { width: 15%; }
+    .ht-patient-panel .ht-table th:nth-child(2),
+    .ht-patient-panel .ht-table td:nth-child(2) { width: 9%; }
+    .ht-patient-panel .ht-table th:nth-child(3),
+    .ht-patient-panel .ht-table td:nth-child(3) { width: 13%; }
+    .ht-patient-panel .ht-table th:nth-child(4),
+    .ht-patient-panel .ht-table td:nth-child(4) { width: 8%; }
+    .ht-patient-panel .ht-table th:nth-child(5),
+    .ht-patient-panel .ht-table td:nth-child(5) { width: 10%; }
 
     .ht-patient-appointments .ht-table th:nth-child(1),
     .ht-patient-appointments .ht-table td:nth-child(1),
@@ -1402,6 +1413,12 @@ Reusable surfaces, panel headings, metrics, and section icons.
     .ht-status-badge-active {
         background: rgba(15, 107, 95, 0.08);
         color: var(--color-brand-strong);
+    }
+
+    .ht-patient-panel .ht-status-badge-active,
+    .ht-patient-panel .ht-status-badge-inactive {
+        min-width: 96px;
+        padding: 0.4rem 0.7rem;
     }
 
     .ht-status-badge-inactive {
@@ -1475,15 +1492,25 @@ Reusable surfaces, panel headings, metrics, and section icons.
         padding: 0.75rem 0.75rem 0.5rem;
     }
 
+    .ht-appointments-panel .ht-empty {
+        border-color: transparent;
+        background: transparent;
+        color: var(--color-danger);
+        font-size: 1.25rem;
+    }
+
     .ht-appointments-toolbar {
-        display: flex;
-        align-items: flex-end;
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
+        align-items: end;
         gap: 1rem;
         margin-bottom: 1rem;
     }
 
-    .ht-toolbar-field-filter {
-        min-width: 180px;
+    @media (max-width: 720px) {
+        .ht-appointments-toolbar {
+            grid-template-columns: minmax(0, 1fr);
+        }
     }
 
     .ht-filter-select {
@@ -1564,10 +1591,13 @@ Reusable surfaces, panel headings, metrics, and section icons.
         vertical-align: middle;
     }
 
-    .ht-patient-panel th:nth-child(6),
-    .ht-patient-panel td:nth-child(6),
-    .ht-patient-panel th:nth-child(7),
-    .ht-patient-panel td:nth-child(7) {
+    .ht-patient-panel th:nth-child(-n + 4),
+    .ht-patient-panel td:nth-child(-n + 4) {
+        text-align: center;
+    }
+
+    .ht-patient-panel th:nth-child(n + 6),
+    .ht-patient-panel td:nth-child(n + 6) {
         text-align: center;
     }
 
@@ -1602,15 +1632,16 @@ Reusable surfaces, panel headings, metrics, and section icons.
         min-height: 40px;
         height: 40px;
         padding: 0 16px;
-        border: 1px solid #ddb5b5;
-        border-radius: 7px;
-        background: #fffafa;
-        color: #a45151;
+        border: 1px solid #e4b26b;
+        border-radius: 8px;
+        background: #fff7ed;
+        color: #b86d16;
         font-family: inherit;
         font-size: 12px;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
         white-space: nowrap;
+        box-shadow: inset 0 0 0 1px rgba(184, 109, 22, 0.04);
         transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
     }
 
@@ -1640,9 +1671,8 @@ Reusable surfaces, panel headings, metrics, and section icons.
 
     .ht-archive-row-action:hover,
     .ht-archive-row-action:focus-visible {
-        background: #fff1f1;
-        border-color: #d59a9a;
-        color: #8f3d3d;
+        background: #fff0dc;
+        border-color: #d9993a;
         outline: none;
         transform: translateY(-1px);
     }
@@ -1660,7 +1690,166 @@ Reusable surfaces, panel headings, metrics, and section icons.
     }
 
     .ht-archive-row-action svg {
-        color: #a45151;
+        color: #b86d16;
+    }
+
+    .ht-confirm-backdrop {
+        position: fixed;
+        z-index: 1000;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 1rem;
+        background: rgba(15, 24, 20, 0.56);
+    }
+
+    .ht-confirm-dialog {
+        width: min(100%, 440px);
+        padding: 1.5rem;
+        border: 1px solid #dfeae4;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
+    }
+
+    .ht-login-confirm-backdrop {
+        animation: ht-login-confirm-fade-in 180ms ease-out both;
+    }
+
+    .ht-login-confirm-dialog {
+        animation: ht-login-confirm-pop-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .ht-archive-confirm-backdrop {
+        animation: ht-login-confirm-fade-in 180ms ease-out both;
+    }
+
+    .ht-archive-confirm-dialog {
+        animation: ht-login-confirm-pop-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+
+    .ht-login-confirm-backdrop.is-closing,
+    .ht-archive-confirm-backdrop.is-closing {
+        animation: ht-login-confirm-fade-out 180ms ease-in both;
+    }
+
+    .ht-login-confirm-dialog.is-closing,
+    .ht-archive-confirm-dialog.is-closing {
+        animation: ht-login-confirm-pop-out 220ms ease-in both;
+    }
+
+    @keyframes ht-login-confirm-fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes ht-login-confirm-pop-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px) scale(0.97);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    @keyframes ht-login-confirm-fade-out {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+
+    @keyframes ht-login-confirm-pop-out {
+        from {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: translateY(8px) scale(0.98);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ht-login-confirm-backdrop,
+        .ht-login-confirm-dialog,
+        .ht-archive-confirm-backdrop,
+        .ht-archive-confirm-dialog,
+        .ht-login-confirm-backdrop.is-closing,
+        .ht-login-confirm-dialog.is-closing,
+        .ht-archive-confirm-backdrop.is-closing,
+        .ht-archive-confirm-dialog.is-closing {
+            animation: none;
+        }
+    }
+
+    .ht-confirm-dialog h2 {
+        margin: 0 0 0.75rem;
+        color: #17211d;
+        font-size: 1.2rem;
+        font-weight: 750;
+        text-align: center;
+    }
+
+    .ht-confirm-dialog p {
+        margin: 0;
+        color: #40534a;
+        font-size: 0.95rem;
+        line-height: 1.55;
+    }
+
+    .ht-confirm-dialog .ht-confirm-error {
+        margin-top: 0.75rem;
+        color: var(--color-danger);
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .ht-confirm-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.65rem;
+        margin-top: 1.5rem;
+    }
+
+    .ht-login-confirm-actions {
+        justify-content: center;
+    }
+
+    .ht-archive-confirm-actions {
+        justify-content: center;
+    }
+
+    .ht-confirm-actions button {
+        min-width: 100px;
+        min-height: 40px;
+        padding: 0.55rem 1rem;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font: inherit;
+        font-size: 0.875rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .ht-confirm-actions button:disabled {
+        cursor: wait;
+        opacity: 0.65;
+    }
+
+    .ht-confirm-cancel {
+        border-color: #b8c9c0 !important;
+        background: #fff;
+        color: #40534a;
+    }
+
+    .ht-confirm-submit {
+        background: #b86d16;
+        color: #fff;
+    }
+
+    .ht-confirm-submit:hover:not(:disabled) {
+        background: #9e5d12;
     }
 
     .ht-pagination {
@@ -1728,7 +1917,7 @@ Reusable surfaces, panel headings, metrics, and section icons.
         flex: 0 0 auto;
         white-space: nowrap;
         font-family: "Inter", sans-serif;
-        font-size: 1.3rem;
+        font-size: 1.75rem;
         font-weight: 800;
         letter-spacing: -0.02em;
         color: #01341e;
@@ -1755,6 +1944,7 @@ Reusable surfaces, panel headings, metrics, and section icons.
     .ht-brand-image-mark {
         overflow: hidden;
         border: 1px solid rgba(15, 107, 95, 0.14);
+        outline: 2px solid #1f2421;
         background: #ffffff;
     }
 
@@ -1779,7 +1969,7 @@ Reusable surfaces, panel headings, metrics, and section icons.
         border: none;
         background: none;
         color: #000;
-        font-size: 0.82rem;
+        font-size: 1rem;
         font-weight: 700;
         text-decoration: none;
         cursor: pointer;
@@ -1812,41 +2002,41 @@ Reusable surfaces, panel headings, metrics, and section icons.
 
     .ht-user-meta {
         display: grid;
-        text-align: right;
+        text-align: center;
         font-family: "Inter", sans-serif;
     }
 
     .ht-user-name {
         color: #01341e;
-        font-size: 0.92rem;
+        font-size: 1rem;
         font-weight: 800;
         line-height: 1.2;
     }
 
     .ht-user-role {
-        color: rgba(1, 52, 30, 0.7);
-        font-size: 0.72rem;
+        color: #000;
+        font-size: 0.75rem;
     }
 
     .ht-header-logout {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        min-height: 36px;
-        padding: 0.55rem 0.85rem;
-        border: 1px solid rgba(255, 255, 255, 0.55);
+        min-height: 40px;
+        padding: 0.6rem 0.95rem;
+        border: 1px solid var(--color-brand-strong);
         border-radius: 10px;
-        background: #c7e4d5;
-        color: #000;
+        background: linear-gradient(180deg, var(--color-brand) 0%, var(--color-brand-strong) 100%);
+        color: #fff;
         font-weight: 700;
-        font-size: 0.8rem;
+        font-size: 0.875rem;
         font-family: var(--font-sans);
         cursor: pointer;
     }
 
     .ht-header-logout svg {
-        width: 18px;
-        height: 18px;
+        width: 20px;
+        height: 20px;
         fill: none;
         stroke: currentColor;
         stroke-width: 1.9;
@@ -2132,7 +2322,7 @@ Reusable surfaces, panel headings, metrics, and section icons.
     .ht-login-brand-name {
         color: #01341e;
         font-family: "Inter", sans-serif;
-        font-size: 1.4rem;
+        font-size: 2.0rem;
         font-weight: 800;
         letter-spacing: -0.02em;
     }
@@ -2325,6 +2515,10 @@ Reusable surfaces, panel headings, metrics, and section icons.
         border-radius: 12px;
         padding: 0.7rem 0.85rem;
         font-size: 0.75rem;
+    }
+
+    .ht-auth-card .ht-login-alert {
+        text-align: center;
     }
 
     .ht-login-alert-error {
@@ -6511,9 +6705,7 @@ body:has(.patient-dashboard-shell) .ht-topbar * {
 
 body:has(.patient-dashboard-shell) .ht-brand,
 body:has(.patient-dashboard-shell) .ht-user-name,
-body:has(.patient-dashboard-shell) .ht-user-role,
-body:has(.patient-dashboard-shell) .ht-nav button,
-body:has(.patient-dashboard-shell) .ht-header-logout {
+body:has(.patient-dashboard-shell) .ht-nav button {
     color: #064E43;
 }
 
@@ -6526,11 +6718,6 @@ body:has(.patient-dashboard-shell) .ht-nav button:hover,
 body:has(.patient-dashboard-shell) .ht-nav button[aria-current="page"] {
     background: #D8F4E8;
     color: #064E43;
-}
-
-body:has(.patient-dashboard-shell) .ht-header-logout {
-    background: #D8F4E8;
-    border-color: #CCE9DD;
 }
 
 .patient-dashboard-shell .patient-welcome-simple {
@@ -7683,6 +7870,9 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-report-range { margin: 0; font-size: .82rem; line-height: 1.5; }
 .ht-dashboard-events-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 1rem; align-items: stretch; }
 .ht-dashboard-events-grid > .ht-panel { min-width: 0; }
+.ht-dashboard-screen .ht-dashboard-schedule,
+.ht-dashboard-screen .ht-dashboard-events,
+.ht-dashboard-screen .ht-dashboard-overview-card { background: #F2FAF7; }
 .ht-dashboard-events-grid .ht-table-scroll { max-height: 350px; overflow: auto; }
 @media (max-width: 1000px) { .ht-dashboard-events-grid { grid-template-columns: minmax(0, 1fr); } }
 
@@ -7749,10 +7939,13 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-legacy-record dt { font-size: .75rem; color: #56645d; font-weight: 700; margin-bottom: 4px; }
 .ht-legacy-record dd { margin: 0; font-size: .875rem; color: #28352f; white-space: pre-wrap; overflow-wrap: anywhere; }
 
-.ht-patient-row-actions { display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; }
+.ht-patient-row-actions { display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; gap: 8px; }
 .ht-patient-row-actions > button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 112px; min-width: 112px; height: 36px; min-height: 36px; margin: 0; padding: 0 12px; border-radius: 8px; font: inherit; font-size: 12px; font-weight: 700; line-height: 1; white-space: nowrap; }
-.ht-patient-panel th:last-child, .ht-patient-actions-cell { text-align: left !important; }
+.ht-patient-panel .ht-table th:nth-child(n + 6),
+.ht-patient-panel .ht-table td:nth-child(n + 6) { text-align: center !important; }
 .ht-export-dialog { text-align: left; }
+.ht-new-appointment-dialog h2 { text-align: center; }
+.ht-new-appointment-dialog .ht-form-buttons { justify-content: center; }
 .ht-export-dialog .ht-export-options { justify-items: stretch; }
 .ht-export-dialog .ht-export-options > label { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 10px; width: 100%; margin: 0; padding: 9px 10px; text-align: left; border: 1px solid #dce8e1; border-radius: 8px; cursor: pointer; }
 .ht-export-dialog .ht-export-options input { width: 16px; height: 16px; flex: 0 0 16px; margin: 0; accent-color: #235c43; }

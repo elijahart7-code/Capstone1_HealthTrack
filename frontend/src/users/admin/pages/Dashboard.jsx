@@ -41,10 +41,10 @@ function ReportList({ title, icon: Icon, rows }) {
   );
 }
 
-function ReportBarChart({ title, rows = [], color = "var(--color-brand-strong)" }) {
+function ReportBarChart({ title, rows = [], color = "var(--color-brand-strong)", className = "" }) {
   const max = Math.max(...rows.map(([, count]) => count), 1);
   return (
-    <div className="ht-chart-card">
+    <div className={`ht-chart-card ${className}`.trim()}>
       <h3>{title}</h3>
       {!rows.length ? <EmptyState>No data for this range.</EmptyState> : (
         <div className="ht-bar-chart">
@@ -340,9 +340,9 @@ export function Dashboard({ dashboard, appointments, loadData }) {
             </div>
             {report && <ReportInsights data={report} heading="Month-to-date operating summary" />}
             <div className="grid gap-4 lg:grid-cols-3">
-              <ReportBarChart title="Top appointment reasons" rows={normalizeRows(report?.reasons)} />
-              <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
-              <ReportBarChart title="Appointment status" rows={normalizeRows(report?.statuses)} color="var(--color-warm)" />
+              <ReportBarChart title="Top appointment reasons" rows={normalizeRows(report?.reasons)} className="ht-dashboard-overview-card" />
+              <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" className="ht-dashboard-overview-card" />
+              <ReportBarChart title="Appointment status" rows={normalizeRows(report?.statuses)} color="var(--color-warm)" className="ht-dashboard-overview-card" />
             </div>
           </div>
         ) : (
