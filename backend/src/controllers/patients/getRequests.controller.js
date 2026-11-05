@@ -26,7 +26,7 @@ export async function getAllPatients(req, res) {
 
 export async function getPatient(req, res) {
   const rows = await sql`
-    SELECT p.*, u.email, u.created_at AS account_created_at
+    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at
     FROM patients p
     LEFT JOIN users u ON u.user_id = p.user_id
     WHERE p.patient_id = ${req.params.patientId}

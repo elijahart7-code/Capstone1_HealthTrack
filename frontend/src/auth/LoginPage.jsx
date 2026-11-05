@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
 import { api } from "../lib/axios";
 import { homeRouteForRole, saveSession } from "../lib/auth";
@@ -210,6 +210,7 @@ export default function LoginPage() {
               >
                 Forgot your password?
               </button>
+              <Link className="ht-login-link" to="/setup-account">New patient? Set up your account or resend your email</Link>
             </form>
           </div>
         </div>

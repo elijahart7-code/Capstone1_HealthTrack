@@ -41,6 +41,8 @@ export function PatientRecord({
   const [showAccountForm, setShowAccountForm] = useState(false);
   const [portalEmail, setPortalEmail] = useState("");
   const [accountError, setAccountError] = useState(null);
+  const [accountMessage, setAccountMessage] = useState("");
+  const [accountBusy, setAccountBusy] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
 
   async function load() {
@@ -74,12 +76,14 @@ export function PatientRecord({
 
   async function createPortalAccount() {
     setAccountError(null);
+    setAccountMessage("");
 
     if (!portalEmail) {
       setAccountError("Email address is required.");
       return;
     }
 
+    setAccountBusy(true);
     try {
       const { data } = await api.post(
         `/patients/${patientId}/portal-account`,
@@ -91,6 +95,7 @@ export function PatientRecord({
       setPatient(data.patient);
       setPortalEmail("");
       setShowAccountForm(false);
+      setAccountMessage(data.verification?.message || data.message);
 
       onPatientUpdated?.();
     } catch (err) {
@@ -98,7 +103,17 @@ export function PatientRecord({
         err?.response?.data?.error ||
           "Could not create that account."
       );
-    }
+    } finally { setAccountBusy(false); }
+  }
+
+  async function resendSetupEmail() {
+    setAccountError(null); setAccountMessage(""); setAccountBusy(true);
+    try {
+      const { data } = await api.post("/auth/initiate", { email: patient.email });
+      setAccountMessage(data.message);
+    } catch (err) {
+      setAccountError(err?.response?.data?.error || "Could not send the setup email.");
+    } finally { setAccountBusy(false); }
   }
 
   async function archivePatient() {
@@ -360,6 +375,8 @@ export function PatientRecord({
                 </button>
             )}
        </div>
+       {accountError && <div className="ht-login-alert ht-login-alert-error" role="alert">{accountError}</div>}
+       {accountMessage && <div className="ht-login-alert" role="status">{accountMessage}</div>}
                {patient.user_id ? (
           <div className="ht-portal-info">
           <div className="ht-portal-avatar">
@@ -372,9 +389,18 @@ export function PatientRecord({
           <div className="ht-portal-detail">
           <span>Account Status:</span>
           <span className="ht-account-status">
-            Active
+            {patient.is_verified ? "Active" : "Pending email confirmation"}
           </span>
         </div>
+
+        {!patient.is_verified && (
+          <div className="ht-portal-detail">
+            <span>Account Setup:</span>
+            <button type="button" className="ht-small-button" disabled={accountBusy || !patient.email} onClick={resendSetupEmail}>
+              {accountBusy ? "Sending..." : "Resend setup email"}
+            </button>
+          </div>
+        )}
 
         <div className="ht-portal-detail">
           <span>Email Address:</span>
@@ -410,11 +436,7 @@ export function PatientRecord({
 
     <div className="ht-form-box">
 
-      {accountError && (
-        <div className="ht-login-alert ht-login-alert-error">
-          {accountError}
-        </div>
-      )}
+      <p className="ht-muted text-sm">The patient will receive a confirmation link to choose their password. The link expires after 15 minutes.</p>
 
       <Field
         label="Email address"
@@ -434,8 +456,9 @@ export function PatientRecord({
         <button
           onClick={createPortalAccount}
           className="ht-primary-button"
+          disabled={accountBusy}
         >
-          Create account
+          {accountBusy ? "Creating..." : "Create account & send email"}
         </button>
 
         <button

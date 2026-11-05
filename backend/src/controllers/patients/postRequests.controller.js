@@ -1,4 +1,7 @@
 import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
+import { deliverAccountSetup } from "../../services/accountSetup.js";
+import { isValidEmail, normalizeEmail } from "../../services/accountSetup.service.js";
 import { sql } from "../../config/db.js";
 import { generateAppointmentId, generatePatientId, generateRecordId, generateUserId } from "../../utils/generateId.js";
 import { isRecordType, RECORD_TYPES } from "../../config/recordTypes.js";
@@ -30,29 +33,32 @@ export async function registerPatient(req, res) {
   const lastName = b.last_name.trim();
   const fullName = `${firstName}${middleName ? ` ${middleName}` : ""} ${lastName}`;
 
+  const email = normalizeEmail(b.portal_email);
+  if (email && !isValidEmail(email)) return res.status(422).json({ error: "Enter a valid portal email address." });
+  if (email) {
+    const existing = await sql`SELECT id FROM users WHERE LOWER(email) = ${email}`;
+    if (existing.length) return res.status(422).json({ error: "That email address is already in use." });
+  }
   const patientId = await generatePatientId();
 
-  let userId = null;
-  if (b.portal_email && String(b.portal_email).trim()) {
-    const existing = await sql`SELECT id FROM users WHERE email = ${b.portal_email}`;
-    if (existing.length > 0) return res.status(422).json({ error: "That email address is already in use." });
-
-    userId = await generateUserId();
-    const password = await bcrypt.hash("password", 10);
-    await sql`
-      INSERT INTO users (user_id, name, email, password, role)
-      VALUES (${userId}, ${fullName}, ${b.portal_email}, ${password}, 'patient')
-    `;
-  }
-
+  const userId = email ? await generateUserId() : null;
+  // An unusable random password satisfies the existing NOT NULL column. The
+  // patient chooses the actual password only after confirming their email.
+  const password = email ? await bcrypt.hash(randomBytes(32).toString("hex"), 12) : null;
   const rows = await sql`
+    WITH account AS (
+      INSERT INTO users (user_id, name, email, password, role, is_verified)
+      SELECT ${userId}, ${fullName}, ${email}, ${password}, 'patient', FALSE
+      WHERE ${userId}::text IS NOT NULL
+      RETURNING user_id
+    )
     INSERT INTO patients (
       patient_id, user_id, first_name, middle_name, last_name, sex, birthdate,
       civil_status, blood_type, occupation, barangay_id_number, contact_number,
       address, nationality, place_of_birth, emergency_contact_name,
       emergency_contact_number, emergency_contact_relationship, place_of_birth_data
     ) VALUES (
-      ${patientId}, ${userId}, ${firstName}, ${middleName}, ${lastName}, ${b.sex}, ${b.birthdate},
+      ${patientId}, (SELECT user_id FROM account), ${firstName}, ${middleName}, ${lastName}, ${b.sex}, ${b.birthdate},
       ${b.civil_status}, ${b.blood_type}, ${b.occupation}, ${b.barangay_id_number}, ${b.contact_number || null},
       ${b.address}, ${b.nationality || null}, ${birthplace.display},
       ${b.emergency_contact_name || null}, ${b.emergency_contact_number || null},
@@ -60,7 +66,8 @@ export async function registerPatient(req, res) {
     ) RETURNING *
   `;
 
-  return res.status(201).json({ message: `${lastName}, ${firstName} registered.`, patient: rows[0] });
+  const verification = email ? await deliverAccountSetup(email, b.send_setup_email !== false) : null;
+  return res.status(201).json({ message: `${lastName}, ${firstName} registered.`, patient: rows[0], verification });
 }
 
 export async function createAppointment(req, res) {
@@ -90,13 +97,18 @@ export async function createAppointment(req, res) {
   return res.status(201).json({ message: "Appointment scheduled.", appointment: rows[0] });
 }
 
+/**
+ * POST /api/patients/:patientId/portal-account
+ *
+ * Provision a pending patient account and send its password setup link.
+ */
 export async function createPortalAccount(req, res) {
   if (!PatientPolicy.createAccount(req.user)) {
     return res.status(403).json({ error: "Only an admin may create a portal account." });
   }
 
   const patientRows = await sql`
-    SELECT p.*, u.email, u.created_at AS account_created_at
+    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at
     FROM patients p
     LEFT JOIN users u ON u.user_id = p.user_id
     WHERE p.patient_id = ${req.params.patientId} AND p.archived_at IS NULL
@@ -108,36 +120,44 @@ export async function createPortalAccount(req, res) {
     return res.status(200).json({ message: "This patient already has a portal account.", patient });
   }
 
-  const { email } = req.body;
-  if (!email) return res.status(422).json({ error: "Email address is required." });
+  const email = normalizeEmail(req.body?.email);
+  if (!isValidEmail(email)) return res.status(422).json({ error: "Enter a valid email address." });
 
-  const existing = await sql`SELECT id FROM users WHERE email = ${email}`;
+  const existing = await sql`SELECT id FROM users WHERE LOWER(email) = ${email}`;
   if (existing.length > 0) return res.status(422).json({ error: "That email address is already in use." });
 
   const userId = await generateUserId();
-  const defaultPassword = await bcrypt.hash("password", 10);
+  const pendingPassword = await bcrypt.hash(randomBytes(32).toString("hex"), 12);
   const fullName = `${patient.last_name}, ${patient.first_name}${patient.middle_name ? " " + patient.middle_name : ""}`;
 
-  await sql`
-    INSERT INTO users (user_id, name, email, password, role)
-    VALUES (${userId}, ${fullName}, ${email}, ${defaultPassword}, 'patient')
+  // Lock the patient before inserting so concurrent requests cannot leave
+  // unattached accounts behind. Both writes commit as one SQL statement.
+  const linked = await sql`
+    WITH eligible AS (
+      SELECT patient_id FROM patients WHERE patient_id = ${req.params.patientId}
+        AND user_id IS NULL AND archived_at IS NULL FOR UPDATE
+    ), account AS (
+      INSERT INTO users (user_id, name, email, password, role, is_verified)
+      SELECT ${userId}, ${fullName}, ${email}, ${pendingPassword}, 'patient', FALSE FROM eligible
+      RETURNING user_id
+    )
+    UPDATE patients SET user_id = (SELECT user_id FROM account), updated_at = NOW()
+    WHERE patient_id IN (SELECT patient_id FROM eligible)
+    RETURNING patient_id
   `;
-
-  await sql`
-    UPDATE patients
-    SET user_id = ${userId}, updated_at = NOW()
-    WHERE patient_id = ${req.params.patientId}
-  `;
+  if (!linked.length) return res.status(409).json({ error: "This patient record has changed. Refresh before creating an account." });
 
   const updated = await sql`
-    SELECT p.*, u.email, u.created_at AS account_created_at
+    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at
     FROM patients p
     JOIN users u ON u.user_id = p.user_id
     WHERE p.patient_id = ${req.params.patientId}
   `;
 
+  const verification = await deliverAccountSetup(email);
   return res.status(201).json({
-    message: 'Portal account created. The patient can sign in with this email and the default password "password".',
+    message: "Pending portal account created. The patient must confirm their email and set a password.",
+    verification,
     patient: updated[0],
   });
 }

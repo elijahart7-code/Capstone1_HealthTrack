@@ -71,6 +71,10 @@ const TABLES = [
       email        VARCHAR(255) NOT NULL UNIQUE,
       password     VARCHAR(255) NOT NULL,
       role         VARCHAR(50) NOT NULL,
+      is_verified  BOOLEAN NOT NULL DEFAULT FALSE,
+      verification_token VARCHAR(64),
+      token_expires_at TIMESTAMPTZ,
+      verification_sent_at TIMESTAMPTZ,
       created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )`,
@@ -81,6 +85,10 @@ const TABLES = [
       email: "VARCHAR(255) NOT NULL UNIQUE",
       password: "VARCHAR(255) NOT NULL",
       role: "VARCHAR(50) NOT NULL",
+      is_verified: "BOOLEAN NOT NULL DEFAULT FALSE",
+      verification_token: "VARCHAR(64)",
+      token_expires_at: "TIMESTAMPTZ",
+      verification_sent_at: "TIMESTAMPTZ",
       created_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
       updated_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
     },
@@ -351,6 +359,14 @@ export async function connectNeon() {
     for (const { createSQL } of TABLES) {
       await sql.query(createSQL);
     }
+    // Preserve access for existing accounts; newly provisioned accounts must
+    // confirm their email and choose a password. Tokens contain SHA-256 hashes.
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN NOT NULL DEFAULT TRUE`;
+    await sql`ALTER TABLE users ALTER COLUMN is_verified SET DEFAULT FALSE`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_token VARCHAR(64)`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS token_expires_at TIMESTAMPTZ`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_sent_at TIMESTAMPTZ`;
+    await sql`CREATE UNIQUE INDEX IF NOT EXISTS users_verification_token_idx ON users (verification_token) WHERE verification_token IS NOT NULL`;
     await sql`ALTER TABLE appointments ALTER COLUMN status SET DEFAULT 'confirmed'`;
     await sql`UPDATE appointments SET status = 'confirmed', updated_at = NOW() WHERE status = 'pending'`;
     for (const table of ["health_assessments", "vital_signs", "midwife_notes", "medical_histories", "allergies"]) {

@@ -16,6 +16,7 @@ export function HealthWorkerShell() {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
+  const [verificationNotice, setVerificationNotice] = useState(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -45,7 +46,8 @@ export function HealthWorkerShell() {
     loadData();
   }, [loadData]);
 
-  function goToPatient(patientId) {
+  function goToPatient(patientId, verification) {
+    setVerificationNotice(verification || null);
     setSearchParams({ page: "patients", patientId });
   }
 
@@ -65,6 +67,7 @@ export function HealthWorkerShell() {
       </header>
 
       <main className="ht-content">
+        {verificationNotice && <div className={`ht-login-alert ${verificationNotice.status === "failed" ? "ht-login-alert-error" : ""}`} role="status">{verificationNotice.message}</div>}
         {loadError && (page !== "patients" || patients.length === 0) ? (
           <div className="ht-panel">
             <p className="ht-muted text-sm">{loadError}</p>

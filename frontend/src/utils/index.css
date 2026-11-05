@@ -2270,6 +2270,9 @@ Reusable surfaces, panel headings, metrics, and section icons.
     AUTHENTICATION
     Login and account-selection form surfaces.
     --------------------------------------------------------- */
+    .ht-setup-back { display: block; margin: 1.25rem auto 0; text-align: center; }
+    .ht-setup-show-password { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
+
     .ht-auth-shell {
         display: grid;
         place-items: center;

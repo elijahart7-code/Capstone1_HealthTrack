@@ -14,7 +14,7 @@ export async function authMiddleware(req, res, next) {
     const payload = jwt.verify(token, ENV.JWT_SECRET);
 
     const rows = await sql`
-      SELECT id, user_id, name, email, role FROM users WHERE user_id = ${payload.user_id}
+      SELECT id, user_id, name, email, role FROM users WHERE user_id = ${payload.user_id} AND is_verified = TRUE
     `;
 
     if (rows.length === 0) {

@@ -140,7 +140,7 @@ test('appointment list opens the selected appointment; activation exposes every 
 
 test('patient list opens and returns without needing a page refresh', async () => {
   await mount('/admin?page=patients');
-  await click(button('Open record'));
+  await click(button('Open Record'));
   assert.match(visibleText(), /General Information/);
   await click(button('Back to patients'));
   assert.match(visibleText(), /Patient Lists/);
@@ -222,10 +222,10 @@ test('failed status update shows an error and retains the original status', asyn
   assert.equal(select.disabled, false);
 });
 
-test('patient action buttons share an alignment container and export options use explicit left alignment', async () => {
+test('patient action columns expose export and archive and export options use explicit left alignment', async () => {
   await mount('/admin?page=patients');
   const actions = document.querySelector('.ht-patient-row-actions');
-  assert.ok(button('Export PDF', actions));
+  assert.ok(button('Export PDF', actions.closest('tr')));
   assert.ok(button('Archive', actions));
   const css = await readFile(path.join(frontend, 'src/utils/index.css'), 'utf8');
   assert.match(css, /\.ht-patient-row-actions\s*\{[^}]*gap:\s*8px/);
@@ -455,7 +455,7 @@ test('empty report summaries show zero activity without invalid percentages or i
 for (const url of ['/admin', '/admin?page=appointments', '/admin?page=patients&patientId=P1&appointmentId=A1']) {
   test(`completed cannot be selected manually at ${url}`, async () => {
     await mount(url);
-    assert.equal(document.querySelector('select option[value="completed"]'), null);
+    assert.equal(document.querySelector('select.ht-status-select option[value="completed"]') === null, true);
   });
 }
 

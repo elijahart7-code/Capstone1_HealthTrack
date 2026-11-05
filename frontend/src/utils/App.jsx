@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router";
 import LoginPage from "../auth/LoginPage";
+import { ConfirmAccountPage, RequestAccountSetupPage } from "../auth/AccountSetupPage";
 import { ProtectRoute } from "../lib/protectRoute";
 import { getCurrentUser, homeRouteForRole } from "../lib/auth";
 
@@ -17,6 +18,8 @@ export default function App() {
     <Routes>
       <Route path="/" element={<DashboardRedirect />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/setup-account" element={<RequestAccountSetupPage />} />
+      <Route path="/confirm-account" element={<ConfirmAccountPage />} />
 
       <Route
         path="/admin"

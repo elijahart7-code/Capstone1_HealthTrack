@@ -25,6 +25,15 @@ app.use(
 
 app.use(express.json());
 
+// Setup links carry bearer secrets. Keep them out of referrers and caches,
+// including when serving the built React app directly from Express.
+app.use((req, res, next) => {
+  if (req.path === "/confirm-account" || req.path.startsWith("/api/auth/")) {
+    res.set({ "Referrer-Policy": "no-referrer", "Cache-Control": "no-store" });
+  }
+  next();
+});
+
 app.use("/api/auth", authRoute);
 
 app.use(
@@ -70,6 +79,8 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use((error, _req, res, _next) => {
+  if (error.type === "entity.parse.failed") return res.status(400).json({ error: "Invalid JSON request." });
+  if (error.code === "23505") return res.status(409).json({ error: "That email address or account is already in use. Refresh and try again." });
   console.error("[server] Request failed:", error);
   res.status(500).json({ error: "An internal server error occurred." });
 });

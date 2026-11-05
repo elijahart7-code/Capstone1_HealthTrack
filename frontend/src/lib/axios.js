@@ -17,9 +17,9 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const requestUrl = error.config?.url || "";
-    const isLoginRequest = requestUrl.endsWith("/auth/login");
+    const isAuthRequest = /\/auth\/(login|initiate|complete)$/.test(requestUrl);
 
-    if (error.response?.status === 401 && !isLoginRequest) {
+    if (error.response?.status === 401 && !isAuthRequest) {
       clearSession();
       window.location.replace("/login");
     }
