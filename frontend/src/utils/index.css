@@ -8076,6 +8076,8 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-clinical-content .ht-health-assessment-header { justify-content: flex-end; margin: 0 0 14px; padding: 0; border: none; }
 .ht-clinical-content .ht-health-form { box-shadow: none; }
 .ht-clinical-records .ht-table { min-width: 100%; }
+.ht-clinical-records .ht-table th,
+.ht-clinical-records .ht-table td { font-size: 1rem; text-align: center; vertical-align: middle; }
 .ht-clinical-records .ht-table th { background: #f2f7f4; }
 .ht-clinical-records .ht-table td { min-width: 110px; max-width: 320px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .ht-clinical-empty { margin: 0; color: #718076; font-size: 13px; }

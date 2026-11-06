@@ -29,8 +29,8 @@ export const RECORD_TYPES = {
     dateField: "recorded_at",
     dateLabel: "Date Recorded ",
     fields: {
-      blood_pressure: { label: "Blood Pressure", type: "text", required: true, primary: true },
-      temperature: { label: "Temperature (C)", type: "text", required: true, column: true },
+      blood_pressure: { label: "Blood Pressure (mmHg)", type: "text", required: true, primary: true },
+      temperature: { label: "Temperature (°C)", type: "text", required: true, column: true },
       pulse_rate: { label: "Pulse Rate (bpm)", type: "text", required: true, column: true },
       respiratory_rate: { label: "Respiratory Rate (breaths/min)", type: "text", required: true, column: true },
       height_cm: { label: "Height (cm)", type: "text", required: true, column: true },
