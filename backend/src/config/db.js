@@ -625,48 +625,92 @@ export async function connectNeon() {
 
     const optionSeeds = {
       appointment_reasons: [
-        "General checkup", "Prenatal check-up", "Postnatal check-up",
-        "Child wellness check-up", "Vaccination", "Immunization",
-        "Family planning", "Maternal health consultation",
-        "Blood pressure monitoring", "Diabetes monitoring",
-        "Medical consultation", "Circumcision", "Other",
+        "General Checkup", "Prenatal Checkup", "Postnatal Checkup",
+        "Child Wellness Checkup", "Vaccination", "Immunization",
+        "Family Planning", "Maternal Health Consultation",
+        "Blood Pressure Monitoring", "Diabetes Monitoring",
+        "Medical Consultation", "Circumcision", "Others",
       ],
       health_conditions: [
-        "No known condition", "Hypertension", "Diabetes", "Asthma",
+        "No Known Condition", "Hypertension", "Diabetes", "Asthma",
         "Dengue", "Tuberculosis", "Malnutrition", "Anemia",
-        "Respiratory infection", "Skin infection",
-        "Gastrointestinal infection", "Pregnancy", "Other",
+        "Respiratory Infection", "Skin Infection",
+        "Gastrointestinal Infection", "Pregnancy", "Other",
       ],
       allergy_reactions: [
-        "Rash", "Itching", "Swelling", "Hives", "Shortness of breath",
-        "Nausea or vomiting", "Anaphylaxis", "Other",
+        "Rash", "Itching", "Swelling", "Hives", "Shortness of Breath",
+        "Nausea or Vomiting", "Anaphylaxis", "Other",
       ],
       medication_allergies: [
-        "Penicillin", "Amoxicillin", "Sulfa drugs", "Aspirin",
+        "Penicillin", "Amoxicillin", "Sulfa Drugs", "Aspirin",
         "Ibuprofen", "Paracetamol", "Acetaminophen", "Other",
       ],
       food_allergies: [
-        "Peanuts", "Tree nuts", "Milk", "Eggs", "Fish", "Shellfish",
-        "Wheat", "Soy", "Other",
+        "Peanuts", "Tree Nuts", "Shrimp", "Milk", "Eggs", "Fish",
+        "Shellfish", "Wheat", "Soy", "Other",
       ],
       environmental_allergies: [
-        "Dust", "Dust mites", "Pollen", "Mold", "Pet dander",
-        "Insect bites", "Latex", "Other",
+        "Dust", "Dust Mites", "Pollen", "Mold", "Pet Dander",
+        "Insect Bites", "Latex", "Other",
       ],
       immunization_statuses: [
-        "Up to date", "Partially immunized", "Not immunized", "Unknown", "Other",
+        "Up to Date", "Partially Immunized", "Not Immunized", "Unknown", "Other",
       ],
     };
 
     for (const [optionKey, values] of Object.entries(optionSeeds)) {
+      const existing = await sql`
+        SELECT id, value
+        FROM health_option_values
+        WHERE option_key = ${optionKey}
+      `;
+      const normalize = (value) => {
+        const normalized = value.toLowerCase().replace(/[^a-z0-9]/g, "");
+        return optionKey === "appointment_reasons" && normalized === "other"
+          ? "others"
+          : normalized;
+      };
+
       for (const [sortOrder, value] of values.entries()) {
-        await sql`
-          INSERT INTO health_option_values (option_key, value, sort_order)
-          VALUES (${optionKey}, ${value}, ${sortOrder})
-          ON CONFLICT (option_key, value) DO NOTHING
-        `;
+        const matching = existing.filter((row) => normalize(row.value) === normalize(value));
+        const canonical = matching.find((row) => row.value === value);
+        const primary = canonical || matching[0];
+
+        if (primary) {
+          await sql`
+            UPDATE health_option_values
+            SET value = ${value}, sort_order = ${sortOrder}, active = TRUE
+            WHERE id = ${primary.id}
+          `;
+          for (const duplicate of matching) {
+            if (duplicate.id !== primary.id) {
+              await sql`UPDATE health_option_values SET active = FALSE WHERE id = ${duplicate.id}`;
+            }
+          }
+        } else {
+          await sql`
+            INSERT INTO health_option_values (option_key, value, sort_order)
+            VALUES (${optionKey}, ${value}, ${sortOrder})
+            ON CONFLICT (option_key, value) DO UPDATE
+            SET sort_order = EXCLUDED.sort_order, active = TRUE
+          `;
+        }
       }
     }
+
+    await sql`
+      UPDATE appointments AS appointment
+      SET reason = options.value, updated_at = NOW()
+      FROM health_option_values AS options
+      WHERE options.option_key = 'appointment_reasons'
+        AND options.active = TRUE
+        AND CASE
+          WHEN regexp_replace(lower(trim(appointment.reason)), '[^a-z0-9]', '', 'g') = 'other'
+            THEN 'others'
+          ELSE regexp_replace(lower(trim(appointment.reason)), '[^a-z0-9]', '', 'g')
+        END = regexp_replace(lower(options.value), '[^a-z0-9]', '', 'g')
+        AND appointment.reason IS DISTINCT FROM options.value
+    `;
 
     console.log("[db] Database initialized successfully");
   } catch (error) {

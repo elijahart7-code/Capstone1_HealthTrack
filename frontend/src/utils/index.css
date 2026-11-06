@@ -1537,6 +1537,19 @@ Reusable surfaces, panel headings, metrics, and section icons.
         vertical-align: middle;
     }
 
+    .ht-appointments-panel .ht-table td {
+        color: #17211d;
+    }
+
+    .ht-appointments-panel .ht-table tbody td:nth-child(3) {
+        font-size: 0.9rem;
+    }
+
+    .ht-appointments-panel .ht-record-action {
+        color: #064e46;
+        font-weight: 700;
+    }
+
     .ht-appointments-panel .ht-appointment-date-time {
         justify-content: center;
     }
@@ -8101,8 +8114,8 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-appointment-action-cancelled { border-color: #e6bfbc; background: #fff; color: #b2453e; }
 .ht-appointment-action-cancelled:hover:not(:disabled) { border-color: #d7a29e; background: #f0d9d7; }
 .ht-appointment-action:disabled:not(.is-active) { opacity: .6; cursor: wait; }
-.ht-appointment-record-view-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; padding: 9px 12px; border: 1px solid #3f725b; border-radius: 8px; background: #3f725b; color: #fff; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
-.ht-appointment-record-view-button:hover { border-color: #315d49; background: #315d49; }
+.ht-appointment-record-view-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; padding: 9px 12px; border: 1px solid #3366cc; border-radius: 8px; background: #3366cc; color: #fff; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.ht-appointment-record-view-button:hover { border-color: #2857b5; background: #2857b5; }
 .ht-appointment-no-records { min-height: 42px; padding: 9px 12px; border: 1px solid #b2453e; border-radius: 8px; background: #b2453e; color: #fff; font: inherit; font-size: 14px; font-weight: 700; }
 .ht-appointment-compact-notes { grid-column: 1; grid-row: 3; max-height: 3.4em; overflow-y: auto; margin: 0; color: #000; font-size: 16px; white-space: pre-wrap; }
 .ht-recording-form { grid-column: 1 / -1; min-width: 0; margin: 0; }
