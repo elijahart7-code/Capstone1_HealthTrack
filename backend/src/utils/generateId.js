@@ -31,7 +31,7 @@ export const generateAppointmentId = () => generateUniqueId("appointments", "app
 
 const RECORD_TABLE_PREFIX = {
   midwife_notes: "NOTE",
-  medical_histories: "HIST",
+  health_background: "HIST",
   allergies: "ALG",
 };
 

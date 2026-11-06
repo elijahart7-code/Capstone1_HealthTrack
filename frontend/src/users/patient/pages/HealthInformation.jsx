@@ -171,7 +171,7 @@ const upcomingAppointment =
           <SidebarItem icon={Calendar} label="Appointments" active={section === "appointments"} onClick={() => selectSection("appointments")} />
           <SidebarItem
             icon={Stethoscope}
-            label="Health Records"
+            label="Medical Records"
             active={section === "health-assessment"}
             expanded={assessmentExpanded}
             onClick={() => {
@@ -902,7 +902,7 @@ function LatestMedicalHistory({
 
   return (
     <LatestRecordCard
-      title="Latest Health History"
+      title="Latest Health Background"
       icon={FileText}
       type="medical-history"
       definition={definition}
@@ -913,7 +913,7 @@ function LatestMedicalHistory({
           className="patient-appointment-link"
           onClick={onViewMedicalHistory}
         >
-          View Health History
+          View Health Background
           <ArrowRight size={16} strokeWidth={1.8} />
         </button>
       }
@@ -966,7 +966,7 @@ function LatestMedicalHistory({
         </div>
       ) : (
         <div className="patient-empty-state">
-          No health history recorded yet.
+          No health background recorded yet.
         </div>
       )}
     </LatestRecordCard>
@@ -1070,7 +1070,7 @@ function HealthAssessmentHistory({
     },
     {
       key: "medical-history",
-      label: "Health History",
+      label: "Health Background",
       icon: FileText,
       records: records["medical-history"] || [],
       render: () => (
@@ -1166,7 +1166,7 @@ function MedicalHistorySection({ definition, records }) {
           <span className="patient-panel-icon patient-panel-icon-small">
             <FileText size={18} strokeWidth={1.8} />
           </span>
-          <h2>Health History</h2>
+          <h2>Health Background</h2>
         </div>
       </div>
 
@@ -1220,7 +1220,7 @@ function MedicalHistorySection({ definition, records }) {
         </div>
       ) : (
         <div className="patient-empty-state">
-          No health history recorded.
+          No health background recorded.
         </div>
       )}
     </section>

@@ -139,7 +139,7 @@ export function Dashboard({ dashboard }) {
 
             <p>
               Your personal information, Vital Signs, Health Assessment,
-              Midwife Notes, Health History and Allergies are all
+              Midwife Notes, Health Background and Allergies are all
               recorded by the Midwife and shown in one place.
             </p>
 

@@ -53,7 +53,7 @@ export const RECORD_TYPES = {
   "medical-history": {
     label: "Health Background",
     singular: "Health Background Entry",
-    table: "medical_histories",
+    table: "health_background",
     dateField: "recorded_at",
     dateLabel: "Date Recorded",
     fields: {

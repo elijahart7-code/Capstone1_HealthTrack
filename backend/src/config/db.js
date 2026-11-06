@@ -282,8 +282,8 @@ const TABLES = [
   },
 
   {
-    table: "medical_histories",
-    createSQL: `CREATE TABLE IF NOT EXISTS medical_histories (
+    table: "health_background",
+    createSQL: `CREATE TABLE IF NOT EXISTS health_background (
       id                        SERIAL PRIMARY KEY,
       record_id                 VARCHAR(255) UNIQUE NOT NULL,
       appointment_id VARCHAR(255) REFERENCES appointments(appointment_id),
@@ -356,6 +356,16 @@ const TABLES = [
 
 export async function connectNeon() {
   try {
+    await sql`
+      DO $$
+      BEGIN
+        IF to_regclass('public.health_background') IS NULL
+          AND to_regclass('public.medical_histories') IS NOT NULL THEN
+          ALTER TABLE medical_histories RENAME TO health_background;
+        END IF;
+      END $$;
+    `;
+
     for (const { createSQL } of TABLES) {
       await sql.query(createSQL);
     }
@@ -369,7 +379,7 @@ export async function connectNeon() {
     await sql`CREATE UNIQUE INDEX IF NOT EXISTS users_verification_token_idx ON users (verification_token) WHERE verification_token IS NOT NULL`;
     await sql`ALTER TABLE appointments ALTER COLUMN status SET DEFAULT 'confirmed'`;
     await sql`UPDATE appointments SET status = 'confirmed', updated_at = NOW() WHERE status = 'pending'`;
-    for (const table of ["health_assessments", "vital_signs", "midwife_notes", "medical_histories", "allergies"]) {
+    for (const table of ["health_assessments", "vital_signs", "midwife_notes", "health_background", "allergies"]) {
       await sql.query(`ALTER TABLE ${table} ADD COLUMN IF NOT EXISTS appointment_id VARCHAR(255) REFERENCES appointments(appointment_id)`);
       await sql.query(`CREATE INDEX IF NOT EXISTS ${table}_appointment_idx ON ${table} (patient_id, appointment_id)`);
     }
@@ -510,30 +520,30 @@ export async function connectNeon() {
       END $$;
     `;
 
-    await sql`ALTER TABLE medical_histories ADD COLUMN IF NOT EXISTS past_illnesses TEXT`;
-    await sql`ALTER TABLE medical_histories ADD COLUMN IF NOT EXISTS chronic_conditions TEXT`;
-    await sql`ALTER TABLE medical_histories ADD COLUMN IF NOT EXISTS past_surgeries TEXT`;
-    await sql`ALTER TABLE medical_histories ADD COLUMN IF NOT EXISTS previous_hospitalizations TEXT`;
-    await sql`ALTER TABLE medical_histories ADD COLUMN IF NOT EXISTS family_medical_history TEXT`;
-    await sql`ALTER TABLE medical_histories ADD COLUMN IF NOT EXISTS immunization_status VARCHAR(100)`;
+    await sql`ALTER TABLE health_background ADD COLUMN IF NOT EXISTS past_illnesses TEXT`;
+    await sql`ALTER TABLE health_background ADD COLUMN IF NOT EXISTS chronic_conditions TEXT`;
+    await sql`ALTER TABLE health_background ADD COLUMN IF NOT EXISTS past_surgeries TEXT`;
+    await sql`ALTER TABLE health_background ADD COLUMN IF NOT EXISTS previous_hospitalizations TEXT`;
+    await sql`ALTER TABLE health_background ADD COLUMN IF NOT EXISTS family_medical_history TEXT`;
+    await sql`ALTER TABLE health_background ADD COLUMN IF NOT EXISTS immunization_status VARCHAR(100)`;
     await sql`
       DO $$
       BEGIN
         IF EXISTS (
           SELECT 1 FROM information_schema.columns
           WHERE table_schema = 'public'
-            AND table_name = 'medical_histories'
+            AND table_name = 'health_background'
             AND column_name = 'condition'
         ) THEN
-          ALTER TABLE medical_histories ALTER COLUMN condition DROP NOT NULL;
+          ALTER TABLE health_background ALTER COLUMN condition DROP NOT NULL;
         END IF;
         IF EXISTS (
           SELECT 1 FROM information_schema.columns
           WHERE table_schema = 'public'
-            AND table_name = 'medical_histories'
+            AND table_name = 'health_background'
             AND column_name = 'recorded_at'
         ) THEN
-          ALTER TABLE medical_histories ALTER COLUMN recorded_at DROP NOT NULL;
+          ALTER TABLE health_background ALTER COLUMN recorded_at DROP NOT NULL;
         END IF;
       END $$;
     `;

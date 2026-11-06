@@ -170,7 +170,7 @@ export async function getReports(req, res) {
            EXISTS (SELECT 1 FROM vital_signs r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
            EXISTS (SELECT 1 FROM health_assessments r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
            EXISTS (SELECT 1 FROM midwife_notes r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
-           EXISTS (SELECT 1 FROM medical_histories r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
+           EXISTS (SELECT 1 FROM health_background r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
            EXISTS (SELECT 1 FROM allergies r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id)
          ))::int AS documented_completed,
          (SELECT COUNT(*)::int FROM (SELECT patient_id FROM current_appointments WHERE status = 'completed' GROUP BY patient_id HAVING COUNT(*) > 1) repeat_visitors) AS repeat_patients,
