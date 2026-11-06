@@ -34,7 +34,7 @@ export async function getDashboard(_req, res) {
 
 export async function getAppointments(_req, res) {
   const appointments = await sql`
-    SELECT a.*, p.first_name, p.last_name FROM appointments a
+    SELECT a.*, p.first_name, p.middle_name, p.last_name FROM appointments a
     JOIN patients p ON p.patient_id = a.patient_id
     ORDER BY a.scheduled_at ASC
   `;

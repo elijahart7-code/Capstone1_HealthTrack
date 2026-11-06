@@ -221,15 +221,15 @@ const TABLES = [
       appointment_id VARCHAR(255) REFERENCES appointments(appointment_id),
       patient_id          VARCHAR(255) NOT NULL REFERENCES patients(patient_id),
       created_by          VARCHAR(255) REFERENCES users(user_id),
-      blood_pressure      VARCHAR(20) NOT NULL,
-      temperature         DECIMAL(4,1) NOT NULL,
-      pulse_rate          INTEGER NOT NULL,
-      respiratory_rate    INTEGER NOT NULL,
-      height_cm           DECIMAL(5,2) NOT NULL,
-      weight_kg           DECIMAL(5,2) NOT NULL,
-      bmi                 DECIMAL(4,1) NOT NULL,
-      oxygen_saturation   INTEGER NOT NULL,
-      pain_score          INTEGER NOT NULL,
+      blood_pressure      TEXT NOT NULL,
+      temperature         TEXT NOT NULL,
+      pulse_rate          TEXT NOT NULL,
+      respiratory_rate    TEXT NOT NULL,
+      height_cm           TEXT NOT NULL,
+      weight_kg           TEXT NOT NULL,
+      bmi                 TEXT NOT NULL,
+      oxygen_saturation   TEXT NOT NULL,
+      pain_score          TEXT NOT NULL,
       recorded_at         TIMESTAMP NOT NULL,
       created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -240,15 +240,15 @@ const TABLES = [
       appointment_id: "VARCHAR(255) REFERENCES appointments(appointment_id)",
       patient_id: "VARCHAR(255) NOT NULL REFERENCES patients(patient_id)",
       created_by: "VARCHAR(255) REFERENCES users(user_id)",
-      blood_pressure: "VARCHAR(20) NOT NULL",
-      temperature: "DECIMAL(4,1) NOT NULL",
-      pulse_rate: "INTEGER NOT NULL",
-      respiratory_rate: "INTEGER NOT NULL",
-      height_cm: "DECIMAL(5,2) NOT NULL",
-      weight_kg: "DECIMAL(5,2) NOT NULL",
-      bmi: "DECIMAL(4,1) NOT NULL",
-      oxygen_saturation: "INTEGER NOT NULL",
-      pain_score: "INTEGER NOT NULL",
+      blood_pressure: "TEXT NOT NULL",
+      temperature: "TEXT NOT NULL",
+      pulse_rate: "TEXT NOT NULL",
+      respiratory_rate: "TEXT NOT NULL",
+      height_cm: "TEXT NOT NULL",
+      weight_kg: "TEXT NOT NULL",
+      bmi: "TEXT NOT NULL",
+      oxygen_saturation: "TEXT NOT NULL",
+      pain_score: "TEXT NOT NULL",
       recorded_at: "TIMESTAMP NOT NULL",
       created_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
       updated_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
@@ -402,16 +402,40 @@ export async function connectNeon() {
     await sql`CREATE INDEX IF NOT EXISTS patients_active_name_idx ON patients (last_name, first_name) WHERE archived_at IS NULL`;
     await sql`ALTER TABLE patients DROP COLUMN IF EXISTS philhealth_number`;
 
-    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS blood_pressure VARCHAR(20)`;
-    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS temperature DECIMAL(4,1)`;
-    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS pulse_rate INTEGER`;
-    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS respiratory_rate INTEGER`;
-    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS height_cm DECIMAL(5,2)`;
-    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS weight_kg DECIMAL(5,2)`;
-    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS bmi DECIMAL(4,1)`;
-    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS oxygen_saturation INTEGER`;
-    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS pain_score INTEGER`;
+    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS blood_pressure TEXT`;
+    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS temperature TEXT`;
+    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS pulse_rate TEXT`;
+    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS respiratory_rate TEXT`;
+    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS height_cm TEXT`;
+    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS weight_kg TEXT`;
+    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS bmi TEXT`;
+    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS oxygen_saturation TEXT`;
+    await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS pain_score TEXT`;
     await sql`ALTER TABLE vital_signs ADD COLUMN IF NOT EXISTS recorded_at TIMESTAMP`;
+    await sql`
+      DO $$
+      DECLARE
+        column_to_convert TEXT;
+      BEGIN
+        FOR column_to_convert IN
+          SELECT column_name
+          FROM information_schema.columns
+          WHERE table_schema = 'public'
+            AND table_name = 'vital_signs'
+            AND column_name = ANY (ARRAY[
+              'blood_pressure', 'temperature', 'pulse_rate', 'respiratory_rate',
+              'height_cm', 'weight_kg', 'bmi', 'oxygen_saturation', 'pain_score'
+            ])
+            AND data_type <> 'text'
+        LOOP
+          EXECUTE format(
+            'ALTER TABLE vital_signs ALTER COLUMN %I TYPE TEXT USING %I::TEXT',
+            column_to_convert,
+            column_to_convert
+          );
+        END LOOP;
+      END $$;
+    `;
     await sql`
       DO $$
       BEGIN
@@ -765,4 +789,3 @@ export async function syncSchema(onlyTables) {
     throw error;
   }
 }
-
