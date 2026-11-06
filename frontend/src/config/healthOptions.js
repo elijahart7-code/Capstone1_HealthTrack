@@ -55,7 +55,7 @@ export const MEDICATION_ALLERGIES = [
 export const FOOD_ALLERGIES = [
   "Peanuts",
   "Tree Nuts",
-  "Shrimp"
+  "Shrimp",
   "Milk",
   "Eggs",
   "Fish",
