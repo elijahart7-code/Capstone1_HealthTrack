@@ -14,6 +14,11 @@ const STATUS_COLORS = {
   cancelled: "ht-status-badge-cancelled",
 };
 
+function getPatientName(appointment) {
+  const firstAndMiddleName = [appointment.first_name, appointment.middle_name].filter(Boolean).join(" ");
+  return [appointment.last_name, firstAndMiddleName].filter(Boolean).join(", ");
+}
+
 export function Appointments({ appointments, loadData }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -27,7 +32,7 @@ export function Appointments({ appointments, loadData }) {
     return appointments
       .filter((appointment) => statusFilter === "all" || appointment.status === statusFilter)
       .filter((appointment) => {
-        const patientName = `${appointment.last_name || ""}, ${appointment.first_name || ""}`.toLowerCase();
+        const patientName = getPatientName(appointment).toLowerCase();
         return !term || patientName.includes(term);
       })
       .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
@@ -51,7 +56,7 @@ export function Appointments({ appointments, loadData }) {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 ht-admin-appointment-lists-page">
       <PageHeader title="Appointment Lists" subtitle="Schedule new appointments from a patient's record.">
         <span className="ht-pill ht-pill-count">
           <Calendar size={18} strokeWidth={2} />
@@ -117,7 +122,7 @@ export function Appointments({ appointments, loadData }) {
                   return (
                     <tr key={a.appointment_id}>
                       <Td className="font-bold" style={{ color: "#1f2421" }}>
-                        <div className="flex items-center gap-2">
+                        <div className="ht-appointment-date-time flex items-center gap-2">
                           <Calendar size={16} />
                           <AppointmentDate appointment={a} />
                         </div>
@@ -127,7 +132,7 @@ export function Appointments({ appointments, loadData }) {
                           onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id, appointmentId: a.appointment_id })}
                           style={{ color: "var(--color-brand-strong)", fontWeight: 700 }}
                         >
-                          {a.last_name}, {a.first_name}
+                          {getPatientName(a)}
                         </button>
                       </Td>
                       <Td>{a.reason}</Td>
