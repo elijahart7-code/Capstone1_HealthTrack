@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { calculateAge } from "../../utils/calculateAge";
 import { Field, Input } from "../../components/ui/Input";
+import { PatientExportButton } from "../ExportDialog";
 
 import {
   UserRound,
   BriefcaseMedical,
+  ClipboardList,
   ArrowLeft,
   Calendar,
   MapPin,
@@ -17,7 +19,6 @@ import {
   IdCard,
   Flag,
   User,
-  Archive,
   ArchiveRestore,
 } from "lucide-react";
 
@@ -135,18 +136,6 @@ export function PatientRecord({
     } finally { setAccountBusy(false); }
   }
 
-  async function archivePatient() {
-    if (!confirm("Archive this patient? Their clinical history will be preserved and they will be hidden from active patient lists.")) return;
-    setDeleteError(null);
-    try {
-      await api.post(`/patients/${patientId}/archive`);
-      onPatientUpdated?.();
-      onBack();
-    } catch (err) {
-      setDeleteError(err?.response?.data?.error || "Could not archive this patient.");
-    }
-  }
-
   async function restorePatient() {
     if (!confirm("Restore this patient? Their record will return to the active patient list and become available for updates again.")) return;
     setDeleteError(null);
@@ -177,7 +166,7 @@ export function PatientRecord({
 
   const sidebarItems = [
     { key: "general", label: "Patient Information", icon: UserRound },
-    { key: "appointments", label: "Appointments", icon: Calendar },
+    { key: "appointments", label: "Medical Records", icon: ClipboardList },
   ];
 
   return (
@@ -207,28 +196,15 @@ export function PatientRecord({
             <ArrowLeft size={16} />
             Back to patients
           </button>
-          {isAdmin && (
-            <>
-              {patient.archived_at ? (
-                <button
-                  type="button"
-                  onClick={restorePatient}
-                  className="ht-delete-patient-button"
-                >
-                  <ArchiveRestore size={16} />
-                  Restore Patient
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={archivePatient}
-                  className="ht-delete-patient-button"
-                >
-                  <Archive size={16} />
-                  Archive Patient
-                </button>
-              )}
-            </>
+          {isAdmin && patient.archived_at && (
+            <button
+              type="button"
+              onClick={restorePatient}
+              className="ht-delete-patient-button"
+            >
+              <ArchiveRestore size={16} />
+              Restore Patient
+            </button>
           )}
         </div>
       </section>
@@ -264,6 +240,10 @@ export function PatientRecord({
               </button>
             );
           })}
+
+          <div className="ht-patient-sidebar-export">
+            <PatientExportButton patient={patient} />
+          </div>
 
         </aside>
 
@@ -565,7 +545,7 @@ export function PatientRecord({
           justify-content: space-between;
           gap: 20px;
           background: #ffffff;
-          border: 1px solid #dfeae4;
+          border: 1px solid #000;
           border-radius: 13px;
           box-shadow: 0 2px 8px rgba(31, 61, 48, 0.03);
         }
@@ -589,7 +569,7 @@ export function PatientRecord({
 
         .ht-patient-profile h1 {
           margin: 0;
-          font-size: 21px;
+          font-size: 25px;
           font-weight: 750;
           color: #17211d;
         }
@@ -659,22 +639,23 @@ export function PatientRecord({
   height: 42px;
   padding: 0 16px;
 
-  border: 1px solid #b8c9c0;
+  border: 1px solid #3f725b;
   border-radius: 7px;
 
-  background: white;
-  color: #40534a;
+  background: #3f725b;
+  color: white;
 
   font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
 
   cursor: pointer;
   white-space: nowrap;
 }
 
 .ht-back-button:hover {
-  background: #f4f8f6;
+  background: #295a42;
+  border-color: #295a42;
 }
 
 
@@ -690,9 +671,15 @@ export function PatientRecord({
 
         .ht-patient-sidebar {
           background: #ffffff;
-          border: 1px solid #dfeae4;
+          border: 1px solid #000;
           border-radius: 12px;
           padding: 10px;
+        }
+
+        .ht-patient-sidebar-export {
+          display: flex;
+          justify-content: center;
+          margin-top: 12px;
         }
 
         .ht-sidebar-item {
@@ -748,6 +735,10 @@ export function PatientRecord({
           background: white;
           border: 1px solid #dfeae4;
           border-radius: 11px;
+        }
+
+        .ht-patient-main .ht-content-card {
+          border-color: #000;
         }
 
         .ht-content-card h2 {

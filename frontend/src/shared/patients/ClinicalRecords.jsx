@@ -33,6 +33,7 @@ import {
   Hospital,
 } from "lucide-react";
 import { Combobox, Field, Input, MultiCombobox, Select, Textarea } from "../../components/ui/Input";
+import { Table, Th, Td } from "../../components/ui/Table";
 
 
 export function ClinicalRecords({ patientId, type, role, readOnly = false, appointmentId, appointmentDate, appendOnly = false, embedded = false, draftMode = false, draft = {}, onDraftChange, disabled = false }) {
@@ -414,6 +415,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
                 >
                   {field.type === "multi-combobox" ? (
                     <MultiCombobox
+                      className="ht-clinical-multi-combobox"
                       aria-required={field.required}
                       id={column}
                       options={healthOptions[field.optionKey] || field.options}
@@ -491,7 +493,7 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
               )
             )}
 
-            <Field label={definition.dateLabel} required>
+            <Field label={definition.dateLabel} required className={`ht-clinical-date-field${["health-assessment", "midwife-notes", "vital-signs"].includes(type) ? " ht-clinical-date-field-inline" : ""}`}>
               <Input
                 required
                 type="date"
@@ -559,12 +561,22 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
         </div>
       ) : embedded ? (
         <div className="ht-clinical-records">
-          {records.map(record => <section className="ht-clinical-record" key={record.record_id}>
-            <div className="ht-clinical-record-meta"><span>{definition.dateLabel}: {getRecordDate(record)}</span>{getRecordedBy(record) && <span>Recorded by {getRecordedBy(record)}</span>}</div>
-            <dl className={`ht-clinical-fields${type === "vital-signs" ? " ht-clinical-vitals" : ""}`}>
-              {Object.entries(definition.fields).map(([column, field]) => <div key={column} className={field.type === "textarea" ? "ht-clinical-field-long" : ""}><dt>{field.label}</dt><dd>{formatValue(record[column], field)}</dd></div>)}
-            </dl>
-          </section>)}
+          <Table>
+            <thead>
+              <tr>
+                {Object.entries(definition.fields).map(([column, field]) => <Th key={column}>{field.label}</Th>)}
+                <Th>{definition.dateLabel}</Th>
+                <Th>Recorded By</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {records.map(record => <tr key={record.record_id}>
+                {Object.entries(definition.fields).map(([column, field]) => <Td key={column}>{formatValue(record[column], field)}</Td>)}
+                <Td>{getRecordDate(record)}</Td>
+                <Td>{getRecordedBy(record) || "--"}</Td>
+              </tr>)}
+            </tbody>
+          </Table>
           {records.length >= perPage && <button type="button" className="ht-small-button" onClick={() => setPerPage(p => p + 10)}>Show more records</button>}
         </div>
       ) : isMidwifeNotes ? (

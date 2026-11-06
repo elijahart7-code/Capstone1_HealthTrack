@@ -1,6 +1,6 @@
 import { PatientExportButton } from "../../../shared/ExportDialog";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Archive, Eye, Search, Users } from "lucide-react";
+import { Archive, CalendarDays, Eye, Search, Users } from "lucide-react";
 import { useSearchParams } from "react-router";
 import { api } from "../../../lib/axios";
 import { calculateAge } from "../../../utils/calculateAge";
@@ -13,6 +13,9 @@ import { PortalAccountBadge } from "../../../shared/patients/PortalAccountBadge"
 export function Patients({ patients, loadData, showArchived, onArchivedChange }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedId = searchParams.get("patientId");
+  const today = new Date().toLocaleDateString(undefined, {
+    weekday: "long", day: "2-digit", month: "long", year: "numeric",
+  });
 
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("name_asc");
@@ -125,8 +128,10 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
   }
 
   return (
-    <div className="grid gap-4">
-      <PageHeader title="Patient Lists" subtitle="People registered at the Barangay Health Center of Mambog I." />
+    <div className="grid gap-4 ht-admin-patient-lists-page">
+      <PageHeader title="Patient Lists" subtitle="People registered at the Barangay Health Center of Mambog I.">
+        <span className="ht-current-date-pill"><CalendarDays size={18} strokeWidth={2} />{today}</span>
+      </PageHeader>
 
       <div className="ht-panel ht-patient-panel">
         {archiveError && <div className="ht-login-alert ht-login-alert-error">{archiveError}</div>}
