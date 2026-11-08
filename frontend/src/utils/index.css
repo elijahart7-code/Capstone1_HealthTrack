@@ -6433,6 +6433,25 @@ body:has(.patient-dashboard-shell) .ht-topbar-inner {
     padding-left: var(--patient-page-gutter);
 }
 
+body:has(.patient-healthinfo-page) .ht-content-health-information {
+    width: 100%;
+    max-width: 1440px;
+}
+
+body:has(.patient-healthinfo-page) .ht-topbar {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+body:has(.patient-healthinfo-page) .ht-topbar-inner {
+    width: 100%;
+    max-width: 1440px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+}
+
 .patient-dashboard-shell *,
 body:has(.patient-dashboard-shell) .ht-topbar * {
     font-family: "Inter", sans-serif !important;
