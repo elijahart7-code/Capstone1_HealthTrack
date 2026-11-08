@@ -7,6 +7,7 @@ import { PageHeader } from "../../../components/ui/PageHeader";
 import { Field, Input, Select } from "../../../components/ui/Input";
 import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 import { PatientRecord } from "../../../shared/patients/PatientRecord";
+import { PortalAccountBadge } from "../../../shared/patients/PortalAccountBadge";
 
 export function Patients({ patients, loadData }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -128,11 +129,7 @@ export function Patients({ patients, loadData }) {
                   <Td>{p.blood_type || "--"}</Td>
                   <Td>{p.occupation || "--"}</Td>
                   <Td>
-                    {p.user_id ? (
-                      <span className="ht-status-badge ht-status-badge-active">Active</span>
-                    ) : (
-                      <span className="ht-status-badge ht-status-badge-inactive">Inactive</span>
-                    )}
+                    <PortalAccountBadge patient={p} />
                   </Td>
                   <Td>
                     <button

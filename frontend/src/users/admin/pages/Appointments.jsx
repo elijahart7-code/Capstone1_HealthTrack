@@ -1,10 +1,10 @@
 import { AppointmentDate } from "../../../shared/appointments/AppointmentDate";
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, Eye } from "lucide-react";
+import { Calendar, Eye, Search } from "lucide-react";
 import { useSearchParams } from "react-router";
 import { api } from "../../../lib/axios";
 import { PageHeader } from "../../../components/ui/PageHeader";
-import { Select } from "../../../components/ui/Input";
+import { Input, Select } from "../../../components/ui/Input";
 import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 
 const STATUSES = ["confirmed", "cancelled"];
@@ -14,29 +14,29 @@ const STATUS_COLORS = {
   cancelled: "ht-status-badge-cancelled",
 };
 
+function getPatientName(appointment) {
+  const firstAndMiddleName = [appointment.first_name, appointment.middle_name].filter(Boolean).join(" ");
+  return [appointment.last_name, firstAndMiddleName].filter(Boolean).join(", ");
+}
+
 export function Appointments({ appointments, loadData }) {
-  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [, setSearchParams] = useSearchParams();
   const pageSize = 10;
 
   const visible = useMemo(() => {
-    const now = new Date();
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const endOfToday = new Date(startOfToday.getTime() + 24 * 60 * 60 * 1000);
+    const term = search.trim().toLowerCase();
 
-    let list = appointments;
-    if (filter === "today") {
-      list = list.filter((a) => new Date(a.scheduled_at) >= startOfToday && new Date(a.scheduled_at) < endOfToday);
-    } else if (filter === "past") {
-      list = [...list.filter((a) => new Date(a.scheduled_at) < now)].sort(
-        (a, b) => new Date(b.scheduled_at) - new Date(a.scheduled_at)
-      );
-    } else if (filter === "upcoming") {
-      list = list.filter((a) => new Date(a.scheduled_at) >= now && !["completed", "cancelled"].includes(a.status));
-    }
-    return [...list].sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
-  }, [appointments, filter]);
+    return appointments
+      .filter((appointment) => statusFilter === "all" || appointment.status === statusFilter)
+      .filter((appointment) => {
+        const patientName = getPatientName(appointment).toLowerCase();
+        return !term || patientName.includes(term);
+      })
+      .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+  }, [appointments, search, statusFilter]);
 
   const totalPages = Math.max(1, Math.ceil(visible.length / pageSize));
   const pageStart = (page - 1) * pageSize;
@@ -44,7 +44,7 @@ export function Appointments({ appointments, loadData }) {
 
   useEffect(() => {
     setPage(1);
-  }, [filter]);
+  }, [search, statusFilter]);
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -56,8 +56,8 @@ export function Appointments({ appointments, loadData }) {
   }
 
   return (
-    <div className="grid gap-4">
-      <PageHeader title="Appointments" subtitle="Schedule new appointments from a patient's record.">
+    <div className="grid gap-4 ht-admin-appointment-lists-page">
+      <PageHeader title="Appointment Lists" subtitle="Schedule new appointments from a patient's record.">
         <span className="ht-pill ht-pill-count">
           <Calendar size={18} strokeWidth={2} />
           {appointments.length} Appointments
@@ -66,19 +66,38 @@ export function Appointments({ appointments, loadData }) {
 
       <div className="ht-panel ht-appointments-panel">
         <div className="ht-appointments-toolbar">
-          <div className="ht-toolbar-field ht-toolbar-field-filter">
-            <label className="ht-toolbar-label">Show</label>
-            <Select value={filter} onChange={(e) => setFilter(e.target.value)} className="ht-filter-select">
-              <option value="today">Today</option>
-              <option value="upcoming">Upcoming</option>
-              <option value="previous">Previous</option>
+          <div className="ht-toolbar-field">
+            <label className="ht-toolbar-label" htmlFor="appointment-patient-search">Search</label>
+            <div className="ht-search-wrap">
+              <Search size={16} strokeWidth={2} />
+              <Input
+                id="appointment-patient-search"
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search Patient Name"
+                className="ht-search-input"
+              />
+            </div>
+          </div>
+          <div className="ht-toolbar-field ht-toolbar-field-sort">
+            <label className="ht-toolbar-label" htmlFor="appointment-status-filter">Sort by</label>
+            <Select
+              id="appointment-status-filter"
+              value={statusFilter}
+              onChange={(event) => setStatusFilter(event.target.value)}
+              className="ht-sort-select"
+            >
               <option value="all">All</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="completed">Completed</option>
             </Select>
           </div>
         </div>
 
         {visible.length === 0 ? (
-          <EmptyState>No appointments in this view.</EmptyState>
+          <EmptyState>No Appointments until this time.Thank you!</EmptyState>
         ) : (
           <>
             <Table>
@@ -103,7 +122,7 @@ export function Appointments({ appointments, loadData }) {
                   return (
                     <tr key={a.appointment_id}>
                       <Td className="font-bold" style={{ color: "#1f2421" }}>
-                        <div className="flex items-center gap-2">
+                        <div className="ht-appointment-date-time flex items-center gap-2">
                           <Calendar size={16} />
                           <AppointmentDate appointment={a} />
                         </div>
@@ -113,7 +132,7 @@ export function Appointments({ appointments, loadData }) {
                           onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id, appointmentId: a.appointment_id })}
                           style={{ color: "var(--color-brand-strong)", fontWeight: 700 }}
                         >
-                          {a.last_name}, {a.first_name}
+                          {getPatientName(a)}
                         </button>
                       </Td>
                       <Td>{a.reason}</Td>
@@ -140,7 +159,7 @@ export function Appointments({ appointments, loadData }) {
                           <span className="ht-record-action-icon">
                             <Eye size={15} strokeWidth={2} />
                           </span>
-                          Open appointment
+                          Open Appointment
                         </button>
                       </Td>
                     </tr>

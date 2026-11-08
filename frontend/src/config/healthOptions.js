@@ -1,21 +1,21 @@
 export const APPOINTMENT_REASONS = [
-  "General checkup",
-  "Prenatal check-up",
-  "Postnatal check-up",
-  "Child wellness check-up",
+  "General Checkup",
+  "Prenatal Checkup",
+  "Postnatal Checkup",
+  "Child Wellness Checkup",
   "Vaccination",
   "Immunization",
-  "Family planning",
-  "Maternal health consultation",
-  "Blood pressure monitoring",
-  "Diabetes monitoring",
-  "Medical consultation",
+  "Family Planning",
+  "Maternal Health Consultation",
+  "Blood Pressure Monitoring",
+  "Diabetes Monitoring",
+  "Medical Consultation",
   "Circumcision",
-  "Other",
+  "Others",
 ];
 
 export const HEALTH_CONDITIONS = [
-  "No known condition",
+  "No Known Condition",
   "Hypertension",
   "Diabetes",
   "Asthma",
@@ -23,9 +23,9 @@ export const HEALTH_CONDITIONS = [
   "Tuberculosis",
   "Malnutrition",
   "Anemia",
-  "Respiratory infection",
-  "Skin infection",
-  "Gastrointestinal infection",
+  "Respiratory Infection",
+  "Skin Infection",
+  "Gastrointestinal Infection",
   "Pregnancy",
   "Other",
 ];
@@ -35,8 +35,8 @@ export const ALLERGY_REACTIONS = [
   "Itching",
   "Swelling",
   "Hives",
-  "Shortness of breath",
-  "Nausea or vomiting",
+  "Shortness of Breath",
+  "Nausea or Vomiting",
   "Anaphylaxis",
   "Other",
 ];
@@ -44,7 +44,7 @@ export const ALLERGY_REACTIONS = [
 export const MEDICATION_ALLERGIES = [
   "Penicillin",
   "Amoxicillin",
-  "Sulfa drugs",
+  "Sulfa Drugs",
   "Aspirin",
   "Ibuprofen",
   "Paracetamol",
@@ -54,7 +54,8 @@ export const MEDICATION_ALLERGIES = [
 
 export const FOOD_ALLERGIES = [
   "Peanuts",
-  "Tree nuts",
+  "Tree Nuts",
+  "Shrimp",
   "Milk",
   "Eggs",
   "Fish",
@@ -66,19 +67,19 @@ export const FOOD_ALLERGIES = [
 
 export const ENVIRONMENTAL_ALLERGIES = [
   "Dust",
-  "Dust mites",
+  "Dust Mites",
   "Pollen",
   "Mold",
-  "Pet dander",
-  "Insect bites",
+  "Pet Dander",
+  "Insect Bites",
   "Latex",
   "Other",
 ];
 
 export const IMMUNIZATION_STATUSES = [
-  "Up to date",
-  "Partially immunized",
-  "Not immunized",
+  "Up to Date",
+  "Partially Immunized",
+  "Not Immunized",
   "Unknown",
   "Other",
 ];

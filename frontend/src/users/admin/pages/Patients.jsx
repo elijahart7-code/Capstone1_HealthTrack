@@ -1,6 +1,6 @@
 import { PatientExportButton } from "../../../shared/ExportDialog";
-import { useEffect, useMemo, useState } from "react";
-import { Archive, Eye, Search, Users } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Archive, CalendarDays, Eye, Search, Users } from "lucide-react";
 import { useSearchParams } from "react-router";
 import { api } from "../../../lib/axios";
 import { calculateAge } from "../../../utils/calculateAge";
@@ -8,29 +8,56 @@ import { PageHeader } from "../../../components/ui/PageHeader";
 import { Input, Select } from "../../../components/ui/Input";
 import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
 import { PatientRecord } from "../../../shared/patients/PatientRecord";
+import { PortalAccountBadge } from "../../../shared/patients/PortalAccountBadge";
 
 export function Patients({ patients, loadData, showArchived, onArchivedChange }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedId = searchParams.get("patientId");
+  const today = new Date().toLocaleDateString(undefined, {
+    weekday: "long", day: "2-digit", month: "long", year: "numeric",
+  });
 
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("last_name");
+  const [sortBy, setSortBy] = useState("name_asc");
   const [page, setPage] = useState(1);
   const [archiveError, setArchiveError] = useState("");
+  const [patientToArchive, setPatientToArchive] = useState(null);
+  const [isClosingArchiveDialog, setIsClosingArchiveDialog] = useState(false);
+  const [isArchiving, setIsArchiving] = useState(false);
+  const archiveDialogCloseTimer = useRef(null);
   const pageSize = 10;
 
-  async function archivePatient(patient) {
-    const confirmed = window.confirm(
-      `Are you sure you want to archive ${patient.full_name}? Their clinical history will be preserved, but they will be hidden from active patient lists.`
-    );
-    if (!confirmed) return;
+  useEffect(() => () => window.clearTimeout(archiveDialogCloseTimer.current), []);
 
+  function openArchiveDialog(patient) {
+    window.clearTimeout(archiveDialogCloseTimer.current);
     setArchiveError("");
+    setIsClosingArchiveDialog(false);
+    setPatientToArchive(patient);
+  }
+
+  function closeArchiveDialog(force = false) {
+    if ((isArchiving && !force) || isClosingArchiveDialog) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setIsClosingArchiveDialog(true);
+    archiveDialogCloseTimer.current = window.setTimeout(() => {
+      setPatientToArchive(null);
+      setIsClosingArchiveDialog(false);
+    }, reduceMotion ? 0 : 220);
+  }
+
+  async function archivePatient() {
+    if (!patientToArchive || isArchiving || isClosingArchiveDialog) return;
+    setArchiveError("");
+    setIsArchiving(true);
     try {
-      await api.post(`/patients/${patient.patient_id}/archive`);
+      await api.post(`/patients/${patientToArchive.patient_id}/archive`);
+      closeArchiveDialog(true);
       await loadData();
     } catch (err) {
       setArchiveError(err?.response?.data?.error || "Could not archive this patient.");
+    } finally {
+      setIsArchiving(false);
     }
   }
 
@@ -71,7 +98,8 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
     return [...list].sort((a, b) => {
       if (sortBy === "newest") return new Date(b.created_at) - new Date(a.created_at);
       if (sortBy === "birthdate") return new Date(a.birthdate) - new Date(b.birthdate);
-      return a.last_name.localeCompare(b.last_name);
+      const nameOrder = (a.full_name || "").localeCompare(b.full_name || "", undefined, { sensitivity: "base" });
+      return sortBy === "name_desc" ? -nameOrder : nameOrder;
     });
   }, [patients, search, sortBy]);
 
@@ -100,8 +128,10 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
   }
 
   return (
-    <div className="grid gap-4">
-      <PageHeader title="Patient Lists" subtitle="People registered at the Barangay Health Center of Mambog I." />
+    <div className="grid gap-4 ht-admin-patient-lists-page">
+      <PageHeader title="Patient Lists" subtitle="People registered at the Barangay Health Center of Mambog I.">
+        <span className="ht-current-date-pill"><CalendarDays size={18} strokeWidth={2} />{today}</span>
+      </PageHeader>
 
       <div className="ht-panel ht-patient-panel">
         {archiveError && <div className="ht-login-alert ht-login-alert-error">{archiveError}</div>}
@@ -123,9 +153,10 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
           <div className="ht-toolbar-field ht-toolbar-field-sort">
             <label className="ht-toolbar-label">Sort by</label>
             <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="ht-sort-select">
-              <option value="last_name">Surname (A-Z)</option>
-              <option value="newest">Recently registered</option>
-              <option value="birthdate">Date of birth</option>
+              <option value="name_asc">Name (A-Z)</option>
+              <option value="name_desc">Name (Z-A)</option>
+              <option value="newest">Recently Registered</option>
+              <option value="birthdate">Date of Birth</option>
             </Select>
           </div>
           <label className="ht-archive-filter">
@@ -146,13 +177,13 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
               <thead>
                 <tr>
                   <Th>Name</Th>
-                  <Th>Age</Th>
-                  <Th>Contact Number</Th>
                   <Th>Sex</Th>
+                  <Th>Contact Number</Th>
+                  <Th>Age</Th>
                   <Th>Portal Account</Th>
                   <Th>Patient Records</Th>
-                  <Th>Action</Th>
                   <Th>Download File</Th>
+                  <Th>Action</Th>
                 </tr>
               </thead>
               <tbody>
@@ -161,11 +192,11 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                     <Td className="font-bold" style={{ color: "#1f2421" }}>
                       {p.full_name}
                     </Td>
-                    <Td>{calculateAge(p.birthdate)}</Td>
-                    <Td>{p.contact_number || "--"}</Td>
                     <Td className="capitalize">{p.sex}</Td>
+                    <Td>{p.contact_number || "--"}</Td>
+                    <Td>{calculateAge(p.birthdate)}</Td>
                     <Td>
-                      {p.user_id ? <span className="ht-status-badge ht-status-badge-active">Active</span> : <span className="ht-status-badge ht-status-badge-inactive">Inactive</span>}
+                      <PortalAccountBadge patient={p} />
                     </Td>
                     <Td>
                       <button
@@ -176,8 +207,11 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                         <span className="ht-record-action-icon">
                           <Eye size={15} strokeWidth={2} />
                         </span>
-                        Open record
+                        Open Record
                       </button>
+                    </Td>
+                    <Td>
+                      <PatientExportButton patient={p} />
                     </Td>
                     <Td className="ht-patient-actions-cell">
                       <div className="ht-patient-row-actions">
@@ -192,7 +226,7 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                         ) : (
                           <button
                             type="button"
-                            onClick={() => archivePatient(p)}
+                            onClick={() => openArchiveDialog(p)}
                             className="ht-archive-row-action"
                           >
                             <Archive size={15} strokeWidth={2} />
@@ -201,7 +235,6 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                         )}
                       </div>
                     </Td>
-                    <Td><PatientExportButton patient={p} /></Td>
                   </tr>
                 ))}
               </tbody>
@@ -239,6 +272,53 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
           </>
         )}
       </div>
+      {patientToArchive && (
+        <div
+          className={`ht-confirm-backdrop ht-archive-confirm-backdrop ${isClosingArchiveDialog ? "is-closing" : ""}`}
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              closeArchiveDialog();
+            }
+          }}
+        >
+          <section
+            aria-labelledby="archive-confirm-title"
+            aria-modal="true"
+            className={`ht-confirm-dialog ht-archive-confirm-dialog ${isClosingArchiveDialog ? "is-closing" : ""}`}
+            role="dialog"
+          >
+            <h2 id="archive-confirm-title">Archive Patient?</h2>
+            <p>
+              Are you sure you want to archive {patientToArchive.full_name}? Their
+              medical records will be preserved, but they will be hidden from
+              active patient lists. Thank you!
+            </p>
+            {archiveError && (
+              <p className="ht-confirm-error" role="alert">
+                {archiveError}
+              </p>
+            )}
+            <div className="ht-confirm-actions ht-archive-confirm-actions">
+              <button
+                className="ht-confirm-cancel"
+                disabled={isArchiving}
+                onClick={() => closeArchiveDialog()}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="ht-confirm-submit"
+                disabled={isArchiving}
+                onClick={archivePatient}
+                type="button"
+              >
+                {isArchiving ? "Archiving..." : "Archive"}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

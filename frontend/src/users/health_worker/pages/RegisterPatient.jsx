@@ -32,7 +32,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
   const [error, setError] = useState(null);
   const [portalEmailError, setPortalEmailError] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [sendLoginCredentials, setSendLoginCredentials] = useState(true);
+  const [sendSetupEmail, setSendSetupEmail] = useState(true);
   const birthDatePickerRef = useRef(null);
 
   function set(key, value) {
@@ -119,12 +119,13 @@ export function RegisterPatient({ loadData, onRegistered }) {
       const finalPayload = {
         ...form,
         birthdate: toIsoDate(form.birthdate),
+        send_setup_email: sendSetupEmail,
       };
 
       const { data } = await api.post("/patients", finalPayload);
 
       await loadData();
-      onRegistered(data.patient.patient_id);
+      onRegistered(data.patient.patient_id, data.verification);
     } catch (err) {
       const message = err?.response?.data?.error || "Could not register this patient.";
       if (message.toLowerCase().includes("email")) {
@@ -350,7 +351,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
                 </div>
                 <p className="ht-portal-info-text">
                   The patient will use this email address to sign in and view their health information,
-                  appointments, and medical records.
+                  appointments, and medical records after confirming their email and setting a password.
                 </p>
               </div>
             </div>
@@ -382,15 +383,15 @@ export function RegisterPatient({ loadData, onRegistered }) {
               <label className="ht-portal-checkbox" style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginTop: "0.75rem" }}>
                 <input
                   type="checkbox"
-                  checked={sendLoginCredentials}
-                  onChange={(e) => setSendLoginCredentials(e.target.checked)}
+                  checked={sendSetupEmail}
+                  onChange={(e) => setSendSetupEmail(e.target.checked)}
                 />
-                <span>Send login credentials to this email address</span>
+                <span>Send account confirmation and password setup email</span>
               </label>
 
-              {sendLoginCredentials && (
+              {sendSetupEmail && (
                 <p className="ht-muted text-sm" style={{ marginTop: "0.5rem" }}>
-                  The patient will receive an email with login instructions.
+                  The patient will receive a link valid for 15 minutes to confirm their email and choose a password.
                 </p>
               )}
             </div>
