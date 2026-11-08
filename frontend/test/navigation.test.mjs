@@ -211,9 +211,10 @@ test('failed status update shows an error and retains the original status', asyn
   assert.equal(select.disabled, false);
 });
 
-test('patient action columns expose archive actions and keep row action layout consistent', async () => {
+test('patient action columns expose export and archive and keep row action layout consistent', async () => {
   await mount('/admin?page=patients');
   const actions = document.querySelector('.ht-patient-row-actions');
+  assert.ok(button('Export PDF', actions.closest('tr')));
   assert.ok(button('Archive', actions));
   const css = await readFile(path.join(frontend, 'src/utils/index.css'), 'utf8');
   assert.match(css, /\.ht-patient-row-actions\s*\{[^}]*gap:\s*8px/);
@@ -371,5 +372,4 @@ test('an empty recording cannot finish even through direct form submission', asy
   assert.match(document.querySelector('[role="alert"]').textContent, /required/);
   assert.equal(document.querySelector('.ht-appointment-scroll'), null);
 });
-
 

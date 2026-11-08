@@ -7,7 +7,7 @@ import { ClinicalRecords } from "./ClinicalRecords";
 import { RECORD_TYPES } from "../../config/recordTypes";
 import { Combobox, Field, Input, Select, Textarea } from "../../components/ui/Input";
 import { APPOINTMENT_REASONS } from "../../config/healthOptions";
-import { EmptyState, Table, Th, Td } from "../../components/ui/Table";
+import { Badge, EmptyState, Table, Th, Td } from "../../components/ui/Table";
 
 const TYPES = ["vital-signs", "health-assessment", "midwife-notes", "medical-history", "allergies"];
 const STATUSES = ["confirmed", "cancelled"];
@@ -170,22 +170,11 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
     </section>}
     {!recording && error && <p className="ht-login-alert ht-login-alert-error" role="alert">{error}</p>}
     {appointment && <>
-      <section
-        className={`ht-appointment-record ht-appointment-record-compact${recording ? " is-recording" : ""}`}
-        aria-label="Selected appointment record"
-      >
-        <div className="ht-appointment-record-summary">
-          <div className="ht-appointment-record-identity">
-            <div className="ht-appointment-record-title-line">
-              <span className="ht-appointment-record-label">Consultation Record</span>
-              <div className="ht-appointment-record-reason-group">
-                <h2 className="ht-appointment-record-reason">{appointment.reason}</h2>
-                <span className={`ht-appointment-record-status ht-appointment-record-status-${appointmentStatus}`}>{appointmentStatus}</span>
-              </div>
-            </div>
-            <div className="ht-appointment-record-meta"><AppointmentDate appointment={appointment} /></div>
-            {appointment.notes && <p className="ht-appointment-compact-notes">{appointment.notes}</p>}
-          </div>
+      <section className={`ht-appointment-record ht-appointment-record-compact${recording ? " is-recording" : ""}`} aria-label="Selected appointment record">
+        <div className="ht-appointment-record-identity">
+          <span className="ht-appointment-record-label"><ClipboardList size={14} /> Appointment record</span>
+          <h2>{appointment.reason}</h2>
+          <div className="ht-appointment-record-meta"><AppointmentDate appointment={appointment} /><Badge>{appointment.status}</Badge></div>
         </div>
         <div className="ht-appointment-record-controls">
           {recording ? (
