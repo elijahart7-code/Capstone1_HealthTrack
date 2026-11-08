@@ -1,4 +1,3 @@
-import { PatientExportButton } from "../../../shared/ExportDialog";
 import { useEffect, useMemo, useState } from "react";
 import { CalendarDays, Eye } from "lucide-react";
 import { useSearchParams } from "react-router";
@@ -110,7 +109,6 @@ export function Patients({ patients, loadData }) {
                 <Th>Occupation</Th>
                 <Th>Portal Account</Th>
                 <Th>Action</Th>
-                <Th>Download File</Th>
               </tr>
             </thead>
             <tbody>
@@ -143,7 +141,6 @@ export function Patients({ patients, loadData }) {
                       View Record Only
                     </button>
                   </Td>
-                  <Td><PatientExportButton patient={p} /></Td>
                 </tr>
               ))}
             </tbody>

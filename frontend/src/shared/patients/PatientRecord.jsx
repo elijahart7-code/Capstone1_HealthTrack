@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { api } from "../../lib/axios";
 import { calculateAge } from "../../utils/calculateAge";
 import { Field, Input } from "../../components/ui/Input";
-import { PatientExportButton } from "../ExportDialog";
 
 import {
   UserRound,
@@ -240,10 +239,6 @@ export function PatientRecord({
               </button>
             );
           })}
-
-          <div className="ht-patient-sidebar-export">
-            <PatientExportButton patient={patient} />
-          </div>
 
         </aside>
 

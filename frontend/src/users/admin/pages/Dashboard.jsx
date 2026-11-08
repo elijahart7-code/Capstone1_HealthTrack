@@ -1,13 +1,11 @@
 import { ReportInsights, ReportMetrics } from "../../../shared/ReportInsights";
 import { AppointmentDate } from "../../../shared/appointments/AppointmentDate";
-import { ExportDialog } from "../../../shared/ExportDialog";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   BarChart3,
   CalendarDays,
   ClipboardList,
-  Download,
   FileText,
   HeartPulse,
   Syringe,
@@ -224,7 +222,6 @@ function NotableEvents({ appointments, onAppointmentClick, limit = 100 }) {
 export function Dashboard({ dashboard, appointments, loadData }) {
   const [, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("overview");
-  const [showExport, setShowExport] = useState(false);
   const [reportSets, setReportSets] = useState({});
   const [reportError, setReportError] = useState(null);
   const today = new Date().toLocaleDateString(undefined, {
@@ -307,7 +304,6 @@ export function Dashboard({ dashboard, appointments, loadData }) {
         <div className="ht-report-tabs" role="tablist" aria-label="Health center reports">
           <button className={activeTab === "overview" ? "is-active" : ""} onClick={() => setActiveTab("overview")} role="tab" aria-selected={activeTab === "overview"}><BarChart3 size={16} /> Overview</button>
           {PERIODS.map((period) => <button key={period.key} className={activeTab === period.key ? "is-active" : ""} onClick={() => selectPeriod(period)} role="tab" aria-selected={activeTab === period.key}>{period.label}</button>)}
-          <button className="ht-report-export ht-export-pdf-button" onClick={() => setShowExport(true)} disabled={!report || !!reportError}><Download size={16} /> Export PDF</button>
         </div>
 
         {!report && !reportError && <p role="status">Loading report data…</p>}
@@ -363,7 +359,6 @@ export function Dashboard({ dashboard, appointments, loadData }) {
         )}
       </div>
 
-      {showExport && <ExportDialog title="HealthTrack dashboard report" sections={exportSections} initialSelected={["overview", activeTab === "overview" ? "monthly" : activeTab]} onClose={() => setShowExport(false)} />}
     </div>
   );
 }

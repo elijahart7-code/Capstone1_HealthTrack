@@ -146,17 +146,6 @@ test('patient list opens and returns without needing a page refresh', async () =
   assert.match(visibleText(), /Patient Lists/);
 });
 
-test('export dialog opens from dashboard and from patient rows before opening a patient', async () => {
-  await mount(); await click(button('Export PDF'));
-  assert.ok(document.querySelector('dialog[open]'));
-  await click(button('Cancel', document.querySelector('dialog')));
-  assert.equal(document.querySelector('dialog'), null);
-  await click(button('Patients', document.querySelector('nav')));
-  await click(button('Export PDF'));
-  assert.match(document.querySelector('dialog').textContent, /Patient report/);
-  await click(button('Cancel', document.querySelector('dialog')));
-});
-
 test('creating an appointment refreshes data without unmounting the active patient screen', async () => {
   await mount('/admin?page=patients&patientId=P1&appointmentId=A1');
   await click(button('Activate'));
@@ -222,15 +211,13 @@ test('failed status update shows an error and retains the original status', asyn
   assert.equal(select.disabled, false);
 });
 
-test('patient action columns expose export and archive and export options use explicit left alignment', async () => {
+test('patient action columns expose archive actions and keep row action layout consistent', async () => {
   await mount('/admin?page=patients');
   const actions = document.querySelector('.ht-patient-row-actions');
-  assert.ok(button('Export PDF', actions.closest('tr')));
   assert.ok(button('Archive', actions));
   const css = await readFile(path.join(frontend, 'src/utils/index.css'), 'utf8');
   assert.match(css, /\.ht-patient-row-actions\s*\{[^}]*gap:\s*8px/);
   assert.match(css, /\.ht-patient-row-actions > button\s*\{[^}]*height:\s*36px/);
-  assert.match(css, /\.ht-export-dialog \.ht-export-options > label\s*\{[^}]*justify-content:\s*flex-start[^}]*text-align:\s*left/);
 });
 
 
@@ -355,90 +342,6 @@ test('failed finish preserves the recording draft for retry', async () => {
 });
 
 
-test('PDF exports retain styled topics with page breaks only between top-level sections', async () => {
-  await mount();
-  await click(button('Export PDF'));
-  for (const label of document.querySelectorAll('.ht-export-options label')) {
-    const wanted = ['Overview', 'Today report', 'Weekly report', 'Appointment details', 'Notable events'].includes(label.textContent.trim());
-    const checkbox = label.querySelector('input');
-    if (checkbox.checked !== wanted) await click(checkbox);
-  }
-  const originalPrint = window.print;
-  window.print = () => {};
-  await click(button('Print / Save PDF', document.querySelector('dialog')));
-  const printed = document.querySelector('.ht-export-document');
-  assert.ok(printed.querySelector('.ht-export-heading'));
-  const topics = [...printed.querySelectorAll(':scope > .ht-export-section')];
-  assert.deepEqual(topics.map(t => t.dataset.reportSection), ['overview', 'daily', 'weekly', 'details', 'events']);
-  assert.equal(printed.querySelectorAll('.ht-export-section .ht-export-section').length, 0);
-  assert.equal(printed.querySelectorAll('.ht-export-section-title').length, 5);
-  assert.ok(printed.querySelector('.ht-export-summary'));
-  assert.ok(printed.querySelector('.ht-report-list'));
-  const css = await readFile(path.join(frontend, 'src/utils/index.css'), 'utf8');
-  assert.match(css, /\.ht-export-document > \.ht-export-section \+ \.ht-export-section\s*\{[^}]*break-before:\s*page/);
-  assert.match(css, /print-color-adjust:\s*exact/);
-  assert.match(css, /\.ht-export-document th\s*\{[^}]*background:\s*#e1eee5/);
-  if (process.env.HEALTHTRACK_PRINT_FIXTURE) {
-    const sample = printed.cloneNode(true);
-    const tbody = sample.querySelector('[data-report-section="details"] tbody');
-    const row = tbody.firstElementChild.cloneNode(true);
-    for (let i = 1; i < 45; i++) tbody.append(row.cloneNode(true));
-    await writeFile(process.env.HEALTHTRACK_PRINT_FIXTURE, sample.outerHTML);
-  }
-  await act(async () => window.dispatchEvent(new Event('afterprint')));
-  assert.equal(document.querySelector('.ht-export-document'), null);
-  assert.equal(document.body.classList.contains('ht-exporting'), false);
-  window.print = originalPrint;
-});
-
-test('patient export buttons use the same red export style as dashboard', async () => {
-  await mount('/admin?page=patients');
-  assert.ok(button('Export PDF').classList.contains('ht-export-pdf-button'));
-  const css = await readFile(path.join(frontend, 'src/utils/index.css'), 'utf8');
-  assert.match(css, /\.ht-export-pdf-button\s*\{[^}]*background:\s*var\(--color-danger/);
-});
-
-
-test('patient PDF uses the same styled, separately paginated sections', async () => {
-  await mount('/admin?page=patients');
-  await click(button('Export PDF'));
-  const vital = [...document.querySelectorAll('.ht-export-options label')].find(label => label.textContent.trim() === 'Vital Signs');
-  await click(vital.querySelector('input'));
-  const originalPrint = window.print; window.print = () => {};
-  await click(button('Print / Save PDF', document.querySelector('dialog')));
-  const printed = document.querySelector('.ht-export-document');
-  assert.deepEqual([...printed.querySelectorAll(':scope > .ht-export-section')].map(s => s.dataset.reportSection), ['profile', 'appointments', 'vital-signs']);
-  assert.ok(printed.querySelector('dl'));
-  assert.ok(printed.querySelector('table thead'));
-  assert.ok(printed.querySelector('.ht-export-record'));
-  await act(async () => window.dispatchEvent(new Event('afterprint')));
-  window.print = originalPrint;
-});
-
-
-test('period summaries change with the selected tab and PDF uses the same metrics', async () => {
-  await mount();
-  const metric = label => [...document.querySelectorAll('.ht-dashboard-screen .ht-report-metric')].find(m => m.querySelector('span').textContent === label);
-  assert.equal(metric('Scheduled in period').querySelector('strong').textContent, '15');
-  assert.equal(metric('Completed visits').querySelector('strong').textContent, '9');
-  assert.equal(metric('Patients served').querySelector('strong').textContent, '1');
-  assert.match(visibleText(), /Completed with linked records/);
-  assert.match(visibleText(), /Current follow-up patients/);
-  await click(button('Today'));
-  assert.equal(metric('Scheduled in period').querySelector('strong').textContent, '4');
-  assert.equal(metric('Completed visits').querySelector('strong').textContent, '2');
-  assert.equal(metric('Overdue confirmed').querySelector('strong').textContent, '1');
-  await click(button('Export PDF'));
-  const originalPrint = window.print; window.print = () => {};
-  await click(button('Print / Save PDF', document.querySelector('dialog')));
-  const daily = document.querySelector('[data-report-section="daily"]');
-  const completed = [...daily.querySelectorAll('.ht-report-metric')].find(m => m.querySelector('span').textContent === 'Completed visits');
-  assert.equal(completed.querySelector('strong').textContent, '2');
-  assert.match(daily.textContent, /50% of scheduled appointments/);
-  assert.doesNotMatch(daily.textContent, /Volume comparison|Follow-up counts reflect latest/);
-  await act(async () => window.dispatchEvent(new Event('afterprint')));
-  window.print = originalPrint;
-});
 
 
 test('empty report summaries show zero activity without invalid percentages or invented leaders', async () => {
@@ -470,39 +373,3 @@ test('an empty recording cannot finish even through direct form submission', asy
 });
 
 
-test('detail exports have independent period dropdowns and filter each section by its own choice', async () => {
-  const year = new Date().getFullYear();
-  const earlier = { ...appointment, appointment_id: 'HISTORICAL', scheduled_at: `${year}-01-02T10:00:00`, reason: 'Historical consultation', notes: 'Earlier event for yearly report' };
-  await mount('/admin', [earlier]);
-  await click(button('Export PDF'));
-  const details = document.querySelector('select[aria-label="Appointment details period"]');
-  const followups = document.querySelector('select[aria-label="Patients needing follow-up period"]');
-  const events = document.querySelector('select[aria-label="Notable events period"]');
-  assert.deepEqual([...details.options].map(o => o.textContent), ['Today', 'Weekly', 'Monthly', 'Quarterly', 'Yearly']);
-  assert.equal(document.querySelectorAll('.ht-export-option-row select').length, 3);
-  assert.doesNotMatch(document.querySelector('dialog').textContent, /selected period/i);
-  await act(async () => { details.value = 'daily'; details.dispatchEvent(new Event('change', { bubbles: true })); });
-  assert.equal(followups.value, 'monthly');
-  assert.equal(events.value, 'monthly');
-  await act(async () => { followups.value = 'weekly'; followups.dispatchEvent(new Event('change', { bubbles: true })); events.value = 'yearly'; events.dispatchEvent(new Event('change', { bubbles: true })); });
-  for (const label of document.querySelectorAll('.ht-export-options label')) {
-    const wanted = ['Appointment details', 'Patients needing follow-up', 'Notable events'].includes(label.textContent.trim());
-    const checkbox = label.querySelector('input'); if (checkbox.checked !== wanted) await click(checkbox);
-  }
-  const originalPrint = window.print; window.print = () => {};
-  await click(button('Print / Save PDF', document.querySelector('dialog')));
-  const printed = document.querySelector('.ht-export-document');
-  const detailReport = printed.querySelector('[data-report-section="details"]');
-  const followupReport = printed.querySelector('[data-report-section="followups"]');
-  const eventReport = printed.querySelector('[data-report-section="events"]');
-  assert.match(detailReport.querySelector('h2').textContent, /Appointment details — Today/);
-  assert.match(followupReport.querySelector('h2').textContent, /Patients needing follow-up — Weekly/);
-  assert.match(eventReport.querySelector('h2').textContent, /Notable events — Yearly/);
-  assert.doesNotMatch(detailReport.textContent, /Historical consultation/);
-  assert.match(eventReport.textContent, /Earlier event for yearly report/);
-  const today = new Date().toLocaleDateString('en-CA');
-  assert.ok(detailReport.textContent.includes(`${today} to ${today}`));
-  assert.ok(eventReport.textContent.includes(`${year}-01-01 to ${today}`));
-  await act(async () => window.dispatchEvent(new Event('afterprint')));
-  window.print = originalPrint;
-});

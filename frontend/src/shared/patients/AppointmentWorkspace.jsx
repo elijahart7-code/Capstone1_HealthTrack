@@ -177,7 +177,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
         <div className="ht-appointment-record-summary">
           <div className="ht-appointment-record-identity">
             <div className="ht-appointment-record-title-line">
-              <span className="ht-appointment-record-label">Medical Record</span>
+              <span className="ht-appointment-record-label">Consultation Record</span>
               <div className="ht-appointment-record-reason-group">
                 <h2 className="ht-appointment-record-reason">{appointment.reason}</h2>
                 <span className={`ht-appointment-record-status ht-appointment-record-status-${appointmentStatus}`}>{appointmentStatus}</span>
