@@ -40,6 +40,13 @@ export function Patients({ patients, loadData }) {
     return [...list].sort((a, b) => {
       if (sortBy === "newest") return new Date(b.created_at) - new Date(a.created_at);
       if (sortBy === "last_name_desc") return b.last_name.localeCompare(a.last_name);
+      if (sortBy === "birthdate") {
+        const birthdateA = a.birthdate || "";
+        const birthdateB = b.birthdate || "";
+        if (!birthdateA) return birthdateB ? 1 : 0;
+        if (!birthdateB) return -1;
+        return birthdateA.localeCompare(birthdateB);
+      }
       return a.last_name.localeCompare(b.last_name);
     });
   }, [patients, search, sortBy]);
@@ -72,7 +79,7 @@ export function Patients({ patients, loadData }) {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 ht-healthworker-patients-page">
       <PageHeader title="Patients" subtitle="Everyone who registered at the Barangay Health Center of Mambog I.">
         <button onClick={() => setSearchParams({ page: "register-patient" })} className="ht-button ht-button-strong-green">
           Register Patient
@@ -88,7 +95,8 @@ export function Patients({ patients, loadData }) {
             <Select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
               <option value="last_name">Surname (A-Z)</option>
               <option value="last_name_desc">Surname (Z-A)</option>
-              <option value="newest">Recently registered</option>
+              <option value="birthdate">Date of Birth</option>
+              <option value="newest">Recently Registered</option>
             </Select>
           </Field>
         </div>
@@ -107,14 +115,15 @@ export function Patients({ patients, loadData }) {
                 <Th>Civil Status</Th>
                 <Th>Blood Type</Th>
                 <Th>Occupation</Th>
+                <Th>Nationality</Th>
                 <Th>Portal Account</Th>
-                <Th>Action</Th>
+                <Th>Patient Records</Th>
               </tr>
             </thead>
             <tbody>
               {pageItems.map((p) => (
                 <tr key={p.patient_id}>
-                  <Td className="font-bold whitespace-nowrap" style={{ color: "var(--color-brand-strong)" }}>
+                  <Td className="font-bold whitespace-nowrap" style={{ color: "#000000" }}>
                     {p.full_name}
                   </Td>
                   <Td>{calculateAge(p.birthdate)}</Td>
@@ -126,6 +135,7 @@ export function Patients({ patients, loadData }) {
                   <Td className="capitalize whitespace-nowrap">{p.civil_status || "--"}</Td>
                   <Td>{p.blood_type || "--"}</Td>
                   <Td>{p.occupation || "--"}</Td>
+                  <Td>{p.nationality || "--"}</Td>
                   <Td>
                     <PortalAccountBadge patient={p} />
                   </Td>

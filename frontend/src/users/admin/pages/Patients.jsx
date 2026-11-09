@@ -1,4 +1,3 @@
-import { PatientExportButton } from "../../../shared/ExportDialog";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Archive, CalendarDays, Eye, Search, Users } from "lucide-react";
 import { useSearchParams } from "react-router";
@@ -22,12 +21,19 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
   const [page, setPage] = useState(1);
   const [archiveError, setArchiveError] = useState("");
   const [patientToArchive, setPatientToArchive] = useState(null);
+  const [patientToRestore, setPatientToRestore] = useState(null);
   const [isClosingArchiveDialog, setIsClosingArchiveDialog] = useState(false);
+  const [isClosingRestoreDialog, setIsClosingRestoreDialog] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
   const archiveDialogCloseTimer = useRef(null);
+  const restoreDialogCloseTimer = useRef(null);
   const pageSize = 10;
 
-  useEffect(() => () => window.clearTimeout(archiveDialogCloseTimer.current), []);
+  useEffect(() => () => {
+    window.clearTimeout(archiveDialogCloseTimer.current);
+    window.clearTimeout(restoreDialogCloseTimer.current);
+  }, []);
 
   function openArchiveDialog(patient) {
     window.clearTimeout(archiveDialogCloseTimer.current);
@@ -46,6 +52,23 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
     }, reduceMotion ? 0 : 220);
   }
 
+  function openRestoreDialog(patient) {
+    window.clearTimeout(restoreDialogCloseTimer.current);
+    setArchiveError("");
+    setIsClosingRestoreDialog(false);
+    setPatientToRestore(patient);
+  }
+
+  function closeRestoreDialog(force = false) {
+    if ((isRestoring && !force) || isClosingRestoreDialog) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setIsClosingRestoreDialog(true);
+    restoreDialogCloseTimer.current = window.setTimeout(() => {
+      setPatientToRestore(null);
+      setIsClosingRestoreDialog(false);
+    }, reduceMotion ? 0 : 220);
+  }
+
   async function archivePatient() {
     if (!patientToArchive || isArchiving || isClosingArchiveDialog) return;
     setArchiveError("");
@@ -61,14 +84,18 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
     }
   }
 
-  async function restorePatient(patient) {
-    if (!window.confirm(`Restore ${patient.full_name} to the active patient list?`)) return;
+  async function restorePatient() {
+    if (!patientToRestore || isRestoring || isClosingRestoreDialog) return;
     setArchiveError("");
+    setIsRestoring(true);
     try {
-      await api.post(`/patients/${patient.patient_id}/restore`);
+      await api.post(`/patients/${patientToRestore.patient_id}/restore`);
+      closeRestoreDialog(true);
       await loadData(true);
     } catch (err) {
       setArchiveError(err?.response?.data?.error || "Could not restore this patient.");
+    } finally {
+      setIsRestoring(false);
     }
   }
 
@@ -170,19 +197,18 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
         </div>
 
         {visible.length === 0 ? (
-          <EmptyState>{search ? `No patient matches "${search}".` : "No patients registered yet."}</EmptyState>
+          <EmptyState>{search ? `No patient matches "${search}".` : "No patient found."}</EmptyState>
         ) : (
           <>
             <Table>
               <thead>
                 <tr>
-                  <Th>Name</Th>
+                  <Th>Full Name</Th>
                   <Th>Sex</Th>
                   <Th>Contact Number</Th>
                   <Th>Age</Th>
                   <Th>Portal Account</Th>
                   <Th>Patient Records</Th>
-                  <Th>Download File</Th>
                   <Th>Action</Th>
                 </tr>
               </thead>
@@ -210,15 +236,12 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                         Open Record
                       </button>
                     </Td>
-                    <Td>
-                      <PatientExportButton patient={p} />
-                    </Td>
                     <Td className="ht-patient-actions-cell">
                       <div className="ht-patient-row-actions">
                         {showArchived ? (
                           <button
                             type="button"
-                            onClick={() => restorePatient(p)}
+                            onClick={() => openRestoreDialog(p)}
                             className="ht-restore-row-action"
                           >
                             Restore
@@ -288,7 +311,7 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
             role="dialog"
           >
             <h2 id="archive-confirm-title">Archive Patient?</h2>
-            <p>
+            <p className="ht-confirm-message">
               Are you sure you want to archive {patientToArchive.full_name}? Their
               medical records will be preserved, but they will be hidden from
               active patient lists. Thank you!
@@ -314,6 +337,52 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                 type="button"
               >
                 {isArchiving ? "Archiving..." : "Archive"}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {patientToRestore && (
+        <div
+          className={`ht-confirm-backdrop ht-archive-confirm-backdrop ${isClosingRestoreDialog ? "is-closing" : ""}`}
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              closeRestoreDialog();
+            }
+          }}
+        >
+          <section
+            aria-labelledby="restore-confirm-title"
+            aria-modal="true"
+            className={`ht-confirm-dialog ht-archive-confirm-dialog ${isClosingRestoreDialog ? "is-closing" : ""}`}
+            role="dialog"
+          >
+            <h2 id="restore-confirm-title">Restore Patient?</h2>
+            <p>
+              Restore {patientToRestore.full_name} to the active list?
+            </p>
+            {archiveError && (
+              <p className="ht-confirm-error" role="alert">
+                {archiveError}
+              </p>
+            )}
+            <div className="ht-confirm-actions ht-archive-confirm-actions">
+              <button
+                className="ht-confirm-cancel"
+                disabled={isRestoring}
+                onClick={() => closeRestoreDialog()}
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                className="ht-confirm-submit"
+                disabled={isRestoring}
+                onClick={restorePatient}
+                type="button"
+              >
+                {isRestoring ? "Restoring..." : "OK"}
               </button>
             </div>
           </section>
