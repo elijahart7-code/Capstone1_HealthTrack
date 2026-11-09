@@ -130,7 +130,7 @@ export function Appointments({ appointments, loadData }) {
                       <Td>
                         <button
                           onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id, appointmentId: a.appointment_id })}
-                          style={{ color: "var(--color-brand-strong)", fontWeight: 700 }}
+                          style={{ color: "#000000", fontSize: 14, fontWeight: 400 }}
                         >
                           {getPatientName(a)}
                         </button>

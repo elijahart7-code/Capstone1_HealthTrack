@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
-import { CheckCircle2, CircleDot, ClipboardList, Trash2 } from "lucide-react";
+import { CalendarDays, CheckCircle2, CircleDot, ClipboardList, Trash2 } from "lucide-react";
 import { api } from "../../lib/axios";
 import { AppointmentDate } from "../appointments/AppointmentDate";
 import { ClinicalRecords } from "./ClinicalRecords";
 import { RECORD_TYPES } from "../../config/recordTypes";
 import { Combobox, Field, Input, Select, Textarea } from "../../components/ui/Input";
 import { APPOINTMENT_REASONS } from "../../config/healthOptions";
-import { Badge, EmptyState, Table, Th, Td } from "../../components/ui/Table";
+import { EmptyState, Table, Th, Td } from "../../components/ui/Table";
 
 const TYPES = ["vital-signs", "health-assessment", "midwife-notes", "medical-history", "allergies"];
 const STATUSES = ["confirmed", "cancelled"];
@@ -135,7 +135,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
   }
   return <div className="ht-appointment-workspace">
     {!recording && <section className="ht-content-card">
-      <div className="ht-card-heading"><h2>Appointments</h2>{role === "admin" && <button className="ht-primary-button ht-new-appointment-button" onClick={() => setShowNew(true)}>+ New Appointment</button>}</div>
+      <div className="ht-card-heading"><h2 className="ht-appointments-heading"><CalendarDays size={22} aria-hidden="true" />Appointments</h2>{role === "admin" && <button className="ht-primary-button ht-new-appointment-button" onClick={() => setShowNew(true)}>+ New Appointment</button>}</div>
       <div className="ht-appointment-scroll" tabIndex="0" aria-label="Patient appointments, scroll for more">
         {!appointments.length ? <EmptyState>No appointments yet.</EmptyState> : <Table>
           <thead><tr><Th>Date and Time</Th><Th>Reason</Th><Th>Status</Th><Th>Action</Th></tr></thead>
@@ -171,10 +171,18 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
     {!recording && error && <p className="ht-login-alert ht-login-alert-error" role="alert">{error}</p>}
     {appointment && <>
       <section className={`ht-appointment-record ht-appointment-record-compact${recording ? " is-recording" : ""}`} aria-label="Selected appointment record">
-        <div className="ht-appointment-record-identity">
-          <span className="ht-appointment-record-label"><ClipboardList size={14} /> Appointment record</span>
-          <h2>{appointment.reason}</h2>
-          <div className="ht-appointment-record-meta"><AppointmentDate appointment={appointment} /><Badge>{appointment.status}</Badge></div>
+        <div className="ht-appointment-record-title-line">
+          <span className="ht-appointment-record-label"><ClipboardList size={20} /> CONSULTATION RECORD</span>
+          <div className="ht-appointment-record-reason-group">
+            <h2 className="ht-appointment-record-reason">{appointment.reason}</h2>
+            <span className={`ht-appointment-record-status ht-appointment-record-status-${appointmentStatus}`}>
+              {appointmentStatus.charAt(0).toUpperCase() + appointmentStatus.slice(1)}
+            </span>
+          </div>
+          <div className="ht-appointment-record-meta">
+            <AppointmentDate appointment={appointment} />
+          </div>
+          {appointment.notes && <p className="ht-appointment-compact-notes">{appointment.notes}</p>}
         </div>
         <div className="ht-appointment-record-controls">
           {recording ? (
@@ -186,7 +194,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
           ) : appointmentStatus === "cancelled" ? (
             <button type="button" className="ht-appointment-no-records" disabled>No Record</button>
           ) : role === "admin" ? (
-            <button type="button" className="ht-primary-button" onClick={() => activate(appointment)}>Activate</button>
+            <button type="button" className="ht-appointment-record-activate-button" onClick={() => activate(appointment)}>Activate</button>
           ) : null}
         </div>
       {showClinicalRecords && <form onSubmit={finishRecording} className="ht-recording-form">
@@ -214,7 +222,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
     }}>
       <section className="ht-confirm-dialog ht-archive-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="remove-appointment-title">
         <h2 id="remove-appointment-title">Remove Appointment?</h2>
-        <p>Are you sure you want to remove this Cancelled Appointment scheduled for {new Date(appointmentToRemove.scheduled_at).toLocaleString()}? This action cannot be undone. Read it carefully.</p>
+        <p className="ht-confirm-message">Are you sure you want to remove this Cancelled Appointment scheduled for {new Date(appointmentToRemove.scheduled_at).toLocaleString()}? This action cannot be undone. Read it carefully.</p>
         {removeError && <p className="ht-confirm-error" role="alert">{removeError}</p>}
         <div className="ht-confirm-actions ht-archive-confirm-actions">
           <button type="button" className="ht-confirm-cancel" disabled={statusBusy !== null} onClick={() => setAppointmentToRemove(null)}>Cancel</button>
@@ -326,9 +334,11 @@ function NewAppointment({ patientId, onClose, onSaved }) {
               </div>
               <p className="ht-appointment-time-hint">Choose the time for this appointment.</p>
             </section>
+            <Field label="Reason" required className="ht-appointment-reason-field">
+              <Combobox options={reasons} value={reason} required onChange={event => setReason(event.target.value)} />
+            </Field>
           </div>
         </div>
-        <Field label="Reason" required className="ht-appointment-reason-field"><Combobox options={reasons} value={reason} required onChange={e => setReason(e.target.value)} /></Field>
         <Field label="Notes" className="ht-appointment-notes-field"><Textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)} /></Field>
         <div className="ht-form-buttons ht-appointment-form-actions"><button type="button" className="ht-secondary-button" disabled={busy} onClick={onClose}>Cancel</button><button className="ht-primary-button" disabled={busy || !reason.trim() || !scheduledAt}>{busy ? "Saving…" : "Save & Activate"}</button></div>
       </div>

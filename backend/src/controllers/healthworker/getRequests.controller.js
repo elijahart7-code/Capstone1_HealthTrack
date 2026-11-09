@@ -11,7 +11,13 @@ export async function getDashboard(_req, res) {
     SELECT COUNT(*)::int AS count FROM patients WHERE archived_at IS NULL AND user_id IS NULL
   `;
 
-  const recentPatients = await sql`SELECT * FROM patients WHERE archived_at IS NULL ORDER BY created_at DESC`;
+  const recentPatients = await sql`
+    SELECT p.*, u.email, u.is_verified
+    FROM patients p
+    LEFT JOIN users u ON u.user_id = p.user_id
+    WHERE p.archived_at IS NULL
+    ORDER BY p.created_at DESC
+  `;
 
   return res.status(200).json({
     message: "Dashboard retrieved.",

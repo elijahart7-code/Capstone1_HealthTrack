@@ -35,6 +35,8 @@ import {
   Phone,
   PhoneCall,
   Flag,
+  Info,
+  ShieldPlus,
 } from "lucide-react";
 
 const SECTION_ICONS = {
@@ -151,16 +153,33 @@ const upcomingAppointment =
   };
 
   return (
-    <div className="patient-healthinfo-page">
+    <div className={`patient-healthinfo-page${["health-assessment", "vital-signs", "allergies", "medical-history", "midwife-notes"].includes(section) ? " patient-healthinfo-page-records" : ""}`}>
+      {section !== null && (
+        <section className="patient-healthinfo-header-card">
+          <div className="patient-healthinfo-header-copy">
+            <div className="patient-panel-icon patient-panel-icon-large">
+              <FileText size={30} strokeWidth={1.8} />
+            </div>
+            <div>
+              <h1>My Health Information</h1>
+              <p>Everything has been recorded here at the Barangay Health Center of Mambog I.</p>
+            </div>
+          </div>
+          <span className="patient-readonly-pill">
+            <Lock size={16} strokeWidth={1.8} />
+            Read Only
+          </span>
+        </section>
+      )}
       <aside className="patient-healthinfo-sidebar">
         <nav className="patient-healthinfo-nav" aria-label="Health information navigation">
           <button
             type="button"
             onClick={showOverview}
-            className={`patient-sidebar-item ${section === null ? "is-active" : ""}`}
+            className={`patient-sidebar-item patient-sidebar-summary-item ${section === null ? "is-active" : ""}`}
           >
             <span className="patient-sidebar-icon">
-              <Home size={18} strokeWidth={1.8} />
+              <Home size={30} strokeWidth={1.8} />
             </span>
             <span>Latest Health Summary</span>
           </button>
@@ -184,12 +203,16 @@ const upcomingAppointment =
 
       </aside>
 
-      <main className="patient-healthinfo-main">
+      <main className={`patient-healthinfo-main${section === null ? " patient-healthinfo-main-overview" : ""}`}>
         {section === null ? (
           <>
             <header className="patient-overview-heading">
               <h1>Latest Health Summary</h1>
               <p>Your latest health information from your most recent checkup.</p>
+              <span className="ht-header-logout patient-overview-readonly" aria-label="Read only">
+                <Lock size={18} strokeWidth={1.9} />
+                Read Only
+              </span>
             </header>
             <LatestAppointment
               appointment={upcomingAppointment}
@@ -197,30 +220,14 @@ const upcomingAppointment =
               onViewAppointments={() => selectSection("appointments")}
             />
             <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} onViewAssessments={() => selectSection("health-assessment")} />
-            <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("vital-signs")} />            
-            <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} onViewMidwifeNotes={() => selectSection("midwife-notes")} />          
-            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("allergies")} />          
-            <LatestMedicalHistory definition={recordTypes["medical-history"]} record={latestRecords["medical-history"]} onViewMedicalHistory={() => selectSection("medical-history")} /> </>
+            <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("health-assessment")} />
+            <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} onViewMidwifeNotes={() => selectSection("health-assessment")} />
+            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("health-assessment")} />
+            <LatestMedicalHistory definition={recordTypes["medical-history"]} record={latestRecords["medical-history"]} onViewMedicalHistory={() => selectSection("health-assessment")} /> </>
         ) : (
           <>
 
-        <section className="patient-healthinfo-header-card">
-          <div className="patient-healthinfo-header-copy">
-            <div className="patient-panel-icon patient-panel-icon-large">
-              <FileText size={22} strokeWidth={1.8} />
-            </div>
-            <div>
-              <h1>My Health Information</h1>
-              <p>Everything has been recorded here at the Barangay Health Center of Mambog I.</p>
-            </div>
-          </div>
-          <span className="patient-readonly-pill">
-            <Lock size={16} strokeWidth={1.8} />
-            Read Only
-          </span>
-        </section>
-
-        {section === "appointments" && <section className="patient-healthinfo-card">
+        {section === "appointments" && <section className="patient-healthinfo-card patient-appointments-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
                 <span className="patient-panel-icon patient-panel-icon-small">
@@ -228,11 +235,7 @@ const upcomingAppointment =
                 </span>
                 <h2>Appointments</h2>
               </div>
-              <button type="button" className="patient-view-button" onClick={() => selectSection("appointments")}>
-                View All
-              </button>
             </div>
-
             {appointments.length === 0 ? (
               <div className="patient-empty-state">No appointments recorded.</div>
             ) : (
@@ -246,15 +249,26 @@ const upcomingAppointment =
                     </tr>
                   </thead>
                   <tbody>
-                    {appointments.map((a) => (
-                      <tr key={a.appointment_id}>
-                        <td className="patient-date-cell">{new Date(a.scheduled_at).toLocaleString()}</td>
-                        <td>{a.reason}</td>
-                        <td>
-                          <span className="patient-status-pill">{a.status}</span>
-                        </td>
-                      </tr>
-                    ))}
+                    {appointments.map((a) => {
+                      const appointmentStatus = (a.status || "pending").toLowerCase();
+                      const status = appointmentStatus === "pending" ? "confirmed" : appointmentStatus;
+                      const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+
+                      return (
+                        <tr key={a.appointment_id}>
+                          <td className="patient-date-cell">{new Date(a.scheduled_at).toLocaleString()}</td>
+                          <td>{a.reason}</td>
+                          <td>
+                            <span
+                              className={`patient-appointment-status patient-appointment-status-${status}`}
+                              aria-label={`Appointment status: ${statusLabel}`}
+                            >
+                              {statusLabel}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -265,10 +279,13 @@ const upcomingAppointment =
         {section === "patient-information" && <section className="patient-healthinfo-card patient-information-card">
             <div className="patient-card-header">
               <div className="patient-card-title">
-                <span className="patient-panel-icon patient-panel-icon-small">
-                  <User size={18} strokeWidth={1.8} />
-                </span>
-                <h2>General Information</h2>
+                <h2 className="ht-patient-section-heading">
+                  <span className="ht-section-heading-icon ht-section-heading-icon-general" aria-hidden="true">
+                    <FileText className="ht-section-heading-icon-main" size={25} />
+                    <Info className="ht-section-heading-icon-badge" size={15} />
+                  </span>
+                  General Information
+                </h2>
               </div>
             </div>
 
@@ -285,7 +302,8 @@ const upcomingAppointment =
               <InfoField icon={IdCard} label="Barangay ID Number" value={patient.barangay_id_number} />
               <InfoField icon={Flag} label="Nationality" value={patient.nationality} />
               <InfoField icon={MapPin} label="Place of Birth" value={patient.place_of_birth} />
-              <div className="patient-information-divider" role="separator" aria-hidden="true" />
+            </div>
+            <div className="patient-information-emergency-row">
               <InfoField icon={UsersRound} label="Emergency Contact" value={patient.emergency_contact_name} />
               <InfoField icon={PhoneCall} label="Emergency Contact Number" value={patient.emergency_contact_number} />
               <InfoField icon={UserRound} label="Relationship" value={patient.emergency_contact_relationship} />
@@ -306,7 +324,7 @@ const upcomingAppointment =
   <HealthAssessmentHistory
     recordTypes={recordTypes}
     records={records}
-    section={section}
+    appointments={appointments}
     selectSection={selectSection}
   />
 ) : (
@@ -339,31 +357,39 @@ function PatientPortalAccount({ patient, currentUser }) {
     : "Not available";
 
   return (
-    <section className="patient-healthinfo-card patient-general-account-card" aria-labelledby="patient-general-account-title">
-      <h2 id="patient-general-account-title">Patient Portal Account</h2>
-      <div className="patient-general-account-content">
-        <div className="patient-general-account-avatar" aria-label="Verified patient account">
-          <UserRound size={52} strokeWidth={1.6} aria-hidden="true" />
-          <span className="patient-general-account-verified" aria-hidden="true">
+    <section className="patient-healthinfo-card patient-general-account-card ht-portal-card" aria-labelledby="patient-general-account-title">
+      <div className="ht-card-heading">
+        <h2 id="patient-general-account-title" className="ht-patient-section-heading">
+          <span className="ht-section-heading-icon ht-section-heading-icon-portal" aria-hidden="true">
+            <UserRound className="ht-section-heading-icon-main" size={23} />
+            <ShieldPlus className="ht-section-heading-icon-badge" size={18} />
+          </span>
+          Patient Portal Account
+        </h2>
+      </div>
+      <div className="ht-portal-info">
+        <div className="ht-portal-avatar" aria-label="Verified patient account">
+          <UserRound size={46} strokeWidth={1.8} aria-hidden="true" />
+          <span className="ht-portal-check" aria-hidden="true">
             <CircleCheck size={19} strokeWidth={2.4} />
           </span>
         </div>
-        <dl className="patient-general-account-details">
-          <div>
-            <dt>Account Status:</dt>
-            <dd className={`patient-general-account-status ${patient.user_id ? "is-active" : "is-inactive"}`}>
+        <div className="ht-portal-details">
+          <div className="ht-portal-detail">
+            <span>Account Status:</span>
+            <span className={`patient-general-account-status ${patient.user_id ? "is-active" : "is-inactive"}`}>
               {patient.user_id ? "Active" : "Inactive"}
-            </dd>
+            </span>
           </div>
-          <div>
-            <dt>Email Address:</dt>
-            <dd>{patient.email || patient.portal_email || currentUser?.email || "Not available"}</dd>
+          <div className="ht-portal-detail">
+            <span>Email Address:</span>
+            <strong>{patient.email || patient.portal_email || currentUser?.email || "Not available"}</strong>
           </div>
-          <div>
-            <dt>Account Created:</dt>
-            <dd>{accountCreatedDate}</dd>
+          <div className="ht-portal-detail">
+            <span>Account Created:</span>
+            <strong>{accountCreatedDate}</strong>
           </div>
-        </dl>
+        </div>
       </div>
     </section>
   );
@@ -373,7 +399,7 @@ function InfoField({ icon: Icon, label, value }) {
   return (
     <div className="patient-info-field">
       <span className="patient-info-icon" aria-hidden="true">
-        <Icon size={16} strokeWidth={1.8} />
+        <Icon size={30} strokeWidth={1.8} />
       </span>
       <span className="patient-info-copy">
         <span className="patient-info-label">{label}</span>
@@ -393,7 +419,7 @@ function SidebarItem({ icon: Icon, label, active, expanded, onClick, onToggle })
           className={`patient-sidebar-item patient-sidebar-item-main ${active ? "is-active" : ""}`}
           aria-current={active ? "page" : undefined}
         >
-          <span className="patient-sidebar-icon"><Icon size={18} strokeWidth={1.8} /></span>
+          <span className="patient-sidebar-icon"><Icon size={30} strokeWidth={1.8} /></span>
           <span>{label}</span>
         </button>
         
@@ -408,7 +434,7 @@ function SidebarItem({ icon: Icon, label, active, expanded, onClick, onToggle })
       className={`patient-sidebar-item ${active ? "is-active" : ""}`}
       aria-current={active ? "page" : undefined}
     >
-      <span className="patient-sidebar-icon"><Icon size={18} strokeWidth={1.8} /></span>
+      <span className="patient-sidebar-icon"><Icon size={30} strokeWidth={1.8} /></span>
       <span>{label}</span>
     </button>
   );
@@ -502,6 +528,11 @@ function LatestAppointment({
   hasAppointmentHistory,
   onViewAppointments,
 }) {
+  const appointmentStatus = (appointment?.status || "").toLowerCase();
+  const normalizedStatus = appointmentStatus === "pending" ? "confirmed" : appointmentStatus;
+  const statusLabel = normalizedStatus
+    ? normalizedStatus.charAt(0).toUpperCase() + normalizedStatus.slice(1)
+    : "--";
   const columns = [
     {
       key: "scheduled_at",
@@ -532,7 +563,6 @@ function LatestAppointment({
     {
       key: "status",
       label: "Status",
-      value: appointment?.status || "--",
     },
   ];
 
@@ -571,7 +601,11 @@ function LatestAppointment({
               <tbody>
                 <tr>
                   {columns.map(({ key, value }) => (
-                    <td key={key}>{value}</td>
+                    <td key={key}>
+                      {key === "status"
+                        ? <span className={`patient-appointment-status patient-latest-appointment-status patient-latest-appointment-status-${normalizedStatus || "unknown"}`}>{statusLabel}</span>
+                        : value}
+                    </td>
                   ))}
                 </tr>
               </tbody>
@@ -711,9 +745,16 @@ function LatestHealthAssessment({
 
             <tbody>
               <tr>
-                {assessmentItems.map(([key]) => (
-                  <td key={key}>{record[key] || "--"}</td>
-                ))}
+                {assessmentItems.map(([key]) => {
+                  const value = record[key] || "--";
+                  return (
+                    <td key={key}>
+                      {key === "status" && value !== "--"
+                        ? <span className={`patient-appointment-status patient-latest-assessment-status patient-latest-assessment-status-${String(value).toLowerCase()}`}>{definition.fields[key].options?.[record[key]] || value}</span>
+                        : value}
+                    </td>
+                  );
+                })}
                 <td>
                   {formatRecordDate(record[definition.dateField]) || "--"}
                 </td>
@@ -1001,151 +1042,165 @@ function AllergyDetailRows({ rows }) {
 function HealthAssessmentHistory({
   recordTypes,
   records,
-  section,
+  appointments,
   selectSection,
 }) {
-  const [openSection, setOpenSection] = useState(
-    section || "health-assessment"
-  );
+  const recordKeys = ["health-assessment", "vital-signs", "midwife-notes", "allergies", "medical-history"];
+  const sectionDetails = [
+    { key: "health-assessment", label: "Health Assessment" },
+    { key: "vital-signs", label: "Vital Signs" },
+    { key: "midwife-notes", label: "Midwife Notes" },
+    { key: "allergies", label: "Allergies" },
+    { key: "medical-history", label: "Health Background" },
+  ];
+  const groupedAppointments = appointments.map((appointment) => ({
+    ...appointment,
+    groupedRecords: Object.fromEntries(recordKeys.map((key) => [
+      key,
+      (records[key] || []).filter((record) => record.appointment_id === appointment.appointment_id),
+    ])),
+  })).filter((appointment) => recordKeys.some((key) => appointment.groupedRecords[key].length > 0));
+  const unlinkedRecords = Object.fromEntries(recordKeys.map((key) => [
+    key,
+    (records[key] || []).filter((record) => !record.appointment_id),
+  ]));
+  const hasUnlinkedRecords = recordKeys.some((key) => unlinkedRecords[key].length > 0);
+  const [openRecordIds, setOpenRecordIds] = useState(() => new Set());
+  const [openSections, setOpenSections] = useState({});
 
-  useEffect(() => {
-    if (
-      [
-        "health-assessment",
-        "vital-signs",
-        "midwife-notes",
-        "allergies",
-        "medical-history",
-      ].includes(section)
-    ) {
-      setOpenSection(section);
+  const toggleRecord = (recordId) => {
+    setOpenRecordIds((current) => {
+      const next = new Set(current);
+      if (next.has(recordId)) {
+        next.delete(recordId);
+      } else {
+        next.add(recordId);
+      }
+      return next;
+    });
+  };
+
+  const renderRecordSection = (key, appointmentRecords) => {
+    const sectionRecords = appointmentRecords[key];
+    if (key === "vital-signs") {
+      return <VitalSignsSection definition={recordTypes[key]} records={sectionRecords} onViewAll={() => selectSection(key)} />;
     }
-  }, [section]);
+    if (key === "health-assessment") {
+      return <HealthAssessmentSection definition={recordTypes[key]} records={sectionRecords} onViewAll={() => selectSection(key)} />;
+    }
+    if (key === "midwife-notes") {
+      return <MidwifeNotesSection definition={recordTypes[key]} records={sectionRecords} onViewAll={() => selectSection(key)} />;
+    }
+    if (key === "medical-history") {
+      return <MedicalHistorySection definition={recordTypes[key]} records={sectionRecords} />;
+    }
+    return <AllergyRecordsSection definition={recordTypes[key]} records={sectionRecords} onViewAll={() => selectSection(key)} />;
+  };
 
-  const toggleSection = (key) => {
-    setOpenSection((current) =>
-      current === key ? null : key
+  const renderConsultationRecord = (recordId, appointment, appointmentRecords) => {
+    const isRecordOpen = openRecordIds.has(recordId);
+    const statusValue = appointment?.status?.toLowerCase() || "";
+    const status = statusValue === "pending" ? "confirmed" : statusValue;
+    const statusLabel = status ? status.charAt(0).toUpperCase() + status.slice(1) : "";
+    const detailsId = `patient-consultation-${recordId}-sections`;
+
+    return (
+      <tbody key={recordId}>
+        <tr className="patient-consultation-record-row">
+          <td>
+            <div className="patient-consultation-record-title">
+              <strong>CONSULTATION RECORD</strong>
+              <span>{appointment?.reason || "Unlinked Records"}</span>
+            </div>
+          </td>
+          <td>
+            {appointment?.scheduled_at
+              ? <time dateTime={appointment.scheduled_at}>{new Date(appointment.scheduled_at).toLocaleString()}</time>
+              : "--"}
+          </td>
+          <td>
+            {statusLabel && <span className={`ht-appointment-record-status ht-appointment-record-status-${status}`}>{statusLabel}</span>}
+          </td>
+          <td>
+            <button
+              type="button"
+              className="patient-consultation-record-toggle"
+              onClick={() => toggleRecord(recordId)}
+              aria-expanded={isRecordOpen}
+              aria-controls={detailsId}
+            >
+              <ChevronDown size={16} className={isRecordOpen ? "is-expanded" : ""} />
+              {isRecordOpen ? "Hide Record" : "View Record"}
+            </button>
+          </td>
+        </tr>
+        {isRecordOpen && (
+          <tr id={detailsId} className="patient-consultation-record-details">
+            <td colSpan={4}>
+              <div className="patient-consultation-record-sections">
+                {sectionDetails.map(({ key, label }) => {
+                  const isOpen = openSections[recordId] === key;
+                  const contentId = `patient-consultation-${recordId}-${key}`;
+                  return (
+                    <section className="patient-consultation-section" key={key}>
+                      <button
+                        type="button"
+                        className="patient-consultation-section-toggle"
+                        onClick={() => setOpenSections((current) => ({
+                          ...current,
+                          [recordId]: isOpen ? null : key,
+                        }))}
+                        aria-expanded={isOpen}
+                        aria-controls={contentId}
+                      >
+                        <ChevronDown size={16} className={isOpen ? "is-expanded" : ""} />
+                        {label}
+                      </button>
+                      <div id={contentId} className="patient-consultation-section-content" hidden={!isOpen}>
+                        {isOpen && renderRecordSection(key, appointmentRecords)}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+            </td>
+          </tr>
+        )}
+      </tbody>
     );
   };
 
-  const sections = [
-    {
-      key: "health-assessment",
-      label: "Health Assessment",
-      icon: ClipboardList,
-      records: records["health-assessment"] || [],
-      render: () => (
-        <HealthAssessmentSection
-          definition={recordTypes["health-assessment"]}
-          records={records["health-assessment"] || []}
-          onViewAll={() => selectSection("health-assessment")}
-        />
-      ),
-    },
-    {
-      key: "vital-signs",
-      label: "Vital Signs",
-      icon: Activity,
-      records: records["vital-signs"] || [],
-      render: () => (
-        <VitalSignsSection
-          definition={recordTypes["vital-signs"]}
-          records={records["vital-signs"] || []}
-          onViewAll={() => selectSection("vital-signs")}
-        />
-      ),
-    },
-    {
-      key: "allergies",
-      label: "Allergies",
-      icon: TriangleAlert,
-      records: records["allergies"] || [],
-      render: () => (
-        <AllergyRecordsSection
-          definition={recordTypes["allergies"]}
-          records={records["allergies"] || []}
-          onViewAll={() => selectSection("allergies")}
-        />
-      ),
-    },
-    {
-      key: "medical-history",
-      label: "Health Background",
-      icon: FileText,
-      records: records["medical-history"] || [],
-      render: () => (
-        <MedicalHistorySection
-          definition={recordTypes["medical-history"]}
-          records={records["medical-history"] || []}
-        />
-      ),
-    },
-    {
-      key: "midwife-notes",
-      label: "Midwife Notes",
-      icon: FileText,
-      records: records["midwife-notes"] || [],
-      render: () => (
-        <MidwifeNotesSection
-          definition={recordTypes["midwife-notes"]}
-          records={records["midwife-notes"] || []}
-          onViewAll={() => selectSection("midwife-notes")}
-        />
-      ),
-    },
-  ];
-
   return (
-    <section className="patient-health-assessment-history">
-      {sections.map(
-        ({ key, label, icon: Icon, records: sectionRecords, render }) => {
-          const isOpen = openSection === key;
-
-          return (
-            <div
-              key={key}
-              className={`patient-health-history-accordion ${
-                isOpen ? "is-open" : ""
-              }`}
-            >
-              <button
-                type="button"
-                className="patient-health-history-accordion-header"
-                onClick={() => toggleSection(key)}
-                aria-expanded={isOpen}
-                aria-controls={`patient-health-history-${key}`}
-              >
-                <span className="patient-health-history-accordion-title">
-                  <span className="patient-panel-icon patient-record-accordion-icon">
-                    <Icon size={18} strokeWidth={1.8} />
-                  </span>
-
-                  <span>{label}</span>
-                </span>
-
-                <span className="patient-health-history-accordion-right">
-                  
-                  <ChevronDown
-                    size={18}
-                    className={`patient-health-history-chevron ${
-                      isOpen ? "is-expanded" : ""
-                    }`}
-                  />
-                </span>
-              </button>
-
-              <div
-                id={`patient-health-history-${key}`}
-                className="patient-health-history-accordion-content"
-                hidden={!isOpen}
-              >
-                {isOpen && render()}
-              </div>
-            </div>
-          );
-        }
+    <div className="patient-consultation-record-list">
+      <div className="patient-consultation-record-list-title">
+        <span className="patient-panel-icon patient-panel-icon-small">
+          <Stethoscope size={18} strokeWidth={1.8} />
+        </span>
+        <h2>Medical Records</h2>
+      </div>
+      {groupedAppointments.length || hasUnlinkedRecords ? (
+        <div className="patient-consultation-record-scroll">
+          <table className="patient-consultation-record-table">
+            <thead>
+              <tr>
+                <th scope="col">Consultation</th>
+                <th scope="col">Date and Time</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            {groupedAppointments.map((appointment) => renderConsultationRecord(
+              appointment.appointment_id,
+              appointment,
+              appointment.groupedRecords
+            ))}
+            {hasUnlinkedRecords && renderConsultationRecord("unlinked-records", null, unlinkedRecords)}
+          </table>
+        </div>
+      ) : (
+        <div className="patient-empty-state">No medical records are linked to an appointment yet.</div>
       )}
-    </section>
+    </div>
   );
 }
 
