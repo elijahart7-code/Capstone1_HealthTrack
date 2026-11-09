@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { api } from "../../lib/axios";
 import { SideBar } from "./components/SideBar";
@@ -17,6 +17,10 @@ export function HealthWorkerShell() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
   const [verificationNotice, setVerificationNotice] = useState(null);
+  const [isClosingVerificationNotice, setIsClosingVerificationNotice] = useState(false);
+  const verificationNoticeCloseTimer = useRef(null);
+
+  useEffect(() => () => window.clearTimeout(verificationNoticeCloseTimer.current), []);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -47,9 +51,30 @@ export function HealthWorkerShell() {
   }, [loadData]);
 
   function goToPatient(patientId, verification) {
+    window.clearTimeout(verificationNoticeCloseTimer.current);
+    setIsClosingVerificationNotice(false);
     setVerificationNotice(verification || null);
     setSearchParams({ page: "patients", patientId });
   }
+
+  const closeVerificationNotice = useCallback(() => {
+    if (!verificationNotice || isClosingVerificationNotice) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setIsClosingVerificationNotice(true);
+    verificationNoticeCloseTimer.current = window.setTimeout(() => {
+      setVerificationNotice(null);
+      setIsClosingVerificationNotice(false);
+    }, reduceMotion ? 0 : 220);
+  }, [verificationNotice, isClosingVerificationNotice]);
+
+  useEffect(() => {
+    if (!verificationNotice) return undefined;
+    function handleKeyDown(event) {
+      if (event.key === "Escape") closeVerificationNotice();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [verificationNotice, closeVerificationNotice]);
 
   return (
     <div className="ht-healthworker-shell">
@@ -67,7 +92,29 @@ export function HealthWorkerShell() {
       </header>
 
       <main className="ht-content">
-        {verificationNotice && <div className={`ht-login-alert ${verificationNotice.status === "failed" ? "ht-login-alert-error" : ""}`} role="status">{verificationNotice.message}</div>}
+        {verificationNotice && (
+          <div
+            className={`ht-confirm-backdrop ht-archive-confirm-backdrop ${isClosingVerificationNotice ? "is-closing" : ""}`}
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) closeVerificationNotice();
+            }}
+          >
+            <section
+              aria-labelledby="patient-saved-title"
+              aria-modal="true"
+              className={`ht-confirm-dialog ht-archive-confirm-dialog ht-patient-saved-dialog ${isClosingVerificationNotice ? "is-closing" : ""}`}
+              role="dialog"
+            >
+              <h2 id="patient-saved-title">
+                {verificationNotice.status === "failed" ? "Patient Saved, Email Not Sent" : "Patient Saved"}
+              </h2>
+              <p className="ht-confirm-message" role="status">{verificationNotice.message}</p>
+              <div className="ht-confirm-actions ht-archive-confirm-actions">
+                <button type="button" className="ht-confirm-cancel" onClick={closeVerificationNotice}>Close</button>
+              </div>
+            </section>
+          </div>
+        )}
         {loadError && (page !== "patients" || patients.length === 0) ? (
           <div className="ht-panel">
             <p className="ht-muted text-sm">{loadError}</p>

@@ -139,7 +139,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 ht-healthworker-register-page">
       <PageHeader title="Register Patient" subtitle="Add a new patient to the Barangay Health Center of Mambog I.">
         <button onClick={() => setSearchParams({ page: "patients" })} className="ht-button ht-button-strong-green">
           Back to patients

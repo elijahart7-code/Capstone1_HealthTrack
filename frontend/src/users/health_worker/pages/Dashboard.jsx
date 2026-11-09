@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { Users, CalendarDays, ShieldCheck, UserRoundX, Clock3 } from "lucide-react";
+import { Users, CalendarDays, ShieldCheck, UserRoundX, Clock3, ChevronRight } from "lucide-react";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { StatCard } from "../../../components/ui/Card";
 import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
@@ -28,7 +28,7 @@ export function Dashboard({ dashboard, onRegisterClick }) {
   }, [page, totalPages]);
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 ht-healthworker-dashboard">
       <PageHeader title="Health Worker Dashboard" subtitle="Register patients and view patient information.">
         <div className="ht-current-date-pill">
           <CalendarDays size={16} strokeWidth={2} />
@@ -36,14 +36,14 @@ export function Dashboard({ dashboard, onRegisterClick }) {
         </div>
       </PageHeader>
 
-      <div className="ht-metric-grid">
+      <div className="ht-metric-grid ht-healthworker-metric-grid">
         <StatCard label="Registered Patients" value={dashboard.patientCount} tone="brand" icon={Users} />
         <StatCard label="Registered This Month" value={dashboard.registeredThisMonth} tone="brand" icon={CalendarDays} />
         <StatCard label="With Portal Account" value={dashboard.withPortalAccount ?? dashboard.patientCount - dashboard.withoutPortalLogin} tone="brand" icon={ShieldCheck} />
         <StatCard label="Without Portal Account" value={dashboard.withoutPortalLogin} tone="brand" icon={UserRoundX} />
       </div>
 
-      <div className="ht-panel ht-panel-table">
+      <div className="ht-panel ht-panel-table ht-healthworker-recent-patients">
         <div className="ht-table-header-row">
           <h2 className="ht-section-title-with-icon">
             <span className="ht-section-icon" aria-hidden="true">
@@ -52,7 +52,7 @@ export function Dashboard({ dashboard, onRegisterClick }) {
             Recently Registered Patients
           </h2>
           <button className="ht-link-button" onClick={() => setSearchParams({ page: "patients" })}>
-            View all patients <span aria-hidden="true">›</span>
+            View all patients <ChevronRight size={16} strokeWidth={2} aria-hidden="true" />
           </button>
         </div>
 
@@ -62,22 +62,32 @@ export function Dashboard({ dashboard, onRegisterClick }) {
           <Table>
             <thead>
               <tr>
-                <Th>Name</Th>
+                <Th>Full Name</Th>
                 <Th>Age</Th>
                 <Th>Contact Number</Th>
                 <Th>Date Registered</Th>
-                <Th className="ht-table-action">Action</Th>
+                <Th>Email Address</Th>
+                <Th>Barangay ID Number</Th>
+                <Th className="ht-table-action">Patient Records</Th>
               </tr>
             </thead>
             <tbody>
               {pagePatients.map((p) => (
                 <tr key={p.patient_id}>
-                  <Td className="font-bold" style={{ color: "var(--color-brand-strong)" }}>
-                    {p.last_name}, {p.first_name}
+                  <Td className="font-bold ht-patient-name-cell" style={{ color: "#000000" }}>
+                    {p.last_name}, {p.first_name}{p.middle_name ? ` ${p.middle_name}` : ""}
                   </Td>
                   <Td>{calculateAge(p.birthdate)}</Td>
                   <Td>{p.contact_number || "--"}</Td>
-                  <Td className="whitespace-nowrap">{new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</Td>
+                  <Td className="whitespace-nowrap">{new Date(p.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</Td>
+                  <Td className="ht-patient-email-cell">
+                    {p.user_id && p.is_verified === true
+                      ? p.email || "No Email Address"
+                      : p.user_id
+                        ? "Pending Email Address"
+                        : "No Email Address"}
+                  </Td>
+                  <Td>{p.barangay_id_number || "--"}</Td>
                   <Td className="ht-table-action">
                     <button
                       onClick={() => setSearchParams({ page: "patients", patientId: p.patient_id })}
