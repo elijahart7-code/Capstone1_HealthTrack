@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { getCurrentUser } from "../../../lib/auth";
+import { ClinicalRecordSections } from "../../../shared/patients/ClinicalRecordSections";
 import {
   Home,
   Calendar,
@@ -204,7 +205,7 @@ const upcomingAppointment =
           <>
             <header className="patient-overview-heading">
               <h1>Latest Health Summary</h1>
-              <p>Your latest health information from your most recent checkup.</p>
+              <p>This is your latest health information from your most recent checkup.</p>
               <span className="ht-header-logout patient-overview-readonly" aria-label="Read only">
                 <Lock size={18} strokeWidth={1.9} />
                 Read Only
@@ -214,23 +215,22 @@ const upcomingAppointment =
               appointment={upcomingAppointment}
               hasAppointmentHistory={appointments.length > 0}
               onViewAppointments={() => selectSection("appointments")}
+              collapsible
             />
-            <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} onViewAssessments={() => selectSection("health-assessment")} />
-            <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("health-assessment")} />
-            <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} onViewMidwifeNotes={() => selectSection("health-assessment")} />
-            <LatestMedicalHistory definition={recordTypes["medical-history"]} record={latestRecords["medical-history"]} onViewMedicalHistory={() => selectSection("health-assessment")} />
-            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("health-assessment")} /> </>
+            <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} onViewAssessments={() => selectSection("health-assessment")} collapsible />
+            <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("health-assessment")} collapsible />
+            <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} onViewMidwifeNotes={() => selectSection("health-assessment")} collapsible />
+            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("health-assessment")} collapsible />
+            <LatestMedicalHistory definition={recordTypes["medical-history"]} record={latestRecords["medical-history"]} onViewMedicalHistory={() => selectSection("health-assessment")} collapsible /> </>
         ) : (
           <>
 
         {section === "appointments" && <section className="patient-healthinfo-card patient-appointments-card">
             <div className="patient-card-header">
-              <div className="patient-card-title">
-                <span className="patient-panel-icon patient-panel-icon-small">
-                  <Calendar size={18} strokeWidth={1.8} />
-                </span>
-                <h2>Appointments</h2>
-              </div>
+              <h2 className="ht-appointments-heading">
+                <CalendarDays size={22} strokeWidth={1.8} aria-hidden="true" />
+                Appointments
+              </h2>
             </div>
             {appointments.length === 0 ? (
               <div className="patient-empty-state">No appointments recorded.</div>
@@ -524,7 +524,8 @@ function getRecordMetadata(record, definition) {
   ];
 }
 
-function LatestRecordCard({ title, icon: Icon, type, definition, record, action, children, embedded = false }) {
+function LatestRecordCard({ title, icon: Icon, type, definition, record, action, children, embedded = false, collapsible = false }) {
+  const [isExpanded, setIsExpanded] = useState(!collapsible);
   const headerDate = type === "notes"
     ? formatRecordDateTime(record?.created_at)
     : formatRecordDate(record?.[definition.dateField]);
@@ -538,10 +539,23 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, action,
   return (
     <section className={`patient-healthinfo-card patient-latest-card patient-latest-${type}`}>
       <header className="patient-latest-card-header">
-        <div className="patient-latest-title">
-          <Icon size={22} strokeWidth={2} />
-          <h2>{title}</h2>
-        </div>
+        {collapsible ? (
+          <button
+            type="button"
+            className="patient-latest-title patient-latest-toggle"
+            aria-expanded={isExpanded}
+            onClick={() => setIsExpanded((expanded) => !expanded)}
+          >
+            <Icon size={22} strokeWidth={2} />
+            <span className="patient-latest-toggle-heading" role="heading" aria-level="2">{title}</span>
+            <ChevronDown className="patient-latest-toggle-chevron" size={18} strokeWidth={2} />
+          </button>
+        ) : (
+          <div className="patient-latest-title">
+            <Icon size={22} strokeWidth={2} />
+            <h2>{title}</h2>
+          </div>
+        )}
         {record &&
   headerDate &&
   type !== "assessment" &&
@@ -556,9 +570,11 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, action,
 )}
         {action}
       </header>
-      <div className="patient-latest-card-content">
-        {record ? children : <div className="patient-empty-state">No {definition.label.toLowerCase()} recorded yet.</div>}
-      </div>
+      {(!collapsible || isExpanded) && (
+        <div className="patient-latest-card-content">
+          {record ? children : <div className="patient-empty-state">No {definition.label.toLowerCase()} recorded yet.</div>}
+        </div>
+      )}
     </section>
   );
 }
@@ -569,7 +585,9 @@ function LatestAppointment({
   appointment,
   hasAppointmentHistory,
   onViewAppointments,
+  collapsible = false,
 }) {
+  const [isExpanded, setIsExpanded] = useState(!collapsible);
   const appointmentStatus = (appointment?.status || "").toLowerCase();
   const normalizedStatus = appointmentStatus === "pending" ? "confirmed" : appointmentStatus;
   const statusLabel = normalizedStatus
@@ -611,10 +629,23 @@ function LatestAppointment({
   return (
     <section className="patient-healthinfo-card patient-latest-card patient-latest-appointment-card">
       <header className="patient-latest-card-header">
-        <div className="patient-latest-title">
-          <CalendarDays size={22} strokeWidth={2} />
-          <h2>Latest Appointment</h2>
-        </div>
+        {collapsible ? (
+          <button
+            type="button"
+            className="patient-latest-title patient-latest-toggle"
+            aria-expanded={isExpanded}
+            onClick={() => setIsExpanded((expanded) => !expanded)}
+          >
+            <CalendarDays size={22} strokeWidth={2} />
+            <span className="patient-latest-toggle-heading" role="heading" aria-level="2">Latest Appointment</span>
+            <ChevronDown className="patient-latest-toggle-chevron" size={18} strokeWidth={2} />
+          </button>
+        ) : (
+          <div className="patient-latest-title">
+            <CalendarDays size={22} strokeWidth={2} />
+            <h2>Latest Appointment</h2>
+          </div>
+        )}
 
         <button
           type="button"
@@ -626,48 +657,50 @@ function LatestAppointment({
         </button>
       </header>
 
-      <div className="patient-latest-card-content">
-        {appointment ? (
-          <div className="patient-table-wrap">
-            <table className="patient-health-table">
-              <thead>
-                <tr>
-                  {columns.map(({ key, label }) => (
-                    <th scope="col" key={key}>
-                      {label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
+      {(!collapsible || isExpanded) && (
+        <div className="patient-latest-card-content">
+          {appointment ? (
+            <div className="patient-table-wrap">
+              <table className="patient-health-table">
+                <thead>
+                  <tr>
+                    {columns.map(({ key, label }) => (
+                      <th scope="col" key={key}>
+                        {label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
 
-              <tbody>
-                <tr>
-                  {columns.map(({ key, value }) => (
-                    <td key={key}>
-                      {key === "status"
-                        ? <span className={`patient-appointment-status patient-latest-appointment-status patient-latest-appointment-status-${normalizedStatus || "unknown"}`}>{statusLabel}</span>
-                        : value}
-                    </td>
-                  ))}
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="patient-empty-state">
-            {hasAppointmentHistory
-              ? "No appointment details available."
-              : "No appointments recorded."}
-          </div>
-        )}
-      </div>
+                <tbody>
+                  <tr>
+                    {columns.map(({ key, value }) => (
+                      <td key={key}>
+                        {key === "status"
+                          ? <span className={`patient-appointment-status patient-latest-appointment-status patient-latest-appointment-status-${normalizedStatus || "unknown"}`}>{statusLabel}</span>
+                          : value}
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="patient-empty-state">
+              {hasAppointmentHistory
+                ? "No appointment details available."
+                : "No appointments recorded."}
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 }
 
 
 
-function LatestVitalSigns({ definition, record, onViewVitalSigns, showAction = true, embedded = false }) {
+function LatestVitalSigns({ definition, record, onViewVitalSigns, showAction = true, embedded = false, collapsible = false }) {
   const tableRecords = record ? [record] : [];
   const vitalRows = Object.keys(definition?.fields || {})
     .filter((key) => VITAL_SIGN_PRESENTATION[key] && tableRecords.some((item) => hasRecordValue(item[key])))
@@ -687,6 +720,7 @@ function LatestVitalSigns({ definition, record, onViewVitalSigns, showAction = t
   definition={definition}
   record={cardRecord}
   embedded={embedded}
+  collapsible={collapsible}
   action={showAction && (
     <button
       type="button"
@@ -745,6 +779,7 @@ function LatestHealthAssessment({
   onViewAssessments,
   showAction = true,
   embedded = false,
+  collapsible = false,
 }) {
   const tableRecords = record ? [record] : [];
   const assessmentItems = Object.keys(definition?.fields || {})
@@ -764,6 +799,7 @@ function LatestHealthAssessment({
       definition={definition}
       record={cardRecord}
       embedded={embedded}
+      collapsible={collapsible}
       action={showAction && (
         <button
           type="button"
@@ -831,6 +867,7 @@ function LatestAllergies({
   onViewAllergies,
   showAction = true,
   embedded = false,
+  collapsible = false,
 }) {
   const tableRecords = record ? [record] : [];
   const fields = Object.keys(definition?.fields || {})
@@ -857,6 +894,7 @@ function LatestAllergies({
       definition={definition}
       record={tableRecords[0] || record}
       embedded={embedded}
+      collapsible={collapsible}
       action={showAction && (
         <button
           type="button"
@@ -873,7 +911,7 @@ function LatestAllergies({
   );
 }
 
-function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes, showAction = true, embedded = false }) {
+function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes, showAction = true, embedded = false, collapsible = false }) {
   const tableRecords = record ? [record] : [];
   const noteItems = Object.keys(definition?.fields || {})
     .filter((key) => tableRecords.some((item) => hasRecordValue(item[key])))
@@ -889,6 +927,7 @@ function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes, showAction
   definition={definition}
   record={cardRecord}
   embedded={embedded}
+  collapsible={collapsible}
   action={showAction && (
     <button
       type="button"
@@ -952,6 +991,7 @@ function LatestMedicalHistory({
   onViewMedicalHistory,
   showAction = true,
   embedded = false,
+  collapsible = false,
 }) {
   const tableRecords = record ? [record] : [];
   const rows = [
@@ -998,6 +1038,7 @@ function LatestMedicalHistory({
       definition={definition}
       record={cardRecord}
       embedded={embedded}
+      collapsible={collapsible}
       action={showAction && (
         <button
           type="button"
@@ -1103,7 +1144,6 @@ function HealthAssessmentHistory({
   ]));
   const hasUnlinkedRecords = recordKeys.some((key) => unlinkedRecords[key].length > 0);
   const [openRecordIds, setOpenRecordIds] = useState(() => new Set());
-  const [openSections, setOpenSections] = useState({});
 
   const toggleRecord = (recordId) => {
     setOpenRecordIds((current) => {
@@ -1177,32 +1217,16 @@ function HealthAssessmentHistory({
         {isRecordOpen && (
           <tr id={detailsId} className="patient-consultation-record-details">
             <td colSpan={4}>
-              <div className="patient-consultation-record-sections">
-                {sectionDetails.map(({ key, label }) => {
-                  const isOpen = openSections[recordId] === key;
-                  const contentId = `patient-consultation-${recordId}-${key}`;
-                  return (
-                    <section className="patient-consultation-section" key={key}>
-                      <button
-                        type="button"
-                        className="patient-consultation-section-toggle"
-                        onClick={() => setOpenSections((current) => ({
-                          ...current,
-                          [recordId]: isOpen ? null : key,
-                        }))}
-                        aria-expanded={isOpen}
-                        aria-controls={contentId}
-                      >
-                        <ChevronDown size={16} className={isOpen ? "is-expanded" : ""} />
-                        {label}
-                      </button>
-                      <div id={contentId} className="patient-consultation-section-content" hidden={!isOpen}>
-                        {isOpen && renderRecordSection(key, appointmentRecords)}
-                      </div>
-                    </section>
-                  );
-                })}
-              </div>
+              <ClinicalRecordSections
+                sections={sectionDetails}
+                resetKey={recordId}
+                className="patient-consultation-record-sections"
+                renderSection={key => (
+                  <div className="patient-consultation-section-content">
+                    {renderRecordSection(key, appointmentRecords)}
+                  </div>
+                )}
+              />
             </td>
           </tr>
         )}
