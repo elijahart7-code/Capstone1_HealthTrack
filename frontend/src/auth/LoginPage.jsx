@@ -210,7 +210,6 @@ export default function LoginPage() {
               >
                 Forgot your password?
               </button>
-              <Link className="ht-login-link" to="/setup-account">New patient? Set up your account or resend your email</Link>
             </form>
           </div>
         </div>

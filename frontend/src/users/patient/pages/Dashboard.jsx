@@ -54,7 +54,7 @@ export function Dashboard({ dashboard }) {
       <div className="patient-dashboard-header">
   <div>
     <h1>Patient Dashboard</h1>
-    <p>View your health information and medical records.</p>
+    <p>View your appointed schedules, health information, and medical records.</p>
   </div>
 
   <button
@@ -81,7 +81,7 @@ export function Dashboard({ dashboard }) {
 </div>
 
   <p className="patient-welcome-message">
-    Your records at Barangay Health Center of Mambog I. Take care of your health today for a better tomorrow.
+    Your personal records at Barangay Health Center of Mambog I. Take care of your health today for a better tomorrow!
   </p>
 
 </div>

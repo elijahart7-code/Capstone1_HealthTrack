@@ -16,7 +16,7 @@ export async function login(req, res) {
   `;
   const user = rows[0];
   if (!user || user.role !== accountType || !user.is_verified || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).json({ error: "Those credentials don't match an active account. If you are a new patient, confirm your email and set your password first." });
+    return res.status(401).json({ error: "Those credentials doesn't match an active account." });
   }
   return res.json({ message: "Logged in.", ...sessionForUser(user) });
 }

@@ -14,10 +14,6 @@ import {
   Droplets,
   ClipboardList,
   TriangleAlert,
-  Pill,
-  Utensils,
-  Leaf,
-  CircleAlert,
   CalendarDays,
   Clock3,
   UserRound,
@@ -222,8 +218,8 @@ const upcomingAppointment =
             <LatestHealthAssessment definition={recordTypes["health-assessment"]} record={latestRecords["health-assessment"]} onViewAssessments={() => selectSection("health-assessment")} />
             <LatestVitalSigns definition={recordTypes["vital-signs"]} record={latestRecords["vital-signs"]} onViewVitalSigns={() => selectSection("health-assessment")} />
             <LatestMidwifeNotes definition={recordTypes["midwife-notes"]} record={latestRecords["midwife-notes"]} onViewMidwifeNotes={() => selectSection("health-assessment")} />
-            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("health-assessment")} />
-            <LatestMedicalHistory definition={recordTypes["medical-history"]} record={latestRecords["medical-history"]} onViewMedicalHistory={() => selectSection("health-assessment")} /> </>
+            <LatestMedicalHistory definition={recordTypes["medical-history"]} record={latestRecords["medical-history"]} onViewMedicalHistory={() => selectSection("health-assessment")} />
+            <LatestAllergies definition={recordTypes.allergies} record={latestRecords.allergies} onViewAllergies={() => selectSection("health-assessment")} /> </>
         ) : (
           <>
 
@@ -325,7 +321,6 @@ const upcomingAppointment =
     recordTypes={recordTypes}
     records={records}
     appointments={appointments}
-    selectSection={selectSection}
   />
 ) : (
   Object.entries(recordTypes).map(([key, definition]) =>
@@ -476,22 +471,69 @@ function formatRecordDate(value) {
 function getRecordFields(definition, record, keys) {
   if (!definition || !record) return [];
   return keys
-    .filter((key) => record[key] !== null && record[key] !== undefined && record[key] !== "")
+    .filter((key) => hasRecordValue(record[key]))
     .map((key) => {
       const field = definition.fields[key];
       const rawValue = record[key];
       return {
         key,
         label: field?.label || key,
-        value: field?.type === "select" ? field.options?.[rawValue] || rawValue : rawValue,
+        value: ["select", "combobox"].includes(field?.type)
+          ? field.options?.[rawValue] || rawValue
+          : rawValue,
       };
     });
 }
 
-function LatestRecordCard({ title, icon: Icon, type, definition, record, action, children }) {
+function hasRecordValue(value) {
+  return value !== null && value !== undefined && String(value).trim() !== "";
+}
+
+function getMidwifeNoteLines(value) {
+  if (!hasRecordValue(value)) return [];
+
+  return String(value)
+    .replace(/\r\n/g, "\n")
+    .split(/\n|\s+-\s+/)
+    .map((line) => line.replace(/^\s*-\s*/, "").trim())
+    .filter(Boolean);
+}
+
+function getRecordMetadata(record, definition) {
+  const recordedBy =
+    record?.created_by_name ||
+    record?.createdByName ||
+    record?.recorded_by_name ||
+    record?.recordedByName ||
+    record?.created_by ||
+    record?.recorded_by;
+
+  return [
+    {
+      key: "record-date",
+      label: definition?.label === "Health Assessment"
+        ? "Assessment Date"
+        : definition?.dateLabel?.trim() || "Date Recorded",
+      value: formatRecordDate(record?.[definition?.dateField]) || "--",
+    },
+    {
+      key: "recorded-by",
+      label: "Recorded By",
+      value: recordedBy || "Not recorded",
+    },
+  ];
+}
+
+function LatestRecordCard({ title, icon: Icon, type, definition, record, action, children, embedded = false }) {
   const headerDate = type === "notes"
     ? formatRecordDateTime(record?.created_at)
     : formatRecordDate(record?.[definition.dateField]);
+
+  if (embedded) {
+    return record
+      ? <div className="patient-latest-card-content">{children}</div>
+      : <div className="patient-empty-state">No {definition.label.toLowerCase()} recorded for this consultation.</div>;
+  }
 
   return (
     <section className={`patient-healthinfo-card patient-latest-card patient-latest-${type}`}>
@@ -625,23 +667,17 @@ function LatestAppointment({
 
 
 
-function LatestVitalSigns({ definition, record, onViewVitalSigns }) {
-  const vitalRows = [
-    { key: "blood_pressure", label: "Blood Pressure", unit: "mmHg" },
-    { key: "heart_rate", label: "Heart Rate", unit: "bpm" },
-    { key: "temperature", label: "Temperature", unit: "°C" },
-    { key: "respiratory_rate", label: "Respiratory Rate", unit: "breaths/min" },
-    { key: "height_cm", label: "Height", unit: "cm" },
-    { key: "weight_kg", label: "Weight", unit: "kg" },
-    { key: "bmi", label: "BMI", unit: "kg/m²" },
-    { key: "oxygen_saturation", label: "Oxygen Saturation", unit: "%" },
-    { key: "pulse_rate", label: "Pulse Rate", unit: "bpm" },
-  ].filter(
-    ({ key }) =>
-      record?.[key] !== null &&
-      record?.[key] !== undefined &&
-      record?.[key] !== ""
-  );
+function LatestVitalSigns({ definition, record, onViewVitalSigns, showAction = true, embedded = false }) {
+  const tableRecords = record ? [record] : [];
+  const vitalRows = Object.keys(definition?.fields || {})
+    .filter((key) => VITAL_SIGN_PRESENTATION[key] && tableRecords.some((item) => hasRecordValue(item[key])))
+    .map((key) => ({ key, ...VITAL_SIGN_PRESENTATION[key] }));
+  const metadata = getRecordMetadata(tableRecords[0] || record, definition).map((column) => ({
+    ...column,
+    label: column.key === "record-date" ? "Date\nRecorded" : "Recorded\nBy",
+  }));
+  const columns = [...vitalRows, ...metadata];
+  const cardRecord = tableRecords[0] || record;
 
   return (
     <LatestRecordCard
@@ -649,8 +685,9 @@ function LatestVitalSigns({ definition, record, onViewVitalSigns }) {
   icon={Activity}
   type="vitals"
   definition={definition}
-  record={record}
-  action={
+  record={cardRecord}
+  embedded={embedded}
+  action={showAction && (
     <button
       type="button"
       className="patient-appointment-link"
@@ -659,14 +696,14 @@ function LatestVitalSigns({ definition, record, onViewVitalSigns }) {
       View All Vital Signs
       <ArrowRight size={16} strokeWidth={1.8} />
     </button>
-  }
+  )}
 >
-      {vitalRows.length > 0 ? (
-        <div className="patient-table-wrap patient-vital-horizontal-wrap">
+      {tableRecords.length > 0 ? (
+        <div className="patient-table-wrap patient-vital-horizontal-wrap patient-overview-horizontal-scroll" tabIndex={0}>
           <table className="patient-health-table patient-vital-horizontal-table">
             <thead>
               <tr>
-                {vitalRows.map(({ key, label }) => (
+                {columns.map(({ key, label }) => (
                   <th scope="col" key={key}>
                     {label}
                   </th>
@@ -675,18 +712,20 @@ function LatestVitalSigns({ definition, record, onViewVitalSigns }) {
             </thead>
 
             <tbody>
-              <tr>
-                {vitalRows.map(({ key, unit }) => (
-                  <td key={key}>
-                    <span className="patient-vital-value">
-                      {record[key]}
-                    </span>
-                    <span className="patient-vital-unit">
-                      {unit}
-                    </span>
-                  </td>
-                ))}
-              </tr>
+              {tableRecords.map((row) => (
+                <tr key={row.record_id}>
+                  {columns.map(({ key, unit }) => (
+                    <td key={key}>
+                      {unit ? (
+                        <>
+                          <span className="patient-vital-value">{row[key] || "--"}</span>
+                          <span className="patient-vital-unit">{unit}</span>
+                        </>
+                      ) : getRecordMetadata(row, definition).find((item) => item.key === key)?.value}
+                    </td>
+                  ))}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -704,10 +743,18 @@ function LatestHealthAssessment({
   definition,
   record,
   onViewAssessments,
+  showAction = true,
+  embedded = false,
 }) {
-  const assessmentItems = Object.entries(definition?.fields || {}).filter(
-    ([, field]) => field.column || field.primary
-  );
+  const tableRecords = record ? [record] : [];
+  const assessmentItems = Object.keys(definition?.fields || {})
+    .filter((key) => tableRecords.some((item) => hasRecordValue(item[key])))
+    .map((key) => ({
+      key,
+      label: definition.fields[key].label,
+    }));
+  const columns = [...assessmentItems, ...getRecordMetadata(tableRecords[0] || record, definition)];
+  const cardRecord = tableRecords[0] || record;
 
   return (
     <LatestRecordCard
@@ -715,8 +762,9 @@ function LatestHealthAssessment({
       icon={ClipboardList}
       type="assessment"
       definition={definition}
-      record={record}
-      action={
+      record={cardRecord}
+      embedded={embedded}
+      action={showAction && (
         <button
           type="button"
           className="patient-appointment-link"
@@ -725,40 +773,49 @@ function LatestHealthAssessment({
           View All Health Assessments
           <ArrowRight size={16} strokeWidth={1.8} />
         </button>
-      }
+      )}
     >
-      {record && assessmentItems.length > 0 ? (
-        <div className="patient-table-wrap patient-assessment-horizontal-wrap">
+      {tableRecords.length > 0 ? (
+        <div className="patient-table-wrap patient-assessment-horizontal-wrap patient-overview-horizontal-scroll" tabIndex={0}>
           <table className="patient-health-table patient-assessment-horizontal-table">
             <thead>
               <tr>
-                {assessmentItems.map(([key, field]) => (
+                {columns.map(({ key, label }) => (
                   <th scope="col" key={key}>
-                    {field.label}
+                    {label}
                   </th>
                 ))}
-                <th scope="col">
-                  {definition.dateLabel || "Assessment Date"}
-                </th>
               </tr>
             </thead>
 
             <tbody>
-              <tr>
-                {assessmentItems.map(([key]) => {
-                  const value = record[key] || "--";
-                  return (
-                    <td key={key}>
-                      {key === "status" && value !== "--"
-                        ? <span className={`patient-appointment-status patient-latest-assessment-status patient-latest-assessment-status-${String(value).toLowerCase()}`}>{definition.fields[key].options?.[record[key]] || value}</span>
-                        : value}
-                    </td>
-                  );
-                })}
-                <td>
-                  {formatRecordDate(record[definition.dateField]) || "--"}
-                </td>
-              </tr>
+              {tableRecords.map((row) => (
+                <tr key={row.record_id}>
+                  {columns.map(({ key }) => {
+                    const fieldValue = key === "record-date" || key === "recorded-by"
+                      ? getRecordMetadata(row, definition).find((item) => item.key === key)?.value
+                      : getRecordFields(definition, row, [key])[0]?.value || "--";
+                    return (
+                      <td
+                        key={key}
+                        className={
+                          key === "remarks"
+                            ? "patient-assessment-remarks-cell"
+                            : key === "description"
+                              ? "patient-assessment-description-cell"
+                              : undefined
+                        }
+                      >
+                        {key === "remarks"
+                          ? <span className="patient-assessment-remarks">{fieldValue}</span>
+                          : key === "description"
+                            ? <span className="patient-assessment-description">{fieldValue}</span>
+                            : fieldValue}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -772,55 +829,25 @@ function LatestAllergies({
   definition,
   record,
   onViewAllergies,
+  showAction = true,
+  embedded = false,
 }) {
-  const fields = getRecordFields(
-    definition,
-    record,
-    Object.keys(definition?.fields || {})
-  );
+  const tableRecords = record ? [record] : [];
+  const fields = Object.keys(definition?.fields || {})
+    .filter((key) => tableRecords.some((item) => hasRecordValue(item[key])))
+    .map((key) => ({ key, label: definition.fields[key].label }));
 
-  const fieldValues = Object.fromEntries(
-    fields.map(({ key, value }) => [key, value])
-  );
-
-  const rows = [
-    {
-      key: "medication_allergies",
-      label: "Drug Allergies",
-      icon: Pill,
-      value: fieldValues.medication_allergies,
-    },
-    {
-      key: "food_allergies",
-      label: "Food Allergies",
-      icon: Utensils,
-      value: fieldValues.food_allergies,
-    },
-    {
-      key: "environmental_allergies",
-      label: "Environmental Allergies",
-      icon: Leaf,
-      value: fieldValues.environmental_allergies,
-    },
-    {
-      key: "reaction",
-      label: "Reaction",
-      icon: CircleAlert,
-      value: fieldValues.reaction,
-    },
-    {
-      key: "remarks",
-      label: "Remarks",
-      icon: MessageSquare,
-      value: fieldValues.remarks,
-    },
-    {
-      key: "recorded_by",
-      label: "Recorded By",
-      icon: User,
-      value: record?.created_by_name || record?.created_by,
-    },
-  ];
+  const labelOverrides = {
+    medication_allergies: "Medication\nAllergies",
+    food_allergies: "Food\nAllergies",
+    environmental_allergies: "Environmental\nAllergies",
+    "record-date": "Date\nRecorded",
+    "recorded-by": "Recorded\nBy",
+  };
+  const rows = [...fields, ...getRecordMetadata(tableRecords[0] || record, definition)].map((item) => ({
+    ...item,
+    label: labelOverrides[item.key] || item.label,
+  }));
 
   return (
     <LatestRecordCard
@@ -828,8 +855,9 @@ function LatestAllergies({
       icon={TriangleAlert}
       type="allergies"
       definition={definition}
-      record={record}
-      action={
+      record={tableRecords[0] || record}
+      embedded={embedded}
+      action={showAction && (
         <button
           type="button"
           className="patient-appointment-link"
@@ -838,25 +866,20 @@ function LatestAllergies({
           View All Allergies
           <ArrowRight size={16} strokeWidth={1.8} />
         </button>
-      }
+      )}
     >
-      <AllergyDetailRows rows={rows} />
+      <AllergyDetailRows rows={rows} records={tableRecords} definition={definition} />
     </LatestRecordCard>
   );
 }
 
-function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes }) {
-  const noteItems = [
-    { key: "notes", label: "Midwife Notes" },
-    { key: "assessment", label: "Assessment" },
-    { key: "remarks", label: "Remarks" },
-    { key: "referral", label: "Referral" },
-  ].filter(
-    ({ key }) =>
-      record?.[key] !== null &&
-      record?.[key] !== undefined &&
-      record?.[key] !== ""
-  );
+function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes, showAction = true, embedded = false }) {
+  const tableRecords = record ? [record] : [];
+  const noteItems = Object.keys(definition?.fields || {})
+    .filter((key) => tableRecords.some((item) => hasRecordValue(item[key])))
+    .map((key) => ({ key, label: definition.fields[key].label }));
+  const columns = [...noteItems, ...getRecordMetadata(tableRecords[0] || record, definition)];
+  const cardRecord = tableRecords[0] || record;
 
   return (
      <LatestRecordCard
@@ -864,8 +887,9 @@ function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes }) {
   icon={ClipboardList}
   type="midwife-notes"
   definition={definition}
-  record={record}
-  action={
+  record={cardRecord}
+  embedded={embedded}
+  action={showAction && (
     <button
       type="button"
       className="patient-appointment-link"
@@ -874,14 +898,14 @@ function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes }) {
       View All Midwife Notes
       <ArrowRight size={16} strokeWidth={1.8} />
     </button>
-  }
+  )}
 >
-      {noteItems.length > 0 ? (
-        <div className="patient-table-wrap patient-midwife-horizontal-wrap">
+      {tableRecords.length > 0 ? (
+        <div className="patient-table-wrap patient-midwife-horizontal-wrap patient-overview-horizontal-scroll" tabIndex={0}>
           <table className="patient-health-table patient-midwife-horizontal-table">
             <thead>
               <tr>
-                {noteItems.map(({ key, label }) => (
+                {columns.map(({ key, label }) => (
                   <th scope="col" key={key}>
                     {label}
                   </th>
@@ -889,15 +913,28 @@ function LatestMidwifeNotes({ definition, record, onViewMidwifeNotes }) {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                {noteItems.map(({ key }) => (
-                  <td key={key}>
-                    <span className="patient-midwife-value">
-                      {record[key]}
-                    </span>
-                  </td>
-                ))}
-              </tr>
+              {tableRecords.map((row) => (
+                <tr key={row.record_id}>
+                  {columns.map(({ key }) => {
+                    const value = key === "record-date" || key === "recorded-by"
+                      ? getRecordMetadata(row, definition).find((item) => item.key === key)?.value
+                      : getRecordFields(definition, row, [key])[0]?.value || "--";
+                    return (
+                      <td key={key}>
+                        {key === "notes" ? (
+                          <div className="patient-midwife-value patient-midwife-note-lines">
+                            {getMidwifeNoteLines(value).map((line, index) => (
+                              <div key={`${index}-${line}`}>- {line}</div>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="patient-midwife-value">{value}</span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -913,33 +950,45 @@ function LatestMedicalHistory({
   definition,
   record,
   onViewMedicalHistory,
+  showAction = true,
+  embedded = false,
 }) {
+  const tableRecords = record ? [record] : [];
   const rows = [
     {
       key: "past_illnesses",
-      label: "Past Illnesses",
+      label: "Past\nIllnesses",
     },
     {
       key: "chronic_conditions",
-      label: "Chronic Conditions",
+      label: "Chronic\nConditions",
     },
     {
       key: "past_surgeries",
-      label: "Past Surgeries",
+      label: "Past\nSurgeries",
     },
     {
       key: "previous_hospitalizations",
-      label: "Previous Hospitalizations",
+      label: "Previous\nHospitalizations",
     },
     {
       key: "family_medical_history",
-      label: "Family Health History",
+      label: "Family Health\nHistory",
     },
     {
       key: "immunization_status",
-      label: "Immunization Status",
+      label: "Immunization\nStatus",
     },
-  ];
+  ].filter(({ key }) => tableRecords.some((item) => hasRecordValue(item[key])));
+  const columns = [...rows, ...getRecordMetadata(tableRecords[0] || record, definition)].map((item) => ({
+    ...item,
+    label: item.key === "record-date"
+      ? "Date\nRecorded"
+      : item.key === "recorded-by"
+        ? "Recorded\nBy"
+        : item.label,
+  }));
+  const cardRecord = tableRecords[0] || record;
 
   return (
     <LatestRecordCard
@@ -947,8 +996,9 @@ function LatestMedicalHistory({
       icon={FileText}
       type="medical-history"
       definition={definition}
-      record={record}
-      action={
+      record={cardRecord}
+      embedded={embedded}
+      action={showAction && (
         <button
           type="button"
           className="patient-appointment-link"
@@ -957,51 +1007,36 @@ function LatestMedicalHistory({
           View Health Background
           <ArrowRight size={16} strokeWidth={1.8} />
         </button>
-      }
+      )}
     >
-      {record ? (
-        <div className="patient-table-wrap patient-medical-history-latest-wrap">
+      {tableRecords.length > 0 ? (
+        <div className="patient-table-wrap patient-medical-history-latest-wrap patient-overview-horizontal-scroll" tabIndex={0}>
           <table className="patient-health-table patient-medical-history-latest-table">
             <thead>
               <tr>
-                {rows.map(({ key, label }) => (
+                {columns.map(({ key, label }) => (
                   <th scope="col" key={key}>
-                    {label}
+                    {label.split("\n").map((line, index) => (
+                      <span className="patient-health-background-header-line" key={`${key}-${index}`}>
+                        {line}
+                      </span>
+                    ))}
                   </th>
                 ))}
-                <th scope="col">
-                  {definition.dateLabel || "Recorded On"}
-                </th>
               </tr>
             </thead>
 
             <tbody>
-              <tr>
-                {rows.map(({ key }) => {
-                  const value = record[key];
-
-                  return (
-                    <td key={key}>
-                      {value || (
-                        [
-                          "past_illnesses",
-                          "chronic_conditions",
-                          "past_surgeries",
-                          "previous_hospitalizations",
-                        ].includes(key)
-                          ? "None"
-                          : "Not provided"
-                      )}
-                    </td>
-                  );
-                })}
-
-                <td>
-                  {formatRecordDate(
-                    record[definition.dateField]
-                  ) || "--"}
-                </td>
-              </tr>
+              {tableRecords.map((row) => (
+                <tr key={row.record_id}>
+                  {columns.map(({ key }) => {
+                    const value = key === "record-date" || key === "recorded-by"
+                      ? getRecordMetadata(row, definition).find((item) => item.key === key)?.value
+                      : getRecordFields(definition, row, [key])[0]?.value || "--";
+                    return <td key={key}>{value}</td>;
+                  })}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -1013,9 +1048,9 @@ function LatestMedicalHistory({
     </LatestRecordCard>
   );
 }
-function AllergyDetailRows({ rows }) {
+function AllergyDetailRows({ rows, records, definition }) {
   return (
-    <div className="patient-table-wrap patient-allergies-horizontal-wrap">
+    <div className="patient-table-wrap patient-allergies-horizontal-wrap patient-overview-horizontal-scroll" tabIndex={0}>
   <table className="patient-health-table patient-allergies-horizontal-table">
     <thead>
       <tr>
@@ -1027,13 +1062,16 @@ function AllergyDetailRows({ rows }) {
       </tr>
     </thead>
     <tbody>
-      <tr>
-        {rows.map(({ key, value }) => (
-          <td key={key}>
-            {value || "Not recorded"}
-          </td>
-        ))}
-      </tr>
+      {records.map((record) => (
+        <tr key={record.record_id}>
+          {rows.map(({ key }) => {
+            const value = key === "record-date" || key === "recorded-by"
+              ? getRecordMetadata(record, definition).find((item) => item.key === key)?.value
+              : getRecordFields(definition, record, [key])[0]?.value || "--";
+            return <td key={key}>{value}</td>;
+          })}
+        </tr>
+      ))}
     </tbody>
   </table>
 </div>
@@ -1043,7 +1081,6 @@ function HealthAssessmentHistory({
   recordTypes,
   records,
   appointments,
-  selectSection,
 }) {
   const recordKeys = ["health-assessment", "vital-signs", "midwife-notes", "allergies", "medical-history"];
   const sectionDetails = [
@@ -1082,19 +1119,22 @@ function HealthAssessmentHistory({
 
   const renderRecordSection = (key, appointmentRecords) => {
     const sectionRecords = appointmentRecords[key];
-    if (key === "vital-signs") {
-      return <VitalSignsSection definition={recordTypes[key]} records={sectionRecords} onViewAll={() => selectSection(key)} />;
-    }
-    if (key === "health-assessment") {
-      return <HealthAssessmentSection definition={recordTypes[key]} records={sectionRecords} onViewAll={() => selectSection(key)} />;
-    }
-    if (key === "midwife-notes") {
-      return <MidwifeNotesSection definition={recordTypes[key]} records={sectionRecords} onViewAll={() => selectSection(key)} />;
-    }
-    if (key === "medical-history") {
-      return <MedicalHistorySection definition={recordTypes[key]} records={sectionRecords} />;
-    }
-    return <AllergyRecordsSection definition={recordTypes[key]} records={sectionRecords} onViewAll={() => selectSection(key)} />;
+    const definition = recordTypes[key];
+    return sectionRecords.map((record) => {
+      const commonProps = {
+        key: record.record_id,
+        definition,
+        record,
+        showAction: false,
+        embedded: true,
+      };
+
+      if (key === "vital-signs") return <LatestVitalSigns {...commonProps} />;
+      if (key === "health-assessment") return <LatestHealthAssessment {...commonProps} />;
+      if (key === "midwife-notes") return <LatestMidwifeNotes {...commonProps} />;
+      if (key === "medical-history") return <LatestMedicalHistory {...commonProps} />;
+      return <LatestAllergies {...commonProps} />;
+    });
   };
 
   const renderConsultationRecord = (recordId, appointment, appointmentRecords) => {
@@ -1332,15 +1372,15 @@ function AssessmentDetailRows({ fields, assessmentDate, recordedOn, recordedBy }
 }
 
 const VITAL_SIGN_PRESENTATION = {
-  blood_pressure: { label: "Blood Pressure", unit: "mmHg" },
+  blood_pressure: { label: "Blood\nPressure", unit: "mmHg" },
   temperature: { label: "Temperature", unit: "°C" },
-  pulse_rate: { label: "Pulse Rate", unit: "bpm" },
-  respiratory_rate: { label: "Respiratory Rate", unit: "breaths/min" },
+  pulse_rate: { label: "Pulse\nRate", unit: "bpm" },
+  respiratory_rate: { label: "Respiratory\nRate", unit: "breaths/min" },
   height_cm: { label: "Height", unit: "cm" },
   weight_kg: { label: "Weight", unit: "kg" },
-  bmi: { label: "Body Mass Index (BMI)", unit: "kg/m²" },
-  oxygen_saturation: { label: "Oxygen Saturation (SpO2)", unit: "%" },
-  pain_score: { label: "Pain Score", unit: "0–10" },
+  bmi: { label: "Body Mass\nIndex (BMI)", unit: "kg/m²" },
+  oxygen_saturation: { label: "Oxygen\nSaturation (SpO2)", unit: "%" },
+  pain_score: { label: "Pain\nScore", unit: "0–10" },
 };
 
 function VitalSignsSection({ definition, records, onViewAll }) {
