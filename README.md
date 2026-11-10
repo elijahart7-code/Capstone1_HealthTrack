@@ -41,6 +41,26 @@ If the API is unavailable, check that the PostgreSQL service specified by `DATAB
 
 Run checks with `npm test --prefix backend`, `npm test --prefix frontend`, and `npm run build --prefix frontend`.
 
+## Separate patient and staff applications
+
+The patient website no longer contains Admin or Health Worker routes or dashboard modules. The staff website has its own entry point and build. Both use the same database, with server-side role checks on every protected API. Staff accounts are individual: the midwife uses the Admin role, and each health worker uses their own Health Worker account.
+
+Start the local database with `npm run local-db --prefix backend`, then run `npm run dev` from the repository root after installing root, backend, and frontend dependencies. This starts:
+
+| Application | Website | API |
+| --- | --- | --- |
+| Patient | `http://127.0.0.1:5173/patient/login` | `http://127.0.0.1:5000` |
+| Midwife / Admin | `http://127.0.0.1:5174/admin/login` | `http://127.0.0.1:5001` |
+| Health Worker | `http://127.0.0.1:5174/health-worker/login` | `http://127.0.0.1:5001` |
+
+Alternatively, use four terminals: `npm run dev --prefix backend`, `npm run dev:staff --prefix backend`, `npm run dev --prefix frontend`, and `npm run dev:staff --prefix frontend`. Local servers bind to loopback. Browser sessions are separate because the websites use different ports. Without a configured `JWT_SECRET`, development APIs generate temporary signing secrets on startup, so restarting an API signs its users out.
+
+Changing the patient URL to `/admin/login` or `/health-worker/login` shows Page not found. Its API also returns 404 for staff routes, even with a staff token, and refuses staff sign-in. The staff API rejects patient sign-in and does not expose patient portal endpoints. Staff may resend patient setup emails after authentication; confirmation links must continue to use the public patient's `FRONTEND_URL`.
+
+`npm run build --prefix frontend` produces both `frontend/dist` (patient) and `frontend/dist-staff` (staff). For separate deployments, `npm run build:patient --prefix frontend` and `npm run build:staff --prefix frontend` build each independently. The normal backend serves only the patient build. `npm run start:staff --prefix backend` starts the staff backend and serves only the staff build (local default port 5001; a hosting provider's PORT takes precedence). Both deployments need database settings and a strong production `JWT_SECRET`. Set their `CORS_ORIGINS` to their respective frontend origins when deployed separately. Existing single-server deployments will become patient-only; add a separate staff deployment to retain staff access.
+
+This is local application/API separation, not an identity gateway or MFA implementation. A person using this PC can still visit the staff port and see its login form. Before exposing the staff deployment online, place the staff website and API behind a VPN or identity-aware access gateway restricted to approved staff, block direct origin access, and require MFA. The free localhost demonstration does not configure Cloudflare or publish either app.
+
 For a local PostgreSQL database without Docker, run `npm run local-db --prefix backend` in a separate terminal and keep it running. It creates a persistent cluster on `127.0.0.1:55433`, generates a private database password, and updates `backend/.env`. The earlier environment configuration is preserved in the ignored `backend/.env.before-local-db` file. Restart the API after switching databases. Data and connection settings remain in the ignored `backend/.local-db` directory across restarts. Stop the database with Ctrl+C. This starts a separate empty database; it does not migrate records from another server.
 
 On a fresh local database, `npm run seed --prefix backend` creates demo staff accounts: `admin@healthtrack.test` and `healthworker@healthtrack.test`, both with password `password`. These accounts are for local development only. The backend tests use isolated PostgreSQL instances and stub email delivery, so they do not send email or modify the app database.

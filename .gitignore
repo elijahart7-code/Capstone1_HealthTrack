@@ -1,5 +1,6 @@
 node_modules/
 dist/
+dist-staff/
 .env
 backend/.env.before-local-db
 backend/.local-db/

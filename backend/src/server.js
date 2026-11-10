@@ -12,10 +12,12 @@ import healthWorkerRoute from "./routes/healthworker.route.js";
 import patientsRoute from "./routes/patients.route.js";
 import appointmentsRoute from "./routes/appointments.route.js";
 import patientPortalRoute from "./routes/patientportal.route.js";
+import { mountPortalApi } from "./routes/portal.routes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
+const portal = process.env.APP_PORTAL || "patient";
 
 app.use(
   cors({
@@ -34,42 +36,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/auth", authRoute);
-
-app.use(
-  "/api/admin",
-  authMiddleware,
-  requireRole("admin"),
-  midwifeRoute
-);
-
-app.use(
-  "/api/health-worker",
-  authMiddleware,
-  requireRole("health_worker"),
-  healthWorkerRoute
-);
-
-app.use(
-  "/api/patients",
-  authMiddleware,
-  requireRole("admin", "health_worker"),
-  patientsRoute
-);
-
-app.use(
-  "/api/appointments",
-  authMiddleware,
-  requireRole("admin"),
-  appointmentsRoute
-);
-
-app.use(
-  "/api/patient",
-  authMiddleware,
-  requireRole("patient"),
-  patientPortalRoute
-);
+mountPortalApi(app, portal, { authRoute, patientPortalRoute, midwifeRoute, healthWorkerRoute, patientsRoute, appointmentsRoute, authMiddleware, requireRole });
 
 app.get("/api/health", (_req, res) => {
   res.json({
@@ -78,6 +45,9 @@ app.get("/api/health", (_req, res) => {
   });
 });
 
+// Unknown API paths must never fall through to the SPA HTML handler.
+app.use("/api", (_req, res) => res.status(404).json({ error: "Not found." }));
+
 app.use((error, _req, res, _next) => {
   if (error.type === "entity.parse.failed") return res.status(400).json({ error: "Invalid JSON request." });
   if (error.code === "23505") return res.status(409).json({ error: "That email address or account is already in use. Refresh and try again." });
@@ -85,7 +55,7 @@ app.use((error, _req, res, _next) => {
   res.status(500).json({ error: "An internal server error occurred." });
 });
 
-const frontendPath = path.join(__dirname, "../../frontend/dist");
+const frontendPath = path.join(__dirname, portal === "staff" ? "../../frontend/dist-staff" : "../../frontend/dist");
 
 app.use(express.static(frontendPath));
 
@@ -95,9 +65,9 @@ app.get("/{*splat}", (_req, res) => {
 
 connectNeon()
   .then(() => {
-    app.listen(ENV.PORT, () => {
+    app.listen(ENV.PORT, ENV.NODE_ENV === "production" ? "0.0.0.0" : "127.0.0.1", () => {
       console.log(
-        `[server] HealthTrack API listening on port ${ENV.PORT}`
+        `[server] HealthTrack ${portal} API listening on port ${ENV.PORT}`
       );
     });
   })

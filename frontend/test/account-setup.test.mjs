@@ -21,6 +21,7 @@ const outfile = path.join(scratch, "ui.mjs");
 await build({
   stdin: { contents: `
     export { default as App } from './src/utils/App.jsx';
+    export { default as StaffApp } from './src/utils/StaffApp.jsx';
     export { ConfirmAccountPage, RequestAccountSetupPage } from './src/auth/AccountSetupPage.jsx';
     export { Patients as AdminPatients } from './src/users/admin/pages/Patients.jsx';
     export { Patients as WorkerPatients } from './src/users/health_worker/pages/Patients.jsx';
@@ -33,7 +34,7 @@ await build({
   bundle: true, format: "esm", platform: "browser", jsx: "automatic", outfile,
   define: { "import.meta.env.VITE_API_BASE_URL": '"/api"', "process.env.NODE_ENV": '"development"' },
 });
-const { App, ConfirmAccountPage, RequestAccountSetupPage, AdminPatients, WorkerPatients, PatientRecord, api, createRoot, MemoryRouter, Routes, Route, h, act } = await import(pathToFileURL(outfile));
+const { App, StaffApp, ConfirmAccountPage, RequestAccountSetupPage, AdminPatients, WorkerPatients, PatientRecord, api, createRoot, MemoryRouter, Routes, Route, h, act } = await import(pathToFileURL(outfile));
 let root, posts;
 async function mount(url, Page = ConfirmAccountPage) {
   posts = []; localStorage.clear();
@@ -57,14 +58,14 @@ async function submit() { await act(async () => document.querySelector("form").d
 afterEach(async () => { if (root) await act(async () => root.unmount()); root = null; });
 after(async () => { for (const channel of channels) { channel.port1.close(); channel.port2.close(); } globalThis.MessageChannel = originalChannel; dom.window.close(); await rm(scratch, { recursive: true, force: true }); });
 
-async function mountLogin(url) {
+async function mountLogin(url, Page = App) {
   localStorage.clear(); posts = [];
   api.post = async (url, body) => {
     posts.push({ url, body });
     throw { response: { status: 401, data: { error: "Those credentials don't match an active account." } } };
   };
   root = createRoot(document.getElementById("root"));
-  await act(async () => root.render(h(MemoryRouter, { initialEntries: [url] }, h(App))));
+  await act(async () => root.render(h(MemoryRouter, { initialEntries: [url] }, h(Page))));
   await act(async () => { await new Promise(resolve => setTimeout(resolve, 10)); });
 }
 
@@ -83,7 +84,7 @@ for (const [role, url, label, dashboard] of [
   ["health_worker", "/health-worker/login", "Health Worker", "/health_worker"],
 ]) {
   test(`${label} has a direct login page and submits its fixed role`, async () => {
-    await mountLogin(url);
+    await mountLogin(url, role === "patient" ? App : StaffApp);
     assert.equal(document.querySelector("h1").textContent, `${label} Portal`);
     assert.equal(document.querySelectorAll(".ht-account-card").length, 0);
     await fill("Email Address", "test@example.com"); await fill("Password", "wrong password"); await submit();
@@ -94,9 +95,26 @@ for (const [role, url, label, dashboard] of [
   });
 
   test(`unauthenticated ${label} dashboard opens its own login page`, async () => {
-    await mountLogin(dashboard);
+    await mountLogin(dashboard, role === "patient" ? App : StaffApp);
     assert.equal(document.querySelector("h1").textContent, `${label} Portal`);
     assert.ok(document.querySelector("form"));
+  });
+}
+
+for (const url of ["/admin/login", "/health-worker/login", "/admin", "/health_worker"]) {
+  test(`the patient website does not expose staff route ${url}`, async () => {
+    await mountLogin(url);
+    assert.equal(document.querySelector("h1").textContent, "Page not found");
+    assert.equal(document.querySelector("form"), null);
+    assert.equal(document.querySelector(".ht-header-logout"), null);
+  });
+}
+
+for (const url of ["/patient/login", "/patient", "/confirm-account?token=sample"]) {
+  test(`the staff website does not expose patient route ${url}`, async () => {
+    await mountLogin(url, StaffApp);
+    assert.equal(document.querySelector("h1").textContent, "Page not found");
+    assert.equal(document.querySelector("form"), null);
   });
 }
 

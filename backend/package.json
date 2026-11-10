@@ -7,7 +7,9 @@
     "test": "node --test test/*.test.js",
     "local-db": "node src/scripts/local-db.js",
     "dev": "nodemon src/server.js",
+    "dev:staff": "nodemon src/scripts/start-staff.js",
     "start": "node src/server.js",
+    "start:staff": "node src/scripts/start-staff.js",
     "seed": "node src/scripts/seed.js",
     "sync-schema": "node -e \"import('./src/config/db.js').then(m => m.syncSchema())\""
   },
