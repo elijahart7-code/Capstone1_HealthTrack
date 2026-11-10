@@ -5,12 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:staff": "vite --mode staff",
-    "build": "vite build && vite build --mode staff",
+    "dev:admin": "vite --mode admin",
+    "dev:health-worker": "vite --mode health-worker",
+    "build": "vite build && vite build --mode admin && vite build --mode health-worker",
     "build:patient": "vite build",
-    "build:staff": "vite build --mode staff",
+    "build:admin": "vite build --mode admin",
+    "build:health-worker": "vite build --mode health-worker",
     "preview": "vite preview",
-    "preview:staff": "vite preview --mode staff",
+    "preview:admin": "vite preview --mode admin",
+    "preview:health-worker": "vite preview --mode health-worker",
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {

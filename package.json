@@ -4,10 +4,11 @@
   "version": "1.0.0",
   "description": "HealthTrack -- barangay patient information management system (Express + Neon Postgres + React stack).",
   "scripts": {
-    "dev": "concurrently -k -n PATIENT-API,STAFF-API,PATIENT,STAFF \"npm run dev --prefix backend\" \"npm run dev:staff --prefix backend\" \"npm run dev --prefix frontend\" \"npm run dev:staff --prefix frontend\"",
+    "dev": "concurrently -k -n PATIENT-API,ADMIN-API,WORKER-API,PATIENT,ADMIN,WORKER \"npm run dev --prefix backend\" \"npm run dev:admin --prefix backend\" \"npm run dev:health-worker --prefix backend\" \"npm run dev --prefix frontend\" \"npm run dev:admin --prefix frontend\" \"npm run dev:health-worker --prefix frontend\"",
     "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
     "start": "npm run start --prefix backend",
-    "start:staff": "npm run start:staff --prefix backend"
+    "start:admin": "npm run start:admin --prefix backend",
+    "start:health-worker": "npm run start:health-worker --prefix backend"
   },
   "devDependencies": {
     "concurrently": "^9.2.4"

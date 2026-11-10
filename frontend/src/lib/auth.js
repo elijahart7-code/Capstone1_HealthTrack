@@ -1,5 +1,7 @@
-const TOKEN_KEY = "healthtrack_token";
-const USER_KEY = "healthtrack_user";
+const portal = import.meta.env?.VITE_PORTAL || "patient";
+const storagePrefix = portal === "patient" ? "healthtrack" : `healthtrack_${portal}`;
+const TOKEN_KEY = `${storagePrefix}_token`;
+const USER_KEY = `${storagePrefix}_user`;
 export const AUTH_CHANGED_EVENT = "healthtrack-auth-changed";
 
 function notifyAuthChange() {
@@ -16,6 +18,10 @@ export function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
   notifyAuthChange();
+}
+
+export function getSessionToken() {
+  return localStorage.getItem(TOKEN_KEY);
 }
 
 export function getCurrentUser() {

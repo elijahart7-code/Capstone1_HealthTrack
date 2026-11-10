@@ -21,7 +21,8 @@ const outfile = path.join(scratch, "ui.mjs");
 await build({
   stdin: { contents: `
     export { default as App } from './src/utils/App.jsx';
-    export { default as StaffApp } from './src/utils/StaffApp.jsx';
+    export { default as AdminApp } from './src/utils/AdminApp.jsx';
+    export { default as HealthWorkerApp } from './src/utils/HealthWorkerApp.jsx';
     export { ConfirmAccountPage, RequestAccountSetupPage } from './src/auth/AccountSetupPage.jsx';
     export { Patients as AdminPatients } from './src/users/admin/pages/Patients.jsx';
     export { Patients as WorkerPatients } from './src/users/health_worker/pages/Patients.jsx';
@@ -34,7 +35,8 @@ await build({
   bundle: true, format: "esm", platform: "browser", jsx: "automatic", outfile,
   define: { "import.meta.env.VITE_API_BASE_URL": '"/api"', "process.env.NODE_ENV": '"development"' },
 });
-const { App, StaffApp, ConfirmAccountPage, RequestAccountSetupPage, AdminPatients, WorkerPatients, PatientRecord, api, createRoot, MemoryRouter, Routes, Route, h, act } = await import(pathToFileURL(outfile));
+const { App, AdminApp, HealthWorkerApp, ConfirmAccountPage, RequestAccountSetupPage, AdminPatients, WorkerPatients, PatientRecord, api, createRoot, MemoryRouter, Routes, Route, h, act } = await import(pathToFileURL(outfile));
+const portalApps = { patient: App, admin: AdminApp, health_worker: HealthWorkerApp };
 let root, posts;
 async function mount(url, Page = ConfirmAccountPage) {
   posts = []; localStorage.clear();
@@ -84,7 +86,7 @@ for (const [role, url, label, dashboard] of [
   ["health_worker", "/health-worker/login", "Health Worker", "/health_worker"],
 ]) {
   test(`${label} has a direct login page and submits its fixed role`, async () => {
-    await mountLogin(url, role === "patient" ? App : StaffApp);
+    await mountLogin(url, portalApps[role]);
     assert.equal(document.querySelector("h1").textContent, `${label} Portal`);
     assert.equal(document.querySelectorAll(".ht-account-card").length, 0);
     await fill("Email Address", "test@example.com"); await fill("Password", "wrong password"); await submit();
@@ -95,7 +97,7 @@ for (const [role, url, label, dashboard] of [
   });
 
   test(`unauthenticated ${label} dashboard opens its own login page`, async () => {
-    await mountLogin(dashboard, role === "patient" ? App : StaffApp);
+    await mountLogin(dashboard, portalApps[role]);
     assert.equal(document.querySelector("h1").textContent, `${label} Portal`);
     assert.ok(document.querySelector("form"));
   });
@@ -110,12 +112,17 @@ for (const url of ["/admin/login", "/health-worker/login", "/admin", "/health_wo
   });
 }
 
-for (const url of ["/patient/login", "/patient", "/confirm-account?token=sample"]) {
-  test(`the staff website does not expose patient route ${url}`, async () => {
-    await mountLogin(url, StaffApp);
-    assert.equal(document.querySelector("h1").textContent, "Page not found");
-    assert.equal(document.querySelector("form"), null);
-  });
+for (const [portal, Page, blocked] of [
+  ["Admin", AdminApp, ["/patient/login", "/patient", "/confirm-account?token=sample", "/health-worker/login", "/health_worker"]],
+  ["Health Worker", HealthWorkerApp, ["/patient/login", "/patient", "/confirm-account?token=sample", "/admin/login", "/admin"]],
+]) {
+  for (const url of blocked) {
+    test(`the ${portal} website does not expose another portal's route ${url}`, async () => {
+      await mountLogin(url, Page);
+      assert.equal(document.querySelector("h1").textContent, "Page not found");
+      assert.equal(document.querySelector("form"), null);
+    });
+  }
 }
 
 test("opening a confirmation link renders password setup without API requests or session changes", async () => {

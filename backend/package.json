@@ -7,9 +7,11 @@
     "test": "node --test test/*.test.js",
     "local-db": "node src/scripts/local-db.js",
     "dev": "nodemon src/server.js",
-    "dev:staff": "nodemon src/scripts/start-staff.js",
+    "dev:admin": "nodemon src/scripts/start-portal.js admin",
+    "dev:health-worker": "nodemon src/scripts/start-portal.js health-worker",
     "start": "node src/server.js",
-    "start:staff": "node src/scripts/start-staff.js",
+    "start:admin": "node src/scripts/start-portal.js admin",
+    "start:health-worker": "node src/scripts/start-portal.js health-worker",
     "seed": "node src/scripts/seed.js",
     "sync-schema": "node -e \"import('./src/config/db.js').then(m => m.syncSchema())\""
   },

@@ -1,12 +1,12 @@
 import axios from "axios";
-import { clearSession, getCurrentUser, loginRouteForRole } from "./auth";
+import { clearSession, getCurrentUser, getSessionToken, loginRouteForRole } from "./auth";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("healthtrack_token");
+  const token = getSessionToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

@@ -55,7 +55,8 @@ app.use((error, _req, res, _next) => {
   res.status(500).json({ error: "An internal server error occurred." });
 });
 
-const frontendPath = path.join(__dirname, portal === "staff" ? "../../frontend/dist-staff" : "../../frontend/dist");
+const frontendBuild = { patient: "dist", admin: "dist-admin", health_worker: "dist-health-worker" }[portal];
+const frontendPath = path.join(__dirname, "../../frontend", frontendBuild);
 
 app.use(express.static(frontendPath));
 

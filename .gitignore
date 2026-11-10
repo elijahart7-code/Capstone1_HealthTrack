@@ -1,6 +1,8 @@
 node_modules/
 dist/
 dist-staff/
+dist-admin/
+dist-health-worker/
 .env
 backend/.env.before-local-db
 backend/.local-db/
