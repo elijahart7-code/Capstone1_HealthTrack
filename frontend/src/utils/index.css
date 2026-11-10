@@ -276,7 +276,8 @@ Reusable surfaces, panel headings, metrics, and section icons.
         color: var(--color-brand-strong);
         font-size: 0.75rem;
         font-weight: 700;
-        white-space: nowrap;
+        white-space: normal;
+        overflow-wrap: anywhere;
     }
 
     .ht-pill-date {
@@ -3540,10 +3541,10 @@ Reusable surfaces, panel headings, metrics, and section icons.
 
     .patient-overview-heading h1 {
         margin: 0;
-        color: #17312d;
+        color: #1C2724;
         font-family: var(--font-sans);
-        font-size: 1.8rem;
-        font-weight: 800;
+        font-size: 30px;
+        font-weight: 950;
         line-height: 1.15;
     }
 
@@ -3571,8 +3572,9 @@ Reusable surfaces, panel headings, metrics, and section icons.
 
     .patient-overview-heading p {
         margin: 0.2rem 0 0;
-        color: #667875;
-        font-size: 0.82rem;
+        color: #3F473F;
+        font-size: 1rem;
+        font-weight: 500;
         line-height: 1.45;
     }
 
@@ -3601,8 +3603,8 @@ Reusable surfaces, panel headings, metrics, and section icons.
     .patient-healthinfo-header-copy h1 {
         margin: 0;
         font-family: var(--font-sans);
-        font-size: 2.2rem;
-        font-weight: 800;
+        font-size: 30px;
+        font-weight: 950;
         line-height: 1.05;
         color: #1c2724;
     }
@@ -3622,8 +3624,9 @@ Reusable surfaces, panel headings, metrics, and section icons.
 
     .patient-healthinfo-header-copy p {
         margin: 0.4rem 0 0;
-        color: #53615f;
-        font-size: 0.96rem;
+        color: #3F473F;
+        font-size: 1rem;
+        font-weight: 500;
         line-height: 1.5;
     }
 
@@ -3681,13 +3684,34 @@ Reusable surfaces, panel headings, metrics, and section icons.
         min-width: 0;
     }
 
-    .patient-latest-title h2 {
+    .patient-latest-title h2,
+    .patient-latest-toggle-heading {
         margin: 0;
         color: #17312d;
         font-family: var(--font-sans);
         font-size: 0.98rem;
         font-weight: 800;
         line-height: 1.25;
+    }
+
+    .patient-latest-toggle {
+        flex: 1;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .patient-latest-toggle-chevron {
+        flex: 0 0 auto;
+        transition: transform 0.18s ease;
+    }
+
+    .patient-latest-toggle[aria-expanded="false"] .patient-latest-toggle-chevron {
+        transform: rotate(-90deg);
     }
 
     .patient-latest-date {
@@ -3946,7 +3970,8 @@ table.patient-medical-history-latest-table {
         color: #08755f;
     }
 
-    .patient-healthinfo-main .patient-latest-title h2 {
+    .patient-healthinfo-main .patient-latest-title h2,
+    .patient-healthinfo-main .patient-latest-toggle-heading {
         font-size: 0.96rem;
     }
 
@@ -4050,7 +4075,7 @@ table.patient-medical-history-latest-table {
     justify-content: space-between;
     min-height: 52px;
     padding: 0.65rem 1rem !important;
-    background: #eaf7f1 !important;
+    background: #fff !important;
     border-radius: 0;
    }
     .patient-latest-appointment-empty {
@@ -4336,7 +4361,7 @@ table.patient-medical-history-latest-table {
 
 .patient-midwife-notes-table {
     width: 100%;
-    min-width: 650px;
+    min-width: 0;
     border-collapse: collapse;
 }
 
@@ -5109,11 +5134,14 @@ Table layout, recorded-date information, and footer.
 }
 
 .patient-health-history-accordion-content .patient-health-table {
-    min-width: 680px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    table-layout: fixed;
 }
 
 .patient-health-history-accordion-content .patient-health-assessment-table {
-    min-width: 760px;
+    min-width: 0;
 }
 
 .patient-health-history-accordion-content
@@ -5281,18 +5309,6 @@ Table layout, recorded-date information, and footer.
         margin-bottom: 0.8rem;
     }
 
-    .patient-appointments-card .patient-panel-icon-small {
-        width: 46px;
-        height: 46px;
-        flex-basis: 46px;
-    }
-
-    .patient-appointments-card .patient-card-title h2 {
-        color: #0f574b;
-        font-size: 1.25rem;
-        font-weight: 800;
-    }
-
     .patient-appointments-card .patient-table-wrap {
         box-sizing: border-box;
         max-height: 264px;
@@ -5425,13 +5441,18 @@ Table layout, recorded-date information, and footer.
     }
 
     .patient-information-card {
-        padding: 20px;
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 1rem 1.1rem 0.9rem;
         background: #ffffff;
         border: 1px solid #000;
+        border-radius: 16px;
     }
 
     .patient-information-card .patient-card-header {
-        margin-bottom: 16px;
+        margin-bottom: 0.8rem;
     }
 
     .patient-information-emergency-row {
@@ -7053,7 +7074,7 @@ Table layout, recorded-date information, and footer.
 body:has(.patient-dashboard-shell) {
     --patient-page-max-width: 1400px;
     --patient-page-gutter: clamp(24px, 3vw, 40px);
-    background: linear-gradient(135deg, #f0faf5 0%, #ffffff 50%, #e6f7ef 100%);
+    background: #F2FAF7;
     background-attachment: fixed;
 }
 
@@ -8075,7 +8096,7 @@ body:has(.patient-dashboard-shell) .ht-nav button[aria-current="page"] {
 
 .patient-vital-horizontal-table {
   width: 100%;
-  min-width: 760px;
+  min-width: 0;
   table-layout: fixed;
   border-collapse: collapse;
 }
@@ -8166,7 +8187,7 @@ body:has(.patient-dashboard-shell) .ht-nav button[aria-current="page"] {
 
 .patient-vitals-horizontal-table {
   width: 100%;
-  min-width: 760px;
+  min-width: 0;
   table-layout: fixed;
   border-collapse: collapse;
 }
@@ -8781,11 +8802,20 @@ Dashboard charts, report records, export dialogs, and print output.
     border: 1px solid #000;
 }
 
+.patient-healthinfo-main-overview .patient-latest-card .patient-latest-card-header {
+    background: #fff;
+}
+
+.patient-healthinfo-main-overview .patient-latest-appointment-card .patient-latest-card-header {
+    background: #fff !important;
+}
+
 .patient-healthinfo-main-overview .patient-latest-title {
     color: #0f6b5f;
 }
 
-.patient-healthinfo-main-overview .patient-latest-title h2 {
+.patient-healthinfo-main-overview .patient-latest-title h2,
+.patient-healthinfo-main-overview .patient-latest-toggle-heading {
     color: #000;
     font-size: 1rem;
 }
@@ -9092,26 +9122,27 @@ Dashboard charts, report records, export dialogs, and print output.
 
 .patient-consultation-section-content .patient-health-table {
     width: 100%;
-    min-width: 680px;
+    min-width: 0;
+    max-width: 100%;
     height: auto;
-    table-layout: auto;
+    table-layout: fixed;
 }
 
 .patient-consultation-section-content .patient-health-assessment-table {
-    min-width: 760px;
+    min-width: 0;
     table-layout: fixed;
 }
 
 .patient-consultation-section-content .patient-midwife-notes-table {
-    min-width: 650px;
+    min-width: 0;
 }
 
 .patient-consultation-section-content .patient-medical-history-table {
-    min-width: 900px;
+    min-width: 0;
 }
 
 .patient-consultation-section-content .patient-vital-table {
-    min-width: 900px !important;
+    min-width: 0 !important;
 }
 
 .patient-consultation-section-content .patient-empty-state {
@@ -9166,9 +9197,10 @@ Dashboard charts, report records, export dialogs, and print output.
 }
 
 .patient-consultation-section-content .patient-latest-card-content .patient-health-table {
-    width: max-content;
-    min-width: 100%;
-    table-layout: auto;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    table-layout: fixed;
     border: 1px solid #dce8e1;
     border-radius: 12px;
     border-collapse: separate;
@@ -9250,7 +9282,8 @@ Dashboard charts, report records, export dialogs, and print output.
 
 .patient-healthinfo-main-overview .patient-latest-card-content .patient-health-table {
     width: 100%;
-    min-width: 680px;
+    min-width: 0;
+    max-width: 100%;
     table-layout: fixed;
     border: 1px solid #dce8e1;
     border-radius: 12px;
@@ -9381,13 +9414,14 @@ Dashboard charts, report records, export dialogs, and print output.
 }
 
 .patient-healthinfo-main-overview .patient-latest-card:not(.patient-latest-appointment-card) .patient-health-table {
-    width: max-content;
-    min-width: 100%;
-    table-layout: auto;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    table-layout: fixed;
 }
 
 .patient-healthinfo-main-overview .patient-latest-card:not(.patient-latest-appointment-card) .patient-health-table th {
-    white-space: nowrap;
+    white-space: normal;
     text-align: center;
 }
 
@@ -9466,21 +9500,31 @@ body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-health-tips
     font-size: 35px;
 }
 
+.ht-healthworker-dashboard > .ht-page-header h1,
+.ht-healthworker-patients-page > .ht-page-header h1,
+.ht-healthworker-register-page > .ht-page-header h1 {
+    font-weight: 950;
+}
+
 .ht-healthworker-dashboard > .ht-page-header p,
+.ht-healthworker-patients-page > .ht-page-header p,
+.ht-healthworker-register-page > .ht-page-header p,
 .ht-dashboard-screen > .ht-page-header p {
-    font-size: 1rem;
+    font-size: 16px;
     font-weight: 500;
     color: #3F473F;
 }
 
 .patient-dashboard-header h1 {
-    font-size: 35px;
+    font-size: 30px;
+    font-weight: 950;
     color: #1C2724;
 }
 
 .patient-dashboard-header p {
+    font-size: 1rem !important;
     font-weight: 500 !important;
-    color: #3F473F;
+    color: #3F473F !important;
 }
 
 body:has(.patient-dashboard-shell) .patient-dashboard-header {
@@ -9492,9 +9536,53 @@ body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-welcome-sim
     background-image: none !important;
 }
 
-body:has(.patient-dashboard-shell) .patient-dashboard-header h1,
-body:has(.patient-dashboard-shell) .patient-dashboard-header p,
 body:has(.patient-dashboard-shell) .patient-welcome-simple h1,
 body:has(.patient-dashboard-shell) .patient-welcome-simple p {
     color: #000 !important;
+}
+
+.patient-healthinfo-main > * {
+    grid-column: 1 / -1;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.patient-healthinfo-main > .patient-information-card,
+.patient-healthinfo-main > .patient-appointments-card,
+.patient-healthinfo-main > .patient-consultation-record-list {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 20px;
+    border: 1px solid #000;
+    border-radius: 11px;
+    background: #fff;
+}
+
+.patient-healthinfo-main > .patient-information-card .patient-card-header,
+.patient-healthinfo-main > .patient-appointments-card .patient-card-header,
+.patient-healthinfo-main > .patient-consultation-record-list > .patient-consultation-record-list-title {
+    margin-bottom: 16px;
+}
+
+.patient-healthinfo-main .patient-consultation-record-list-title h2,
+.patient-healthinfo-main .patient-appointments-card .ht-appointments-heading,
+.patient-healthinfo-main .patient-information-card .patient-card-title h2,
+.patient-healthinfo-main .patient-general-account-card .ht-card-heading h2 {
+    color: #0C4F46;
+    font-size: 20px;
+    font-weight: 950;
+}
+
+.patient-healthinfo-main .patient-appointments-card .ht-appointments-heading {
+    margin: 0;
+}
+
+.ht-patient-main .ht-content-card .ht-card-heading > .ht-patient-section-heading,
+.ht-patient-main .ht-content-card .ht-card-heading > .ht-appointments-heading {
+    font-size: 20px;
+    font-weight: 950;
 }

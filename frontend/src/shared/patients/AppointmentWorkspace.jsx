@@ -4,6 +4,7 @@ import { CalendarDays, CheckCircle2, CircleDot, ClipboardList, Trash2 } from "lu
 import { api } from "../../lib/axios";
 import { AppointmentDate } from "../appointments/AppointmentDate";
 import { ClinicalRecords } from "./ClinicalRecords";
+import { ClinicalRecordSections } from "./ClinicalRecordSections";
 import { RECORD_TYPES } from "../../config/recordTypes";
 import { Combobox, Field, Input, Select, Textarea } from "../../components/ui/Input";
 import { APPOINTMENT_REASONS } from "../../config/healthOptions";
@@ -198,12 +199,28 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
           ) : null}
         </div>
       {showClinicalRecords && <form onSubmit={finishRecording} className="ht-recording-form">
-      <div className={`ht-clinical-sections${recording ? " is-recording" : ""}`}>
-        {TYPES.map(type => <details className="ht-encounter-section" open={recording || undefined} key={`${selected}-${type}-${recording}-${recordVersion}`}>
-          <summary><span>{RECORD_TYPES[type].label}</span></summary>
-          <ClinicalRecords patientId={patientId} appointmentId={selected} appointmentDate={String(appointment.scheduled_at).slice(0, 10)} type={type} role={role} readOnly={!recording} appendOnly embedded draftMode={recording} draft={drafts[type] || {}} onDraftChange={value => setDrafts(previous => ({ ...previous, [type]: value }))} disabled={saving} />
-        </details>)}
-      </div>
+      <ClinicalRecordSections
+        sections={TYPES.map(type => ({ key: type, label: RECORD_TYPES[type].label }))}
+        expanded={recording}
+        resetKey={`${selected}-${recording}-${recordVersion}`}
+        className={recording ? "is-recording" : ""}
+        renderSection={type => (
+          <ClinicalRecords
+            patientId={patientId}
+            appointmentId={selected}
+            appointmentDate={String(appointment.scheduled_at).slice(0, 10)}
+            type={type}
+            role={role}
+            readOnly={!recording}
+            appendOnly
+            embedded
+            draftMode={recording}
+            draft={drafts[type] || {}}
+            onDraftChange={value => setDrafts(previous => ({ ...previous, [type]: value }))}
+            disabled={saving}
+          />
+        )}
+      />
       {recording && <div className="ht-recording-actions">
         {error && <p className="ht-login-alert ht-login-alert-error" role="alert">{error}</p>}
         <span>{recordingComplete ? "All required fields are complete. Finish recording to save and mark this appointment Completed." : `${missingRequired.length} required fields remaining. Complete all starred fields to finish recording.`}</span>

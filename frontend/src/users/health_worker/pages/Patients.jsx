@@ -80,7 +80,7 @@ export function Patients({ patients, loadData }) {
 
   return (
     <div className="grid gap-4 ht-healthworker-patients-page">
-      <PageHeader title="Patients" subtitle="Everyone who registered at the Barangay Health Center of Mambog I.">
+      <PageHeader title="Patients List" subtitle="Everyone who registered at HealthTrack">
         <button onClick={() => setSearchParams({ page: "register-patient" })} className="ht-button ht-button-strong-green">
           Register Patient
         </button>

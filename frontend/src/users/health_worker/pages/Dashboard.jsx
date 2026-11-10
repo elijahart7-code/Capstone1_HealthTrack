@@ -29,7 +29,7 @@ export function Dashboard({ dashboard, onRegisterClick }) {
 
   return (
     <div className="grid gap-4 ht-healthworker-dashboard">
-      <PageHeader title="Health Worker Dashboard" subtitle="Register patients and view patient information.">
+      <PageHeader title="Health Worker Dashboard" subtitle="Register patients, view their medical records and information">
         <div className="ht-current-date-pill">
           <CalendarDays size={16} strokeWidth={2} />
           <span>{currentDate}</span>
