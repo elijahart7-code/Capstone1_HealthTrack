@@ -17,7 +17,10 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<DashboardRedirect />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route path="/login" element={<Navigate to="/patient/login" replace />} />
+      <Route path="/patient/login" element={<LoginPage key="patient" accountType="patient" />} />
+      <Route path="/admin/login" element={<LoginPage key="admin" accountType="admin" />} />
+      <Route path="/health-worker/login" element={<LoginPage key="health_worker" accountType="health_worker" />} />
       <Route path="/setup-account" element={<RequestAccountSetupPage />} />
       <Route path="/confirm-account" element={<ConfirmAccountPage />} />
 

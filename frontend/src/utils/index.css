@@ -2542,6 +2542,7 @@ Reusable surfaces, panel headings, metrics, and section icons.
     }
 
     .ht-account-card {
+        text-decoration: none;
         position: absolute;
         top: 0;
         left: calc(var(--account-index) * (100% + 0.7rem) / 3);

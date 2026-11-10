@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react";
 import { api } from "../lib/axios";
-import { homeRouteForRole, saveSession } from "../lib/auth";
+import { homeRouteForRole, roleLabel, saveSession } from "../lib/auth";
 
-export default function LoginPage() {
+export default function LoginPage({ accountType = "patient" }) {
   const navigate = useNavigate();
-  const [accountType, setAccountType] = useState(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -15,7 +14,6 @@ export default function LoginPage() {
   const [showForgotPasswordMessage, setShowForgotPasswordMessage] = useState(false);
   const [isClosingForgotPasswordMessage, setIsClosingForgotPasswordMessage] = useState(false);
   const [transitionPhase, setTransitionPhase] = useState("entering");
-  const nextAccountType = useRef(null);
   const emailInput = useRef(null);
   const forgotPasswordCloseTimer = useRef(null);
   const transitioning = transitionPhase !== "idle";
@@ -45,31 +43,15 @@ export default function LoginPage() {
     }
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const timer = window.setTimeout(() => {
-      if (transitionPhase === "exiting") {
-        setAccountType(nextAccountType.current);
-        setError(null);
-        setTransitionPhase("entering");
-      } else {
-        setTransitionPhase("idle");
-      }
-    }, reduceMotion ? 0 : transitionPhase === "exiting" ? 240 : 560);
+      setTransitionPhase("idle");
+    }, reduceMotion ? 0 : 560);
     return () => window.clearTimeout(timer);
   }, [transitionPhase, accountType]);
-
-  function changeAccountType(role) {
-    if (loading || transitioning || role === accountType) return;
-    nextAccountType.current = role;
-    setTransitionPhase("exiting");
-  }
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (loading || transitioning) return;
     setError(null);
-    if (!accountType) {
-      setError("Select your account type to continue.");
-      return;
-    }
     setLoading(true);
     try {
       const { data } = await api.post("/auth/login", { email, password, accountType });
@@ -82,11 +64,6 @@ export default function LoginPage() {
     }
   }
 
-  const accounts = [
-    { key: "patient", label: "Patient", image: "/images/account-patient.png" },
-    { key: "admin", label: "Admin", image: "/images/account-admin.png" },
-    { key: "health_worker", label: "Health Worker", image: "/images/account-health-worker.png" },
-  ];
   const portal = {
     patient: { title: "Patient Portal", description: "Sign in to view your personal health records and appointments." },
     admin: { title: "Admin Portal", description: "Sign in to manage patient info, medical records, and appointments." },
@@ -94,7 +71,7 @@ export default function LoginPage() {
   }[accountType];
 
   return (
-    <div className="ht-auth-shell" data-portal={accountType || "welcome"} aria-busy={transitioning}>
+    <div className="ht-auth-shell" data-portal={accountType} aria-busy={transitioning}>
       <div className="ht-auth-wrap" data-phase={transitionPhase} inert={transitioning}>
         <div className="ht-auth-branding">
           <div className="ht-login-brand">
@@ -109,51 +86,13 @@ export default function LoginPage() {
         <div className="ht-auth-card">
           <div className="ht-login-panel">
             <div className="ht-login-header">
-              <h1>{portal?.title || "Welcome to HealthTrack!"}</h1>
-              <p>{portal?.description || "Sign in to access your account."}</p>
+              <h1>{portal.title}</h1>
+              <p>{portal.description}</p>
             </div>
 
             <div className="ht-login-divider" />
 
-            <div className="ht-select-account">
-              <p>{accountType ? "Selected Account!" : "Select your Account!"}</p>
-              <div className={`ht-account-grid ${accountType ? "has-selection" : ""}`}>
-                {accounts.map((account, index) => {
-                  const selected = accountType === account.key;
-                  const hidden = Boolean(accountType && !selected);
-                  return (
-                    <button
-                      key={account.key}
-                      type="button"
-                      className={`ht-account-card ${selected ? "is-selected" : ""} ${hidden ? "is-hidden" : ""}`}
-                      style={{ "--account-index": index }}
-                      aria-pressed={selected}
-                      aria-hidden={hidden}
-                      tabIndex={hidden ? -1 : 0}
-                      disabled={hidden || loading || transitioning}
-                      onClick={() => changeAccountType(account.key)}
-                    >
-                      <span className="ht-account-icon-bg" aria-hidden="true">
-                        <img className="ht-account-icon" src={account.image} alt="" />
-                      </span>
-                      <span>{account.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-              {accountType && (
-                <button
-                  type="button"
-                  className="ht-account-change"
-                  disabled={loading || transitioning}
-                  onClick={() => changeAccountType(null)}
-                >
-                  Change account type
-                </button>
-              )}
-            </div>
-
-            {error && <div className="ht-login-alert ht-login-alert-error">{error}</div>}
+            {error && <div role="alert" className="ht-login-alert ht-login-alert-error">{error}</div>}
 
             <form onSubmit={handleSubmit} className="ht-login-form">
               <label className="ht-login-field">
@@ -200,7 +139,7 @@ export default function LoginPage() {
 
               <button type="submit" className="ht-button ht-auth-submit" disabled={loading}>
                 <LogIn size={20} strokeWidth={1.8} />
-                {loading ? "Signing In..." : portal ? `Sign In as ${accounts.find((account) => account.key === accountType).label}` : "Sign In"}
+                {loading ? "Signing In..." : `Sign In as ${roleLabel(accountType)}`}
               </button>
 
               <button

@@ -21,7 +21,7 @@ const hash = (token) => createHash("sha256").update(token).digest("hex");
 
 async function loadSource(relative, names, context) {
   const source = (await readFile(new URL(`../src/${relative}`, import.meta.url), "utf8"))
-    .replace(/^import .*;\n/gm, "").replace(/export /g, "");
+    .replace(/^import .*;\r?\n/gm, "").replace(/export /g, "");
   return vm.runInNewContext(`${source}\n;({ ${names.join(",")} });`, { console, ...context });
 }
 const sessionForUser = (user) => ({ token: "test-session", user: { user_id: user.user_id, name: user.name, email: user.email, role: user.role } });
@@ -149,9 +149,29 @@ test("controllers enforce password limits, reject pending login, and return the 
   assert.equal(wrongRole.code, 401);
 });
 
+test("each portal accepts only its stored account role and rejects role tampering", async () => {
+  const { login } = await handlers();
+  const roles = ["patient", "admin", "health_worker"];
+  for (const role of roles) {
+    const email = `${role}@example.com`;
+    await provision({ email, role, verified: true });
+    for (const accountType of roles) {
+      const result = response();
+      await login({ body: { email, password: "password", accountType } }, result);
+      assert.equal(result.code, accountType === role ? 200 : 401);
+      if (accountType === role) assert.equal(result.data.user.role, role);
+      else assert.equal(result.data.token, undefined);
+    }
+    const invalid = response();
+    await login({ body: { email, password: "password", accountType: "superadmin" } }, invalid);
+    assert.equal(invalid.code, 422);
+    assert.equal(invalid.data.token, undefined);
+  }
+});
+
 test("real HTTP routes limit setup requests and GET never consumes a token", async () => {
   await provision();
-  const routeSource = (await readFile(new URL("../src/routes/auth.route.js", import.meta.url), "utf8")).replace(/^import .*;\n/gm, "").replace("export default router;", "router;");
+  const routeSource = (await readFile(new URL("../src/routes/auth.route.js", import.meta.url), "utf8")).replace(/^import .*;\r?\n/gm, "").replace("export default router;", "router;");
   const router = vm.runInNewContext(routeSource, { Router, rateLimit, ...(await handlers()) });
   const app = express(); app.use(express.json()); app.use("/api/auth", router);
   const server = app.listen(0, "127.0.0.1");

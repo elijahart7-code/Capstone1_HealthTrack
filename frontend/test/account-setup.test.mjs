@@ -14,11 +14,13 @@ globalThis.MessageChannel = class extends NodeMessageChannel { constructor() { s
 const dom = new JSDOM('<div id="root"></div>', { url: "http://healthtrack-test.invalid/" });
 for (const name of ["window", "document", "HTMLElement", "Node", "Event", "MouseEvent", "localStorage"]) globalThis[name] = dom.window[name];
 Object.defineProperty(globalThis, "navigator", { value: dom.window.navigator, configurable: true });
+dom.window.matchMedia = () => ({ matches: true });
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 const scratch = await mkdtemp(path.join(tmpdir(), "healthtrack-setup-ui-"));
 const outfile = path.join(scratch, "ui.mjs");
 await build({
   stdin: { contents: `
+    export { default as App } from './src/utils/App.jsx';
     export { ConfirmAccountPage, RequestAccountSetupPage } from './src/auth/AccountSetupPage.jsx';
     export { Patients as AdminPatients } from './src/users/admin/pages/Patients.jsx';
     export { Patients as WorkerPatients } from './src/users/health_worker/pages/Patients.jsx';
@@ -31,7 +33,7 @@ await build({
   bundle: true, format: "esm", platform: "browser", jsx: "automatic", outfile,
   define: { "import.meta.env.VITE_API_BASE_URL": '"/api"', "process.env.NODE_ENV": '"development"' },
 });
-const { ConfirmAccountPage, RequestAccountSetupPage, AdminPatients, WorkerPatients, PatientRecord, api, createRoot, MemoryRouter, Routes, Route, h, act } = await import(pathToFileURL(outfile));
+const { App, ConfirmAccountPage, RequestAccountSetupPage, AdminPatients, WorkerPatients, PatientRecord, api, createRoot, MemoryRouter, Routes, Route, h, act } = await import(pathToFileURL(outfile));
 let root, posts;
 async function mount(url, Page = ConfirmAccountPage) {
   posts = []; localStorage.clear();
@@ -54,6 +56,49 @@ async function fill(label, value) {
 async function submit() { await act(async () => document.querySelector("form").dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }))); }
 afterEach(async () => { if (root) await act(async () => root.unmount()); root = null; });
 after(async () => { for (const channel of channels) { channel.port1.close(); channel.port2.close(); } globalThis.MessageChannel = originalChannel; dom.window.close(); await rm(scratch, { recursive: true, force: true }); });
+
+async function mountLogin(url) {
+  localStorage.clear(); posts = [];
+  api.post = async (url, body) => {
+    posts.push({ url, body });
+    throw { response: { status: 401, data: { error: "Those credentials don't match an active account." } } };
+  };
+  root = createRoot(document.getElementById("root"));
+  await act(async () => root.render(h(MemoryRouter, { initialEntries: [url] }, h(App))));
+  await act(async () => { await new Promise(resolve => setTimeout(resolve, 10)); });
+}
+
+test("the general login URL opens patient login without a portal selector or staff links", async () => {
+  await mountLogin("/login");
+  assert.equal(document.querySelector("h1").textContent, "Patient Portal");
+  assert.equal(document.querySelector(".ht-select-account"), null);
+  assert.equal(document.querySelector('a[href="/admin/login"]'), null);
+  assert.equal(document.querySelector('a[href="/health-worker/login"]'), null);
+  assert.ok(document.querySelector('input[type="password"]'));
+});
+
+for (const [role, url, label, dashboard] of [
+  ["patient", "/patient/login", "Patient", "/patient"],
+  ["admin", "/admin/login", "Admin", "/admin"],
+  ["health_worker", "/health-worker/login", "Health Worker", "/health_worker"],
+]) {
+  test(`${label} has a direct login page and submits its fixed role`, async () => {
+    await mountLogin(url);
+    assert.equal(document.querySelector("h1").textContent, `${label} Portal`);
+    assert.equal(document.querySelectorAll(".ht-account-card").length, 0);
+    await fill("Email Address", "test@example.com"); await fill("Password", "wrong password"); await submit();
+    assert.deepEqual(posts, [{ url: "/auth/login", body: { email: "test@example.com", password: "wrong password", accountType: role } }]);
+    assert.match(document.querySelector('[role="alert"]').textContent, /don't match/);
+    assert.equal(localStorage.length, 0);
+    assert.equal(document.querySelector("h1").textContent, `${label} Portal`);
+  });
+
+  test(`unauthenticated ${label} dashboard opens its own login page`, async () => {
+    await mountLogin(dashboard);
+    assert.equal(document.querySelector("h1").textContent, `${label} Portal`);
+    assert.ok(document.querySelector("form"));
+  });
+}
 
 test("opening a confirmation link renders password setup without API requests or session changes", async () => {
   await mount(`/confirm-account?token=${"a".repeat(64)}`);

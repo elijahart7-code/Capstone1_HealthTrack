@@ -32,6 +32,14 @@ export function homeRouteForRole(role) {
   return `/${role}`;
 }
 
+export function loginRouteForRole(role) {
+  return {
+    patient: "/patient/login",
+    admin: "/admin/login",
+    health_worker: "/health-worker/login",
+  }[role] || "/login";
+}
+
 export function roleLabel(role) {
   switch (role) {
     case "admin":

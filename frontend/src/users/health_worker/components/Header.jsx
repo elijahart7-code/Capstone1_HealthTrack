@@ -8,7 +8,7 @@ export function Header() {
 
   function handleLogout() {
     clearSession();
-    navigate("/login");
+    navigate("/health-worker/login", { replace: true });
   }
 
   return (

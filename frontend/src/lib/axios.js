@@ -1,5 +1,5 @@
 import axios from "axios";
-import { clearSession } from "./auth";
+import { clearSession, getCurrentUser, loginRouteForRole } from "./auth";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
@@ -20,8 +20,9 @@ api.interceptors.response.use(
     const isAuthRequest = /\/auth\/(login|initiate|complete)$/.test(requestUrl);
 
     if (error.response?.status === 401 && !isAuthRequest) {
+      const loginRoute = loginRouteForRole(getCurrentUser()?.role);
       clearSession();
-      window.location.replace("/login");
+      window.location.replace(loginRoute);
     }
 
     return Promise.reject(error);
