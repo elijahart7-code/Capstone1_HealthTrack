@@ -19,7 +19,7 @@ export function Header() {
 
   function handleLogout() {
     clearSession();
-    navigate("/login");
+    navigate("/patient/login", { replace: true });
   }
 
   return (

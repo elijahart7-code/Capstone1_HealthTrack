@@ -8,7 +8,7 @@ export function Header() {
 
   function handleLogout() {
     clearSession();
-    navigate("/login");
+    navigate("/admin/login", { replace: true });
   }
 
   return (
