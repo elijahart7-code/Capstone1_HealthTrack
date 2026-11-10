@@ -1,6 +1,5 @@
 import { useSearchParams } from "react-router";
 import {
-  UserRound,
   CalendarDays,
   HeartPulse,
   ClipboardList,
@@ -13,6 +12,7 @@ import {
   Phone,
   Clock,
   Eye,
+  Plus,
   Droplet,
   Apple,
   Activity,
@@ -51,74 +51,59 @@ export function Dashboard({ dashboard }) {
 
   return (
     <div className="patient-dashboard-shell">
-      <div className="patient-dashboard-header">
-  <div>
-    <h1>Patient Dashboard</h1>
-    <p>View your appointed schedules, health information, and medical records.</p>
-  </div>
+      <section className="patient-dashboard-intro">
+        <div className="patient-dashboard-header">
+          <div>
+            <h1>Patient Dashboard</h1>
+            <p>This is your personal records at Barangay Health Center of Mambog I. </p>
+            <p>Please take care of your own health today for a better tomorrow!</p>
+          </div>
 
-  <button
-    className="patient-dashboard-view-button"
-    onClick={() =>
-      setSearchParams({ page: "health-information" })
-    }
-  >
-    View Health Information
-    <Eye size={20} />
-  </button>
-</div>
-      <section className="patient-welcome-simple">
-
-        <div className="patient-welcome-icon">
-          <UserRound size={38} strokeWidth={1.8} />
+          <button
+            className="patient-dashboard-view-button"
+            onClick={() =>
+              setSearchParams({ page: "health-information" })
+            }
+          >
+            View Health Information
+            <Eye size={20} />
+          </button>
         </div>
 
-        <div className="patient-welcome-text">
-  <div className="patient-welcome-heading">
-    <h1>
-        Welcome back, {dashboard.patient.first_name}!
-    </h1>
-</div>
-
-  <p className="patient-welcome-message">
-    Your personal records at Barangay Health Center of Mambog I. Take care of your health today for a better tomorrow!
-  </p>
-
-</div>
       </section>
 
 
       <div className="patient-metric-grid">
 
 <PatientMetricCard
-  icon={<CalendarDays size={25} strokeWidth={1.6} />}
+  icon={<CalendarDays size={32} strokeWidth={1.6} />}
         iconClass="appointment"
-  title="Appointment"
-  description="View your scheduled appointments."
+  title="My Appointments"
+  description="View your upcoming and past appointments."
   onClick={() => setSearchParams({ page: "health-information", section: "appointments" })}
 />
 
 <PatientMetricCard
-  icon={<HeartPulse size={25} strokeWidth={1.6} />}
+  icon={<HeartPulse size={32} strokeWidth={1.6} />}
   iconClass="vitals"
-  title="Vital Signs"
-  description="View your latest vital sign records."
+  title="Latest Vital Signs"
+  description="View the most recently recorded vital signs."
   onClick={() => setSearchParams({ page: "health-information", section: "vital-signs" })}
 />
 
 <PatientMetricCard
-  icon={<ClipboardList size={25} strokeWidth={1.6} />}
+  icon={<ClipboardList size={32} strokeWidth={1.6} />}
   iconClass="assessment"
   title="Health Assessment"
-  description="View your health assessment records."
+  description="View your own recorded health assessment."
   onClick={() => setSearchParams({ page: "health-information", section: "health-assessment" })}
 />
 
 <PatientMetricCard
-  icon={<ShieldAlert size={25} strokeWidth={1.6} />}
+  icon={<ShieldAlert size={32} strokeWidth={1.6} />}
   iconClass="allergies"
   title="Known Allergies"
-  description="View your recorded allergy information."
+  description="View your recorded allergies information."
   onClick={() => setSearchParams({ page: "health-information", section: "allergies" })}
 />
 
@@ -145,6 +130,20 @@ export function Dashboard({ dashboard }) {
 
           </div>
 
+        </div>
+
+        <button
+          type="button"
+          className="patient-summary-button"
+          onClick={() => setSearchParams({ page: "health-information" })}
+        >
+          View My Health Information
+          <ArrowRight size={18} />
+        </button>
+
+        <div className="patient-health-illustration" aria-hidden="true">
+          <ClipboardList size={92} strokeWidth={1.5} />
+          <span><Plus size={24} strokeWidth={3} /></span>
         </div>
 
       </section>

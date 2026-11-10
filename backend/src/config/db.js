@@ -12,6 +12,27 @@ if (!DATABASE_URL || DATABASE_URL.includes("@host") || DATABASE_URL.includes("us
   );
 }
 
+export function withTimeout(promise, timeoutMs, label) {
+  let timeoutId;
+
+  return new Promise((resolve, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`${label} timed out after ${timeoutMs}ms. Check DATABASE_URL in backend/.env and ensure the database is reachable.`));
+    }, timeoutMs);
+
+    promise.then(
+      (value) => {
+        clearTimeout(timeoutId);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timeoutId);
+        reject(error);
+      }
+    );
+  });
+}
+
 function createLocalSql(connectionString) {
   const pool = new Pool({ connectionString });
 
@@ -356,15 +377,19 @@ const TABLES = [
 
 export async function connectNeon() {
   try {
-    await sql`
-      DO $$
-      BEGIN
-        IF to_regclass('public.health_background') IS NULL
-          AND to_regclass('public.medical_histories') IS NOT NULL THEN
-          ALTER TABLE medical_histories RENAME TO health_background;
-        END IF;
-      END $$;
-    `;
+    await withTimeout(
+      sql`
+        DO $$
+        BEGIN
+          IF to_regclass('public.health_background') IS NULL
+            AND to_regclass('public.medical_histories') IS NOT NULL THEN
+            ALTER TABLE medical_histories RENAME TO health_background;
+          END IF;
+        END $$;
+      `,
+      Number(process.env.DB_TIMEOUT_MS || 15000),
+      "Database connection"
+    );
 
     for (const { createSQL } of TABLES) {
       await sql.query(createSQL);
