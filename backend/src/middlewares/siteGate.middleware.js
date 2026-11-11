@@ -44,6 +44,37 @@ export function hasSiteAccess(req, siteKey) {
   return typeof token === "string" && !!token && keysEqual(token, siteToken(siteKey));
 }
 
+// Locked browsers cannot load the React app (it sits behind this same
+// gate), so locked page visits get a self-contained unlock page instead.
+// It carries no key material and posts to /api/site/unlock, which stays
+// rate-limited. APIs keep answering 404 while locked.
+const UNLOCK_PAGE = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Restricted area</title>
+<style>body{font-family:system-ui,Arial,sans-serif;background:#f2faf6;color:#073b2a;display:flex;min-height:100vh;margin:0;align-items:center;justify-content:center}
+main{background:#fff;border-radius:12px;padding:32px;max-width:400px;width:calc(100% - 32px);box-shadow:0 4px 24px rgba(7,59,42,.12)}
+h1{font-size:22px;margin:0 0 8px}p{margin:0 0 16px;color:#475569;font-size:14px}
+label{display:block;font-size:14px;margin-bottom:12px}input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin-top:6px}
+button{background:#16a34a;color:#fff;border:0;border-radius:8px;padding:12px;width:100%;font-weight:bold;cursor:pointer}
+#error{color:#b91c1c;font-size:14px;min-height:20px;margin:0 0 8px}</style>
+</head><body><main>
+<h1>Restricted area</h1>
+<p>This staff portal requires an access key before sign-in.</p>
+<p id="error" role="alert"></p>
+<form id="gate"><label>Access key<input id="key" type="password" autocomplete="off" autofocus></label>
+<button type="submit" id="go">Unlock</button></form>
+<script>document.getElementById("gate").addEventListener("submit",async function(e){e.preventDefault();
+var go=document.getElementById("go"),err=document.getElementById("error");go.disabled=true;err.textContent="";
+try{var res=await fetch("/api/site/unlock",{method:"POST",credentials:"same-origin",
+headers:{"Content-Type":"application/json"},body:JSON.stringify({key:document.getElementById("key").value})});
+if(res.ok){location.reload();return;}
+if(res.status===429){try{err.textContent=(await res.json()).error;}catch(_){err.textContent="Too many key attempts. Try again in 15 minutes."};}
+else{err.textContent="That key is incorrect.";}}catch(_){err.textContent="The server could not be reached. Try again.";}
+go.disabled=false;});</script>
+</main></body></html>`;
+
 // Mount /api/site BEFORE this gate; unlock/status are handled there and never
 // reach it. Everything after this middleware is hidden without the key.
 export function createSiteGate({ portal, siteKey }) {
@@ -51,6 +82,10 @@ export function createSiteGate({ portal, siteKey }) {
   return (req, res, next) => {
     if (hasSiteAccess(req, siteKey)) return next();
     if (req.path.startsWith("/api/")) return res.status(404).json({ error: "Not found." });
+    if (req.method === "GET" || req.method === "HEAD") {
+      res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "Content-Type": "text/html; charset=utf-8" });
+      return res.status(200).send(UNLOCK_PAGE);
+    }
     return res.status(404).send("Not found.");
   };
 }

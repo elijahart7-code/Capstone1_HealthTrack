@@ -75,9 +75,18 @@ test("staff portal without a key stays open in development", async () => {
 test("staff portal with a key hides pages and APIs until unlocked", async () => {
   const { server, base } = await listen(makeApp({ portal: "admin", siteKey: SITE_KEY }));
   try {
-    // Locked: pages and APIs answer 404, never the real content.
-    assert.equal((await fetch(`${base}/`)).status, 404);
-    assert.equal((await (await fetch(`${base}/`)).text()).includes("staff"), false);
+    // Locked: APIs answer 404, never the real content. Pages serve the
+    // self-contained unlock screen instead, since the React app itself is
+    // gated and cannot render the key form.
+    const root = await fetch(`${base}/`);
+    assert.equal(root.status, 200);
+    assert.match(root.headers.get("content-type"), /text\/html/);
+    const page = await root.text();
+    assert.match(page, /Restricted area/);
+    assert.match(page, /\/api\/site\/unlock/);
+    assert.equal(page.includes("<html>staff</html>"), false);
+    assert.equal(page.includes(SITE_KEY), false);
+    assert.equal((await fetch(`${base}/`, { method: "POST" })).status, 404);
     const health = await fetch(`${base}/api/health`);
     assert.equal(health.status, 404);
     assert.deepEqual(await health.json(), { error: "Not found." });
