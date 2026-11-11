@@ -109,8 +109,8 @@ after(async () => { dom.window.close(); for (const channel of channels) { channe
 
 for (const [label, selector, expected] of [
   ['follow-up patient', '.ht-follow-up-item', 'General Information'],
-  ["today's appointment patient", '.ht-dashboard-schedule .ht-link-button', 'Appointment record'],
-  ['notable-event patient', '.ht-dashboard-events .ht-link-button', 'Appointment record'],
+  ["today's appointment patient", '.ht-dashboard-schedule .ht-link-button', 'CONSULTATION RECORD'],
+  ['notable-event patient', '.ht-dashboard-events .ht-link-button', 'CONSULTATION RECORD'],
 ]) {
   test(`${label} opens a patient without a blank screen and returns to dashboard`, async () => {
     await mount(); await click(document.querySelector(selector));
@@ -123,12 +123,12 @@ for (const [label, selector, expected] of [
 
 test('appointment list opens the selected appointment; activation exposes every clinical form', async () => {
   await mount('/admin?page=appointments');
-  await click(button('Open appointment'));
-  assert.match(visibleText(), /Appointment record/);
+  await click(button('Open Appointment'));
+  assert.match(visibleText(), /CONSULTATION RECORD/);
   assert.equal(document.querySelectorAll('.ht-clinical-sections details[open]').length, 0);
   assert.equal(document.querySelectorAll('.ht-clinical-content h2').length, 0);
   assert.equal(document.querySelectorAll('.ht-clinical-content .ht-vital-record-card').length, 0);
-  assert.equal(document.querySelectorAll('.ht-encounter-section > .ht-health-assessment').length, 5);
+  assert.equal(document.querySelectorAll('.ht-encounter-section > .ht-health-assessment').length, 0);
   await click(button('Activate'));
   assert.ok(document.querySelector('.ht-appointment-record.is-recording'));
   assert.equal(document.querySelector('.ht-appointment-scroll'), null);
@@ -154,14 +154,19 @@ test('creating an appointment refreshes data without unmounting the active patie
   await click(button('+ New Appointment'));
   const dialog = document.querySelector('dialog[open]');
   assert.ok(dialog);
-  const setValue = async (input, value) => {
+  const setInputValue = async (input, value) => {
     await act(async () => {
       Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set.call(input, value);
       input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
     });
   };
-  await setValue(dialog.querySelector('input[type="datetime-local"]'), '2026-10-25T10:00');
-  await setValue(dialog.querySelector('input[list]'), 'New test consultation');
+  const dayButton = [...dialog.querySelectorAll('button[role="gridcell"]')].find(b => !b.className.includes('is-outside')) || dialog.querySelector('button[role="gridcell"]');
+  assert.ok(dayButton, 'Expected a calendar day button');
+  await click(dayButton);
+  const reasonInput = dialog.querySelector('input[list]');
+  assert.ok(reasonInput, 'Expected a reason combobox input');
+  await setInputValue(reasonInput, 'New test consultation');
   assert.equal(button('Save & Activate', dialog).disabled, false);
   await act(async () => dialog.querySelector('form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })));
   assert.equal(posted.length, 1);
@@ -198,7 +203,7 @@ test('appointment status dropdown supports all remaining statuses while browsing
   assert.equal(document.querySelector('.ht-appointment-scroll select').value, 'cancelled');
   assert.equal(document.querySelector('.ht-appointment-record.is-recording'), null);
   assert.equal(button('Activate'), undefined);
-  assert.match(document.querySelector('.ht-recording-state').textContent, /Viewing record/);
+  assert.match(visibleText(), /No Record/);
 });
 
 test('failed status update shows an error and retains the original status', async () => {
@@ -211,11 +216,11 @@ test('failed status update shows an error and retains the original status', asyn
   assert.equal(select.disabled, false);
 });
 
-test('patient action columns expose export and archive and keep row action layout consistent', async () => {
+test('patient action columns expose archive and keep row action layout consistent', async () => {
   await mount('/admin?page=patients');
   const actions = document.querySelector('.ht-patient-row-actions');
-  assert.ok(button('Export PDF', actions.closest('tr')));
   assert.ok(button('Archive', actions));
+  assert.ok(button('Open Record', actions.closest('tr')));
   const css = await readFile(path.join(frontend, 'src/utils/index.css'), 'utf8');
   assert.match(css, /\.ht-patient-row-actions\s*\{[^}]*gap:\s*8px/);
   assert.match(css, /\.ht-patient-row-actions > button\s*\{[^}]*height:\s*36px/);

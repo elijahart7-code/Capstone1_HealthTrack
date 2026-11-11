@@ -29,6 +29,9 @@ export const ENV = {
   BREVO_API_KEY: process.env.BREVO_API_KEY?.trim() || "",
   GMAIL_USER: process.env.GMAIL_USER || "",
   GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD?.replace(/\s/g, "") || "",
+  // Shared access key hiding the staff portals (admin/health_worker). Empty
+  // disables the gate; production staff services fail closed without it.
+  STAFF_SITE_KEY: process.env.STAFF_SITE_KEY?.trim() || "",
   CENTRE_NAME: process.env.HEALTHTRACK_CENTRE_NAME || "Barangay Health Center of Mambog I",
   CENTRE_BARANGAY: process.env.HEALTHTRACK_BARANGAY || "Mambog I",
   CENTRE_MUNICIPALITY: process.env.HEALTHTRACK_MUNICIPALITY || "Bacoor",

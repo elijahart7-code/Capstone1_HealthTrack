@@ -96,6 +96,10 @@ const TABLES = [
       verification_token VARCHAR(64),
       token_expires_at TIMESTAMPTZ,
       verification_sent_at TIMESTAMPTZ,
+      login_otp_hash VARCHAR(64),
+      login_otp_expires_at TIMESTAMPTZ,
+      login_otp_attempts INTEGER NOT NULL DEFAULT 0,
+      login_otp_sent_at TIMESTAMPTZ,
       created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )`,
@@ -110,6 +114,10 @@ const TABLES = [
       verification_token: "VARCHAR(64)",
       token_expires_at: "TIMESTAMPTZ",
       verification_sent_at: "TIMESTAMPTZ",
+      login_otp_hash: "VARCHAR(64)",
+      login_otp_expires_at: "TIMESTAMPTZ",
+      login_otp_attempts: "INTEGER NOT NULL DEFAULT 0",
+      login_otp_sent_at: "TIMESTAMPTZ",
       created_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
       updated_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP",
     },
@@ -402,6 +410,10 @@ export async function connectNeon() {
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS token_expires_at TIMESTAMPTZ`;
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_sent_at TIMESTAMPTZ`;
     await sql`CREATE UNIQUE INDEX IF NOT EXISTS users_verification_token_idx ON users (verification_token) WHERE verification_token IS NOT NULL`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS login_otp_hash VARCHAR(64)`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS login_otp_expires_at TIMESTAMPTZ`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS login_otp_attempts INTEGER NOT NULL DEFAULT 0`;
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS login_otp_sent_at TIMESTAMPTZ`;
     await sql`ALTER TABLE appointments ALTER COLUMN status SET DEFAULT 'confirmed'`;
     await sql`UPDATE appointments SET status = 'confirmed', updated_at = NOW() WHERE status = 'pending'`;
     for (const table of ["health_assessments", "vital_signs", "midwife_notes", "health_background", "allergies"]) {

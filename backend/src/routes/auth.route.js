@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { rateLimit } from "express-rate-limit";
-import { completeAccount, initiateAccount, login } from "../controllers/auth/postRequests.controller.js";
+import { completeAccount, initiateAccount, login, resendLoginCode, verifyLoginCode } from "../controllers/auth/postRequests.controller.js";
 
 const router = Router();
 
@@ -13,6 +13,8 @@ const limit = (max, message) => rateLimit({
 });
 
 router.post("/login", limit(30, "Too many sign-in attempts. Try again in 15 minutes."), login);
+router.post("/verify-2fa", limit(20, "Too many code attempts. Try again in 15 minutes."), verifyLoginCode);
+router.post("/resend-2fa", limit(10, "Too many code requests. Try again in 15 minutes."), resendLoginCode);
 router.post("/initiate", limit(10, "Too many setup requests. Try again in 15 minutes."), initiateAccount);
 router.post("/complete", limit(20, "Too many setup attempts. Try again in 15 minutes."), completeAccount);
 

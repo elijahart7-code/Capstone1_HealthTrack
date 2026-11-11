@@ -37,7 +37,28 @@ await build({
 });
 const { App, AdminApp, HealthWorkerApp, ConfirmAccountPage, RequestAccountSetupPage, AdminPatients, WorkerPatients, PatientRecord, api, createRoot, MemoryRouter, Routes, Route, h, act } = await import(pathToFileURL(outfile));
 const portalApps = { patient: App, admin: AdminApp, health_worker: HealthWorkerApp };
-let root, posts;
+// Staff portals sit behind the site key gate (option B). Stub the gate
+// endpoints so staff apps mount unlocked by default; gate tests set
+// siteLocked = true to exercise the key screen.
+let root, posts, siteLocked = false;
+const siteUnlockPosts = [];
+const nativeFetch = globalThis.fetch.bind(globalThis);
+globalThis.fetch = async (url, init = {}) => {
+  const target = String(url);
+  if (target.endsWith("/api/site/status")) {
+    return new Response(JSON.stringify({ locked: siteLocked }), { status: 200, headers: { "Content-Type": "application/json" } });
+  }
+  if (target.endsWith("/api/site/unlock")) {
+    const body = JSON.parse(init.body || "{}");
+    siteUnlockPosts.push(body);
+    if (body.key === "staff-test-key") {
+      siteLocked = false;
+      return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "Content-Type": "application/json" } });
+    }
+    return new Response(JSON.stringify({ error: "Not found." }), { status: 404, headers: { "Content-Type": "application/json" } });
+  }
+  return nativeFetch(url, init);
+};
 async function mount(url, Page = ConfirmAccountPage) {
   posts = []; localStorage.clear();
   api.get = async () => { throw new Error("The setup page must not request or consume a token on GET"); };
@@ -61,7 +82,7 @@ afterEach(async () => { if (root) await act(async () => root.unmount()); root = 
 after(async () => { for (const channel of channels) { channel.port1.close(); channel.port2.close(); } globalThis.MessageChannel = originalChannel; dom.window.close(); await rm(scratch, { recursive: true, force: true }); });
 
 async function mountLogin(url, Page = App) {
-  localStorage.clear(); posts = [];
+  localStorage.clear(); posts = []; siteLocked = false; siteUnlockPosts.length = 0;
   api.post = async (url, body) => {
     posts.push({ url, body });
     throw { response: { status: 401, data: { error: "Those credentials don't match an active account." } } };
@@ -103,6 +124,50 @@ for (const [role, url, label, dashboard] of [
   });
 }
 
+test("patient password success switches to a 6-digit code step without saving a session", async () => {
+  await mountLogin("/patient/login");
+  api.post = async (url, body) => {
+    posts.push({ url, body });
+    assert.equal(url, "/auth/login");
+    return { data: { requires2FA: true, email: body.email, expiresInSeconds: 300, message: "We sent a 6-digit sign-in code to your email." } };
+  };
+  await fill("Email Address", "patient@example.com"); await fill("Password", "a long test passphrase"); await submit();
+  assert.match(document.body.textContent, /6-digit sign-in code/);
+  assert.ok(document.querySelector('input[autocomplete="one-time-code"]'));
+  assert.equal(localStorage.length, 0);
+});
+
+test("patient code verification posts the code and saves the session", async () => {
+  await mountLogin("/patient/login");
+  api.get = async () => ({ data: { patient: null, appointments: [] } });
+  api.post = async (url, body) => {
+    posts.push({ url, body });
+    if (url === "/auth/login") return { data: { requires2FA: true, email: body.email, expiresInSeconds: 300, message: "We sent a 6-digit sign-in code." } };
+    if (url === "/auth/verify-2fa") {
+      assert.deepEqual(body, { email: "patient@example.com", code: "482913" });
+      return { data: { token: "session", user: { user_id: "U1", role: "patient", email: "patient@example.com" } } };
+    }
+    throw new Error(`Unexpected POST ${url}`);
+  };
+  await fill("Email Address", "patient@example.com"); await fill("Password", "a long test passphrase"); await submit();
+  await fill("6-digit sign-in code", "482913"); await submit();
+  assert.deepEqual(posts[1], { url: "/auth/verify-2fa", body: { email: "patient@example.com", code: "482913" } });
+  assert.equal(localStorage.getItem("healthtrack_token"), "session");
+});
+
+test("patient code screen validates format before submitting", async () => {
+  await mountLogin("/patient/login");
+  api.post = async (url, body) => {
+    posts.push({ url, body });
+    return { data: { requires2FA: true, email: body.email, expiresInSeconds: 300, message: "We sent a 6-digit sign-in code." } };
+  };
+  await fill("Email Address", "patient@example.com"); await fill("Password", "a long test passphrase"); await submit();
+  const count = posts.length;
+  await fill("6-digit sign-in code", "12"); await submit();
+  assert.match(document.querySelector('[role="alert"]').textContent, /6-digit/);
+  assert.equal(posts.length, count);
+});
+
 for (const url of ["/admin/login", "/health-worker/login", "/admin", "/health_worker"]) {
   test(`the patient website does not expose staff route ${url}`, async () => {
     await mountLogin(url);
@@ -124,6 +189,32 @@ for (const [portal, Page, blocked] of [
     });
   }
 }
+
+async function mountLockedStaff(url, Page) {
+  localStorage.clear(); posts = []; siteUnlockPosts.length = 0; siteLocked = true;
+  root = createRoot(document.getElementById("root"));
+  await act(async () => root.render(h(MemoryRouter, { initialEntries: [url] }, h(Page))));
+  await act(async () => { await new Promise((resolve) => setTimeout(resolve, 10)); });
+}
+
+test("locked staff portal shows the access key screen instead of login", async () => {
+  await mountLockedStaff("/admin/login", AdminApp);
+  assert.equal(document.querySelector("h1").textContent, "Restricted area");
+  assert.ok(document.querySelector('input[type="password"]'));
+  assert.equal(posts.length, 0);
+});
+
+test("wrong access key stays locked and the correct key opens staff login", async () => {
+  await mountLockedStaff("/admin/login", AdminApp);
+  await fill("Access key", "wrong-key"); await submit();
+  await act(async () => { await new Promise((resolve) => setTimeout(resolve, 10)); });
+  assert.match(document.querySelector('[role="alert"]').textContent, /incorrect/);
+  assert.equal(document.querySelector("h1").textContent, "Restricted area");
+  await fill("Access key", "staff-test-key"); await submit();
+  await act(async () => { await new Promise((resolve) => setTimeout(resolve, 10)); });
+  assert.deepEqual(siteUnlockPosts, [{ key: "wrong-key" }, { key: "staff-test-key" }]);
+  assert.equal(document.querySelector("h1").textContent, "Admin Portal");
+});
 
 test("opening a confirmation link renders password setup without API requests or session changes", async () => {
   await mount(`/confirm-account?token=${"a".repeat(64)}`);
@@ -181,7 +272,7 @@ for (const [role, Patients] of [["admin", AdminPatients], ["health worker", Work
     ];
     root = createRoot(document.getElementById("root"));
     await act(async () => root.render(h(MemoryRouter, null, h(Patients, { patients, loadData: async () => {}, showArchived: false, onArchivedChange() {} }))));
-    for (const [name, label, tone] of [["Pending Patient", "Pending email confirmation", "pending"], ["Verified Patient", "Active", "active"], ["Walk-in Patient", "Inactive", "inactive"], ["Unknown Status Patient", "Pending email confirmation", "pending"]]) {
+    for (const [name, label, tone] of [["Pending Patient", "Pending Email", "pending"], ["Verified Patient", "Active", "active"], ["Walk-in Patient", "Inactive", "inactive"], ["Unknown Status Patient", "Pending Email", "pending"]]) {
       const row = [...document.querySelectorAll("tbody tr")].find(row => row.textContent.includes(name));
       const badge = row.querySelector(".ht-status-badge");
       assert.equal(badge.textContent, label);
@@ -209,18 +300,18 @@ async function clickButton(label) {
 
 for (const role of ["admin", "health_worker"]) {
   test(`${role} can correct a pending email and keeps the account pending until confirmation`, async () => {
-    await mountPendingPatient(role); await clickButton("Change email");
+    await mountPendingPatient(role); await clickButton("Change Email");
     await fill("New email address", "corrected@example.com"); await submit();
     assert.deepEqual(posts, [{ url: "/patients/P1/portal-account/email", body: { email: "corrected@example.com", current_email: "wrong@example.com" } }]);
     assert.match(document.body.textContent, /corrected@example.com/);
-    assert.match(document.body.textContent, /Pending email confirmation/);
+    assert.match(document.body.textContent, /Pending Email/);
     assert.match(document.querySelector('[role="status"]').textContent, /Confirmation email sent/);
     assert.equal(document.querySelector("form"), null);
   });
 }
 
 test("a rejected email correction keeps the form and draft for retry", async () => {
-  await mountPendingPatient(); await clickButton("Change email");
+  await mountPendingPatient(); await clickButton("Change Email");
   api.patch = async () => { throw { response: { status: 422, data: { error: "That email address is already in use." } } }; };
   await fill("New email address", "duplicate@example.com"); await submit();
   assert.match(document.querySelector('[role="alert"]').textContent, /already in use/);
@@ -229,7 +320,7 @@ test("a rejected email correction keeps the form and draft for retry", async () 
 });
 
 test("delivery failure displays the saved new email and a resend option", async () => {
-  await mountPendingPatient(); await clickButton("Change email");
+  await mountPendingPatient(); await clickButton("Change Email");
   const patch = api.patch;
   api.patch = async (...args) => {
     const response = await patch(...args);
@@ -239,11 +330,11 @@ test("delivery failure displays the saved new email and a resend option", async 
   await fill("New email address", "corrected@example.com"); await submit();
   assert.match(document.body.textContent, /corrected@example.com/);
   assert.match(document.querySelector('[role="status"]').textContent, /could not be sent/);
-  assert.ok([...document.querySelectorAll("button")].some(button => button.textContent.trim() === "Resend setup email"));
+  assert.ok([...document.querySelectorAll("button")].some(button => button.textContent.trim() === "Resend Email"));
 });
 
 test("verified accounts do not offer email correction or setup resend", async () => {
   await mountPendingPatient("admin", true);
-  assert.equal([...document.querySelectorAll("button")].some(button => ["Change email", "Resend setup email"].includes(button.textContent.trim())), false);
+  assert.equal([...document.querySelectorAll("button")].some(button => ["Change Email", "Resend Email"].includes(button.textContent.trim())), false);
   assert.match(document.querySelector(".ht-account-status").textContent, /Active/);
 });

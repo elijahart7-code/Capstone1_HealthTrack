@@ -9,6 +9,7 @@ import express, { Router } from "express";
 import { rateLimit } from "express-rate-limit";
 import { PGlite } from "@electric-sql/pglite";
 import { createAccountSetupService, isValidEmail, normalizeEmail, passwordError } from "../src/services/accountSetup.service.js";
+import { createLoginOtpService } from "../src/services/loginOtp.service.js";
 
 // Run real PostgreSQL statements in an isolated WASM database, never the
 // application's configured database. Only SMTP and JWT issuance are stubbed.
@@ -16,6 +17,7 @@ const db = new PGlite();
 const sql = (strings, ...params) => sql.query(strings.reduce((query, part, index) => query + part + (index < params.length ? `$${index + 1}` : ""), ""), params);
 sql.query = async (query, params = []) => (await db.query(query, params)).rows;
 let mail, service, failMail;
+let loginMail, loginService, failLoginMail;
 const password = "a memorable patient passphrase";
 const hash = (token) => createHash("sha256").update(token).digest("hex");
 
@@ -27,7 +29,7 @@ async function loadSource(relative, names, context) {
 const sessionForUser = (user) => ({ token: "test-session", user: { user_id: user.user_id, name: user.name, email: user.email, role: user.role } });
 function response() { return { code: 200, status(code) { this.code = code; return this; }, set() { return this; }, json(data) { this.data = data; return this; } }; }
 async function handlers() {
-  return loadSource("controllers/auth/postRequests.controller.js", ["login", "initiateAccount", "completeAccount"], { bcrypt, sql, accountSetup: service, sessionForUser, normalizeEmail, isValidEmail, passwordError });
+  return loadSource("controllers/auth/postRequests.controller.js", ["login", "verifyLoginCode", "resendLoginCode", "initiateAccount", "completeAccount"], { bcrypt, sql, accountSetup: service, loginOtp: loginService, sessionForUser, normalizeEmail, isValidEmail, passwordError });
 }
 async function provision({ email = "patient@example.com", role = "patient", verified = false, archived = false } = {}) {
   const id = randomBytes(6).toString("hex");
@@ -57,6 +59,8 @@ beforeEach(async () => {
   await db.exec("TRUNCATE users CASCADE");
   mail = []; failMail = false;
   service = createAccountSetupService({ sql, assertMailConfigured() {}, sendVerificationEmail: async (email, token) => { if (failMail) throw new Error("SMTP unavailable"); mail.push({ email, token }); } });
+  loginMail = []; failLoginMail = false;
+  loginService = createLoginOtpService({ sql, assertMailConfigured() {}, sendLoginCodeEmail: async (email, code) => { if (failLoginMail) throw new Error("SMTP unavailable"); loginMail.push({ email, code }); } });
 });
 after(() => db.close());
 
@@ -125,7 +129,7 @@ test("archiving a patient invalidates an outstanding setup link", async () => {
 
 test("controllers enforce password limits, reject pending login, and return the session after completion", async () => {
   await provision();
-  const { login, completeAccount } = await handlers();
+  const { login, verifyLoginCode, completeAccount } = await handlers();
   const pending = response();
   await login({ body: { email: "patient@example.com", password: "password", accountType: "patient" } }, pending);
   assert.equal(pending.code, 401);
@@ -144,6 +148,13 @@ test("controllers enforce password limits, reject pending login, and return the 
   const signedIn = response();
   await login({ body: { email: " PATIENT@EXAMPLE.COM ", password, accountType: "patient" } }, signedIn);
   assert.equal(signedIn.code, 200);
+  assert.equal(signedIn.data.requires2FA, true);
+  assert.equal(signedIn.data.token, undefined);
+  assert.match(loginMail[0].code, /^\d{6}$/);
+  const verified = response();
+  await verifyLoginCode({ body: { email: "patient@example.com", code: loginMail[0].code } }, verified);
+  assert.equal(verified.code, 200);
+  assert.equal(verified.data.token, "test-session");
   const wrongRole = response();
   await login({ body: { email: "patient@example.com", password, accountType: "admin" } }, wrongRole);
   assert.equal(wrongRole.code, 401);
@@ -159,7 +170,14 @@ test("each portal accepts only its stored account role and rejects role tamperin
       const result = response();
       await login({ body: { email, password: "password", accountType } }, result);
       assert.equal(result.code, accountType === role ? 200 : 401);
-      if (accountType === role) assert.equal(result.data.user.role, role);
+      if (accountType === role) {
+        if (role === "patient") {
+          assert.equal(result.data.requires2FA, true);
+          assert.equal(result.data.token, undefined);
+        } else {
+          assert.equal(result.data.user.role, role);
+        }
+      }
       else assert.equal(result.data.token, undefined);
     }
     const invalid = response();
@@ -167,6 +185,97 @@ test("each portal accepts only its stored account role and rejects role tamperin
     assert.equal(invalid.code, 422);
     assert.equal(invalid.data.token, undefined);
   }
+});
+
+test("patient login issues a hashed 5-minute OTP and verifies it exactly once", async () => {
+  await provision({ verified: true });
+  const { login, verifyLoginCode } = await handlers();
+  const challenge = response();
+  await login({ body: { email: "patient@example.com", password: "password", accountType: "patient" } }, challenge);
+  assert.equal(challenge.code, 200);
+  assert.equal(challenge.data.requires2FA, true);
+  assert.match(loginMail[0].code, /^\d{6}$/);
+  const stored = (await sql`SELECT * FROM users`)[0];
+  assert.equal(stored.login_otp_hash, hash(loginMail[0].code));
+  assert.notEqual(stored.login_otp_hash, loginMail[0].code);
+  assert.equal(stored.login_otp_attempts, 0);
+  const remaining = new Date(stored.login_otp_expires_at).getTime() - Date.now();
+  assert.ok(remaining > 4 * 60000 && remaining <= 5 * 60000);
+  const ok = response();
+  await verifyLoginCode({ body: { email: " Patient@Example.com ", code: loginMail[0].code } }, ok);
+  assert.equal(ok.code, 200);
+  assert.equal(ok.data.token, "test-session");
+  assert.equal(ok.data.user.role, "patient");
+  const cleared = (await sql`SELECT * FROM users`)[0];
+  assert.equal(cleared.login_otp_hash, null);
+  const replay = response();
+  await verifyLoginCode({ body: { email: "patient@example.com", code: loginMail[0].code } }, replay);
+  assert.equal(replay.code, 401);
+});
+
+test("staff login stays single-step and never issues a patient OTP", async () => {
+  await provision({ email: "staff@example.com", role: "admin", verified: true });
+  const { login } = await handlers();
+  const result = response();
+  await login({ body: { email: "staff@example.com", password: "password", accountType: "admin" } }, result);
+  assert.equal(result.code, 200);
+  assert.equal(result.data.token, "test-session");
+  assert.equal(result.data.requires2FA, undefined);
+  assert.equal(loginMail.length, 0);
+  assert.equal((await sql`SELECT login_otp_hash FROM users`)[0].login_otp_hash, null);
+});
+
+test("wrong OTP codes count attempts and lock after five", async () => {
+  await provision({ verified: true });
+  const { login, verifyLoginCode } = await handlers();
+  await login({ body: { email: "patient@example.com", password: "password", accountType: "patient" } }, response());
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    const result = response();
+    await verifyLoginCode({ body: { email: "patient@example.com", code: "000000" } }, result);
+    assert.equal(result.code, 401);
+    assert.match(result.data.error, /left before/);
+  }
+  const locked = response();
+  await verifyLoginCode({ body: { email: "patient@example.com", code: "000000" } }, locked);
+  assert.equal(locked.code, 429);
+  assert.equal((await sql`SELECT login_otp_hash FROM users`)[0].login_otp_hash, null);
+  const afterLock = response();
+  await verifyLoginCode({ body: { email: "patient@example.com", code: loginMail[0].code } }, afterLock);
+  assert.equal(afterLock.code, 401);
+});
+
+test("expired OTP cannot verify and resend respects the 60-second cooldown", async () => {
+  await provision({ verified: true });
+  const { login, verifyLoginCode, resendLoginCode } = await handlers();
+  await login({ body: { email: "patient@example.com", password: "password", accountType: "patient" } }, response());
+  const immediate = response();
+  await resendLoginCode({ body: { email: "patient@example.com" } }, immediate);
+  assert.equal(immediate.code, 429);
+  assert.equal(loginMail.length, 1);
+  await sql`UPDATE users SET login_otp_sent_at = NOW() - INTERVAL '61 seconds'`;
+  const resent = response();
+  await resendLoginCode({ body: { email: "patient@example.com" } }, resent);
+  assert.equal(resent.code, 202);
+  assert.equal(loginMail.length, 2);
+  await sql`UPDATE users SET login_otp_expires_at = NOW() - INTERVAL '1 second'`;
+  const expired = response();
+  await verifyLoginCode({ body: { email: "patient@example.com", code: loginMail[1].code } }, expired);
+  assert.equal(expired.code, 400);
+  const noPending = response();
+  await resendLoginCode({ body: { email: "patient@example.com" } }, noPending);
+  assert.equal(noPending.code, 400);
+});
+
+test("OTP delivery failure returns 503 without leaving a pending challenge", async () => {
+  await provision({ verified: true });
+  failLoginMail = true;
+  const { login } = await handlers();
+  const result = response();
+  await login({ body: { email: "patient@example.com", password: "password", accountType: "patient" } }, result);
+  assert.equal(result.code, 503);
+  const stored = (await sql`SELECT * FROM users`)[0];
+  assert.equal(stored.login_otp_hash, null);
+  assert.equal(stored.login_otp_sent_at, null);
 });
 
 test("real HTTP routes limit setup requests and GET never consumes a token", async () => {

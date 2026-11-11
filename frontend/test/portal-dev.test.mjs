@@ -11,6 +11,7 @@ for (const [mode, ownEntry, otherEntry] of [
   test(`${mode} dev server serves its JavaScript runtime while blocking other portals`, async () => {
     const server = await createServer({
       configFile: fileURLToPath(new URL("../vite.config.js", import.meta.url)),
+      root: fileURLToPath(new URL("..", import.meta.url)),
       mode, logLevel: "silent", server: { port: 0, strictPort: false, open: false },
     });
     try {

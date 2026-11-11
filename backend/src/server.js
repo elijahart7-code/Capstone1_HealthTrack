@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { connectNeon } from "./config/db.js";
 import { ENV } from "./config/env.js";
 import { authMiddleware, requireRole } from "./middlewares/auth.middleware.js";
+import { createSiteGate, createSiteRoutes } from "./middlewares/siteGate.middleware.js";
 
 import authRoute from "./routes/auth.route.js";
 import midwifeRoute from "./routes/midwife.route.js";
@@ -35,6 +36,18 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+// Staff portals hide behind STAFF_SITE_KEY (free-tier option B). The site
+// routes stay public so browsers can unlock; the gate covers everything after
+// them, including the portal APIs, health check, and the built frontend.
+if (portal !== "patient" && ENV.NODE_ENV === "production" && !ENV.STAFF_SITE_KEY) {
+  throw new Error("STAFF_SITE_KEY is required in production for staff portals.");
+}
+if (portal !== "patient" && !ENV.STAFF_SITE_KEY) {
+  console.warn(`[server] STAFF_SITE_KEY not set; ${portal} site gate is open (development only).`);
+}
+app.use("/api/site", createSiteRoutes({ siteKey: ENV.STAFF_SITE_KEY, isProduction: ENV.NODE_ENV === "production" }));
+app.use(createSiteGate({ portal, siteKey: ENV.STAFF_SITE_KEY }));
 
 mountPortalApi(app, portal, { authRoute, patientPortalRoute, midwifeRoute, healthWorkerRoute, patientsRoute, appointmentsRoute, authMiddleware, requireRole });
 
