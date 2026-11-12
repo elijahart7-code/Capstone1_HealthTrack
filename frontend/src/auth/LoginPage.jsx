@@ -168,6 +168,7 @@ export default function LoginPage({ accountType = "patient" }) {
     admin: { title: "Admin Portal", description: "Sign in to manage patient info, medical records, and appointments." },
     health_worker: { title: "Health Worker Portal", description: "Sign in to register patients and review patient health records." },
   }[accountType];
+  const canRequestPasswordHelp = accountType === "patient";
 
   const expiryLabel = expiresInSeconds > 0
     ? `Code expires in ${Math.floor(expiresInSeconds / 60)}:${String(expiresInSeconds % 60).padStart(2, "0")}`
@@ -247,13 +248,15 @@ export default function LoginPage({ accountType = "patient" }) {
                     {loading ? "Signing In..." : `Sign In as ${roleLabel(accountType)}`}
                   </button>
 
-                  <button
-                    type="button"
-                    className="ht-login-link"
-                    onClick={openForgotPasswordMessage}
-                  >
-                    Forgot your password?
-                  </button>
+                  {canRequestPasswordHelp && (
+                    <button
+                      type="button"
+                      className="ht-login-link"
+                      onClick={openForgotPasswordMessage}
+                    >
+                      Forgot your password?
+                    </button>
+                  )}
                 </form>
               </>
             ) : (
@@ -314,7 +317,7 @@ export default function LoginPage({ accountType = "patient" }) {
 
         <div className="ht-auth-footer">© 2026 HealthTrack. All rights reserved.</div>
       </div>
-      {showForgotPasswordMessage && (
+      {canRequestPasswordHelp && showForgotPasswordMessage && (
         <div
           className={`ht-confirm-backdrop ht-login-confirm-backdrop ${isClosingForgotPasswordMessage ? "is-closing" : ""}`}
           onMouseDown={(event) => {

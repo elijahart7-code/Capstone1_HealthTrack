@@ -208,7 +208,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
             >
               <CheckCircle2 size={14} />{recordExpanded ? "Hide Record" : "View Record"}
             </button>
-          ) : appointmentStatus === "cancelled" ? (
+          ) : appointmentStatus === "cancelled" && role === "admin" ? (
             <button type="button" className="ht-appointment-no-records" disabled>No Record</button>
           ) : role === "admin" ? (
             <button type="button" className="ht-appointment-record-activate-button" onClick={() => activate(appointment)}>Activate</button>
@@ -277,10 +277,10 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
           aria-labelledby="records-restricted-title"
         >
           <h2 id="records-restricted-title">Records Restricted</h2>
-          <p className="ht-confirm-message">Health workers cannot access patient clinical records.</p>
+          <p className="ht-confirm-message">Health Workers cannot access patient's medical records due to some valid reasons. Thank you!</p>
           <div className="ht-confirm-actions ht-archive-confirm-actions">
-            <button type="button" className="ht-confirm-cancel" onClick={() => setRecordsRestrictedOpen(false)}>
-              Close
+            <button type="button" className="ht-confirm-submit" onClick={() => setRecordsRestrictedOpen(false)}>
+              Exit
             </button>
           </div>
         </section>

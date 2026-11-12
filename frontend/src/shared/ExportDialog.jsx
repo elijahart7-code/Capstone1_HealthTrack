@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { api } from "../lib/axios";
 import { rangeForPeriod } from "./statisticalReport.js";
-import { StatisticalDocument, ALL_SECTIONS } from "./StatisticalReport";
+import { StatisticalDocument, ALL_SECTIONS } from "./StatisticalReport.jsx";
 import { LineListDocument } from "./LineListReport";
 
 const SECTION_LABELS = [

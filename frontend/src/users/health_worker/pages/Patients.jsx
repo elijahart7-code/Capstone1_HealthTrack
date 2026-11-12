@@ -148,7 +148,7 @@ export function Patients({ patients, loadData }) {
                       <span className="ht-record-action-icon">
                         <Eye size={15} strokeWidth={2} />
                       </span>
-                      View Record Only
+                      Limited Access Only
                     </button>
                   </Td>
                 </tr>

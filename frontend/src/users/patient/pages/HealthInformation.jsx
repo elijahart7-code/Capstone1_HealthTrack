@@ -154,7 +154,7 @@ const upcomingAppointment =
           </div>
           <span className="patient-readonly-pill">
             <Lock size={16} strokeWidth={1.8} />
-            Read Only
+            Read / View Only
           </span>
         </section>
       )}
@@ -170,7 +170,6 @@ const upcomingAppointment =
             </span>
             <span>Latest Health Summary</span>
           </button>
-
           <div className="patient-sidebar-label">MY HEALTH INFORMATION</div>
 
           <SidebarItem icon={User} label="Personal Information" active={section === "patient-information"} onClick={() => selectSection("patient-information")} />
@@ -193,7 +192,7 @@ const upcomingAppointment =
               <p>This is your latest health information from your most recent checkup.</p>
               <span className="ht-header-logout patient-overview-readonly" aria-label="Read only">
                 <Lock size={18} strokeWidth={1.9} />
-                Read Only
+                Read / View Only
               </span>
             </header>
             <LatestAppointment
@@ -241,7 +240,7 @@ const upcomingAppointment =
                           <td>{a.reason}</td>
                           <td>
                             <span
-                              className={`patient-appointment-status patient-appointment-status-${status}`}
+                              className={`ht-appointment-record-status ht-appointment-record-status-${status}`}
                               aria-label={`Appointment status: ${statusLabel}`}
                             >
                               {statusLabel}

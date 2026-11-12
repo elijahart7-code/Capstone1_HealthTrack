@@ -97,7 +97,7 @@ export function Dashboard({ dashboard, onRegisterClick }) {
                         <path d="M1.5 12S5 5.5 12 5.5 22.5 12 22.5 12 19 18.5 12 18.5 1.5 12 1.5 12Z" fill="none" stroke="currentColor" strokeWidth="1.8"/>
                         <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.8"/>
                       </svg>
-                      View Record Only
+                      Limited Access Only
                     </button>
                   </Td>
                 </tr>

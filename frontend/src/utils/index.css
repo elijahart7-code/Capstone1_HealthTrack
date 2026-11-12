@@ -3593,6 +3593,10 @@ Reusable surfaces, panel headings, metrics, and section icons.
         transform: translateY(-50%);
         cursor: default;
         white-space: nowrap;
+        border-radius: 999px;
+        border: 0;
+        background: #c0e2d1;
+        color: #000;
     }
 
     .patient-overview-heading p {
@@ -3661,10 +3665,10 @@ Reusable surfaces, panel headings, metrics, and section icons.
         gap: 0.4rem;
         min-height: 40px;
         padding: 0.6rem 0.95rem;
-        border: 1px solid #000;
+        border: 0;
         border-radius: 999px;
-        background: linear-gradient(180deg, var(--color-brand) 0%, var(--color-brand-strong) 100%);
-        color: #fff;
+        background: #c0e2d1;
+        color: #000;
         font-family: var(--font-sans);
         font-size: 0.875rem;
         font-weight: 700;
@@ -6157,9 +6161,9 @@ Table layout, recorded-date information, and footer.
   gap: 0.4rem;
   min-height: 44px;
   padding: 0.7rem 1.05rem;
-  color: #fff;
-  background: linear-gradient(180deg, var(--color-brand) 0%, var(--color-brand-strong) 100%);
-  border: 1px solid #000;
+  color: #000;
+  background: #c0e2d1;
+  border: 0;
   border-radius: 10px;
   font-size: 0.9375rem;
   font-weight: 700;
@@ -6169,7 +6173,7 @@ Table layout, recorded-date information, and footer.
 }
 
 .patient-dashboard-view-button:hover {
-  background: linear-gradient(180deg, var(--color-brand-strong) 0%, var(--color-brand-strong) 100%);
+  background: #b4dfcb;
 }
 
 @media (max-width: 640px) {
