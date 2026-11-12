@@ -1979,6 +1979,28 @@ Reusable surfaces, panel headings, metrics, and section icons.
         background: #9e5d12;
     }
 
+    .ht-logout-confirm-actions .ht-logout-confirm-yes {
+        border-color: #16815a;
+        background: #16815a;
+        color: #fff;
+    }
+
+    .ht-logout-confirm-actions .ht-logout-confirm-yes:hover:not(:disabled) {
+        border-color: #116b4a;
+        background: #116b4a;
+    }
+
+    .ht-logout-confirm-actions .ht-logout-confirm-no {
+        border-color: #c62828 !important;
+        background: #c62828;
+        color: #fff;
+    }
+
+    .ht-logout-confirm-actions .ht-logout-confirm-no:hover:not(:disabled) {
+        border-color: #a61f1f !important;
+        background: #a61f1f;
+    }
+
     .ht-pagination {
         display: flex;
         justify-content: center;
@@ -8609,6 +8631,7 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-appointment-action-cancelled { border-color: #e6bfbc; background: #fff; color: #b2453e; }
 .ht-appointment-action-cancelled:hover:not(:disabled) { border-color: #d7a29e; background: #f0d9d7; }
 .ht-appointment-action:disabled:not(.is-active) { opacity: .6; cursor: wait; }
+.ht-appointment-record-restricted { color: #b42318; font-size: 12px; font-weight: 700; }
 .ht-appointment-record-view-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; padding: 9px 12px; border: 1px solid #3366cc; border-radius: 8px; background: #3366cc; color: #fff; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
 .ht-appointment-record-view-button:hover { border-color: #2857b5; background: #2857b5; }
 .ht-appointment-no-records { min-height: 42px; padding: 9px 12px; border: 1px solid #b2453e; border-radius: 8px; background: #b2453e; color: #fff; font: inherit; font-size: 14px; font-weight: 700; }

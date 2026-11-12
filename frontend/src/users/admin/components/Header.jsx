@@ -1,15 +1,8 @@
-import { useNavigate } from "react-router";
-import { LogOut } from "lucide-react";
-import { clearSession, getCurrentUser, roleLabel } from "../../../lib/auth";
+import { getCurrentUser, roleLabel } from "../../../lib/auth";
+import { LogoutButton } from "../../../components/ui/LogoutButton";
 
 export function Header() {
-  const navigate = useNavigate();
   const user = getCurrentUser();
-
-  function handleLogout() {
-    clearSession();
-    navigate("/admin/login", { replace: true });
-  }
 
   return (
     <div className="ht-user-wrap">
@@ -17,10 +10,7 @@ export function Header() {
         <div className="ht-user-name">{user?.name}</div>
         <div className="ht-user-role">{user ? roleLabel(user.role) : ""}</div>
       </div>
-      <button onClick={handleLogout} className="ht-header-logout">
-        <LogOut size={18} strokeWidth={1.9} />
-        Log out
-      </button>
+      <LogoutButton loginPath="/admin/login" />
     </div>
   );
 }

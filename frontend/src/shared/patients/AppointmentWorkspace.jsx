@@ -26,6 +26,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
   const [selected, setSelected] = useState(params.get("appointmentId") || appointments[0]?.appointment_id);
   const [active, setActive] = useState(null);
   const [recordExpanded, setRecordExpanded] = useState(false);
+  const [recordsRestrictedOpen, setRecordsRestrictedOpen] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [drafts, setDrafts] = useState({});
   const [saving, setSaving] = useState(false);
@@ -38,7 +39,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
   const appointment = appointments.find(a => a.appointment_id === selected);
   const appointmentStatus = appointment?.status === "pending" ? "confirmed" : appointment?.status;
   const recording = active === selected && !!appointment && !["completed", "cancelled"].includes(appointment.status);
-  const showClinicalRecords = recording || (appointmentStatus === "completed" && recordExpanded);
+  const showClinicalRecords = recording || (role === "admin" && appointmentStatus === "completed" && recordExpanded);
   const missingRequired = TYPES.flatMap(type => Object.entries(RECORD_TYPES[type].fields)
     .filter(([key, field]) => field.required && !String(drafts[type]?.[key] ?? "").trim())
     .map(([, field]) => `${RECORD_TYPES[type].label}: ${field.label}`));
@@ -149,21 +150,25 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
               <Td>{role === "admin" && status !== "completed" ? <Select aria-label={`Appointment status for ${new Date(a.scheduled_at).toLocaleString()}`} value={status} disabled={statusBusy !== null} className={`ht-status-select ht-status-select-${status} ht-appointment-status`} onChange={e => updateStatus(a, e.target.value)}>
                 {STATUSES.map(status => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}
               </Select> : <span className={`ht-appointment-status ht-appointment-status-${status}`}>{status.charAt(0).toUpperCase() + status.slice(1)}</span>}</Td>
-              <Td>
-                {a.status === "completed" ? (
-                  <button type="button" className="ht-appointment-action ht-appointment-action-completed" onClick={() => viewRecords(a)}>
-                    <CheckCircle2 size={14} /> Successful
-                  </button>
-                ) : a.status === "cancelled" ? (
-                  role === "admin" && <button type="button" className="ht-appointment-action ht-appointment-action-cancelled" disabled={statusBusy !== null} onClick={() => { setRemoveError(""); setAppointmentToRemove(a); }}>
-                    <Trash2 size={14} /> Remove
-                  </button>
-                ) : role === "admin" && (
-                  <button className={`ht-appointment-action ht-appointment-action-confirmed${isActive ? " is-active" : ""}`} disabled={isActive || statusBusy !== null} aria-pressed={isActive} onClick={() => activate(a)}>
-                    {isActive ? <><CircleDot size={14} /> Recording active</> : "Activate"}
-                  </button>
-                )}
-              </Td>
+              {role === "health_worker" ? (
+                <Td><span className="ht-appointment-record-restricted">Records Restricted</span></Td>
+              ) : role === "admin" ? (
+                <Td>
+                  {a.status === "completed" ? (
+                    <button type="button" className="ht-appointment-action ht-appointment-action-completed" onClick={() => viewRecords(a)}>
+                      <CheckCircle2 size={14} /> Successful
+                    </button>
+                  ) : a.status === "cancelled" ? (
+                    <button type="button" className="ht-appointment-action ht-appointment-action-cancelled" disabled={statusBusy !== null} onClick={() => { setRemoveError(""); setAppointmentToRemove(a); }}>
+                      <Trash2 size={14} /> Remove
+                    </button>
+                  ) : (
+                    <button className={`ht-appointment-action ht-appointment-action-confirmed${isActive ? " is-active" : ""}`} disabled={isActive || statusBusy !== null} aria-pressed={isActive} onClick={() => activate(a)}>
+                      {isActive ? <><CircleDot size={14} />Recording active</> : "Activate"}
+                    </button>
+                  )}
+                </Td>
+              ) : <Td />}
             </tr>;
           })}</tbody>
         </Table>}
@@ -189,7 +194,18 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
           {recording ? (
             <span className="ht-recording-state is-active" role="status"><CircleDot size={14} />Recording active</span>
           ) : appointmentStatus === "completed" ? (
-            <button type="button" className="ht-appointment-record-view-button" aria-expanded={recordExpanded} onClick={() => setRecordExpanded(expanded => !expanded)}>
+            <button
+              type="button"
+              className="ht-appointment-record-view-button"
+              aria-expanded={role === "admin" ? recordExpanded : undefined}
+              onClick={() => {
+                if (role === "health_worker") {
+                  setRecordsRestrictedOpen(true);
+                  return;
+                }
+                setRecordExpanded(expanded => !expanded);
+              }}
+            >
               <CheckCircle2 size={14} />{recordExpanded ? "Hide Record" : "View Record"}
             </button>
           ) : appointmentStatus === "cancelled" ? (
@@ -247,6 +263,29 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
         </div>
       </section>
     </div>}
+    {recordsRestrictedOpen && role === "health_worker" && (
+      <div
+        className="ht-confirm-backdrop ht-archive-confirm-backdrop"
+        onMouseDown={event => {
+          if (event.target === event.currentTarget) setRecordsRestrictedOpen(false);
+        }}
+      >
+        <section
+          className="ht-confirm-dialog ht-archive-confirm-dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="records-restricted-title"
+        >
+          <h2 id="records-restricted-title">Records Restricted</h2>
+          <p className="ht-confirm-message">Health workers cannot access patient clinical records.</p>
+          <div className="ht-confirm-actions ht-archive-confirm-actions">
+            <button type="button" className="ht-confirm-cancel" onClick={() => setRecordsRestrictedOpen(false)}>
+              Close
+            </button>
+          </div>
+        </section>
+      </div>
+    )}
   </div>;
 }
 function NewAppointment({ patientId, onClose, onSaved }) {

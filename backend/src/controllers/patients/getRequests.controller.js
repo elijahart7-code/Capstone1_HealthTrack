@@ -78,7 +78,7 @@ export async function getClinicalRecords(req, res) {
   );
   const patient = patientRows[0];
   if (!patient) return res.status(404).json({ error: "Patient not found." });
-  if (!(req.user.role === "admin" || req.user.role === "health_worker" || patient.user_id === req.user.user_id)) {
+  if (!(req.user.role === "admin" || patient.user_id === req.user.user_id)) {
     return res.status(403).json({ error: "You do not have access to this patient's records." });
   }
 

@@ -32,6 +32,29 @@ test('clinical record listing binds selected appointment instead of mixing all v
   assert.deepEqual(Array.from(calls[1].params), ['P1', 20, 'APT1']);
 });
 
+test('health workers cannot retrieve patient clinical records', async () => {
+  const calls = [];
+  const { getClinicalRecords } = await controller('patients/getRequests.controller.js', {
+    names: ['getClinicalRecords'],
+    isRecordType: () => true,
+    RECORD_TYPES: { 'vital-signs': { table: 'vital_signs', dateField: 'recorded_at' } },
+    sql: { query: async (query, params) => {
+      calls.push({ query, params });
+      return [{ patient_id: 'P1', user_id: 'PATIENT1' }];
+    } },
+  });
+  const res = response();
+  await getClinicalRecords({
+    params: { patientId: 'P1', type: 'vital-signs' },
+    query: { appointmentId: 'APT1' },
+    user: { role: 'health_worker', user_id: 'WORKER1' },
+  }, res);
+
+  assert.equal(res.code, 403);
+  assert.match(res.data.error, /do not have access/);
+  assert.equal(calls.length, 1);
+});
+
 test('record creation rejects an appointment belonging to another patient', async () => {
   let calls = 0;
   const sql = async () => (++calls === 1 ? [{ patient_id: 'P1' }] : []);

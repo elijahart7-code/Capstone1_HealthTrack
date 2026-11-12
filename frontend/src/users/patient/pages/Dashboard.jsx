@@ -82,7 +82,7 @@ export function Dashboard({ dashboard }) {
 <PatientMetricCard
   icon={<HeartPulse size={32} strokeWidth={1.6} />}
   iconClass="vitals"
-  title="Latest Vital Signs"
+  title="Vital Signs Records"
   description="View the most recently recorded vital signs."
   onClick={() => setSearchParams({ page: "health-information", section: "vital-signs" })}
 />
