@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { ENV } from "../../config/env.js";
 import { sql } from "../../config/db.js";
 import { accountSetup } from "../../services/accountSetup.js";
 import { loginOtp } from "../../services/loginOtp.js";
@@ -19,8 +20,9 @@ export async function login(req, res) {
   if (!user || user.role !== accountType || !user.is_verified || !(await bcrypt.compare(password, user.password))) {
     return res.status(401).json({ error: "Those credentials doesn't match an active account." });
   }
-  // Staff keep single-step login. Patients must finish email OTP every sign-in.
-  if (user.role !== "patient") {
+  // Staff keep single-step login. Patients must finish email OTP every
+  // sign-in unless LOGIN_OTP_ENABLED is explicitly "false" (local testing).
+  if (user.role !== "patient" || !ENV.LOGIN_OTP_ENABLED) {
     return res.json({ message: "Logged in.", ...sessionForUser(user) });
   }
   res.set("Cache-Control", "no-store");
@@ -50,6 +52,7 @@ export async function login(req, res) {
 }
 
 export async function verifyLoginCode(req, res) {
+  if (!ENV.LOGIN_OTP_ENABLED) return res.status(404).json({ error: "Not found." });
   res.set("Cache-Control", "no-store");
   const email = normalizeEmail(req.body?.email);
   const { code } = req.body || {};
@@ -75,6 +78,7 @@ export async function verifyLoginCode(req, res) {
 }
 
 export async function resendLoginCode(req, res) {
+  if (!ENV.LOGIN_OTP_ENABLED) return res.status(404).json({ error: "Not found." });
   res.set("Cache-Control", "no-store");
   const email = normalizeEmail(req.body?.email);
   if (!isValidEmail(email)) return res.status(422).json({ error: "Enter a valid email address." });

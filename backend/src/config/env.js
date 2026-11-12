@@ -32,6 +32,10 @@ export const ENV = {
   // Shared access key hiding the staff portals (admin/health_worker). Empty
   // disables the gate; production staff services fail closed without it.
   STAFF_SITE_KEY: process.env.STAFF_SITE_KEY?.trim() || "",
+  // Patient email-OTP sign-in. Enabled unless explicitly set to "false".
+  // Local development sets false to skip inbox codes; production keeps the
+  // default so patient 2FA cannot be switched off by accident.
+  LOGIN_OTP_ENABLED: process.env.LOGIN_OTP_ENABLED?.trim().toLowerCase() !== "false",
   CENTRE_NAME: process.env.HEALTHTRACK_CENTRE_NAME || "Barangay Health Center of Mambog I",
   CENTRE_BARANGAY: process.env.HEALTHTRACK_BARANGAY || "Mambog I",
   CENTRE_MUNICIPALITY: process.env.HEALTHTRACK_MUNICIPALITY || "Bacoor",

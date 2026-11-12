@@ -28,8 +28,8 @@ async function loadSource(relative, names, context) {
 }
 const sessionForUser = (user) => ({ token: "test-session", user: { user_id: user.user_id, name: user.name, email: user.email, role: user.role } });
 function response() { return { code: 200, status(code) { this.code = code; return this; }, set() { return this; }, json(data) { this.data = data; return this; } }; }
-async function handlers() {
-  return loadSource("controllers/auth/postRequests.controller.js", ["login", "verifyLoginCode", "resendLoginCode", "initiateAccount", "completeAccount"], { bcrypt, sql, accountSetup: service, loginOtp: loginService, sessionForUser, normalizeEmail, isValidEmail, passwordError });
+async function handlers(env = { LOGIN_OTP_ENABLED: true }) {
+  return loadSource("controllers/auth/postRequests.controller.js", ["login", "verifyLoginCode", "resendLoginCode", "initiateAccount", "completeAccount"], { bcrypt, ENV: env, sql, accountSetup: service, loginOtp: loginService, sessionForUser, normalizeEmail, isValidEmail, passwordError });
 }
 async function provision({ email = "patient@example.com", role = "patient", verified = false, archived = false } = {}) {
   const id = randomBytes(6).toString("hex");
@@ -264,6 +264,23 @@ test("expired OTP cannot verify and resend respects the 60-second cooldown", asy
   const noPending = response();
   await resendLoginCode({ body: { email: "patient@example.com" } }, noPending);
   assert.equal(noPending.code, 400);
+});
+
+test("disabled patient OTP signs in single-step without email", async () => {
+  await provision({ verified: true });
+  const { login, verifyLoginCode, resendLoginCode } = await handlers({ LOGIN_OTP_ENABLED: false });
+  const signedIn = response();
+  await login({ body: { email: "patient@example.com", password: "password", accountType: "patient" } }, signedIn);
+  assert.equal(signedIn.code, 200);
+  assert.equal(signedIn.data.requires2FA, undefined);
+  assert.equal(signedIn.data.token, "test-session");
+  assert.equal(loginMail.length, 0);
+  const denied = response();
+  await verifyLoginCode({ body: { email: "patient@example.com", code: "000000" } }, denied);
+  assert.equal(denied.code, 404);
+  const resendDenied = response();
+  await resendLoginCode({ body: { email: "patient@example.com" } }, resendDenied);
+  assert.equal(resendDenied.code, 404);
 });
 
 test("OTP delivery failure returns 503 without leaving a pending challenge", async () => {
