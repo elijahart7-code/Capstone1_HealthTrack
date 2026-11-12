@@ -55,8 +55,7 @@ export function Dashboard({ dashboard }) {
         <div className="patient-dashboard-header">
           <div>
             <h1>Patient Dashboard</h1>
-            <p>This is your personal records at Barangay Health Center of Mambog I. </p>
-            <p>Please take care of your own health today for a better tomorrow!</p>
+            <p>Your Personal Information, Scheduled Appointments, and Medical Records are all recorded by the Midwife.</p>
           </div>
 
           <button
@@ -65,8 +64,8 @@ export function Dashboard({ dashboard }) {
               setSearchParams({ page: "health-information" })
             }
           >
-            View Health Information
             <Eye size={20} />
+            View Health Information
           </button>
         </div>
 
@@ -95,7 +94,7 @@ export function Dashboard({ dashboard }) {
   icon={<ClipboardList size={32} strokeWidth={1.6} />}
   iconClass="assessment"
   title="Health Assessment"
-  description="View your own recorded health assessment."
+  description="View your health assessment test results."
   onClick={() => setSearchParams({ page: "health-information", section: "health-assessment" })}
 />
 
@@ -103,7 +102,7 @@ export function Dashboard({ dashboard }) {
   icon={<ShieldAlert size={32} strokeWidth={1.6} />}
   iconClass="allergies"
   title="Known Allergies"
-  description="View your recorded allergies information."
+  description="View your  recorded allergies information."
   onClick={() => setSearchParams({ page: "health-information", section: "allergies" })}
 />
 
@@ -282,8 +281,8 @@ function PatientMetricCard({
         className="patient-view-button"
         onClick={onClick}
       >
-        View Only
         <Eye size={20} strokeWidth={2} />
+        View Only
       </button>
 
     </div>
