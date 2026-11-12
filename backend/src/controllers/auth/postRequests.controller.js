@@ -21,7 +21,8 @@ export async function login(req, res) {
     return res.status(401).json({ error: "Those credentials doesn't match an active account." });
   }
   // Staff keep single-step login. Patients must finish email OTP every
-  // sign-in unless LOGIN_OTP_ENABLED is explicitly "false" (local testing).
+  // sign-in when LOGIN_OTP_ENABLED (on by default in production, off by
+  // default locally; explicit "true"/"false" always wins).
   if (user.role !== "patient" || !ENV.LOGIN_OTP_ENABLED) {
     return res.json({ message: "Logged in.", ...sessionForUser(user) });
   }
@@ -47,7 +48,7 @@ export async function login(req, res) {
     });
   } catch (error) {
     console.error("[mail] Login code request failed:", error.code || error.name);
-    return res.status(503).json({ error: "We could not send the sign-in code. Please try again later or contact your health center." });
+    return res.status(503).json({ error: "We could not send the sign-in code. For local testing set LOGIN_OTP_ENABLED=false in backend/.env and restart the API, or configure Gmail/Brevo mail and restart." });
   }
 }
 
