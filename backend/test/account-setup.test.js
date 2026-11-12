@@ -29,7 +29,7 @@ async function loadSource(relative, names, context) {
 const sessionForUser = (user) => ({ token: "test-session", user: { user_id: user.user_id, name: user.name, email: user.email, role: user.role } });
 function response() { return { code: 200, status(code) { this.code = code; return this; }, set() { return this; }, json(data) { this.data = data; return this; } }; }
 async function handlers(env = { LOGIN_OTP_ENABLED: true }) {
-  return loadSource("controllers/auth/postRequests.controller.js", ["login", "verifyLoginCode", "resendLoginCode", "initiateAccount", "completeAccount"], { bcrypt, ENV: env, sql, accountSetup: service, loginOtp: loginService, sessionForUser, normalizeEmail, isValidEmail, passwordError });
+  return loadSource("controllers/auth/postRequests.controller.js", ["login", "verifyLoginCode", "resendLoginCode", "initiateAccount", "completeAccount", "changePassword"], { bcrypt, ENV: env, sql, accountSetup: service, loginOtp: loginService, sessionForUser, normalizeEmail, isValidEmail, passwordError });
 }
 async function provision({ email = "patient@example.com", role = "patient", verified = false, archived = false } = {}) {
   const id = randomBytes(6).toString("hex");
@@ -283,6 +283,38 @@ test("disabled patient OTP signs in single-step without email", async () => {
   assert.equal(resendDenied.code, 404);
 });
 
+test("change password checks the current one and rotates the hash", async () => {
+  const id = await provision({ verified: true });
+  const { login, changePassword } = await handlers();
+  const changed = response();
+  await changePassword({ body: { current_password: "password", new_password: "a brand new passphrase" }, user: { user_id: id } }, changed);
+  assert.equal(changed.code, 200);
+  assert.match(changed.data.message, /Password changed/);
+  const stale = response();
+  await login({ body: { email: "patient@example.com", password: "password", accountType: "patient" } }, stale);
+  assert.equal(stale.code, 401);
+  const fresh = response();
+  await login({ body: { email: "patient@example.com", password: "a brand new passphrase", accountType: "patient" } }, fresh);
+  assert.equal(fresh.code, 200);
+  assert.equal(fresh.data.requires2FA, true);
+});
+
+test("change password rejects a wrong current password and weak replacements", async () => {
+  const id = await provision({ verified: true });
+  const { changePassword } = await handlers();
+  const wrong = response();
+  await changePassword({ body: { current_password: "not-the-password", new_password: "another valid passphrase" }, user: { user_id: id } }, wrong);
+  assert.equal(wrong.code, 401);
+  const short = response();
+  await changePassword({ body: { current_password: "password", new_password: "short" }, user: { user_id: id } }, short);
+  assert.equal(short.code, 422);
+  const same = response();
+  await changePassword({ body: { current_password: "password", new_password: "password" }, user: { user_id: id } }, same);
+  assert.equal(same.code, 422);
+  const stored = await sql`SELECT password FROM users WHERE user_id = ${id}`;
+  assert.equal(await bcrypt.compare("password", stored[0].password), true);
+});
+
 test("OTP delivery failure returns 503 without leaving a pending challenge", async () => {
   await provision({ verified: true });
   failLoginMail = true;
@@ -298,7 +330,7 @@ test("OTP delivery failure returns 503 without leaving a pending challenge", asy
 test("real HTTP routes limit setup requests and GET never consumes a token", async () => {
   await provision();
   const routeSource = (await readFile(new URL("../src/routes/auth.route.js", import.meta.url), "utf8")).replace(/^import .*;\r?\n/gm, "").replace("export default router;", "router;");
-  const router = vm.runInNewContext(routeSource, { Router, rateLimit, ...(await handlers()) });
+  const router = vm.runInNewContext(routeSource, { Router, rateLimit, authMiddleware: (_req, _res, next) => next(), ...(await handlers()) });
   const app = express(); app.use(express.json()); app.use("/api/auth", router);
   const server = app.listen(0, "127.0.0.1");
   await new Promise((resolve) => server.once("listening", resolve));

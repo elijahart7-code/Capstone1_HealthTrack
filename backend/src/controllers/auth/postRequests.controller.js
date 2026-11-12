@@ -78,6 +78,30 @@ export async function verifyLoginCode(req, res) {
   });
 }
 
+export async function changePassword(req, res) {
+  const { current_password, new_password } = req.body || {};
+  if (typeof current_password !== "string" || !current_password) {
+    return res.status(422).json({ error: "Enter your current password." });
+  }
+  const error = passwordError(new_password);
+  if (error) return res.status(422).json({ error });
+  if (current_password === new_password) {
+    return res.status(422).json({ error: "The new password must be different from the current one." });
+  }
+  const rows = await sql`
+    SELECT user_id, password FROM users WHERE user_id = ${req.user.user_id} AND is_verified = TRUE
+  `;
+  const user = rows[0];
+  if (!user || !(await bcrypt.compare(current_password, user.password))) {
+    return res.status(401).json({ error: "The current password is incorrect." });
+  }
+  const hash = await bcrypt.hash(new_password, 12);
+  await sql`UPDATE users SET password = ${hash}, updated_at = NOW() WHERE user_id = ${user.user_id}`;
+  // Sessions are stateless JWTs: existing tokens stay valid until they
+  // expire (at most JWT_EXPIRES_IN), the new password gates the next sign-in.
+  return res.json({ message: "Password changed. Use it the next time you sign in." });
+}
+
 export async function resendLoginCode(req, res) {
   if (!ENV.LOGIN_OTP_ENABLED) return res.status(404).json({ error: "Not found." });
   res.set("Cache-Control", "no-store");

@@ -197,3 +197,163 @@ export async function getReports(req, res) {
     summary: summaryRows?.[0] || null,
   });
 }
+
+// Official statistical report: aggregate counts only, never patient names.
+// Sections mirror barangay/FHSIS-style reporting: population served, visit
+// volume, morbidity profile, and program signals for the same date range.
+export async function getAggregateReport(req, res) {
+  const dateFrom = /^\d{4}-\d{2}-\d{2}$/.test(req.query.from || "")
+    ? req.query.from
+    : new Date(new Date().setDate(new Date().getDate() - 90)).toISOString().slice(0, 10);
+  const dateTo = /^\d{4}-\d{2}-\d{2}$/.test(req.query.to || "")
+    ? req.query.to
+    : new Date().toISOString().slice(0, 10);
+
+  const [demographicsRows, visitRows, reasonRows, morbidity, immunizationRows, allergyRows, documentationRows] = await Promise.all([
+    sql.query(
+      `SELECT COUNT(*)::int AS total,
+        COUNT(*) FILTER (WHERE LOWER(TRIM(sex)) = 'male')::int AS male,
+        COUNT(*) FILTER (WHERE LOWER(TRIM(sex)) = 'female')::int AS female,
+        COUNT(*) FILTER (WHERE yrs < 1)::int AS age_lt1,
+        COUNT(*) FILTER (WHERE yrs BETWEEN 1 AND 4)::int AS age_1_4,
+        COUNT(*) FILTER (WHERE yrs BETWEEN 5 AND 14)::int AS age_5_14,
+        COUNT(*) FILTER (WHERE yrs BETWEEN 15 AND 24)::int AS age_15_24,
+        COUNT(*) FILTER (WHERE yrs BETWEEN 25 AND 39)::int AS age_25_39,
+        COUNT(*) FILTER (WHERE yrs BETWEEN 40 AND 59)::int AS age_40_59,
+        COUNT(*) FILTER (WHERE yrs >= 60)::int AS age_60_up,
+        COUNT(*) FILTER (WHERE created_at >= $1::date AND created_at < ($2::date + INTERVAL '1 day'))::int AS new_patients
+       FROM (SELECT sex, created_at, date_part('year', age(CURRENT_DATE, birthdate))::int AS yrs
+             FROM patients WHERE archived_at IS NULL) p`,
+      [dateFrom, dateTo]
+    ),
+    sql.query(
+      `SELECT COUNT(*)::int AS total,
+        COUNT(*) FILTER (WHERE status = 'completed')::int AS completed,
+        COUNT(*) FILTER (WHERE status = 'cancelled')::int AS cancelled,
+        COUNT(DISTINCT patient_id) FILTER (WHERE status = 'completed')::int AS patients_served
+       FROM appointments
+       WHERE scheduled_at >= $1::date AND scheduled_at < ($2::date + INTERVAL '1 day')`,
+      [dateFrom, dateTo]
+    ),
+    sql.query(
+      `SELECT COALESCE(NULLIF(TRIM(reason), ''), 'Not specified') AS label, COUNT(*)::int AS count
+       FROM appointments
+       WHERE scheduled_at >= $1::date AND scheduled_at < ($2::date + INTERVAL '1 day')
+       GROUP BY 1 ORDER BY count DESC LIMIT 5`,
+      [dateFrom, dateTo]
+    ),
+    sql.query(
+      `SELECT COALESCE(NULLIF(TRIM(ha.condition), ''), 'Not specified') AS label,
+        COUNT(*)::int AS count,
+        COUNT(*) FILTER (WHERE LOWER(TRIM(p.sex)) = 'male')::int AS male,
+        COUNT(*) FILTER (WHERE LOWER(TRIM(p.sex)) = 'female')::int AS female
+       FROM health_assessments ha
+       JOIN patients p ON p.patient_id = ha.patient_id
+       WHERE ha.assessment_date >= $1::date AND ha.assessment_date < ($2::date + INTERVAL '1 day')
+         AND p.archived_at IS NULL
+       GROUP BY 1 ORDER BY count DESC LIMIT 10`,
+      [dateFrom, dateTo]
+    ),
+    sql.query(
+      `SELECT COALESCE(NULLIF(TRIM(immunization_status), ''), 'Not specified') AS label, COUNT(*)::int AS count
+       FROM health_background
+       WHERE recorded_at >= $1::date AND recorded_at < ($2::date + INTERVAL '1 day')
+       GROUP BY 1 ORDER BY count DESC`,
+      [dateFrom, dateTo]
+    ),
+    sql.query(
+      `SELECT COUNT(*) FILTER (WHERE NULLIF(TRIM(medication_allergies), '') IS NOT NULL)::int AS medication,
+        COUNT(*) FILTER (WHERE NULLIF(TRIM(food_allergies), '') IS NOT NULL)::int AS food,
+        COUNT(*) FILTER (WHERE NULLIF(TRIM(environmental_allergies), '') IS NOT NULL)::int AS environmental
+       FROM allergies
+       WHERE recorded_at >= $1::date AND recorded_at < ($2::date + INTERVAL '1 day')`,
+      [dateFrom, dateTo]
+    ),
+    sql.query(
+      `SELECT COUNT(*) FILTER (WHERE a.status = 'completed' AND (
+          EXISTS (SELECT 1 FROM vital_signs r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
+          EXISTS (SELECT 1 FROM health_assessments r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
+          EXISTS (SELECT 1 FROM midwife_notes r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
+          EXISTS (SELECT 1 FROM health_background r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id) OR
+          EXISTS (SELECT 1 FROM allergies r WHERE r.patient_id = a.patient_id AND r.appointment_id = a.appointment_id)
+        ))::int AS documented
+       FROM appointments a
+       WHERE a.scheduled_at >= $1::date AND a.scheduled_at < ($2::date + INTERVAL '1 day')`,
+      [dateFrom, dateTo]
+    ),
+  ]);
+
+  const demo = parseAggregateDemographics(demographicsRows[0]);
+  return res.status(200).json({
+    message: "Aggregate report retrieved.",
+    filters: { from: dateFrom, to: dateTo },
+    demographics: demo,
+    visits: {
+      total: visitRows[0]?.total || 0,
+      completed: visitRows[0]?.completed || 0,
+      cancelled: visitRows[0]?.cancelled || 0,
+      patientsServed: visitRows[0]?.patients_served || 0,
+      reasons: reasonRows,
+    },
+    morbidity: morbidity,
+    programs: {
+      immunization: immunizationRows,
+      allergies: allergyRows[0] || { medication: 0, food: 0, environmental: 0 },
+      documented: documentationRows[0]?.documented || 0,
+    },
+  });
+}
+
+function parseAggregateDemographics(demo) {
+  demo = demo || {};
+  return {
+    total: demo.total || 0,
+    male: demo.male || 0,
+    female: demo.female || 0,
+    newPatients: demo.new_patients || 0,
+    ageBands: [
+      { label: "<1", count: demo.age_lt1 || 0 },
+      { label: "1–4", count: demo.age_1_4 || 0 },
+      { label: "5–14", count: demo.age_5_14 || 0 },
+      { label: "15–24", count: demo.age_15_24 || 0 },
+      { label: "25–39", count: demo.age_25_39 || 0 },
+      { label: "40–59", count: demo.age_40_59 || 0 },
+      { label: "60+", count: demo.age_60_up || 0 },
+    ],
+  };
+}
+
+// Operational drill-down for the midwife: who carries a given condition in
+// the period. In-app only (admin role) — the printed/PDF report keeps
+// aggregates exclusively, so patient names never reach paper.
+export async function getConditionPatients(req, res) {
+  const condition = typeof req.params.condition === "string" ? req.params.condition.trim() : "";
+  if (!condition) return res.status(422).json({ error: "Choose a condition to list." });
+  const dateFrom = /^\d{4}-\d{2}-\d{2}$/.test(req.query.from || "")
+    ? req.query.from
+    : new Date(new Date().setDate(new Date().getDate() - 90)).toISOString().slice(0, 10);
+  const dateTo = /^\d{4}-\d{2}-\d{2}$/.test(req.query.to || "")
+    ? req.query.to
+    : new Date().toISOString().slice(0, 10);
+
+  const patients = await sql.query(
+    `SELECT p.patient_id, p.first_name, p.middle_name, p.last_name, p.sex, p.birthdate,
+      date_part('year', age(CURRENT_DATE, p.birthdate))::int AS age,
+      MAX(ha.assessment_date)::date AS latest_assessment,
+      (ARRAY_AGG(ha.status ORDER BY ha.assessment_date DESC, ha.id DESC))[1] AS latest_status
+     FROM health_assessments ha
+     JOIN patients p ON p.patient_id = ha.patient_id
+     WHERE LOWER(TRIM(ha.condition)) = LOWER(TRIM($1))
+       AND ha.assessment_date >= $2::date AND ha.assessment_date < ($3::date + INTERVAL '1 day')
+       AND p.archived_at IS NULL
+     GROUP BY p.patient_id, p.first_name, p.middle_name, p.last_name, p.sex, p.birthdate
+     ORDER BY p.last_name, p.first_name`,
+    [condition, dateFrom, dateTo]
+  );
+
+  return res.status(200).json({
+    message: "Condition patients retrieved.",
+    filters: { condition, from: dateFrom, to: dateTo },
+    patients,
+  });
+}
