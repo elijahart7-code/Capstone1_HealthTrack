@@ -3,16 +3,13 @@ import {
   CalendarDays,
   HeartPulse,
   ClipboardList,
-  ShieldAlert,
-  ArrowRight,
-  FileText,
   PersonStanding,
   House,
   Landmark,
   Phone,
   Clock,
   Eye,
-  Plus,
+  UserRound,
   Droplet,
   Apple,
   Activity,
@@ -99,53 +96,14 @@ export function Dashboard({ dashboard }) {
 />
 
 <PatientMetricCard
-  icon={<ShieldAlert size={32} strokeWidth={1.6} />}
+  icon={<UserRound size={30} strokeWidth={1.8} />}
   iconClass="allergies"
-  title="Known Allergies"
-  description="View your  recorded allergies information."
-  onClick={() => setSearchParams({ page: "health-information", section: "allergies" })}
+  title="Portal Account"
+  description="View your general information and account."
+  onClick={() => setSearchParams({ page: "health-information", section: "patient-information" })}
 />
 
       </div>
-
-
-      <section className="patient-health-summary">
-
-        <div className="patient-health-heading">
-
-          <div className="patient-health-summary-icon">
-            <FileText size={34} strokeWidth={1.8} />
-          </div>
-
-          <div className="patient-health-copy">
-
-            <h2>Your Health Information</h2>
-
-            <p>
-              Your personal information, Vital Signs, Health Assessment,
-              Midwife Notes, Health Background and Allergies are all
-              recorded by the Midwife and shown in one place.
-            </p>
-
-          </div>
-
-        </div>
-
-        <button
-          type="button"
-          className="patient-summary-button"
-          onClick={() => setSearchParams({ page: "health-information" })}
-        >
-          View My Health Information
-          <ArrowRight size={18} />
-        </button>
-
-        <div className="patient-health-illustration" aria-hidden="true">
-          <ClipboardList size={92} strokeWidth={1.5} />
-          <span><Plus size={24} strokeWidth={3} /></span>
-        </div>
-
-      </section>
 
 
       <section className="patient-panel">
@@ -172,29 +130,29 @@ export function Dashboard({ dashboard }) {
           <ContactCard
             icon={<House size={22} strokeWidth={1.8} />}
             title="Brgy. Health Center"
-            line1="Brgy. Mambog I, Bacoor, Cavite"
-            line2="(046) 123-4567"
+            line1=" Diamond St. Mambog I, Bacoor, Cavite 4102"
+            line2=" Contact Number | Hotline :0946 417 1932"
           />
 
           <ContactCard
             icon={<Landmark size={22} strokeWidth={1.8} />}
             title="City Gov. of Bacoor"
-            line1="Bacoor City Hall, Bacoor, Cavite"
-            line2="(046) 417-3000"
+            line1=" Bacoor Blvd, Bayanan, City of Bacoor, Cavite"
+            line2=" Dial: (046) 481 4100 or +63 46 481 4144"
           />
 
           <ContactCard
             icon={<Phone size={22} strokeWidth={1.8} />}
             title="Emergency Hotline"
-            line1="(+63) 912-345-6789"
-            line2="24/7 Available"
+            line1="Priority Emergency Hotline: call 161 or 911"
+            line2="BDRRMO: (046) 417-0727 | 24/7 Available" 
           />
 
           <ContactCard
             icon={<Clock size={22} strokeWidth={1.8} />}
-            title="Office Hours"
-            line1="Mon - Fri: 8:00 AM - 5:00 PM"
-            line2="Closed on weekends and holidays"
+            title="Availability Hours"
+            line1="Mon - Fri: 8:00 AM - 5:00 PM (government)"
+            line2="Closed on weekends and special holidays"
           />
 
         </div>
@@ -222,7 +180,7 @@ export function Dashboard({ dashboard }) {
 
           <TipItem
             icon={<Droplet size={23} strokeWidth={1.8} />}
-            text="Drink plenty of water daily."
+            text="Drink plenty of water everyday."
             type="water"
           />
 
@@ -234,7 +192,7 @@ export function Dashboard({ dashboard }) {
 
           <TipItem
             icon={<PersonStanding size={23} strokeWidth={1.8} />}
-            text="Stay active and exercise."
+            text="Stay active and regular exercise."
             type="activity"
           />
 

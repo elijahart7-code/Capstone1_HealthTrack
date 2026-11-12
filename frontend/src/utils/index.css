@@ -3405,12 +3405,14 @@ Reusable surfaces, panel headings, metrics, and section icons.
     }
 
     .patient-sidebar-label {
+        width: 100%;
         margin-top: 0.5rem;
         padding: 0 0.5rem;
         color: #5d6966;
         font-size: 0.7rem;
         font-weight: 800;
         letter-spacing: 0.08em;
+        text-align: center;
     }
 
     .patient-sidebar-icon {
@@ -3638,7 +3640,7 @@ Reusable surfaces, panel headings, metrics, and section icons.
         min-height: 40px;
         padding: 0.6rem 0.95rem;
         border: 1px solid #000;
-        border-radius: 10px;
+        border-radius: 999px;
         background: linear-gradient(180deg, var(--color-brand) 0%, var(--color-brand-strong) 100%);
         color: #fff;
         font-family: var(--font-sans);
@@ -6131,13 +6133,13 @@ Table layout, recorded-date information, and footer.
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  min-height: 40px;
-  padding: 0.6rem 0.95rem;
+  min-height: 44px;
+  padding: 0.7rem 1.05rem;
   color: #fff;
   background: linear-gradient(180deg, var(--color-brand) 0%, var(--color-brand-strong) 100%);
   border: 1px solid #000;
   border-radius: 10px;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   font-family: var(--font-sans);
   cursor: pointer;
@@ -8862,30 +8864,13 @@ Dashboard charts, report records, export dialogs, and print output.
 
 .patient-consultation-record-scroll {
     box-sizing: border-box;
-    height: calc(46px + 3 * 70px);
+    height: 256px;
     min-width: 0;
     overflow-x: auto;
     overflow-y: scroll;
     padding-right: 12px;
     background: transparent;
     scrollbar-gutter: stable;
-    scrollbar-color: #8ca99a #edf4ef;
-    scrollbar-width: thin;
-}
-
-.patient-consultation-record-scroll::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-}
-
-.patient-consultation-record-scroll::-webkit-scrollbar-track {
-    background: #edf4ef;
-}
-
-.patient-consultation-record-scroll::-webkit-scrollbar-thumb {
-    border: 3px solid #edf4ef;
-    border-radius: 999px;
-    background: #8ca99a;
 }
 
 .patient-consultation-record-table {
@@ -8902,22 +8887,22 @@ Dashboard charts, report records, export dialogs, and print output.
 
 .patient-consultation-record-table th:nth-child(1),
 .patient-consultation-record-table td:nth-child(1) {
-    width: 34%;
+    width: 25%;
 }
 
 .patient-consultation-record-table th:nth-child(2),
 .patient-consultation-record-table td:nth-child(2) {
-    width: 30%;
+    width: 25%;
 }
 
 .patient-consultation-record-table th:nth-child(3),
 .patient-consultation-record-table td:nth-child(3) {
-    width: 18%;
+    width: 25%;
 }
 
 .patient-consultation-record-table th:nth-child(4),
 .patient-consultation-record-table td:nth-child(4) {
-    width: 18%;
+    width: 25%;
 }
 
 .patient-consultation-record-table th {
@@ -9017,7 +9002,7 @@ Dashboard charts, report records, export dialogs, and print output.
 }
 
 .patient-consultation-record-details > td {
-    padding: 14px;
+    padding: 14px 14px 0;
     border-bottom: 1px solid #dce8e1;
     background: #fff;
 }
@@ -9034,6 +9019,10 @@ Dashboard charts, report records, export dialogs, and print output.
     display: grid;
     gap: 0.75rem;
     margin: 0;
+}
+
+.patient-consultation-record-details .patient-consultation-record-sections {
+    margin-bottom: 16px;
 }
 
 .patient-consultation-section {
@@ -9235,13 +9224,82 @@ Dashboard charts, report records, export dialogs, and print output.
     white-space: nowrap;
 }
 
+.patient-consultation-section-content .patient-latest-card-content .patient-table-wrap {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-color: #8ca99a #edf4ef;
+    scrollbar-width: thin;
+}
+
+.patient-consultation-section-content .patient-latest-card-content .patient-table-wrap::-webkit-scrollbar {
+    display: block;
+    height: 8px;
+}
+
+.patient-consultation-section-content .patient-latest-card-content .patient-table-wrap::-webkit-scrollbar-track {
+    background: #edf4ef;
+}
+
+.patient-consultation-section-content .patient-latest-card-content .patient-table-wrap::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #8ca99a;
+}
+
+.patient-consultation-section-content .patient-latest-card-content .patient-health-table {
+    width: max-content;
+    min-width: 100%;
+    max-width: none;
+    table-layout: auto;
+}
+
+.patient-consultation-section-content .patient-latest-card-content .patient-health-table th {
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+}
+
+.patient-consultation-section-content .patient-latest-card-content .patient-health-table td {
+    letter-spacing: 0.5px;
+}
+
+.patient-consultation-section-content .patient-latest-card-content .patient-medical-history-latest-table {
+    width: max-content !important;
+    min-width: max-content !important;
+    max-width: none !important;
+    table-layout: auto !important;
+}
+
+.patient-consultation-section-content .patient-latest-card-content .patient-medical-history-latest-table th {
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: keep-all !important;
+}
+
+.patient-consultation-section-content .patient-latest-card-content .patient-medical-history-latest-table td {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+}
+
 .patient-consultation-section-content .patient-latest-vitals .patient-vital-horizontal-table th,
 .patient-consultation-section-content .patient-latest-allergies .patient-health-table th {
     white-space: pre-line;
 }
 
+.patient-consultation-section-content .patient-latest-vitals .patient-vital-horizontal-table th {
+    white-space: nowrap;
+}
+
 .patient-consultation-section-content .patient-latest-medical-history .patient-health-table th {
     white-space: pre-line;
+}
+
+.patient-consultation-section-content .patient-latest-allergies .patient-health-table th,
+.patient-consultation-section-content .patient-latest-medical-history .patient-health-table th {
+    white-space: nowrap !important;
+    overflow-wrap: normal;
+    word-break: keep-all;
 }
 
 .patient-consultation-section-content .patient-latest-medical-history .patient-health-background-header-line {
@@ -9429,10 +9487,54 @@ Dashboard charts, report records, export dialogs, and print output.
 .patient-healthinfo-main-overview .patient-latest-card:not(.patient-latest-appointment-card) .patient-health-table th {
     white-space: normal;
     text-align: center;
+    letter-spacing: 0.5px;
 }
 
-.patient-healthinfo-main-overview .patient-latest-vitals .patient-vital-horizontal-table th {
+.patient-healthinfo-main-overview .patient-latest-card:not(.patient-latest-appointment-card) .patient-health-table td {
+    letter-spacing: 0.5px;
+}
+
+.patient-consultation-record-list .patient-consultation-record-table th,
+.patient-consultation-record-list .patient-consultation-record-table td,
+.patient-consultation-record-list .patient-consultation-section-content .patient-health-table th,
+.patient-consultation-record-list .patient-consultation-section-content .patient-health-table td {
+    letter-spacing: 0.5px;
+}
+
+.patient-healthinfo-main-overview .patient-latest-card.patient-latest-vitals .patient-vital-horizontal-table.patient-health-table th {
+    white-space: nowrap;
+}
+
+.patient-healthinfo-main-overview .patient-latest-card.patient-latest-vitals .patient-vital-horizontal-table.patient-health-table th.patient-vital-header-wrapped {
     white-space: pre-line;
+}
+
+.patient-healthinfo-main-overview .patient-latest-vitals .patient-vital-horizontal-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-color: #8ca99a #edf4ef;
+    scrollbar-width: thin;
+}
+
+.patient-healthinfo-main-overview .patient-latest-vitals .patient-vital-horizontal-wrap::-webkit-scrollbar {
+    display: block;
+    height: 8px;
+}
+
+.patient-healthinfo-main-overview .patient-latest-vitals .patient-vital-horizontal-wrap::-webkit-scrollbar-track {
+    background: #edf4ef;
+}
+
+.patient-healthinfo-main-overview .patient-latest-vitals .patient-vital-horizontal-wrap::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #8ca99a;
+}
+
+.patient-healthinfo-main-overview .patient-latest-card.patient-latest-vitals .patient-vital-horizontal-table.patient-health-table {
+    width: max-content;
+    min-width: 1650px;
+    max-width: none;
+    table-layout: auto;
 }
 
 .patient-healthinfo-main-overview .patient-latest-assessment .patient-assessment-remarks {
@@ -9469,21 +9571,45 @@ Dashboard charts, report records, export dialogs, and print output.
     white-space: normal;
 }
 
-.patient-healthinfo-main-overview .patient-latest-medical-history .patient-health-table th {
-    white-space: pre-line !important;
-}
-
-.patient-healthinfo-main-overview .patient-latest-medical-history .patient-health-background-header-line {
-    display: block;
-    white-space: nowrap;
-}
-
+.patient-healthinfo-main-overview .patient-latest-medical-history .patient-health-table th,
 .patient-healthinfo-main-overview .patient-latest-allergies .patient-health-table th {
-    white-space: pre-line;
+    white-space: nowrap !important;
 }
 
 .patient-healthinfo-main-overview .patient-latest-midwife-notes .patient-midwife-note-lines {
     text-align: center;
+}
+
+.patient-healthinfo-main-overview .patient-latest-card:not(.patient-latest-vitals) .patient-overview-horizontal-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-color: #8ca99a #edf4ef;
+    scrollbar-width: thin;
+}
+
+.patient-healthinfo-main-overview .patient-latest-card:not(.patient-latest-vitals) .patient-overview-horizontal-scroll::-webkit-scrollbar {
+    display: block;
+    height: 8px;
+}
+
+.patient-healthinfo-main-overview .patient-latest-card:not(.patient-latest-vitals) .patient-overview-horizontal-scroll::-webkit-scrollbar-track {
+    background: #edf4ef;
+}
+
+.patient-healthinfo-main-overview .patient-latest-card:not(.patient-latest-vitals) .patient-overview-horizontal-scroll::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #8ca99a;
+}
+
+.patient-healthinfo-main-overview .patient-latest-card:not(.patient-latest-vitals) .patient-overview-horizontal-scroll > .patient-health-table {
+    width: max-content !important;
+    min-width: 100% !important;
+    max-width: none !important;
+    table-layout: auto !important;
+}
+
+.patient-healthinfo-main-overview .patient-latest-card:not(.patient-latest-vitals) .patient-overview-horizontal-scroll > .patient-health-table th {
+    white-space: pre !important;
 }
 
 body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-dashboard-header,
@@ -9503,6 +9629,101 @@ body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-health-tips
 @layer components {
     body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-metric-card {
         border: 1px solid #000 !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-panel {
+        border: 1px solid #000 !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-section-header h2 {
+        color: #000 !important;
+        font-size: 18px !important;
+        font-weight: 900 !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-section-header p {
+        color: #000 !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-tips-heading h2 {
+        color: #000 !important;
+        font-size: 18px !important;
+        font-weight: 900 !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-tips-heading p {
+        color: #000 !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-contact-card {
+        display: grid !important;
+        grid-template-columns: 42px minmax(0, 1fr) !important;
+        align-items: start !important;
+        column-gap: 12px !important;
+        row-gap: 0.4rem !important;
+        border: 1px solid #000 !important;
+        padding: 0.8rem !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-contact-icon {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-contact-body {
+        display: contents !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-contact-body h3 {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        align-self: center !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        color: #000 !important;
+        font-family: "Inter", sans-serif !important;
+        font-size: 22px !important;
+        font-weight: 800 !important;
+        line-height: 1.4 !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-contact-body p,
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-contact-body span {
+        grid-column: 1 / -1 !important;
+        display: block !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        color: #000 !important;
+        font-family: "Inter", sans-serif !important;
+        font-size: 13px !important;
+        font-weight: 500 !important;
+        line-height: 1.5 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-tip-item,
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-health-tips .patient-tip-item.water,
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-health-tips .patient-tip-item.food,
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-health-tips .patient-tip-item.activity,
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-health-tips .patient-tip-item.sleep {
+        background: #fff !important;
+    }
+
+    body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-tip-item > span {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        color: #000 !important;
+        font-size: 14px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
     }
 
     body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-view-button {
@@ -9580,6 +9801,40 @@ body:has(.patient-dashboard-shell) .patient-welcome-simple p {
     background: #fff;
 }
 
+@media (min-width: 981px) {
+    .patient-healthinfo-main > .patient-information-card,
+    .patient-healthinfo-main > .patient-appointments-card,
+    .patient-healthinfo-main > .patient-consultation-record-list {
+        box-sizing: border-box !important;
+        height: 360px !important;
+        min-height: 360px !important;
+        max-height: 360px !important;
+        overflow: hidden !important;
+    }
+
+    .patient-healthinfo-main > .patient-information-card {
+        overflow: hidden !important;
+    }
+
+    .patient-information-scroll {
+        box-sizing: border-box;
+        max-height: 264px;
+        overflow-x: auto;
+        overflow-y: scroll;
+        scrollbar-gutter: stable;
+        padding-right: 12px;
+        background: transparent;
+    }
+}
+
+.patient-appointments-card .patient-table-wrap,
+.patient-consultation-record-scroll,
+.patient-information-scroll {
+    scrollbar-gutter: stable;
+    scrollbar-color: auto;
+    scrollbar-width: auto;
+}
+
 .patient-healthinfo-main > .patient-information-card .patient-card-header,
 .patient-healthinfo-main > .patient-appointments-card .patient-card-header,
 .patient-healthinfo-main > .patient-consultation-record-list > .patient-consultation-record-list-title {
@@ -9603,4 +9858,84 @@ body:has(.patient-dashboard-shell) .patient-welcome-simple p {
 .ht-patient-main .ht-content-card .ht-card-heading > .ht-appointments-heading {
     font-size: 20px;
     font-weight: 950;
+}
+
+@layer components {
+    .patient-healthinfo-main-overview .patient-health-background-overview-wrap {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scrollbar-color: #8ca99a #edf4ef !important;
+        scrollbar-width: thin !important;
+    }
+
+    .patient-healthinfo-main-overview .patient-health-background-overview-wrap::-webkit-scrollbar {
+        display: block !important;
+        height: 8px !important;
+    }
+
+    .patient-healthinfo-main-overview .patient-health-background-overview-wrap::-webkit-scrollbar-track {
+        background: #edf4ef;
+    }
+
+    .patient-healthinfo-main-overview .patient-health-background-overview-wrap::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: #8ca99a;
+    }
+
+    .patient-healthinfo-main-overview .patient-health-background-overview-table {
+        display: table !important;
+        width: max-content !important;
+        min-width: max-content !important;
+        max-width: none !important;
+        table-layout: auto !important;
+    }
+
+    .patient-healthinfo-main-overview .patient-health-background-overview-table th {
+        min-width: max-content !important;
+        white-space: nowrap !important;
+        overflow-wrap: normal !important;
+        word-break: keep-all !important;
+    }
+
+    .patient-consultation-section-content .patient-latest-medical-history .patient-health-background-overview-wrap {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scrollbar-color: #8ca99a #edf4ef !important;
+        scrollbar-width: thin !important;
+    }
+
+    .patient-consultation-section-content .patient-latest-medical-history .patient-health-background-overview-wrap::-webkit-scrollbar {
+        display: block !important;
+        height: 8px !important;
+    }
+
+    .patient-consultation-section-content .patient-latest-medical-history .patient-health-background-overview-wrap::-webkit-scrollbar-track {
+        background: #edf4ef;
+    }
+
+    .patient-consultation-section-content .patient-latest-medical-history .patient-health-background-overview-wrap::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: #8ca99a;
+    }
+
+    .patient-consultation-section-content .patient-latest-medical-history .patient-health-background-overview-table {
+        display: table !important;
+        width: max-content !important;
+        min-width: max-content !important;
+        max-width: none !important;
+        table-layout: auto !important;
+    }
+
+    .patient-consultation-section-content .patient-latest-medical-history .patient-health-background-overview-table th {
+        min-width: max-content !important;
+        white-space: nowrap !important;
+        overflow-wrap: normal !important;
+        word-break: keep-all !important;
+    }
 }

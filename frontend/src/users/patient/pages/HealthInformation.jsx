@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { getCurrentUser } from "../../../lib/auth";
 import { ClinicalRecordSections } from "../../../shared/patients/ClinicalRecordSections";
@@ -45,7 +45,7 @@ const SECTION_ICONS = {
   allergies: Activity,
 };
 
-const HEALTH_ASSESSMENT_CHILD_SECTIONS = [
+const MEDICAL_RECORD_SECTIONS = [
   "health-assessment",
   "vital-signs",
   "allergies",
@@ -54,16 +54,6 @@ const HEALTH_ASSESSMENT_CHILD_SECTIONS = [
 ];
 export function HealthInformation({ healthInfo }) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentSection = searchParams.get("section");
-  const [assessmentExpanded, setAssessmentExpanded] = useState(() =>
-    HEALTH_ASSESSMENT_CHILD_SECTIONS.includes(currentSection)
-  );
-
-  useEffect(() => {
-    if (HEALTH_ASSESSMENT_CHILD_SECTIONS.includes(currentSection)) {
-      setAssessmentExpanded(true);
-    }
-  }, [currentSection]);
 
   if (!healthInfo?.patient) {
     return (
@@ -188,13 +178,8 @@ const upcomingAppointment =
           <SidebarItem
             icon={Stethoscope}
             label="Medical Records"
-            active={section === "health-assessment"}
-            expanded={assessmentExpanded}
-            onClick={() => {
-              setAssessmentExpanded(true);
-              selectSection("health-assessment");
-            }}
-            onToggle={() => setAssessmentExpanded((expanded) => !expanded)}
+            active={MEDICAL_RECORD_SECTIONS.includes(section)}
+            onClick={() => selectSection("health-assessment")}
           />
         </nav>
 
@@ -285,42 +270,41 @@ const upcomingAppointment =
               </div>
             </div>
 
-            <div className="patient-information-grid">
-              <InfoField icon={User} label="Full Name" value={patientName} />
-              <InfoField icon={UserRound} label="Sex" value={patient.sex} />
-              <InfoField icon={MapPin} label="Address" value={patient.address} />
-              <InfoField icon={CalendarDays} label="Date of Birth" value={patient.birthdate ? new Date(patient.birthdate).toLocaleDateString() : null} />
-              <InfoField icon={Clock3} label="Age" value={patient.age != null ? `${patient.age} years old` : null} />
-              <InfoField icon={Phone} label="Contact Number" value={patient.contact_number} />
-              <InfoField icon={HeartPulse} label="Civil Status" value={patient.civil_status} />
-              <InfoField icon={Droplets} label="Blood Type" value={patient.blood_type} />
-              <InfoField icon={Briefcase} label="Occupation" value={patient.occupation} />
-              <InfoField icon={IdCard} label="Barangay ID Number" value={patient.barangay_id_number} />
-              <InfoField icon={Flag} label="Nationality" value={patient.nationality} />
-              <InfoField icon={MapPin} label="Place of Birth" value={patient.place_of_birth} />
-            </div>
-            <div className="patient-information-emergency-row">
-              <InfoField icon={UsersRound} label="Emergency Contact" value={patient.emergency_contact_name} />
-              <InfoField icon={PhoneCall} label="Emergency Contact Number" value={patient.emergency_contact_number} />
-              <InfoField icon={UserRound} label="Relationship" value={patient.emergency_contact_relationship} />
+            <div className="patient-information-scroll">
+              <div className="patient-information-grid">
+                <InfoField icon={User} label="Full Name" value={patientName} />
+                <InfoField icon={UserRound} label="Sex" value={patient.sex} />
+                <InfoField icon={MapPin} label="Address" value={patient.address} />
+                <InfoField icon={CalendarDays} label="Date of Birth" value={patient.birthdate ? new Date(patient.birthdate).toLocaleDateString() : null} />
+                <InfoField icon={Clock3} label="Age" value={patient.age != null ? `${patient.age} years old` : null} />
+                <InfoField icon={Phone} label="Contact Number" value={patient.contact_number} />
+                <InfoField icon={HeartPulse} label="Civil Status" value={patient.civil_status} />
+                <InfoField icon={Droplets} label="Blood Type" value={patient.blood_type} />
+                <InfoField icon={Briefcase} label="Occupation" value={patient.occupation} />
+                <InfoField icon={IdCard} label="Barangay ID Number" value={patient.barangay_id_number} />
+                <InfoField icon={Flag} label="Nationality" value={patient.nationality} />
+                <InfoField icon={MapPin} label="Place of Birth" value={patient.place_of_birth} />
+              </div>
+              <div className="patient-information-emergency-row">
+                <InfoField icon={UsersRound} label="Emergency Contact" value={patient.emergency_contact_name} />
+                <InfoField icon={PhoneCall} label="Emergency Contact Number" value={patient.emergency_contact_number} />
+                <InfoField icon={UserRound} label="Relationship" value={patient.emergency_contact_relationship} />
+              </div>
+              <PatientPortalAccount patient={patient} currentUser={currentUser} />
             </div>
         </section>}
 
-        {section === "patient-information" && (
-          <PatientPortalAccount patient={patient} currentUser={currentUser} />
-        )}
-
-        {[
-  "health-assessment",
-  "vital-signs",
-  "allergies",
-  "medical-history",
-  "midwife-notes",
-].includes(section) ? (
+        {["health-assessment", "vital-signs", "medical-history", "midwife-notes"].includes(section) ? (
   <HealthAssessmentHistory
     recordTypes={recordTypes}
     records={records}
     appointments={appointments}
+  />
+) : section === "allergies" ? (
+  <AllergyRecordsSection
+    definition={recordTypes.allergies}
+    records={records.allergies || []}
+    onViewAll={() => selectSection("allergies")}
   />
 ) : (
   Object.entries(recordTypes).map(([key, definition]) =>
@@ -404,24 +388,7 @@ function InfoField({ icon: Icon, label, value }) {
   );
 }
 
-function SidebarItem({ icon: Icon, label, active, expanded, onClick, onToggle }) {
-  if (onToggle) {
-    return (
-      <div className="patient-sidebar-item-row">
-        <button
-          type="button"
-          onClick={onClick}
-          className={`patient-sidebar-item patient-sidebar-item-main ${active ? "is-active" : ""}`}
-          aria-current={active ? "page" : undefined}
-        >
-          <span className="patient-sidebar-icon"><Icon size={30} strokeWidth={1.8} /></span>
-          <span>{label}</span>
-        </button>
-        
-      </div>
-    );
-  }
-
+function SidebarItem({ icon: Icon, label, active, onClick }) {
   return (
     <button
       type="button"
@@ -430,20 +397,6 @@ function SidebarItem({ icon: Icon, label, active, expanded, onClick, onToggle })
       aria-current={active ? "page" : undefined}
     >
       <span className="patient-sidebar-icon"><Icon size={30} strokeWidth={1.8} /></span>
-      <span>{label}</span>
-    </button>
-  );
-}
-
-function SidebarChild({ label, active, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`patient-sidebar-child ${active ? "is-active" : ""}`}
-      aria-current={active ? "page" : undefined}
-    >
-      <span className="patient-sidebar-child-dot" />
       <span>{label}</span>
     </button>
   );
@@ -532,7 +485,7 @@ function LatestRecordCard({ title, icon: Icon, type, definition, record, action,
 
   if (embedded) {
     return record
-      ? <div className="patient-latest-card-content">{children}</div>
+      ? <div className={`patient-latest-card-content patient-latest-${type}`}>{children}</div>
       : <div className="patient-empty-state">No {definition.label.toLowerCase()} recorded for this consultation.</div>;
   }
 
@@ -665,7 +618,11 @@ function LatestAppointment({
                 <thead>
                   <tr>
                     {columns.map(({ key, label }) => (
-                      <th scope="col" key={key}>
+                      <th
+                        scope="col"
+                        key={key}
+                        className={["bmi", "oxygen_saturation"].includes(key) ? "patient-vital-header-wrapped" : undefined}
+                      >
                         {label}
                       </th>
                     ))}
@@ -707,7 +664,7 @@ function LatestVitalSigns({ definition, record, onViewVitalSigns, showAction = t
     .map((key) => ({ key, ...VITAL_SIGN_PRESENTATION[key] }));
   const metadata = getRecordMetadata(tableRecords[0] || record, definition).map((column) => ({
     ...column,
-    label: column.key === "record-date" ? "Date\nRecorded" : "Recorded\nBy",
+    label: column.key === "record-date" ? "Date Recorded" : "Recorded By",
   }));
   const columns = [...vitalRows, ...metadata];
   const cardRecord = tableRecords[0] || record;
@@ -790,6 +747,19 @@ function LatestHealthAssessment({
     }));
   const columns = [...assessmentItems, ...getRecordMetadata(tableRecords[0] || record, definition)];
   const cardRecord = tableRecords[0] || record;
+  const embeddedColumnWidths = {
+    condition: 98,
+    description: 200,
+    status: 110,
+    medication: 124,
+    remarks: 200,
+    "record-date": 173,
+    "recorded-by": 160,
+  };
+  const embeddedTableWidth = columns.reduce(
+    (width, { key }) => width + (embeddedColumnWidths[key] || 160),
+    0
+  );
 
   return (
     <LatestRecordCard
@@ -813,7 +783,21 @@ function LatestHealthAssessment({
     >
       {tableRecords.length > 0 ? (
         <div className="patient-table-wrap patient-assessment-horizontal-wrap patient-overview-horizontal-scroll" tabIndex={0}>
-          <table className="patient-health-table patient-assessment-horizontal-table">
+          <table
+            className="patient-health-table patient-assessment-horizontal-table"
+            style={embedded ? {
+              width: embeddedTableWidth,
+              minWidth: embeddedTableWidth,
+              tableLayout: "fixed",
+            } : undefined}
+          >
+            {embedded && (
+              <colgroup>
+                {columns.map(({ key }) => (
+                  <col key={key} style={{ width: embeddedColumnWidths[key] || 160 }} />
+                ))}
+              </colgroup>
+            )}
             <thead>
               <tr>
                 {columns.map(({ key, label }) => (
@@ -875,11 +859,11 @@ function LatestAllergies({
     .map((key) => ({ key, label: definition.fields[key].label }));
 
   const labelOverrides = {
-    medication_allergies: "Medication\nAllergies",
-    food_allergies: "Food\nAllergies",
-    environmental_allergies: "Environmental\nAllergies",
-    "record-date": "Date\nRecorded",
-    "recorded-by": "Recorded\nBy",
+    medication_allergies: "Medication Allergies",
+    food_allergies: "Food Allergies",
+    environmental_allergies: "Environmental Allergies",
+    "record-date": "Date Recorded",
+    "recorded-by": "Recorded By",
   };
   const rows = [...fields, ...getRecordMetadata(tableRecords[0] || record, definition)].map((item) => ({
     ...item,
@@ -1051,17 +1035,13 @@ function LatestMedicalHistory({
       )}
     >
       {tableRecords.length > 0 ? (
-        <div className="patient-table-wrap patient-medical-history-latest-wrap patient-overview-horizontal-scroll" tabIndex={0}>
-          <table className="patient-health-table patient-medical-history-latest-table">
+        <div className="patient-table-wrap patient-medical-history-latest-wrap patient-health-background-overview-wrap patient-overview-horizontal-scroll" tabIndex={0}>
+          <table className="patient-health-table patient-medical-history-latest-table patient-health-background-overview-table">
             <thead>
               <tr>
                 {columns.map(({ key, label }) => (
                   <th scope="col" key={key}>
-                    {label.split("\n").map((line, index) => (
-                      <span className="patient-health-background-header-line" key={`${key}-${index}`}>
-                        {line}
-                      </span>
-                    ))}
+                    {label.replace(/\n/g, " ")}
                   </th>
                 ))}
               </tr>
@@ -1396,15 +1376,15 @@ function AssessmentDetailRows({ fields, assessmentDate, recordedOn, recordedBy }
 }
 
 const VITAL_SIGN_PRESENTATION = {
-  blood_pressure: { label: "Blood\nPressure", unit: "mmHg" },
+  blood_pressure: { label: "Blood Pressure", unit: "mmHg" },
   temperature: { label: "Temperature", unit: "°C" },
-  pulse_rate: { label: "Pulse\nRate", unit: "bpm" },
-  respiratory_rate: { label: "Respiratory\nRate", unit: "breaths/min" },
+  pulse_rate: { label: "Pulse Rate", unit: "bpm" },
+  respiratory_rate: { label: "Respiratory Rate", unit: "breaths/min" },
   height_cm: { label: "Height", unit: "cm" },
   weight_kg: { label: "Weight", unit: "kg" },
   bmi: { label: "Body Mass\nIndex (BMI)", unit: "kg/m²" },
   oxygen_saturation: { label: "Oxygen\nSaturation (SpO2)", unit: "%" },
-  pain_score: { label: "Pain\nScore", unit: "0–10" },
+  pain_score: { label: "Pain Score", unit: "0–10" },
 };
 
 function VitalSignsSection({ definition, records, onViewAll }) {
