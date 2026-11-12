@@ -5,6 +5,8 @@
   "description": "HealthTrack -- barangay patient information management system (Express + Neon Postgres + React stack).",
   "scripts": {
     "dev": "concurrently -k -n PATIENT-API,ADMIN-API,WORKER-API,PATIENT,ADMIN,WORKER \"npm run dev --prefix backend\" \"npm run dev:admin --prefix backend\" \"npm run dev:health-worker --prefix backend\" \"npm run dev --prefix frontend\" \"npm run dev:admin --prefix frontend\" \"npm run dev:health-worker --prefix frontend\"",
+    "dev:admin": "concurrently -k -n ADMIN-API,ADMIN \"npm run dev:admin --prefix backend\" \"npm run dev:admin --prefix frontend\"",
+    "dev:health-worker": "concurrently -k -n WORKER-API,WORKER \"npm run dev:health-worker --prefix backend\" \"npm run dev:health-worker --prefix frontend\"",
     "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
     "start": "npm run start --prefix backend",
     "start:admin": "npm run start:admin --prefix backend",
