@@ -108,8 +108,8 @@ export function ExportDialog({ onClose, conditions = [] }) {
 
   return (
     <>
-      <div className="ht-modal-overlay" role="dialog" aria-label="Export PDF options">
-        <div className="ht-modal-card ht-export-dialog">
+      <div className="ht-confirm-backdrop" role="dialog" aria-label="Export PDF options">
+        <div className="ht-confirm-dialog ht-export-dialog">
           <h2>Export PDF</h2>
           <p className="ht-muted">The PDF prints exactly what is configured here.</p>
           {error && <div role="alert" className="ht-login-alert ht-login-alert-error">{error}</div>}
@@ -165,7 +165,7 @@ export function ExportDialog({ onClose, conditions = [] }) {
               </label>
             </>
           )}
-          <div className="ht-modal-actions">
+          <div className="ht-confirm-actions">
             <button type="button" className="ht-button" onClick={onClose}>Cancel</button>
             <button type="button" className="ht-button ht-auth-submit" onClick={handleExport} disabled={working}>
               {working ? "Preparing…" : "Export PDF"}
@@ -183,4 +183,11 @@ export function ExportDialog({ onClose, conditions = [] }) {
       )}
     </>
   );
+}
+
+// The patient-record sidebar used to carry its own print button. The official
+// report now lives on the admin dashboard, so this keeps the slot empty rather
+// than printing an aggregate the staff portals are not allowed to fetch.
+export function PatientExportButton() {
+  return null;
 }

@@ -87,8 +87,16 @@ export function StatisticalDocument({ report, generatedAt, sections = ALL_SECTIO
       )}
 
       <footer className="ht-stat-signatures">
-        <div><span>Prepared by (Midwife):</span><span className="ht-stat-sigline" /><span>Date: ____________</span></div>
-        <div><span>Noted by (Barangay Captain):</span><span className="ht-stat-sigline" /><span>Date: ____________</span></div>
+        <div>
+          <span className="ht-stat-sig-role">Prepared by (Midwife):</span>
+          <span className="ht-stat-sigline" aria-hidden="true" />
+          <span className="ht-stat-sig-date">Date: ____________</span>
+        </div>
+        <div>
+          <span className="ht-stat-sig-role">Noted by (Barangay Captain):</span>
+          <span className="ht-stat-sigline" aria-hidden="true" />
+          <span className="ht-stat-sig-date">Date: ____________</span>
+        </div>
       </footer>
       <p className="ht-stat-footnote">HealthTrack statistical report — aggregate counts only, no patient names. For barangay health planning use.</p>
     </article>
