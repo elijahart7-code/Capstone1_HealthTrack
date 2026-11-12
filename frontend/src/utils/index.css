@@ -9962,3 +9962,86 @@ body:has(.patient-dashboard-shell) .patient-welcome-simple p {
         word-break: keep-all !important;
     }
 }
+
+/* Official statistical report (scope A: aggregates only, no patient names).
+   Restored: this block was dropped in a stash/checkout cycle, which left the
+   printed report unstyled (collapsed tables, run-together signature footer). */
+.ht-stat-wrap { display: grid; gap: 12px; }
+.ht-stat-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; }
+.ht-stat-toolbar label { display: grid; gap: 4px; font-size: 13px; }
+.ht-stat-toolbar input[type="date"] { padding: 8px; border: 1px solid #b9cfc0; border-radius: 6px; }
+.ht-stat-report { background: #fff; border: 1px solid #dce8e1; border-radius: 10px; padding: 28px; color: #0b2e21; }
+.ht-stat-header { text-align: center; border-bottom: 3px double #0b2e21; padding-bottom: 12px; margin-bottom: 16px; }
+.ht-stat-header h1 { font-size: 20px; margin: 0; }
+.ht-stat-header p { margin: 4px 0 0; font-size: 13px; }
+.ht-stat-section { margin: 18px 0; break-inside: avoid; }
+.ht-stat-section h2 { font-size: 15px; margin: 0 0 8px; }
+.ht-stat-section h3 { font-size: 13px; margin: 12px 0 6px; }
+.ht-stat-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ht-stat-table th, .ht-stat-table td { border: 1px solid #9db8a8; padding: 6px 8px; text-align: left; }
+.ht-stat-table thead th { background: #eef5f0; }
+.ht-stat-narrative { font-size: 13px; line-height: 1.55; margin: 6px 0; padding-left: 20px; }
+.ht-stat-signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 32px; font-size: 13px; }
+.ht-stat-signatures > div { display: grid; gap: 4px; align-content: start; }
+.ht-stat-sig-role { font-weight: 600; }
+.ht-stat-sigline { display: block; height: 30px; border-bottom: 1px solid #0b2e21; }
+.ht-stat-sig-date { margin-top: 4px; }
+@media print { .ht-stat-signatures { break-inside: avoid; page-break-inside: avoid; } }
+.ht-stat-footnote { margin-top: 16px; font-size: 11px; color: #475569; }
+@media print {
+  .ht-admin-shell > header.ht-topbar, .no-print { display: none !important; }
+  .ht-admin-shell > main.ht-content { padding: 0; }
+  .ht-stat-wrap { display: block; }
+  .ht-stat-report { border: none; border-radius: 0; padding: 0; }
+  .ht-stat-section h2 { font-size: 12pt; }
+  .ht-stat-table { font-size: 9pt; }
+  .ht-stat-narrative { font-size: 9.5pt; }
+}
+
+/* Export PDF dialog: "Sections to include" is a fieldset, so it needs explicit
+   block layout. Without these rules every checkbox label runs together into a
+   single inline blob ("☑A. Population served☑B. Visit volume…"). */
+.ht-export-sections {
+  display: grid;
+  gap: 8px;
+  margin: 6px 0 0;
+  padding: 14px 16px;
+  border: 1px solid #dce8e1;
+  border-radius: 10px;
+  background: #fbfdfc;
+}
+.ht-export-sections > legend {
+  padding: 0 6px;
+  color: #40534a;
+  font-size: 12px;
+  font-weight: 700;
+}
+.ht-export-sections > label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  cursor: pointer;
+}
+.ht-export-sections > label > input[type="checkbox"] {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #16a34a;
+  cursor: pointer;
+}
+
+/* Keep the Export PDF dialog usable: compact vertical rhythm, and pair the
+   section rows once there is room so the action buttons stay in view. */
+.ht-export-dialog { display: flex; flex-direction: column; gap: 6px; max-height: 92vh; overflow: auto; padding: 22px 26px; }
+.ht-export-dialog > h2 { margin: 0 0 2px; }
+.ht-export-dialog > p { margin: 0 0 8px; }
+.ht-export-dialog .ht-field { display: grid; gap: 4px; }
+.ht-export-dialog .ht-confirm-actions { margin-top: 14px; }
+@media (min-width: 460px) {
+  .ht-export-sections { grid-template-columns: 1fr 1fr; column-gap: 18px; }
+  .ht-export-sections > legend { grid-column: 1 / -1; }
+}

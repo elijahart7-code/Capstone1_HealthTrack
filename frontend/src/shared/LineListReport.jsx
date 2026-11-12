@@ -29,8 +29,16 @@ export function LineListDocument({ condition, from, to, rows, limitNote, generat
         </table>}
 
       <footer className="ht-stat-signatures">
-        <div><span>Prepared by (Midwife):</span><span className="ht-stat-sigline" /><span>Date: ____________</span></div>
-        <div><span>Noted by (Barangay Captain):</span><span className="ht-stat-sigline" /><span>Date: ____________</span></div>
+        <div>
+          <span className="ht-stat-sig-role">Prepared by (Midwife):</span>
+          <span className="ht-stat-sigline" aria-hidden="true" />
+          <span className="ht-stat-sig-date">Date: ____________</span>
+        </div>
+        <div>
+          <span className="ht-stat-sig-role">Noted by (Barangay Captain):</span>
+          <span className="ht-stat-sigline" aria-hidden="true" />
+          <span className="ht-stat-sig-date">Date: ____________</span>
+        </div>
       </footer>
       <p className="ht-stat-footnote">Operational worklist for follow-up use — not the statistical report. Handle according to patient confidentiality rules.</p>
     </article>
