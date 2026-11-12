@@ -1,5 +1,6 @@
 import { ReportInsights, ReportMetrics } from "../../../shared/ReportInsights";
 import { AppointmentDate } from "../../../shared/appointments/AppointmentDate";
+import { ExportDialog } from "../../../shared/ExportDialog";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
@@ -222,6 +223,7 @@ function NotableEvents({ appointments, onAppointmentClick, limit = 100 }) {
 export function Dashboard({ dashboard, appointments, loadData }) {
   const [, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState("overview");
+  const [showExport, setShowExport] = useState(false);
   const [reportSets, setReportSets] = useState({});
   const [reportError, setReportError] = useState(null);
   const today = new Date().toLocaleDateString(undefined, {
@@ -291,6 +293,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
     <div className="grid gap-4">
       <div className="ht-dashboard-screen">
         <PageHeader title="Admin Overview" subtitle="Barangay Health Center of Mambog I">
+          <button type="button" className="ht-button" onClick={() => setShowExport(true)}>Export PDF</button>
           <span className="ht-pill ht-pill-count"><CalendarDays size={18} strokeWidth={2} />{today}</span>
         </PageHeader>
 
@@ -358,6 +361,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
           </div>
         )}
       </div>
+      {showExport && <ExportDialog onClose={() => setShowExport(false)} />}
 
     </div>
   );

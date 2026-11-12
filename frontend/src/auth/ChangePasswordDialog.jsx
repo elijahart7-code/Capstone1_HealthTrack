@@ -8,7 +8,7 @@ export function ChangePasswordButton() {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button type="button" className="ht-header-password" onClick={() => setOpen(true)}>
+      <button type="button" className="ht-header-logout" onClick={() => setOpen(true)}>
         <KeyRound size={18} strokeWidth={1.9} />
         Change password
       </button>
@@ -48,8 +48,8 @@ export function ChangePasswordDialog({ onClose }) {
   }
 
   return (
-    <div className="ht-modal-overlay" role="dialog" aria-label="Change password">
-      <form className="ht-modal-card" onSubmit={handleSubmit}>
+    <div className="ht-confirm-backdrop" role="dialog" aria-label="Change password">
+      <form className="ht-confirm-dialog" onSubmit={handleSubmit}>
         <h2>Change password</h2>
         <p className="ht-muted">Use at least 12 characters. Other signed-in sessions stay valid until they expire.</p>
         {error && <div role="alert" className="ht-login-alert ht-login-alert-error">{error}</div>}
@@ -66,7 +66,7 @@ export function ChangePasswordDialog({ onClose }) {
           <span>Confirm new password</span>
           <input className="ht-input" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" />
         </label>
-        <div className="ht-modal-actions">
+        <div className="ht-confirm-actions">
           <button type="button" className="ht-button" onClick={onClose}>Close</button>
           <button type="submit" className="ht-button ht-auth-submit" disabled={loading || !current || !next || !confirm}>
             {loading ? "Saving…" : "Save new password"}
