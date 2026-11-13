@@ -311,7 +311,7 @@ for (const [role, Patients] of [["admin", AdminPatients], ["health worker", Work
       const row = [...document.querySelectorAll("tbody tr")].find(row => row.textContent.includes(name));
       const badge = row.querySelector(".ht-status-badge");
       assert.equal(badge.textContent, label);
-      assert.ok(badge.classList.contains(`ht-status-badge-${tone}`));
+      assert.ok(badge.classList.contains(`ht-portal-account-status-${tone}`));
     }
   });
 }
