@@ -81,10 +81,10 @@ export default function SiteKeyGate({ children }) {
 
   return (
     <div className="ht-auth-page">
-      <form className="ht-auth-card" onSubmit={handleSubmit}>
-        <div className="ht-auth-header">
+      <form className="ht-auth-card ht-site-key-card" onSubmit={handleSubmit}>
+        <div className="ht-auth-header ht-site-gate-header">
           <ShieldCheck size={28} aria-hidden="true" />
-          <h1>Restricted area</h1>
+          <h1>Restricted Area</h1>
           <p>This staff portal requires an access key before sign-in.</p>
         </div>
         {error && (

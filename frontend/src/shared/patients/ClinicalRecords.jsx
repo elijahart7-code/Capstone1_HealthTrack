@@ -33,45 +33,306 @@ import {
   Hospital,
 } from "lucide-react";
 import { Combobox, Field, Input, MultiCombobox, Select, Textarea } from "../../components/ui/Input";
-import { Table, Th, Td } from "../../components/ui/Table";
 
-function clinicalTableHeading(type, column, label) {
-  if (type === "vital-signs" && (column === "date-recorded" || column === "recorded-by")) {
-    const [first, second] = label.split(" ");
-    return <>{first}<br />{second}</>;
-  }
+const PATIENT_VITAL_PRESENTATION = {
+  blood_pressure: { label: "Blood Pressure", unit: "mmHg" },
+  temperature: { label: "Temperature", unit: "°C" },
+  pulse_rate: { label: "Pulse Rate", unit: "bpm" },
+  respiratory_rate: { label: "Respiratory Rate", unit: "breaths/min" },
+  height_cm: { label: "Height", unit: "cm" },
+  weight_kg: { label: "Weight", unit: "kg" },
+  bmi: { label: "Body Mass\nIndex (BMI)", unit: "kg/m²" },
+  oxygen_saturation: { label: "Oxygen\nSaturation (SpO2)", unit: "%" },
+  pain_score: { label: "Pain Score", unit: "0–10" },
+};
 
-  if (type === "medical-history" || type === "allergies") {
-    const words = label.split(/\s+/);
-    if (words.length > 1) {
-      const midpoint = label.length / 2;
-      let splitIndex = 1;
-      let shortestDistance = Infinity;
+function hasPatientRecordValue(value) {
+  return value !== null && value !== undefined && String(value).trim() !== "";
+}
 
-      for (let index = 1; index < words.length; index += 1) {
-        const distance = Math.abs(words.slice(0, index).join(" ").length - midpoint);
-        if (distance < shortestDistance) {
-          shortestDistance = distance;
-          splitIndex = index;
-        }
-      }
+function formatPatientRecordDate(value) {
+  if (!value) return "--";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "--";
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
 
-      return <>{words.slice(0, splitIndex).join(" ")}<br />{words.slice(splitIndex).join(" ")}</>;
-    }
-  }
+function getPatientRecordFields(definition, record, keys) {
+  return keys
+    .filter((key) => hasPatientRecordValue(record[key]))
+    .map((key) => {
+      const field = definition.fields[key];
+      const rawValue = record[key];
+      return {
+        key,
+        label: field?.label || key,
+        value: ["select", "combobox"].includes(field?.type)
+          ? field.options?.[rawValue] || rawValue
+          : rawValue,
+      };
+    });
+}
 
-  if (type !== "vital-signs") return label;
+function getPatientRecordMetadata(record, definition) {
+  const recordedBy =
+    record.created_by_name ||
+    record.createdByName ||
+    record.recorded_by_name ||
+    record.recordedByName ||
+    record.created_by ||
+    record.recorded_by;
 
-  const match = label.match(/^(.*?)\s*(\([^)]*\))$/);
-  const title = match?.[1] || label;
-  const unit = column === "blood_pressure" ? "(mmHg)" : match?.[2];
+  return [
+    {
+      key: "record-date",
+      label: definition.label === "Health Assessment"
+        ? "Assessment Date"
+        : definition.dateLabel?.trim() || "Date Recorded",
+      value: formatPatientRecordDate(record[definition.dateField]),
+    },
+    {
+      key: "recorded-by",
+      label: "Recorded By",
+      value: recordedBy || "Not recorded",
+    },
+  ];
+}
+
+function getPatientMidwifeNoteLines(value) {
+  if (!hasPatientRecordValue(value)) return [];
+
+  return String(value)
+    .replace(/\r\n/g, "\n")
+    .split(/\n|\s+-\s+/)
+    .map((line) => line.replace(/^\s*-\s*/, "").trim())
+    .filter(Boolean);
+}
+
+function PatientClinicalRecordTable({ type, definition, record }) {
+  const patientType = {
+    "health-assessment": "assessment",
+    "vital-signs": "vitals",
+    "midwife-notes": "midwife-notes",
+    "medical-history": "medical-history",
+    allergies: "allergies",
+  }[type] || type;
 
   return (
-    <>
-      {title}
-      {unit && <><br />{unit}</>}
-    </>
+    <div className={`patient-latest-card-content patient-latest-${patientType}`}>
+      <PatientClinicalRecordTableContent type={type} definition={definition} record={record} />
+    </div>
   );
+}
+
+function PatientClinicalRecordTableContent({ type, definition, record }) {
+  if (type === "vital-signs") {
+    const fields = Object.keys(definition.fields)
+      .filter((key) => PATIENT_VITAL_PRESENTATION[key] && hasPatientRecordValue(record[key]))
+      .map((key) => ({ key, ...PATIENT_VITAL_PRESENTATION[key] }));
+    const metadata = getPatientRecordMetadata(record, definition).map((column) => ({
+      ...column,
+      label: column.key === "record-date" ? "Date Recorded" : "Recorded By",
+    }));
+    const columns = [...fields, ...metadata];
+
+    return (
+      <div className="patient-table-wrap patient-vital-horizontal-wrap patient-overview-horizontal-scroll" tabIndex={0}>
+        <table className="patient-health-table patient-vital-horizontal-table">
+          <thead>
+            <tr>{columns.map(({ key, label }) => <th scope="col" key={key}>{label}</th>)}</tr>
+          </thead>
+          <tbody>
+            <tr>
+              {columns.map(({ key, unit }) => (
+                <td key={key}>
+                  {unit ? (
+                    <>
+                      <span className="patient-vital-value">{record[key] || "--"}</span>
+                      <span className="patient-vital-unit">{unit}</span>
+                    </>
+                  ) : metadata.find((item) => item.key === key)?.value}
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  if (type === "health-assessment") {
+    const fields = Object.keys(definition.fields)
+      .filter((key) => hasPatientRecordValue(record[key]))
+      .map((key) => ({ key, label: definition.fields[key].label }));
+    const columns = [...fields, ...getPatientRecordMetadata(record, definition)];
+    const columnWidths = {
+      condition: 98,
+      description: 200,
+      status: 110,
+      medication: 124,
+      remarks: 200,
+      "record-date": 173,
+      "recorded-by": 160,
+    };
+    const tableWidth = columns.reduce((width, { key }) => width + (columnWidths[key] || 160), 0);
+
+    return (
+      <div className="patient-table-wrap patient-assessment-horizontal-wrap patient-overview-horizontal-scroll" tabIndex={0}>
+        <table
+          className="patient-health-table patient-assessment-horizontal-table"
+          style={{ width: tableWidth, minWidth: tableWidth, tableLayout: "fixed" }}
+        >
+          <colgroup>{columns.map(({ key }) => <col key={key} style={{ width: columnWidths[key] || 160 }} />)}</colgroup>
+          <thead>
+            <tr>{columns.map(({ key, label }) => <th scope="col" key={key}>{label}</th>)}</tr>
+          </thead>
+          <tbody>
+            <tr>
+              {columns.map(({ key }) => {
+                const value = key === "record-date" || key === "recorded-by"
+                  ? columns.find((item) => item.key === key)?.value
+                  : getPatientRecordFields(definition, record, [key])[0]?.value || "--";
+                return (
+                  <td
+                    key={key}
+                    className={key === "remarks"
+                      ? "patient-assessment-remarks-cell"
+                      : key === "description"
+                        ? "patient-assessment-description-cell"
+                        : undefined}
+                  >
+                    {key === "remarks"
+                      ? <span className="patient-assessment-remarks">{value}</span>
+                      : key === "description"
+                        ? <span className="patient-assessment-description">{value}</span>
+                        : value}
+                  </td>
+                );
+              })}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  if (type === "allergies") {
+    const fields = Object.keys(definition.fields)
+      .filter((key) => hasPatientRecordValue(record[key]))
+      .map((key) => ({ key, label: definition.fields[key].label }));
+    const labelOverrides = {
+      medication_allergies: "Medication Allergies",
+      food_allergies: "Food Allergies",
+      environmental_allergies: "Environmental Allergies",
+      "record-date": "Date Recorded",
+      "recorded-by": "Recorded By",
+    };
+    const columns = [...fields, ...getPatientRecordMetadata(record, definition)].map((item) => ({
+      ...item,
+      label: labelOverrides[item.key] || item.label,
+    }));
+
+    return (
+      <div className="patient-table-wrap patient-allergies-horizontal-wrap patient-overview-horizontal-scroll" tabIndex={0}>
+        <table className="patient-health-table patient-allergies-horizontal-table">
+          <thead>
+            <tr>{columns.map(({ key, label }) => <th scope="col" key={key}>{label}</th>)}</tr>
+          </thead>
+          <tbody>
+            <tr>
+              {columns.map(({ key }) => {
+                const value = key === "record-date" || key === "recorded-by"
+                  ? columns.find((item) => item.key === key)?.value
+                  : getPatientRecordFields(definition, record, [key])[0]?.value || "--";
+                return <td key={key}>{value}</td>;
+              })}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  if (type === "midwife-notes") {
+    const fields = Object.keys(definition.fields)
+      .filter((key) => hasPatientRecordValue(record[key]))
+      .map((key) => ({ key, label: definition.fields[key].label }));
+    const columns = [...fields, ...getPatientRecordMetadata(record, definition)];
+
+    return (
+      <div className="patient-table-wrap patient-midwife-horizontal-wrap patient-overview-horizontal-scroll" tabIndex={0}>
+        <table className="patient-health-table patient-midwife-horizontal-table">
+          <thead>
+            <tr>{columns.map(({ key, label }) => <th scope="col" key={key}>{label}</th>)}</tr>
+          </thead>
+          <tbody>
+            <tr>
+              {columns.map(({ key }) => {
+                const value = key === "record-date" || key === "recorded-by"
+                  ? columns.find((item) => item.key === key)?.value
+                  : getPatientRecordFields(definition, record, [key])[0]?.value || "--";
+                return (
+                  <td key={key}>
+                    {key === "notes" ? (
+                      <div className="patient-midwife-value patient-midwife-note-lines">
+                        {getPatientMidwifeNoteLines(value).map((line, index) => (
+                          <div key={`${index}-${line}`}>- {line}</div>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="patient-midwife-value">{value}</span>
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  if (type === "medical-history") {
+    const fields = [
+      { key: "past_illnesses", label: "Past Illnesses" },
+      { key: "chronic_conditions", label: "Chronic Conditions" },
+      { key: "past_surgeries", label: "Past Surgeries" },
+      { key: "previous_hospitalizations", label: "Previous Hospitalizations" },
+      { key: "family_medical_history", label: "Family Health History" },
+      { key: "immunization_status", label: "Immunization Status" },
+    ].filter(({ key }) => hasPatientRecordValue(record[key]));
+    const metadata = getPatientRecordMetadata(record, definition).map((item) => ({
+      ...item,
+      label: item.key === "record-date" ? "Date Recorded" : "Recorded By",
+    }));
+    const columns = [...fields, ...metadata];
+
+    return (
+      <div className="patient-table-wrap patient-medical-history-latest-wrap patient-health-background-overview-wrap patient-overview-horizontal-scroll" tabIndex={0}>
+        <table className="patient-health-table patient-medical-history-latest-table patient-health-background-overview-table">
+          <thead>
+            <tr>{columns.map(({ key, label }) => <th scope="col" key={key}>{label}</th>)}</tr>
+          </thead>
+          <tbody>
+            <tr>
+              {columns.map(({ key }) => {
+                const value = key === "record-date" || key === "recorded-by"
+                  ? metadata.find((item) => item.key === key)?.value
+                  : getPatientRecordFields(definition, record, [key])[0]?.value || "--";
+                return <td key={key}>{value}</td>;
+              })}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  return null;
 }
 
 export function ClinicalRecords({ patientId, type, role, readOnly = false, appointmentId, appointmentDate, appendOnly = false, embedded = false, draftMode = false, draft = {}, onDraftChange, disabled = false }) {
@@ -401,7 +662,12 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
   const isMidwifeNotes = type === "midwife-notes";
 
   return (
-    <div className={`ht-health-assessment${embedded ? " ht-clinical-content" : ""}`}>
+    <div className={`ht-health-assessment${embedded
+      ? readOnly
+        ? " patient-consultation-section-content"
+        : " ht-clinical-content"
+      : ""}`}
+    >
       {!draftMode && (canManage || !embedded) && <div className="ht-health-assessment-header">
         {!embedded && <div>
           <h2>{definition.label}</h2>
@@ -599,22 +865,14 @@ export function ClinicalRecords({ patientId, type, role, readOnly = false, appoi
         </div>
       ) : embedded ? (
         <div className="ht-clinical-records">
-          <Table>
-            <thead>
-              <tr>
-                {Object.entries(definition.fields).map(([column, field]) => <Th key={column}>{clinicalTableHeading(type, column, field.label)}</Th>)}
-                <Th>{clinicalTableHeading(type, "date-recorded", definition.dateLabel.trim())}</Th>
-                <Th>{clinicalTableHeading(type, "recorded-by", "Recorded By")}</Th>
-              </tr>
-            </thead>
-            <tbody>
-              {records.map(record => <tr key={record.record_id}>
-                {Object.entries(definition.fields).map(([column, field]) => <Td key={column}>{formatValue(record[column], field)}</Td>)}
-                <Td>{getRecordDate(record)}</Td>
-                <Td>{getRecordedBy(record) || "--"}</Td>
-              </tr>)}
-            </tbody>
-          </Table>
+          {records.map((record) => (
+            <PatientClinicalRecordTable
+              key={record.record_id}
+              type={type}
+              definition={definition}
+              record={record}
+            />
+          ))}
           {records.length >= perPage && <button type="button" className="ht-small-button" onClick={() => setPerPage(p => p + 10)}>Show more records</button>}
         </div>
       ) : isMidwifeNotes ? (

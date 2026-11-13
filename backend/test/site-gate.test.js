@@ -82,7 +82,7 @@ test("staff portal with a key hides pages and APIs until unlocked", async () => 
     assert.equal(root.status, 200);
     assert.match(root.headers.get("content-type"), /text\/html/);
     const page = await root.text();
-    assert.match(page, /Restricted area/);
+    assert.match(page, /Restricted Area/);
     assert.match(page, /\/api\/site\/unlock/);
     assert.equal(page.includes("<html>staff</html>"), false);
     assert.equal(page.includes(SITE_KEY), false);

@@ -52,15 +52,15 @@ const UNLOCK_PAGE = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
-<title>Restricted area</title>
+<title>Restricted Area</title>
 <style>body{font-family:system-ui,Arial,sans-serif;background:#f2faf6;color:#073b2a;display:flex;min-height:100vh;margin:0;align-items:center;justify-content:center}
-main{background:#fff;border-radius:12px;padding:32px;max-width:400px;width:calc(100% - 32px);box-shadow:0 4px 24px rgba(7,59,42,.12)}
-h1{font-size:22px;margin:0 0 8px}p{margin:0 0 16px;color:#475569;font-size:14px}
+main{box-sizing:border-box;background:#fff;border:2px solid #000;border-radius:12px;padding:32px;max-width:400px;width:calc(100% - 32px);box-shadow:0 4px 24px rgba(7,59,42,.12)}
+h1{font-size:22px;margin:0 0 8px;text-align:center}p{margin:0 0 16px;color:#475569;font-size:14px;text-align:center}
 label{display:block;font-size:14px;margin-bottom:12px}input{width:100%;box-sizing:border-box;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin-top:6px}
 button{background:#16a34a;color:#fff;border:0;border-radius:8px;padding:12px;width:100%;font-weight:bold;cursor:pointer}
 #error{color:#b91c1c;font-size:14px;min-height:20px;margin:0 0 8px}</style>
 </head><body><main>
-<h1>Restricted area</h1>
+<h1>Restricted Area</h1>
 <p>This staff portal requires an access key before sign-in.</p>
 <p id="error" role="alert"></p>
 <form id="gate"><label>Access key<input id="key" type="password" autocomplete="off" autofocus></label>

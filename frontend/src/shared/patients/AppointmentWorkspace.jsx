@@ -254,7 +254,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
         sections={TYPES.map(type => ({ key: type, label: RECORD_TYPES[type].label }))}
         expanded={recording}
         resetKey={`${selected}-${recording}-${recordVersion}`}
-        className={recording ? "is-recording" : ""}
+        className={recording ? "is-recording" : role === "admin" ? "patient-consultation-record-sections" : ""}
         renderSection={type => (
           <ClinicalRecords
             patientId={patientId}

@@ -9,7 +9,7 @@ test("staff apps render behind the site key gate", async () => {
   const gate = await read("src/auth/SiteKeyGate.jsx");
   assert.match(gate, /\/api\/site\/status/);
   assert.match(gate, /\/api\/site\/unlock/);
-  assert.match(gate, /Restricted area/);
+  assert.match(gate, /Restricted Area/);
   assert.doesNotMatch(gate, /type="file"/);
 
   for (const app of ["src/utils/AdminApp.jsx", "src/utils/HealthWorkerApp.jsx"]) {
