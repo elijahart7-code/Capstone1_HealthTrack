@@ -66,7 +66,7 @@ after(() => db.close());
 
 test("initiation stores only a hash, sets 15-minute expiry, normalizes email, and enforces resend cooldown", async () => {
   await provision();
-  assert.equal(await service.initiate(" Patient@Example.com "), true);
+  assert.ok(await service.initiate(" Patient@Example.com "));
   assert.match(mail[0].token, /^[a-f0-9]{64}$/);
   const user = (await sql`SELECT * FROM users`)[0];
   assert.equal(user.verification_token, hash(mail[0].token));
@@ -74,18 +74,49 @@ test("initiation stores only a hash, sets 15-minute expiry, normalizes email, an
   assert.equal(user.is_verified, false);
   const remaining = new Date(user.token_expires_at).getTime() - Date.now();
   assert.ok(remaining > 14 * 60000 && remaining <= 15 * 60000);
-  assert.equal(await service.initiate("patient@example.com"), false);
+  assert.equal(await service.initiate("patient@example.com"), null);
   assert.equal(mail.length, 1);
 });
 
-test("unknown, verified, staff, and archived accounts cannot be enrolled or overwritten", async () => {
-  await provision({ email: "verified@example.com", verified: true });
+test("unknown, staff, and archived accounts cannot be enrolled or overwritten", async () => {
   await provision({ email: "staff@example.com", role: "admin" });
   await provision({ email: "archived@example.com", archived: true });
-  for (const email of ["unknown@example.com", "verified@example.com", "staff@example.com", "archived@example.com"]) assert.equal(await service.initiate(email), false);
+  for (const email of ["unknown@example.com", "staff@example.com", "archived@example.com"]) assert.equal(await service.initiate(email), null);
   assert.equal(mail.length, 0);
-  assert.equal((await sql`SELECT COUNT(*)::int AS count FROM users`)[0].count, 3);
+  assert.equal((await sql`SELECT COUNT(*)::int AS count FROM users`)[0].count, 2);
   assert.ok((await sql`SELECT verification_token FROM users`).every((user) => user.verification_token === null));
+});
+
+test("an active patient receives a reset email while a pending one receives activation", async () => {
+  await provision({ email: "active@example.com", verified: true });
+  const reset = await service.initiate("active@example.com");
+  assert.deepEqual(reset, { email: "active@example.com", variant: "reset" });
+  await provision({ email: "pending@example.com", verified: false });
+  const activate = await service.initiate("pending@example.com");
+  assert.deepEqual(activate, { email: "pending@example.com", variant: "activate" });
+});
+
+test("a reset link changes the password of an active account and keeps it active", async () => {
+  await provision({ verified: true });
+  await service.initiate("patient@example.com");
+  const user = await service.complete(mail[0].token, "a brand new reset passphrase");
+  assert.equal(user.email, "patient@example.com");
+  const stored = (await sql`SELECT * FROM users`)[0];
+  assert.equal(stored.is_verified, true);
+  assert.equal(stored.verification_token, null);
+  assert.equal(await bcrypt.compare("a brand new reset passphrase", stored.password), true);
+  assert.equal(await bcrypt.compare("password", stored.password), false);
+  assert.equal(await service.complete(mail[0].token, "another attempt passphrase"), null);
+});
+
+test("an active account can request a reset even though it was already verified", async () => {
+  await provision({ verified: true });
+  assert.ok(await service.initiate("patient@example.com"));
+  assert.equal(mail.length, 1);
+  await sql`UPDATE users SET verification_sent_at = NOW() - INTERVAL '61 seconds'`;
+  assert.ok(await service.initiate("patient@example.com"));
+  assert.equal(mail.length, 2);
+  assert.notEqual(mail[1].token, mail[0].token);
 });
 
 test("delivery failure invalidates its token and allows retry", async () => {
@@ -94,7 +125,7 @@ test("delivery failure invalidates its token and allows retry", async () => {
   const user = (await sql`SELECT * FROM users`)[0];
   assert.equal(user.verification_token, null); assert.equal(user.token_expires_at, null); assert.equal(user.verification_sent_at, null);
   failMail = false;
-  assert.equal(await service.initiate("patient@example.com"), true);
+  assert.ok(await service.initiate("patient@example.com"));
 });
 
 test("resend invalidates the old link and expired links cannot finalize", async () => {
@@ -480,7 +511,7 @@ test("failed delivery keeps the corrected email pending and leaves the previous 
   assert.equal(user.email, "corrected@example.com"); assert.equal(user.is_verified, false);
   assert.equal(user.verification_token, null); assert.equal(user.verification_sent_at, null);
   assert.equal(await service.complete(oldToken, password), null);
-  assert.equal(await service.initiate("corrected@example.com"), true);
+  assert.ok(await service.initiate("corrected@example.com"));
 });
 
 test("confirmation winning a race prevents a staff correction from changing an active account", async () => {
@@ -507,6 +538,36 @@ test("concurrent staff email corrections cannot silently overwrite each other", 
   assert.deepEqual([first.code, second.code].sort(), [200, 409]);
   assert.equal(mail.length, 1);
   assert.equal((await sql`SELECT email FROM users WHERE user_id = ${id}`)[0].email, mail[0].email);
+});
+
+test("a reset email asks to change the password while activation still asks 'Yes, this is me'", async () => {
+  let message;
+  const ENV = { GMAIL_USER: "sender@gmail.com", GMAIL_APP_PASSWORD: "test-app-password", FRONTEND_URL: "https://healthtrack.example", NODE_ENV: "production" };
+  const { sendVerificationEmail } = await loadSource("services/mail.service.js", ["sendVerificationEmail"], {
+    ENV, URL,
+    nodemailer: { createTransport() { return { sendMail: async (mail) => { message = mail; return { accepted: [mail.to] }; } }; } },
+  });
+  const token = randomBytes(32).toString("hex");
+
+  await sendVerificationEmail("patient@example.com", token, "reset");
+  assert.equal(message.subject, "Change your HealthTrack password");
+  assert.match(message.html, /Change my password/);
+  assert.doesNotMatch(message.html, /Yes, this is me/);
+  assert.match(message.html, /expires in 15 minutes/);
+  assert.match(message.text, /change the password/i);
+  // The reset link carries mode=reset so the page can show reset wording.
+  assert.ok(message.text.includes(`/confirm-account?token=${token}&mode=reset`));
+
+  await sendVerificationEmail("patient@example.com", token, "activate");
+  assert.equal(message.subject, "Confirm your HealthTrack Account");
+  assert.match(message.html, /Yes, this is me/);
+  assert.doesNotMatch(message.html, /Change my password/);
+  assert.ok(message.text.includes(`/confirm-account?token=${token}`));
+  assert.ok(!message.text.includes("mode=reset"));
+
+  // Default stays activation for callers that pass no variant.
+  await sendVerificationEmail("patient@example.com", token);
+  assert.match(message.html, /Yes, this is me/);
 });
 
 test("SMTP uses encrypted Gmail transport and sends a confirmation link without a password", async () => {

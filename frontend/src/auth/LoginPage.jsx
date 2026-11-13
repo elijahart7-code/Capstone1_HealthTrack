@@ -13,6 +13,11 @@ export default function LoginPage({ accountType = "patient" }) {
   const [loading, setLoading] = useState(false);
   const [showForgotPasswordMessage, setShowForgotPasswordMessage] = useState(false);
   const [isClosingForgotPasswordMessage, setIsClosingForgotPasswordMessage] = useState(false);
+  // Forgot-password request state. The typed sign-in email pre-fills the field.
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetStatus, setResetStatus] = useState("");
+  const [resetError, setResetError] = useState("");
+  const [resetSending, setResetSending] = useState(false);
   const [transitionPhase, setTransitionPhase] = useState("entering");
   const emailInput = useRef(null);
   const otpInput = useRef(null);
@@ -51,7 +56,28 @@ export default function LoginPage({ accountType = "patient" }) {
   function openForgotPasswordMessage() {
     window.clearTimeout(forgotPasswordCloseTimer.current);
     setIsClosingForgotPasswordMessage(false);
+    setResetEmail(email);
+    setResetStatus("");
+    setResetError("");
     setShowForgotPasswordMessage(true);
+  }
+
+  // Same generic request as the setup screen: the API answers 202 whether the
+  // address is unknown, already active, recently emailed, or staff.
+  async function sendResetLink(event) {
+    event.preventDefault();
+    if (resetSending) return;
+    setResetStatus("");
+    setResetError("");
+    setResetSending(true);
+    try {
+      const { data } = await api.post("/auth/initiate", { email: resetEmail });
+      setResetStatus(data.message);
+    } catch (err) {
+      setResetError(err?.response?.data?.error || "We could not send the email. Please try again later or contact your health center.");
+    } finally {
+      setResetSending(false);
+    }
   }
 
   function closeForgotPasswordMessage() {
@@ -333,17 +359,44 @@ export default function LoginPage({ accountType = "patient" }) {
             role="dialog"
           >
             <h2 id="forgot-password-title">Forgot Password?</h2>
-            <p>Please contact the barangay admin or health worker to reset your password. Thanks for using HealthTrack!</p>
-            <div className="ht-confirm-actions ht-login-confirm-actions">
-              <button
-                autoFocus
-                className="ht-confirm-submit"
-                onClick={closeForgotPasswordMessage}
-                type="button"
-              >
-                Exit
-              </button>
-            </div>
+            <p>Enter the Google (Gmail) address linked to your patient account. We will send a link to change your password.</p>
+            {resetStatus && <p className="ht-login-alert ht-login-alert-success" role="status">{resetStatus}</p>}
+            {resetError && <p className="ht-login-alert ht-login-alert-error" role="alert">{resetError}</p>}
+            <form onSubmit={sendResetLink} className="ht-login-form">
+              <label className="ht-login-field">
+                <span>Gmail account</span>
+                <div className="ht-input-wrap">
+                  <Mail aria-hidden="true" />
+                  <input
+                    autoFocus
+                    type="email"
+                    value={resetEmail}
+                    onChange={(event) => setResetEmail(event.target.value)}
+                    required
+                    maxLength={255}
+                    autoComplete="email"
+                    placeholder="yourname@gmail.com"
+                    className="ht-input"
+                  />
+                </div>
+              </label>
+              <div className="ht-confirm-actions ht-login-confirm-actions">
+                <button
+                  className="ht-confirm-cancel"
+                  onClick={closeForgotPasswordMessage}
+                  type="button"
+                >
+                  Cancel
+                </button>
+                <button
+                  className="ht-confirm-submit"
+                  disabled={resetSending}
+                  type="submit"
+                >
+                  {resetSending ? "Sending..." : "Send"}
+                </button>
+              </div>
+            </form>
           </section>
         </div>
       )}
