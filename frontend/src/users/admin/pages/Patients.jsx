@@ -273,16 +273,6 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
                   ‹ Previous
                 </button>
 
-                {Array.from({ length: totalPages }, (_, index) => index + 1).map((value) => (
-                  <button
-                    key={value}
-                    className={`ht-page-btn ${page === value ? "ht-page-btn-active" : ""}`}
-                    onClick={() => setPage(value)}
-                  >
-                    {value}
-                  </button>
-                ))}
-
                 <button
                   className="ht-page-btn ht-page-btn-secondary"
                   disabled={page === totalPages}

@@ -1,7 +1,12 @@
 import { sql } from "../../config/db.js";
 
 export async function getDashboard(_req, res) {
-  const [{ count: patientCount }] = await sql`SELECT COUNT(*)::int AS count FROM patients WHERE archived_at IS NULL`;
+  const [{ patientCount, archivedPatientCount }] = await sql`
+    SELECT
+      COUNT(*) FILTER (WHERE archived_at IS NULL)::int AS "patientCount",
+      COUNT(*) FILTER (WHERE archived_at IS NOT NULL)::int AS "archivedPatientCount"
+    FROM patients
+  `;
 
   const [{ count: appointmentsToday }] = await sql`
     SELECT COUNT(*)::int AS count FROM appointments
@@ -25,6 +30,7 @@ export async function getDashboard(_req, res) {
   return res.status(200).json({
     message: "Dashboard retrieved.",
     patientCount,
+    archivedPatientCount,
     appointmentsToday,
     upcomingCount,
     todaysAppointments,

@@ -21,10 +21,13 @@ function getPatientName(appointment) {
 }
 
 export function Appointments({ appointments, loadData }) {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState(() => {
+    const requestedStatus = searchParams.get("status");
+    return ["confirmed", "cancelled", "completed"].includes(requestedStatus) ? requestedStatus : "all";
+  });
   const [page, setPage] = useState(1);
-  const [, setSearchParams] = useSearchParams();
   const pageSize = 10;
 
   const visible = useMemo(() => {
@@ -86,7 +89,13 @@ export function Appointments({ appointments, loadData }) {
             <Select
               id="appointment-status-filter"
               value={statusFilter}
-              onChange={(event) => setStatusFilter(event.target.value)}
+              onChange={(event) => {
+                const nextStatus = event.target.value;
+                setStatusFilter(nextStatus);
+                setSearchParams(nextStatus === "all"
+                  ? { page: "appointments" }
+                  : { page: "appointments", status: nextStatus });
+              }}
               className="ht-sort-select"
             >
               <option value="all">All</option>
@@ -172,16 +181,6 @@ export function Appointments({ appointments, loadData }) {
                 >
                   ‹ Previous
                 </button>
-
-                {Array.from({ length: totalPages }, (_, index) => index + 1).map((value) => (
-                  <button
-                    key={value}
-                    className={`ht-page-btn ${page === value ? "ht-page-btn-active" : ""}`}
-                    onClick={() => setPage(value)}
-                  >
-                    {value}
-                  </button>
-                ))}
 
                 <button
                   className="ht-page-btn ht-page-btn-secondary"

@@ -915,9 +915,24 @@ Reusable surfaces, panel headings, metrics, and section icons.
     }
 
     .ht-follow-up-status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 6rem;
+        width: 6rem;
+        height: 1.75rem;
+        box-sizing: border-box;
+        padding: 0 .65rem;
+        border: 1px solid color-mix(in srgb, var(--color-danger) 28%, transparent);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--color-danger) 12%, white);
         color: var(--color-danger);
+        font-size: .75rem;
         font-weight: 800;
+        line-height: 1;
+        text-align: center;
         text-transform: capitalize;
+        white-space: nowrap;
     }
 
     @media (max-width: 700px) {
@@ -8962,8 +8977,19 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-dashboard-screen .ht-metric-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
 .ht-activity-layout { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: 16px; }
 .ht-activity-layout > .ht-chart-card { height: 350px; min-width: 0; display: flex; flex-direction: column; }
+.ht-dashboard-screen .ht-activity-layout > .ht-chart-card { border: 1px solid #000; }
 .ht-activity-layout .ht-trend-chart { flex: 1; min-height: 0; width: 100%; }
 .ht-follow-up-scroll { overflow-y: auto; min-height: 0; flex: 1; }
+.ht-follow-up-actions { display: flex; justify-content: center; padding-top: .75rem; }
+.ht-dashboard-screen .ht-follow-up-view-all {
+    border-color: #c0e2d1;
+    background: #c0e2d1;
+    color: #000;
+}
+.ht-dashboard-screen .ht-follow-up-view-all:hover:not(:disabled) {
+    border-color: #b4dfcb;
+    background: #b4dfcb;
+}
 .ht-appointment-scroll { max-height: 263px; overflow: auto; }
 .ht-appointment-scroll tbody tr { height: 54px; }
 .ht-appointment-scroll thead { position: sticky; top: 0; background: #eaf7f0; z-index: 1; }
@@ -9008,7 +9034,18 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-healthworker-patients-panel .ht-table th,
 .ht-healthworker-patients-panel .ht-table td { text-align: center; }
 .ht-admin-patient-lists-page > .ht-page-header,
-.ht-admin-appointment-lists-page > .ht-page-header { border-color: #000; }
+.ht-admin-appointment-lists-page > .ht-page-header,
+.ht-dashboard-screen > .ht-page-header { border-color: #000; }
+.ht-dashboard-screen :is(
+    .ht-metric,
+    .ht-panel,
+    .ht-chart-card,
+    .ht-report-metric,
+    .ht-report-facts,
+    .ht-report-highlights > div,
+    .ht-report-list,
+    .ht-follow-up-item
+) { border-color: #000; }
 .ht-dashboard-screen .ht-metric-grid { gap: 1rem; }
 .ht-healthworker-recent-patients .ht-table-header-row .ht-link-button {
     min-height: 34px;
@@ -9056,15 +9093,61 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-healthworker-recent-patients .ht-table td:nth-child(7) { width: 13%; }
 .ht-healthworker-recent-patients .ht-patient-email-cell { overflow-wrap: anywhere; }
 .ht-report-range { margin: 0; font-size: .82rem; line-height: 1.5; }
-.ht-dashboard-events-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 1rem; align-items: stretch; }
-.ht-dashboard-events-grid > .ht-panel { min-width: 0; }
-.ht-dashboard-screen .ht-dashboard-schedule,
-.ht-dashboard-screen .ht-dashboard-events,
-.ht-dashboard-screen .ht-dashboard-overview-card { background: #F2FAF7; }
-.ht-dashboard-events-grid .ht-table-scroll { max-height: 350px; overflow: auto; }
-@media (max-width: 1000px) { .ht-dashboard-events-grid { grid-template-columns: minmax(0, 1fr); } }
+.ht-dashboard-schedule-highlights-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; align-items: stretch; }
+.ht-dashboard-schedule-highlights-grid > .ht-panel,
+.ht-dashboard-schedule-highlights-grid > .ht-report-highlights { min-width: 0; }
+.ht-dashboard-screen .ht-dashboard-schedule { background: #fff; }
+.ht-dashboard-screen .ht-dashboard-events { background: #F2FAF7; }
+.ht-dashboard-screen .ht-dashboard-overview-card {
+    border: 1px solid #000;
+    background: #fff;
+}
+.ht-dashboard-screen .ht-dashboard-schedule {
+    border: 1px solid #1d2321;
+    border-radius: 1.2rem;
+    background: #fff;
+}
+.ht-dashboard-screen .ht-dashboard-schedule .ht-empty {
+    background: #edf5f0;
+    border: 1px dashed rgba(29, 35, 33, 0.38);
+    border-radius: 1rem;
+    color: #4b5e57;
+}
+.ht-dashboard-screen .ht-report-highlights {
+    background: transparent;
+}
+.ht-dashboard-screen .ht-report-highlights > div {
+    background: #f5f7f5;
+    border: 1px solid #1d2321;
+    border-radius: 1.2rem;
+}
+.ht-dashboard-screen .ht-report-highlights strong {
+    font-size: 15px;
+    font-weight: 800;
+    color: #2a7d62;
+}
+.ht-dashboard-screen .ht-report-highlights small {
+    font-size: 13px;
+    font-weight: 500;
+    color: #2a7d62;
+}
+.ht-dashboard-screen .ht-dashboard-schedule-table-viewport .ht-table-scroll {
+    max-height: 110px;
+    overflow-y: auto;
+}
+.ht-dashboard-screen .ht-dashboard-schedule-table-viewport .ht-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+.ht-dashboard-schedule-highlights-grid .ht-table-scroll { max-height: 350px; overflow: auto; }
+@media (max-width: 1000px) { .ht-dashboard-schedule-highlights-grid { grid-template-columns: minmax(0, 1fr); } }
 
 .ht-healthworker-metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.ht-dashboard-screen .ht-admin-metric-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+}
 .ht-healthworker-dashboard > .ht-page-header,
 .ht-healthworker-dashboard > .ht-panel-table { border-color: #000; }
 .ht-healthworker-dashboard .ht-current-date-pill {
@@ -9080,14 +9163,16 @@ Dashboard charts, report records, export dialogs, and print output.
     background: #c0e2d1;
     color: #000;
 }
-.ht-healthworker-metric-grid .ht-metric {
+.ht-healthworker-metric-grid .ht-metric,
+.ht-dashboard-screen .ht-admin-metric-grid .ht-metric {
     position: relative;
     justify-content: center;
     min-height: 126px;
     border: 1px solid #000;
     text-align: center;
 }
-.ht-healthworker-metric-grid .ht-metric-icon {
+.ht-healthworker-metric-grid .ht-metric-icon,
+.ht-dashboard-screen .ht-admin-metric-grid .ht-metric-icon {
     position: absolute;
     left: 1.1rem;
     width: 64px;
@@ -9095,15 +9180,24 @@ Dashboard charts, report records, export dialogs, and print output.
     flex: 0 0 64px;
     border-radius: 16px;
 }
-.ht-healthworker-metric-grid .ht-metric-icon svg { width: 32px; height: 32px; }
-.ht-healthworker-metric-grid .ht-metric > div {
+.ht-healthworker-metric-grid .ht-metric-icon svg,
+.ht-dashboard-screen .ht-admin-metric-grid .ht-metric-icon svg { width: 32px; height: 32px; }
+.ht-healthworker-metric-grid .ht-metric > div,
+.ht-dashboard-screen .ht-admin-metric-grid .ht-metric > div {
     width: calc(100% - 64px);
     margin-left: 64px;
     text-align: center;
 }
-.ht-healthworker-metric-grid .ht-metric h3 { margin-bottom: 0.3rem; }
-@media (max-width: 900px) { .ht-healthworker-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px) { .ht-healthworker-metric-grid { grid-template-columns: minmax(0, 1fr); } }
+.ht-healthworker-metric-grid .ht-metric h3,
+.ht-dashboard-screen .ht-admin-metric-grid .ht-metric h3 { margin-bottom: 0.3rem; }
+@media (max-width: 900px) {
+    .ht-healthworker-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ht-dashboard-screen .ht-admin-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+    .ht-healthworker-metric-grid { grid-template-columns: minmax(0, 1fr); }
+    .ht-dashboard-screen .ht-admin-metric-grid { grid-template-columns: minmax(0, 1fr); }
+}
 
 .ht-small-button {
           display: inline-flex;
@@ -9611,6 +9705,28 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-report-highlights span { font-size: 11px; color: #62786a; }
 .ht-report-highlights strong { font-size: 14px; color: #295a3e; overflow-wrap: anywhere; }
 .ht-report-highlights small { font-size: 11px; color: #657d6d; }
+.ht-dashboard-screen .ht-dashboard-schedule { background: #fff; }
+.ht-dashboard-screen .ht-report-highlights > div { background: #fff; }
+.ht-dashboard-screen .ht-activity-layout > .ht-chart-card > h3,
+.ht-dashboard-screen .ht-dashboard-schedule > h2,
+.ht-dashboard-screen .ht-report-highlights > div > span {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000 !important;
+}
+.ht-dashboard-screen .ht-report-highlights > div {
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+}
+.ht-dashboard-screen .ht-dashboard-schedule .ht-empty { background: #edf5f0; }
+.ht-dashboard-screen .ht-dashboard-schedule .ht-table,
+.ht-dashboard-screen .ht-dashboard-schedule .ht-table th,
+.ht-dashboard-screen .ht-dashboard-schedule .ht-table td,
+.ht-dashboard-screen .ht-dashboard-schedule .ht-table tbody tr,
+.ht-dashboard-screen .ht-dashboard-schedule .ht-table tbody tr:nth-child(even),
+.ht-dashboard-screen .ht-dashboard-schedule .ht-table tbody tr:hover { background: #edf5f0; }
+.ht-dashboard-screen .ht-dashboard-schedule * { color: #000 !important; }
 .ht-report-comparison { margin: 0; padding: 12px 14px; border-left: 3px solid #739e83; background: #f0f6f2; color: #506c59; font-size: 12px; line-height: 1.6; }
 .ht-report-definitions { margin: 0; font-size: 11px; line-height: 1.6; color: #738379; }
 @media (max-width: 1150px) { .ht-report-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
@@ -10595,8 +10711,7 @@ body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-health-tips
     }
 }
 
-.ht-healthworker-dashboard > .ht-page-header h1,
-.ht-dashboard-screen > .ht-page-header h1 {
+.ht-healthworker-dashboard > .ht-page-header h1 {
     font-size: 35px;
 }
 
@@ -10608,15 +10723,14 @@ body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-health-tips
 
 .ht-healthworker-dashboard > .ht-page-header p,
 .ht-healthworker-patients-page > .ht-page-header p,
-.ht-healthworker-register-page > .ht-page-header p,
-.ht-dashboard-screen > .ht-page-header p {
+.ht-healthworker-register-page > .ht-page-header p {
     font-size: 16px;
     font-weight: 500;
     color: #3F473F;
 }
 
 .patient-dashboard-header h1 {
-    font-size: 30px;
+    font-size: 35px;
     font-weight: 950;
     color: #1C2724;
 }
@@ -10625,6 +10739,34 @@ body:has(.patient-dashboard-shell) .patient-dashboard-shell .patient-health-tips
     font-size: 1rem !important;
     font-weight: 500 !important;
     color: #000 !important;
+}
+
+.ht-dashboard-screen > .ht-page-header h1,
+.ht-admin-patient-lists-page > .ht-page-header h1,
+.ht-admin-appointment-lists-page > .ht-page-header h1 {
+    margin: 0 0 6px;
+    font-family: "Inter", sans-serif;
+    font-size: 35px;
+    font-weight: 950;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+    color: #1C2724;
+}
+
+.ht-dashboard-screen > .ht-page-header p,
+.ht-admin-patient-lists-page > .ht-page-header p,
+.ht-admin-appointment-lists-page > .ht-page-header p {
+    margin: 5px 0 0;
+    font-family: "Inter", sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: 0;
+    color: #000;
+}
+
+.ht-healthworker-dashboard > .ht-page-header p {
+    color: #000;
 }
 
 body:has(.patient-dashboard-shell) .patient-dashboard-header {

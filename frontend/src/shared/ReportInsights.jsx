@@ -23,21 +23,30 @@ export function ReportMetrics({ data }) {
     </div>;
 }
 
-export function ReportInsights({ data, heading = 'Period summary', includeMetrics = true }) {
-  const s = data?.summary;
-  if (!s) return <p className="ht-muted">Summary information is unavailable for this period.</p>;
-  const total = count(s.appointments);
-  const completed = count(s.completed);
+export function ReportHighlights({ data }) {
   const reasons = [...(data.reasons || [])].sort((a, b) => count(b.count) - count(a.count));
   const conditions = [...(data.conditions || [])].sort((a, b) => count(b.count) - count(a.count));
   const peak = [...(data.trend || [])].sort((a, b) => count(b.total) - count(a.total))[0];
   const peakDate = peak && count(peak.total) > 0
     ? new Date(peak.period).toLocaleString(undefined, data.filters?.period === 'hour' ? { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' } : data.filters?.period === 'month' ? { month: 'long', year: 'numeric' } : { month: 'short', day: 'numeric', year: 'numeric' })
     : null;
+  const total = count(data.summary?.appointments);
+
+  return <div className="ht-report-highlights">
+    <div><span>Leading Appointment Reasons</span><strong>{reasons[0]?.label || 'No appointments recorded'}</strong><small>{reasons[0] ? `${count(reasons[0].count)} ${count(reasons[0].count) === 1 ? 'appointment' : 'appointments'} · ${percentage(count(reasons[0].count), total)}` : 'No reason data for this range'}</small></div>
+    <div><span>Most Recorded Condition</span><strong>{conditions[0]?.label || 'No assessments recorded'}</strong><small>{conditions[0] ? `${count(conditions[0].count)} assessment records` : 'Based on recorded assessments only'}</small></div>
+    <div><span>High Intensive Duty Period</span><strong>{peakDate || 'No appointment activity'}</strong><small>{peakDate ? `${count(peak.total)} scheduled appointments` : 'No appointments in this date range'}</small></div>
+  </div>;
+}
+
+export function ReportInsights({ data, heading = 'Period summary', includeMetrics = true, includeFacts = true, includeHighlights = true }) {
+  const s = data?.summary;
+  if (!s) return <p className="ht-muted">Summary information is unavailable for this period.</p>;
+  const completed = count(s.completed);
   return <div className="ht-report-insights">
     <div className="ht-report-insights-heading"><h3>{heading}</h3><span>{data.filters?.from} to {data.filters?.to}</span></div>
     {includeMetrics && <ReportMetrics data={data} />}
-    <div className="ht-report-facts-grid">
+    {includeFacts && <div className="ht-report-facts-grid">
       <Facts title="Workload and records" rows={[
         ['Still confirmed', count(s.confirmed)],
         ['Upcoming in this period', count(s.upcoming)],
@@ -51,11 +60,7 @@ export function ReportInsights({ data, heading = 'Period summary', includeMetric
         ['Current follow-up patients', count(s.current_follow_up_patients)],
         ['Current follow-up recorded in this period', count(s.period_follow_up_patients)],
       ]} />
-    </div>
-    <div className="ht-report-highlights">
-      <div><span>Leading appointment reason</span><strong>{reasons[0]?.label || 'No appointments recorded'}</strong><small>{reasons[0] ? `${count(reasons[0].count)} appointments · ${percentage(count(reasons[0].count), total)} of period volume` : 'No reason data for this range'}</small></div>
-      <div><span>Most recorded condition</span><strong>{conditions[0]?.label || 'No assessments recorded'}</strong><small>{conditions[0] ? `${count(conditions[0].count)} assessment records` : 'Based on recorded assessments only'}</small></div>
-      <div><span>Busiest interval</span><strong>{peakDate || 'No appointment activity'}</strong><small>{peakDate ? `${count(peak.total)} scheduled appointments` : 'No appointments in this date range'}</small></div>
-    </div>
+    </div>}
+    {includeHighlights && <ReportHighlights data={data} />}
   </div>;
 }

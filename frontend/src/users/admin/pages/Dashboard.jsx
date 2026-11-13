@@ -1,10 +1,11 @@
-import { ReportInsights, ReportMetrics } from "../../../shared/ReportInsights";
+import { ReportHighlights, ReportInsights, ReportMetrics } from "../../../shared/ReportInsights";
 import { AppointmentDate } from "../../../shared/appointments/AppointmentDate";
 import { ExportDialog } from "../../../shared/ExportDialog";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import {
   BarChart3,
+  Archive,
   CalendarDays,
   ClipboardList,
   FileText,
@@ -85,7 +86,7 @@ function ReportTrendChart({ rows = [], compact = false, hourly = false }) {
   });
   return (
     <div className={`ht-chart-card${compact ? " ht-chart-card-compact" : ""}`}>
-      <h3>Appointment activity</h3>
+      <h3>Appointment Activity</h3>
       {!rows.length ? <EmptyState>No appointments for this range.</EmptyState> : (
         <svg className="ht-trend-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Appointment activity trend with dates and appointment counts">
           {[0, .5, 1].map((fraction) => {
@@ -135,8 +136,12 @@ function normalizeRows(rows = []) {
   return rows.map((row) => [row.label, Number(row.count)]);
 }
 
+function topRows(rows = []) {
+  return normalizeRows(rows).sort((a, b) => b[1] - a[1]).slice(0, 5);
+}
+
 function FollowUpPatients({ patients, onPatientClick }) {
-  if (!patients?.length) return <EmptyState>No patients currently flagged for follow-up.</EmptyState>;
+  if (!patients?.length) return <EmptyState>No patients needed for follow-up consultation.</EmptyState>;
 
   return (
     <div className="ht-follow-up-list">
@@ -280,7 +285,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
       const rows = appointmentsFor(data);
       return <><p>{data?.filters?.from} to {data?.filters?.to} · {exportRowSummary(rows.length, limit)}</p><AppointmentDetailTable appointments={rows.slice(0, limit)} /></>;
     } },
-    { key: "followups", label: "Patients needing follow-up", periods: PERIODS, defaultPeriod: activeTab === "overview" ? "monthly" : activeTab, render: (limit, period) => {
+    { key: "followups", label: "Patients Requiring Follow-Up Consultation:", periods: PERIODS, defaultPeriod: activeTab === "overview" ? "monthly" : activeTab, render: (limit, period) => {
       const data = reportSets[period];
       return <><p>{data?.filters?.from} to {data?.filters?.to} · {exportRowSummary(data?.followUps?.length || 0, limit)}</p><FollowUpPatients patients={data?.followUps?.slice(0, limit)} onPatientClick={() => {}} /></>;
     } },
@@ -299,16 +304,12 @@ export function Dashboard({ dashboard, appointments, loadData }) {
 
 
 
-        <div className="ht-metric-grid">
+        <div className="ht-metric-grid ht-admin-metric-grid">
           <StatCard label="Today's Appointments" value={dashboard.appointmentsToday} tone="brand" icon={CalendarDays} />
           <StatCard label="Registered Patients" value={dashboard.patientCount} tone="brand" icon={Users} />
           <StatCard label="Upcoming Appointments" value={dashboard.upcomingCount} tone="brand" icon={ClockIcon} />
+          <StatCard label="Archived Patients" value={dashboard.archivedPatientCount} tone="brand" icon={Archive} />
         </div>
-        <div className="ht-report-tabs" role="tablist" aria-label="Health center reports">
-          <button className={activeTab === "overview" ? "is-active" : ""} onClick={() => setActiveTab("overview")} role="tab" aria-selected={activeTab === "overview"}><BarChart3 size={16} /> Overview</button>
-          {PERIODS.map((period) => <button key={period.key} className={activeTab === period.key ? "is-active" : ""} onClick={() => selectPeriod(period)} role="tab" aria-selected={activeTab === period.key}>{period.label}</button>)}
-        </div>
-
         {!report && !reportError && <p role="status">Loading report data…</p>}
         {report && <p className="ht-report-range ht-muted">{report.filters.from} to {report.filters.to} · {activeTab === "overview" ? "Month" : currentPeriod.label} to date · {periodAppointments.length} appointments</p>}
         {activeTab === "overview" ? (
@@ -317,31 +318,34 @@ export function Dashboard({ dashboard, appointments, loadData }) {
             <div className="ht-activity-layout">
               <ReportTrendChart rows={report?.trend} hourly={report?.filters?.period === "hour"} />
               <div className="ht-chart-card">
-                <h3>Patients needing follow-up</h3>
+                <h3>Patients Requiring Follow-Up Consultation</h3>
                 <div className="ht-follow-up-scroll"><FollowUpPatients patients={report?.followUps} onPatientClick={openPatient} /></div>
+                <div className="ht-follow-up-actions">
+                  <button type="button" className="ht-small-button ht-follow-up-view-all" onClick={() => setSearchParams({ page: "appointments", status: "confirmed" })}>View All</button>
+                </div>
               </div>
             </div>
-            <div className="ht-dashboard-events-grid">
+            <div className="ht-dashboard-schedule-highlights-grid">
               <div className="ht-panel ht-dashboard-schedule">
-                <h2>Overview</h2>
+                <h2>Today's Schedule</h2>
                 {dashboard.todaysAppointments.length === 0 ? <EmptyState>Nothing scheduled for today.</EmptyState> : (
-                  <Table><thead><tr><Th>Time</Th><Th>Patient</Th><Th>Reason</Th><Th>Status</Th></tr></thead><tbody>
-                    {dashboard.todaysAppointments.map((a) => <tr key={a.appointment_id}>
-                      <Td className="whitespace-nowrap font-bold"><AppointmentDate appointment={a} timeOnly /></Td>
-                      <Td><button onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id, appointmentId: a.appointment_id })} className="ht-link-button">{a.last_name}, {a.first_name}</button></Td>
-                      <Td>{a.reason}</Td>
-                      <Td>{a.status === "completed" ? <Badge>Completed</Badge> : <Select aria-label={`Update status for ${a.last_name}, ${a.first_name}`} value={a.status} onChange={(event) => updateStatus(a.appointment_id, event.target.value)} className={`ht-status-select ht-status-select-${a.status}`}>{STATUSES.map((status) => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}</Select>}</Td>
-                    </tr>)}
-                  </tbody></Table>
+                  <div className="ht-dashboard-schedule-table-viewport">
+                    <Table><thead><tr><Th>Time</Th><Th>Patient</Th><Th>Reason</Th><Th>Status</Th></tr></thead><tbody>
+                      {dashboard.todaysAppointments.map((a) => <tr key={a.appointment_id}>
+                        <Td className="whitespace-nowrap font-bold"><AppointmentDate appointment={a} timeOnly /></Td>
+                        <Td><button onClick={() => setSearchParams({ page: "patients", patientId: a.patient_id, appointmentId: a.appointment_id })} className="ht-link-button">{a.last_name}, {a.first_name}</button></Td>
+                        <Td>{a.reason}</Td>
+                        <Td>{a.status === "completed" ? <Badge>Completed</Badge> : <Select aria-label={`Update status for ${a.last_name}, ${a.first_name}`} value={a.status} onChange={(event) => updateStatus(a.appointment_id, event.target.value)} className={`ht-status-select ht-status-select-${a.status}`}>{STATUSES.map((status) => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}</Select>}</Td>
+                      </tr>)}
+                    </tbody></Table>
+                  </div>
                 )}
               </div>
-              <div className="ht-panel ht-dashboard-events"><h2>Notable Events</h2><NotableEvents appointments={periodAppointments} onAppointmentClick={a => setSearchParams({ page: "patients", patientId: a.patient_id, appointmentId: a.appointment_id })} /></div>
+              {report && <ReportHighlights data={report} />}
             </div>
-            {report && <ReportInsights data={report} heading="Month-to-date operating summary" />}
-            <div className="grid gap-4 lg:grid-cols-3">
-              <ReportBarChart title="Top appointment reasons" rows={normalizeRows(report?.reasons)} className="ht-dashboard-overview-card" />
-              <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" className="ht-dashboard-overview-card" />
-              <ReportBarChart title="Appointment status" rows={normalizeRows(report?.statuses)} color="var(--color-warm)" className="ht-dashboard-overview-card" />
+            <div className="grid gap-4 lg:grid-cols-2">
+              <ReportBarChart title="Top 5 Most Appointment Reasons" rows={topRows(report?.reasons)} className="ht-dashboard-overview-card" />
+              <ReportBarChart title="Top 5 Recorded Conditions" rows={topRows(report?.conditions)} color="var(--color-danger)" className="ht-dashboard-overview-card" />
             </div>
           </div>
         ) : (
@@ -352,7 +356,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
               <h2>{currentPeriod.label} Report</h2>
               <ReportTrendChart rows={report?.trend} compact hourly={report?.filters?.period === "hour"} />
             </div>
-            {report && <ReportInsights data={report} heading={`${currentPeriod.label} operating summary`} includeMetrics={false} />}
+            {report && <ReportInsights data={report} heading={`${currentPeriod.label} operating summary`} includeMetrics={false} includeFacts={false} />}
             <div className="grid gap-4 lg:grid-cols-3">
               <ReportBarChart title="Appointment reasons" rows={normalizeRows(report?.reasons)} />
               <ReportBarChart title="Common conditions" rows={normalizeRows(report?.conditions)} color="var(--color-danger)" />
