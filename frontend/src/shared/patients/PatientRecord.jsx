@@ -509,18 +509,36 @@ export function PatientRecord({
         </div>
 
         <div className="ht-portal-detail">
-          <span>Account Created:</span>
+          <span>Patient Registered:</span>
 
           <strong>
-            {patient.user_id && patient.account_created_at
+            {patient.patient_created_at || patient.created_at
               ? new Date(
-                  patient.account_created_at
+                  patient.patient_created_at || patient.created_at
                 ).toLocaleDateString(undefined, {
                   month: "long",
                   day: "numeric",
                   year: "numeric",
                 })
               : "---------------"}
+          </strong>
+        </div>
+
+        <div className="ht-portal-detail">
+          <span>Account Activated:</span>
+
+          <strong>
+            {patient.account_activated_at
+              ? new Date(
+                  patient.account_activated_at
+                ).toLocaleDateString(undefined, {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })
+              : patient.is_verified
+                ? "--"
+                : "Not yet activated"}
           </strong>
         </div>
 
@@ -645,8 +663,12 @@ export function PatientRecord({
             <strong>----------</strong>
           </div>
           <div className="ht-portal-detail">
-            <span>Account Created:</span>
-            <strong>----------</strong>
+            <span>Patient Registered:</span>
+            <strong>{patient.patient_created_at || patient.created_at ? new Date(patient.patient_created_at || patient.created_at).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }) : "----------"}</strong>
+          </div>
+          <div className="ht-portal-detail">
+            <span>Account Activated:</span>
+            <strong>Not yet activated</strong>
           </div>
           <p>Please coordinate with the Health Worker as soon as possible to create your account. Thankyou!</p>
         </div>

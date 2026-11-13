@@ -4,7 +4,7 @@ import { RECORD_TYPES } from "../../config/recordTypes.js";
 
 async function findMyPatient(userId) {
   const rows = await sql`
-    SELECT p.*, u.email, u.created_at AS account_created_at
+    SELECT p.*, u.email, u.created_at AS account_created_at, u.verified_at AS account_activated_at, p.created_at AS patient_created_at
     FROM patients p
     LEFT JOIN users u ON u.user_id = p.user_id
     WHERE p.user_id = ${userId} AND p.archived_at IS NULL

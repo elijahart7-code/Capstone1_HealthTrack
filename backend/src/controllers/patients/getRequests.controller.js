@@ -18,7 +18,8 @@ export async function getAllPatients(req, res) {
 
   const showArchived = req.user.role === "admin" && req.query.archived === "true";
   const patients = await sql.query(
-    `SELECT p.*, COALESCE(u.is_verified, FALSE) AS is_verified
+    `SELECT p.*, COALESCE(u.is_verified, FALSE) AS is_verified,
+       u.verified_at AS account_activated_at, p.created_at AS patient_created_at
      FROM patients p LEFT JOIN users u ON u.user_id = p.user_id
      WHERE p.archived_at ${showArchived ? "IS NOT NULL" : "IS NULL"}
      ORDER BY p.last_name ASC, p.first_name ASC`
@@ -29,7 +30,7 @@ export async function getAllPatients(req, res) {
 
 export async function getPatient(req, res) {
   const rows = await sql`
-    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at
+    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at, u.verified_at AS account_activated_at, p.created_at AS patient_created_at
     FROM patients p
     LEFT JOIN users u ON u.user_id = p.user_id
     WHERE p.patient_id = ${req.params.patientId}

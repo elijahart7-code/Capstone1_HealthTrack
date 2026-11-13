@@ -325,14 +325,17 @@ const upcomingAppointment =
 }
 
 function PatientPortalAccount({ patient, currentUser }) {
-  const accountCreatedAt = patient.account_created_at || patient.user_created_at;
-  const accountCreatedDate = accountCreatedAt && Number.isFinite(Date.parse(accountCreatedAt))
-    ? new Date(accountCreatedAt).toLocaleDateString(undefined, {
+  const formatDate = (value) => value && Number.isFinite(Date.parse(value))
+    ? new Date(value).toLocaleDateString(undefined, {
       month: "long",
       day: "numeric",
       year: "numeric",
     })
-    : "Not available";
+    : null;
+  // Two separate facts: when the patient record was made, and when the portal
+  // account actually activated. They are not the same moment.
+  const patientCreatedDate = formatDate(patient.patient_created_at || patient.created_at) || "Not available";
+  const activatedDate = formatDate(patient.account_activated_at) || (patient.is_verified ? "Not available" : "Not yet activated");
 
   return (
     <section className="patient-healthinfo-card patient-general-account-card ht-portal-card" aria-labelledby="patient-general-account-title">
@@ -364,8 +367,12 @@ function PatientPortalAccount({ patient, currentUser }) {
             <strong>{patient.email || patient.portal_email || currentUser?.email || "Not available"}</strong>
           </div>
           <div className="ht-portal-detail">
-            <span>Account Created:</span>
-            <strong>{accountCreatedDate}</strong>
+            <span>Patient Registered:</span>
+            <strong>{patientCreatedDate}</strong>
+          </div>
+          <div className="ht-portal-detail">
+            <span>Account Activated:</span>
+            <strong>{activatedDate}</strong>
           </div>
         </div>
       </div>

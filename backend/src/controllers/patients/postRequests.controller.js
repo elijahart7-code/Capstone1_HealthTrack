@@ -108,7 +108,7 @@ export async function createPortalAccount(req, res) {
   }
 
   const patientRows = await sql`
-    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at
+    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at, u.verified_at AS account_activated_at, p.created_at AS patient_created_at
     FROM patients p
     LEFT JOIN users u ON u.user_id = p.user_id
     WHERE p.patient_id = ${req.params.patientId} AND p.archived_at IS NULL
@@ -148,7 +148,7 @@ export async function createPortalAccount(req, res) {
   if (!linked.length) return res.status(409).json({ error: "This patient record has changed. Refresh before creating an account." });
 
   const updated = await sql`
-    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at
+    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at, u.verified_at AS account_activated_at, p.created_at AS patient_created_at
     FROM patients p
     JOIN users u ON u.user_id = p.user_id
     WHERE p.patient_id = ${req.params.patientId}

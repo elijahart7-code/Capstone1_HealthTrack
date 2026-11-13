@@ -71,6 +71,7 @@ export function createAccountSetupService({ sql, sendVerificationEmail, assertMa
       // pending account, so both flows share one atomic statement.
       const users = await sql`
         UPDATE users u SET password = ${passwordHash}, is_verified = TRUE,
+          verified_at = COALESCE(u.verified_at, NOW()),
           verification_token = NULL, token_expires_at = NULL,
           verification_sent_at = NULL, updated_at = NOW()
         WHERE user_id = ${eligible[0].user_id} AND verification_token = ${hash}

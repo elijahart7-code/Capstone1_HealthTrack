@@ -58,7 +58,7 @@ export async function updatePendingPortalEmail(req, res) {
     verification.message = "Email updated, but the confirmation email could not be sent. Check the email provider settings, then use Resend setup email.";
   }
   const patients = await sql`
-    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at
+    SELECT p.*, u.email, u.is_verified, u.created_at AS account_created_at, u.verified_at AS account_activated_at, p.created_at AS patient_created_at
     FROM patients p JOIN users u ON u.user_id = p.user_id
     WHERE p.patient_id = ${req.params.patientId}
   `;

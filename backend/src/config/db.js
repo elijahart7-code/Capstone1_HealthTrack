@@ -93,6 +93,7 @@ const TABLES = [
       password     VARCHAR(255) NOT NULL,
       role         VARCHAR(50) NOT NULL,
       is_verified  BOOLEAN NOT NULL DEFAULT FALSE,
+      verified_at  TIMESTAMPTZ,
       verification_token VARCHAR(64),
       token_expires_at TIMESTAMPTZ,
       verification_sent_at TIMESTAMPTZ,
@@ -111,6 +112,7 @@ const TABLES = [
       password: "VARCHAR(255) NOT NULL",
       role: "VARCHAR(50) NOT NULL",
       is_verified: "BOOLEAN NOT NULL DEFAULT FALSE",
+      verified_at: "TIMESTAMPTZ",
       verification_token: "VARCHAR(64)",
       token_expires_at: "TIMESTAMPTZ",
       verification_sent_at: "TIMESTAMPTZ",
@@ -409,6 +411,12 @@ export async function connectNeon() {
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_token VARCHAR(64)`;
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS token_expires_at TIMESTAMPTZ`;
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_sent_at TIMESTAMPTZ`;
+    // verified_at records the moment a portal account actually activated, which
+    // is separate from the patient record's created_at (both rows are inserted
+    // together). Existing active accounts are backfilled from updated_at, the
+    // only timestamp the old schema kept for the switch.
+    await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS verified_at TIMESTAMPTZ`;
+    await sql`UPDATE users SET verified_at = updated_at WHERE is_verified = TRUE AND verified_at IS NULL`;
     await sql`CREATE UNIQUE INDEX IF NOT EXISTS users_verification_token_idx ON users (verification_token) WHERE verification_token IS NOT NULL`;
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS login_otp_hash VARCHAR(64)`;
     await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS login_otp_expires_at TIMESTAMPTZ`;
