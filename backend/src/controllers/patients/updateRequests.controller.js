@@ -79,7 +79,8 @@ export async function updateAppointmentStatus(req, res) {
   const rows = await sql`
     UPDATE appointments SET status = ${status}, updated_at = NOW()
     WHERE appointment_id = ${req.params.appointmentId}
-    RETURNING *
+    RETURNING id, appointment_id, patient_id, admin_id, scheduled_at::text AS scheduled_at,
+      status, reason, notes, created_at, updated_at
   `;
 
   if (rows.length === 0) return res.status(404).json({ error: "Appointment not found." });

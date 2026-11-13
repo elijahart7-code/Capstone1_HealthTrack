@@ -19,7 +19,10 @@ export async function getDashboard(_req, res) {
   `;
 
   const todaysAppointments = await sql`
-    SELECT a.*, p.first_name, p.last_name FROM appointments a
+    SELECT a.id, a.appointment_id, a.patient_id, a.admin_id,
+      a.scheduled_at::text AS scheduled_at, a.status, a.reason, a.notes, a.created_at, a.updated_at,
+      p.first_name, p.last_name
+    FROM appointments a
     JOIN patients p ON p.patient_id = a.patient_id
     WHERE a.scheduled_at >= date_trunc('day', NOW()) AND a.scheduled_at < date_trunc('day', NOW()) + INTERVAL '1 day'
     ORDER BY a.scheduled_at ASC
@@ -40,7 +43,10 @@ export async function getDashboard(_req, res) {
 
 export async function getAppointments(_req, res) {
   const appointments = await sql`
-    SELECT a.*, p.first_name, p.middle_name, p.last_name FROM appointments a
+    SELECT a.id, a.appointment_id, a.patient_id, a.admin_id,
+      a.scheduled_at::text AS scheduled_at, a.status, a.reason, a.notes, a.created_at, a.updated_at,
+      p.first_name, p.middle_name, p.last_name
+    FROM appointments a
     JOIN patients p ON p.patient_id = a.patient_id
     ORDER BY a.scheduled_at ASC
   `;

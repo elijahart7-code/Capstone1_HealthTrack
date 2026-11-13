@@ -18,9 +18,11 @@ export async function getDashboard(req, res) {
   if (!patient) return res.status(200).json({ message: "No linked patient record.", patient: null });
 
   const upcomingAppointments = await sql`
-    SELECT * FROM appointments
+    SELECT id, appointment_id, patient_id, admin_id, scheduled_at::text AS scheduled_at,
+      status, reason, notes, created_at, updated_at
+    FROM appointments
     WHERE patient_id = ${patient.patient_id} AND scheduled_at >= NOW() AND status NOT IN ('completed', 'cancelled')
-    ORDER BY scheduled_at ASC LIMIT 5
+    ORDER BY appointments.scheduled_at ASC LIMIT 5
   `;
 
   const [{ count: upcomingCount }] = await sql`
@@ -46,7 +48,9 @@ export async function getHealthInformation(req, res) {
   if (!patient) return res.status(200).json({ message: "No linked patient record.", patient: null });
 
   const appointments = await sql`
-    SELECT * FROM appointments WHERE patient_id = ${patient.patient_id} ORDER BY scheduled_at DESC
+    SELECT id, appointment_id, patient_id, admin_id, scheduled_at::text AS scheduled_at,
+      status, reason, notes, created_at, updated_at
+    FROM appointments WHERE patient_id = ${patient.patient_id} ORDER BY appointments.scheduled_at DESC
   `;
 
   const records = {};

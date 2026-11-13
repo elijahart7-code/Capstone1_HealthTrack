@@ -91,7 +91,8 @@ export async function createAppointment(req, res) {
   const rows = await sql`
     INSERT INTO appointments (appointment_id, patient_id, admin_id, scheduled_at, reason, notes, status)
     VALUES (${appointmentId}, ${req.params.patientId}, ${req.user.user_id}, ${scheduledAt}, ${reason}, ${notes || null}, ${status || "confirmed"})
-    RETURNING *
+    RETURNING id, appointment_id, patient_id, admin_id, scheduled_at::text AS scheduled_at,
+      status, reason, notes, created_at, updated_at
   `;
 
   return res.status(201).json({ message: "Appointment scheduled.", appointment: rows[0] });

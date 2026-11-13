@@ -58,7 +58,9 @@ export async function getPatientAppointments(req, res) {
   }
 
   const appointments = await sql`
-    SELECT * FROM appointments WHERE patient_id = ${req.params.patientId} ORDER BY scheduled_at DESC
+    SELECT id, appointment_id, patient_id, admin_id, scheduled_at::text AS scheduled_at,
+      status, reason, notes, created_at, updated_at
+    FROM appointments WHERE patient_id = ${req.params.patientId} ORDER BY appointments.scheduled_at DESC
   `;
 
   return res.status(200).json({ message: "Appointments retrieved.", appointments });

@@ -100,11 +100,13 @@ test('appointment status updates allow confirmed/cancelled and block manual comp
 
 test('new appointments default to confirmed and reject pending', async () => {
   let inserted;
+  let insertQuery;
   const { createAppointment } = await controller('patients/postRequests.controller.js', {
     names: ['createAppointment'], AppointmentPolicy: { create: () => true },
     generateAppointmentId: async () => 'APT1',
     sql: async (strings, ...values) => {
-      if (strings.join('').includes('INSERT')) { inserted = values; return [{ appointment_id: 'APT1' }]; }
+      const query = strings.join('');
+      if (query.includes('INSERT')) { inserted = values; insertQuery = query; return [{ appointment_id: 'APT1' }]; }
       return [{ patient_id: 'P1' }];
     },
   });
@@ -113,6 +115,7 @@ test('new appointments default to confirmed and reject pending', async () => {
   await createAppointment(req, res);
   assert.equal(res.code, 201);
   assert.equal(inserted.at(-1), 'confirmed');
+  assert.match(insertQuery, /scheduled_at::text AS scheduled_at/);
   const invalid = response();
   await createAppointment({ ...req, body: { ...req.body, status: 'pending' } }, invalid);
   assert.equal(invalid.code, 422);
