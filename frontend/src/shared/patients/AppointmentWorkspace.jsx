@@ -284,7 +284,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
       }
       </section>
     </>}
-    {showNew && <NewAppointment patientId={patientId} onClose={() => setShowNew(false)} onSaved={async a => { await onSaved(a); activate(a); setShowNew(false); }} />}
+    {showNew && <NewAppointment patientId={patientId} onClose={() => setShowNew(false)} onSaved={async a => { await onSaved(a); setShowNew(false); }} />}
     {appointmentToRemove && <div className="ht-confirm-backdrop ht-archive-confirm-backdrop" onMouseDown={event => {
       if (event.target === event.currentTarget && statusBusy === null) setAppointmentToRemove(null);
     }}>
@@ -386,7 +386,7 @@ function NewAppointment({ patientId, onClose, onSaved }) {
   return <dialog ref={dialog} className="ht-export-dialog ht-new-appointment-dialog" onCancel={e => { if (busy) e.preventDefault(); else onClose(); }}>
     <form onSubmit={save}>
       <h2>New Appointment</h2>
-      <p>Enter appointment details. Save to activate the appointment and add clinical records.</p>
+      <p>Enter appointment details. Save to add it to the appointment list.</p>
       {error && <p role="alert">{error}</p>}
       <div className="grid gap-4 ht-appointment-form-fields">
         <div className="ht-field ht-appointment-datetime-field">
@@ -453,7 +453,7 @@ function NewAppointment({ patientId, onClose, onSaved }) {
           </div>
         </div>
         <Field label="Notes" className="ht-appointment-notes-field"><Textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)} /></Field>
-        <div className="ht-form-buttons ht-appointment-form-actions"><button className="ht-primary-button ht-button-mint" disabled={busy || !reason.trim() || !scheduledAt}>{busy ? "Saving…" : "Save & Activate"}</button><button type="button" className="ht-secondary-button ht-appointment-cancel-button" disabled={busy} onClick={onClose}>Cancel</button></div>
+        <div className="ht-form-buttons ht-appointment-form-actions"><button className="ht-primary-button ht-button-mint" disabled={busy || !reason.trim() || !scheduledAt}>{busy ? "Saving…" : "Save"}</button><button type="button" className="ht-secondary-button ht-appointment-cancel-button" disabled={busy} onClick={onClose}>Cancel</button></div>
       </div>
     </form>
   </dialog>;
