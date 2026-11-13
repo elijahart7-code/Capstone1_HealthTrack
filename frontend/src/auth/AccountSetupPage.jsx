@@ -16,12 +16,12 @@ function SetupLayout({ title, description, children }) {
           </div>
           <p className="ht-muted mt-2 text-sm">Barangay Health Center of Mambog I</p>
         </div>
-        <div className="ht-auth-card">
+        <div className="ht-auth-card ht-setup-card">
           <div className="ht-login-panel">
             <div className="ht-login-header"><h1>{title}</h1><p>{description}</p></div>
             <div className="ht-login-divider" />
             {children}
-            <Link className="ht-login-link ht-setup-back" to="/login">Back to sign in</Link>
+            <Link className="ht-button ht-setup-back" to="/login">Back to sign in</Link>
           </div>
         </div>
       </div>
@@ -95,7 +95,7 @@ export function ConfirmAccountPage() {
 
   return (
     <SetupLayout
-      title={isReset ? "Change your password" : "Welcome to HealthTrack"}
+      title={isReset ? "Change Your Password" : "Welcome to HealthTrack"}
       description={isReset ? "Choose a new password for your patient account." : "Confirm your email and choose your password to get started."}
     >
       {error && <p className="ht-login-alert ht-login-alert-error" role="alert">{error}</p>}
@@ -106,7 +106,7 @@ export function ConfirmAccountPage() {
         </div>
       ) : (
         <form className="ht-login-form" onSubmit={submit}>
-          <p className="ht-muted text-sm">{isReset ? "Your current password keeps working until you save the new one. Reset links expire after 15 minutes." : "Your email is confirmed only when you save your password. Setup links expire after 15 minutes."}</p>
+          <p className="ht-muted text-sm ht-setup-notice">{isReset ? "Your current password keeps working until you save the new one. Reset links expire after 15 minutes." : "Your email is confirmed only when you save your password. Setup links expire after 15 minutes."}</p>
           <label className="ht-login-field"><span>New Password</span>
             <input className="ht-input" type={showPassword ? "text" : "password"} autoComplete="new-password" required minLength={12} maxLength={72} aria-describedby="password-guidance" value={password} onChange={(event) => setPassword(event.target.value)} />
           </label>

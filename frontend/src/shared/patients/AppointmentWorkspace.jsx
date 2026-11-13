@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import { CalendarDays, CheckCircle2, CircleDot, ClipboardList, Trash2 } from "lucide-react";
 import { api } from "../../lib/axios";
 import { AppointmentDate } from "../appointments/AppointmentDate";
+import { formatAppointmentDateTime, sortAppointmentsChronologically } from "../appointments/dateTime";
 import { AppointmentStatusControl } from "../appointments/AppointmentStatusControl";
 import { ClinicalRecords } from "./ClinicalRecords";
 import { ClinicalRecordSections } from "./ClinicalRecordSections";
@@ -24,7 +25,11 @@ function localDateValue(date) {
 
 export function AppointmentWorkspace({ patientId, appointments, role, onSaved }) {
   const [params, setParams] = useSearchParams();
-  const [selected, setSelected] = useState(params.get("appointmentId") || appointments[0]?.appointment_id);
+  const sortedAppointments = useMemo(
+    () => sortAppointmentsChronologically(appointments),
+    [appointments],
+  );
+  const [selected, setSelected] = useState(() => params.get("appointmentId") || sortedAppointments[0]?.appointment_id);
   const [active, setActive] = useState(null);
   const [recordExpanded, setRecordExpanded] = useState(false);
   const [recordsRestrictedOpen, setRecordsRestrictedOpen] = useState(false);
@@ -99,7 +104,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
       await api.delete(`/appointments/${removing.appointment_id}`);
       setAppointmentToRemove(null);
       if (active === removing.appointment_id) setActive(null);
-      const nextAppointment = appointments.find(item => item.appointment_id !== removing.appointment_id);
+      const nextAppointment = sortedAppointments.find(item => item.appointment_id !== removing.appointment_id);
       if (selected === removing.appointment_id) {
         setRecordExpanded(false);
         const nextParams = new URLSearchParams(params);
@@ -160,7 +165,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
       <div className="ht-appointment-scroll" tabIndex="0" aria-label="Patient appointments, scroll for more">
         {!appointments.length ? <EmptyState>No appointments yet.</EmptyState> : <Table>
           <thead><tr><Th>Date and Time</Th><Th>Reason</Th><Th>Status</Th><Th>Action</Th></tr></thead>
-          <tbody>{appointments.map(a => {
+          <tbody>{sortedAppointments.map(a => {
             const isActive = active === a.appointment_id && !["completed", "cancelled"].includes(a.status);
             const status = a.status === "pending" ? "confirmed" : a.status;
             const statusClass = role === "health_worker"
@@ -171,7 +176,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
               <Td><button type="button" className="ht-appointment-reason-select" aria-pressed={selected === a.appointment_id} onClick={() => select(a)}>{a.reason}</button></Td>
               <Td>{role === "admin" ? <AppointmentStatusControl
                 appointmentId={a.appointment_id}
-                label={new Date(a.scheduled_at).toLocaleString()}
+                label={formatAppointmentDateTime(a.scheduled_at)}
                 status={status}
                 disabled={statusBusy !== null}
                 onChange={(nextStatus) => updateStatus(a, nextStatus)}
@@ -290,11 +295,11 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
     }}>
       <section className="ht-confirm-dialog ht-archive-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="remove-appointment-title">
         <h2 id="remove-appointment-title">Remove Appointment?</h2>
-        <p className="ht-confirm-message">Are you sure you want to remove this Cancelled Appointment scheduled for {new Date(appointmentToRemove.scheduled_at).toLocaleString()}? This action cannot be undone. Read it carefully.</p>
+        <p className="ht-confirm-message">Are you sure you want to remove this Cancelled Appointment scheduled for {formatAppointmentDateTime(appointmentToRemove.scheduled_at)}? This action cannot be undone. Read it carefully.</p>
         {removeError && <p className="ht-confirm-error" role="alert">{removeError}</p>}
         <div className="ht-confirm-actions ht-archive-confirm-actions">
-          <button type="button" className="ht-confirm-cancel" disabled={statusBusy !== null} onClick={() => setAppointmentToRemove(null)}>Cancel</button>
           <button type="button" className="ht-confirm-submit" disabled={statusBusy !== null} onClick={removeAppointment}>{statusBusy !== null ? "Removing..." : "Remove"}</button>
+          <button type="button" className="ht-confirm-cancel ht-appointment-remove-cancel" disabled={statusBusy !== null} onClick={() => setAppointmentToRemove(null)}>Cancel</button>
         </div>
       </section>
     </div>}

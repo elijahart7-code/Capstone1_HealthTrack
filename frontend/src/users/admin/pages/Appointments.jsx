@@ -1,4 +1,5 @@
 import { AppointmentDate } from "../../../shared/appointments/AppointmentDate";
+import { parseAppointmentDateTime, sortAppointmentsChronologically } from "../../../shared/appointments/dateTime";
 import { AppointmentStatusControl } from "../../../shared/appointments/AppointmentStatusControl";
 import { useEffect, useMemo, useState } from "react";
 import { Calendar, Eye, Search } from "lucide-react";
@@ -33,19 +34,20 @@ export function Appointments({ appointments, loadData }) {
   const visible = useMemo(() => {
     const term = search.trim().toLowerCase();
 
-    return appointments
+    const filteredAppointments = appointments
       .filter((appointment) => {
         if (statusFilter === "all") return true;
         if (statusFilter === "upcoming") {
-          return appointment.status === "confirmed" && new Date(appointment.scheduled_at).getTime() > Date.now();
+          return appointment.status === "confirmed" && parseAppointmentDateTime(appointment.scheduled_at).getTime() > Date.now();
         }
         return appointment.status === statusFilter;
       })
       .filter((appointment) => {
         const patientName = getPatientName(appointment).toLowerCase();
         return !term || patientName.includes(term);
-      })
-      .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+      });
+
+    return sortAppointmentsChronologically(filteredAppointments);
   }, [appointments, search, statusFilter]);
 
   const totalPages = Math.max(1, Math.ceil(visible.length / pageSize));

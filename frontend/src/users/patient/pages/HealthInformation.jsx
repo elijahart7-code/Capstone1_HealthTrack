@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { getCurrentUser } from "../../../lib/auth";
 import { ClinicalRecordSections } from "../../../shared/patients/ClinicalRecordSections";
+import { formatAppointmentDateTime, parseAppointmentDateTime } from "../../../shared/appointments/dateTime";
 import {
   Home,
   Calendar,
@@ -78,17 +79,17 @@ export function HealthInformation({ healthInfo }) {
 const sortedAppointments = [...appointments]
   .filter((appointment) =>
     appointment?.scheduled_at &&
-    Number.isFinite(Date.parse(appointment.scheduled_at))
+    Number.isFinite(parseAppointmentDateTime(appointment.scheduled_at).getTime())
   )
   .sort(
     (a, b) =>
-      Date.parse(b.scheduled_at) - Date.parse(a.scheduled_at)
+      parseAppointmentDateTime(b.scheduled_at) - parseAppointmentDateTime(a.scheduled_at)
   );
 
 const upcomingAppointment =
   sortedAppointments
     .filter((appointment) => {
-      const scheduledTime = Date.parse(appointment.scheduled_at);
+      const scheduledTime = parseAppointmentDateTime(appointment.scheduled_at).getTime();
       const status = appointment.status?.toLowerCase();
 
       return (
@@ -99,7 +100,7 @@ const upcomingAppointment =
     })
     .sort(
       (a, b) =>
-        Date.parse(a.scheduled_at) - Date.parse(b.scheduled_at)
+        parseAppointmentDateTime(a.scheduled_at) - parseAppointmentDateTime(b.scheduled_at)
     )[0] ||
   sortedAppointments[0] ||
   null;
@@ -236,7 +237,7 @@ const upcomingAppointment =
 
                       return (
                         <tr key={a.appointment_id}>
-                          <td className="patient-date-cell">{new Date(a.scheduled_at).toLocaleString()}</td>
+                          <td className="patient-date-cell">{formatAppointmentDateTime(a.scheduled_at)}</td>
                           <td>{a.reason}</td>
                           <td>
                             <span
@@ -557,7 +558,7 @@ function LatestAppointment({
       key: "scheduled_at",
       label: "Appointment Date",
       value: appointment?.scheduled_at
-        ? new Date(appointment.scheduled_at).toLocaleDateString(undefined, {
+        ? formatAppointmentDateTime(appointment.scheduled_at, {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -568,7 +569,7 @@ function LatestAppointment({
       key: "time",
       label: "Time",
       value: appointment?.scheduled_at
-        ? new Date(appointment.scheduled_at).toLocaleTimeString(undefined, {
+        ? formatAppointmentDateTime(appointment.scheduled_at, {
             hour: "numeric",
             minute: "2-digit",
           })
@@ -1181,7 +1182,7 @@ function HealthAssessmentHistory({
           </td>
           <td>
             {appointment?.scheduled_at
-              ? <time dateTime={appointment.scheduled_at}>{new Date(appointment.scheduled_at).toLocaleString()}</time>
+              ? <time dateTime={appointment.scheduled_at}>{formatAppointmentDateTime(appointment.scheduled_at)}</time>
               : "--"}
           </td>
           <td>

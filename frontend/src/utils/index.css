@@ -666,6 +666,17 @@ Reusable surfaces, panel headings, metrics, and section icons.
         justify-content: center;
     }
 
+    .ht-healthworker-register-page .ht-register-form-actions .ht-register-cancel-button {
+        border-color: #b83b3b;
+        background: #b83b3b;
+        color: #fff;
+    }
+
+    .ht-healthworker-register-page .ht-register-form-actions .ht-register-cancel-button:hover:not(:disabled) {
+        border-color: #963232;
+        background: #963232;
+    }
+
     .ht-button-full {
         width: 100%;
         justify-content: center;
@@ -2302,6 +2313,17 @@ Reusable surfaces, panel headings, metrics, and section icons.
         background: #963232;
     }
 
+    .ht-confirm-actions button.ht-appointment-remove-cancel {
+        border-color: #b83b3b !important;
+        background-color: #b83b3b !important;
+        color: #fff !important;
+    }
+
+    .ht-confirm-actions button.ht-appointment-remove-cancel:hover:not(:disabled) {
+        border-color: #963232 !important;
+        background-color: #963232 !important;
+    }
+
     .ht-confirm-submit {
         background: #b86d16;
         color: #fff;
@@ -2912,7 +2934,31 @@ Reusable surfaces, panel headings, metrics, and section icons.
     AUTHENTICATION
     Login and account-selection form surfaces.
     --------------------------------------------------------- */
-    .ht-setup-back { display: block; margin: 1.25rem auto 0; text-align: center; }
+    .ht-auth-shell .ht-setup-back {
+        display: flex;
+        width: 100%;
+        min-height: 44px;
+        align-items: center;
+        justify-content: center;
+        margin: 1.25rem auto 0;
+        border: 1px solid #000 !important;
+        border-radius: 8px;
+        background: #c0e2d1 !important;
+        color: #000 !important;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .ht-auth-shell .ht-setup-back:hover {
+        background: #b4dfcb !important;
+        text-decoration: none;
+    }
+
+    .ht-auth-shell .ht-setup-notice {
+        text-align: center;
+    }
     .ht-setup-show-password { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
 
     .ht-auth-shell {
@@ -2980,6 +3026,10 @@ Reusable surfaces, panel headings, metrics, and section icons.
         background: #ffffff;
         border: 1px solid rgba(15, 107, 95, 0.14);
         box-shadow: 0 10px 24px rgba(15, 20, 16, 0.04);
+    }
+
+    .ht-auth-shell .ht-auth-card.ht-setup-card {
+        border: 1px solid #000 !important;
     }
 
     .ht-site-key-card {
@@ -3188,6 +3238,10 @@ Reusable surfaces, panel headings, metrics, and section icons.
     .ht-login-alert-success {
         background: rgba(15, 107, 95, 0.08);
         color: var(--color-brand-strong);
+    }
+
+    .ht-login-otp-expiry {
+        text-align: center;
     }
 
     .ht-login-form {

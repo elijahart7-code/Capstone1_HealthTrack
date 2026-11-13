@@ -311,13 +311,13 @@ export default function LoginPage({ accountType = "patient" }) {
                     </div>
                   </label>
 
-                  <p className="ht-muted text-sm" role="status">
+                  <p className="ht-muted text-sm ht-login-otp-expiry" role="status">
                     Sent to {email}. {expiryLabel}.
                   </p>
 
                   <button type="submit" className="ht-button ht-auth-submit" disabled={otpLoading}>
                     <ShieldCheck size={20} strokeWidth={1.8} />
-                    {otpLoading ? "Verifying..." : "Verify code & sign in"}
+                    {otpLoading ? "Verifying..." : "Verify Code & Sign In"}
                   </button>
 
                   <button

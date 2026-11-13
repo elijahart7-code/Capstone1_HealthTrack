@@ -1,5 +1,6 @@
 import { ReportHighlights, ReportInsights, ReportMetrics } from "../../../shared/ReportInsights";
 import { AppointmentDate } from "../../../shared/appointments/AppointmentDate";
+import { formatAppointmentDateTime, parseAppointmentDateTime } from "../../../shared/appointments/dateTime";
 import { ExportDialog } from "../../../shared/ExportDialog";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
@@ -184,7 +185,7 @@ function AppointmentDetailTable({ appointments }) {
       <thead><tr><Th>Date</Th><Th>Patient</Th><Th>Reason / Program</Th><Th>Status</Th><Th>Notes</Th></tr></thead>
       <tbody>{appointments.map((appointment) => (
         <tr key={appointment.appointment_id}>
-          <Td>{new Date(appointment.scheduled_at).toLocaleString()}</Td>
+          <Td>{formatAppointmentDateTime(appointment.scheduled_at)}</Td>
           <Td>{appointment.last_name}, {appointment.first_name}</Td>
           <Td>{appointment.reason || "Not specified"}</Td>
           <Td>{appointment.status}</Td>
@@ -206,7 +207,7 @@ function notableAppointments(appointments) {
 
 function NotableEvents({ appointments, onAppointmentClick, limit = 100 }) {
   const events = notableAppointments(appointments)
-    .sort((a, b) => new Date(b.scheduled_at) - new Date(a.scheduled_at))
+    .sort((a, b) => parseAppointmentDateTime(b.scheduled_at) - parseAppointmentDateTime(a.scheduled_at))
     .slice(0, limit);
 
   if (!events.length) return <EmptyState>No notable events recorded.</EmptyState>;
@@ -215,7 +216,7 @@ function NotableEvents({ appointments, onAppointmentClick, limit = 100 }) {
       <thead><tr><Th>Date</Th><Th>Patient</Th><Th>Event</Th><Th>Status</Th></tr></thead>
       <tbody>{events.map((event) => (
         <tr key={event.appointment_id}>
-          <Td>{new Date(event.scheduled_at).toLocaleDateString()}</Td>
+          <Td>{formatAppointmentDateTime(event.scheduled_at, { year: "numeric", month: "numeric", day: "numeric" })}</Td>
           <Td><button className="ht-link-button" onClick={() => onAppointmentClick?.(event)}>{event.last_name}, {event.first_name}</button></Td>
           <Td>{event.notes || `${event.reason} appointment completed`}</Td>
           <Td>{event.status}</Td>
@@ -271,7 +272,7 @@ export function Dashboard({ dashboard, appointments, loadData }) {
 
   function appointmentsFor(data) {
     if (!data?.filters) return [];
-    return appointments.filter(a => { const d = new Date(a.scheduled_at); const start = new Date(data.filters.from + "T00:00:00"); const end = new Date(data.filters.to + "T23:59:59.999"); return d >= start && d <= end; }).sort((a,b) => new Date(b.scheduled_at)-new Date(a.scheduled_at));
+    return appointments.filter(a => { const d = parseAppointmentDateTime(a.scheduled_at); const start = parseAppointmentDateTime(data.filters.from + "T00:00:00"); const end = parseAppointmentDateTime(data.filters.to + "T23:59:59.999"); return d >= start && d <= end; }).sort((a,b) => parseAppointmentDateTime(b.scheduled_at)-parseAppointmentDateTime(a.scheduled_at));
   }
   const periodAppointments = appointmentsFor(report);
   const exportSections = [

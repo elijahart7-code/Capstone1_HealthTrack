@@ -402,7 +402,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
           <button type="submit" className="ht-button ht-button-mint" disabled={saving}>
             {saving ? "Saving..." : "Register Patient"}
           </button>
-          <button type="button" onClick={() => setSearchParams({ page: "patients" })} className="ht-button ht-button-mint">
+          <button type="button" onClick={() => setSearchParams({ page: "patients" })} className="ht-button ht-register-cancel-button">
             Cancel
           </button>
         </div>
