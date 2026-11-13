@@ -359,12 +359,12 @@ export default function LoginPage({ accountType = "patient" }) {
             role="dialog"
           >
             <h2 id="forgot-password-title">Forgot Password?</h2>
-            <p>Enter the Google (Gmail) address linked to your patient account. We will send a link to change your password.</p>
+            <p className="ht-confirm-message">Enter the Google (Gmail) Address linked to your account. We will send a link to change your password.</p>
             {resetStatus && <p className="ht-login-alert ht-login-alert-success" role="status">{resetStatus}</p>}
             {resetError && <p className="ht-login-alert ht-login-alert-error" role="alert">{resetError}</p>}
             <form onSubmit={sendResetLink} className="ht-login-form">
               <label className="ht-login-field">
-                <span>Gmail account</span>
+                <span>Gmail Account</span>
                 <div className="ht-input-wrap">
                   <Mail aria-hidden="true" />
                   <input
@@ -382,18 +382,18 @@ export default function LoginPage({ accountType = "patient" }) {
               </label>
               <div className="ht-confirm-actions ht-login-confirm-actions">
                 <button
-                  className="ht-confirm-cancel"
-                  onClick={closeForgotPasswordMessage}
-                  type="button"
-                >
-                  Cancel
-                </button>
-                <button
-                  className="ht-confirm-submit"
+                  className="ht-confirm-submit ht-password-reset-submit"
                   disabled={resetSending}
                   type="submit"
                 >
                   {resetSending ? "Sending..." : "Send"}
+                </button>
+                <button
+                  className="ht-confirm-cancel ht-password-reset-cancel"
+                  onClick={closeForgotPasswordMessage}
+                  type="button"
+                >
+                  Cancel
                 </button>
               </div>
             </form>

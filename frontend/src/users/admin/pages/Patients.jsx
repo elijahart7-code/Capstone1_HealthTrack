@@ -323,20 +323,20 @@ export function Patients({ patients, loadData, showArchived, onArchivedChange })
             )}
             <div className="ht-confirm-actions ht-archive-confirm-actions">
               <button
-                className="ht-confirm-cancel"
-                disabled={isArchiving}
-                onClick={() => closeArchiveDialog()}
-                type="button"
-              >
-                Cancel
-              </button>
-              <button
                 className="ht-confirm-submit"
                 disabled={isArchiving}
                 onClick={archivePatient}
                 type="button"
               >
                 {isArchiving ? "Archiving..." : "Archive"}
+              </button>
+              <button
+                className="ht-confirm-cancel ht-archive-patient-cancel"
+                disabled={isArchiving}
+                onClick={() => closeArchiveDialog()}
+                type="button"
+              >
+                Cancel
               </button>
             </div>
           </section>

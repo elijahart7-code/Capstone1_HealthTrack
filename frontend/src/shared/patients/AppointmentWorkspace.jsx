@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router";
 import { CalendarDays, CheckCircle2, CircleDot, ClipboardList, Trash2 } from "lucide-react";
 import { api } from "../../lib/axios";
 import { AppointmentDate } from "../appointments/AppointmentDate";
+import { AppointmentStatusControl } from "../appointments/AppointmentStatusControl";
 import { ClinicalRecords } from "./ClinicalRecords";
 import { ClinicalRecordSections } from "./ClinicalRecordSections";
 import { RECORD_TYPES } from "../../config/recordTypes";
@@ -155,7 +156,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
   }
   return <div className="ht-appointment-workspace">
     {!recording && <section className="ht-content-card">
-      <div className="ht-card-heading"><h2 className="ht-appointments-heading"><CalendarDays size={22} aria-hidden="true" />Appointments</h2>{role === "admin" && <button className="ht-primary-button ht-new-appointment-button" onClick={() => setShowNew(true)}>+ New Appointment</button>}</div>
+      <div className="ht-card-heading"><h2 className="ht-appointments-heading"><CalendarDays size={22} aria-hidden="true" />Appointments</h2>{role === "admin" && <button className="ht-primary-button ht-new-appointment-button ht-button-mint" onClick={() => setShowNew(true)}>+ New Appointment</button>}</div>
       <div className="ht-appointment-scroll" tabIndex="0" aria-label="Patient appointments, scroll for more">
         {!appointments.length ? <EmptyState>No appointments yet.</EmptyState> : <Table>
           <thead><tr><Th>Date and Time</Th><Th>Reason</Th><Th>Status</Th><Th>Action</Th></tr></thead>
@@ -168,9 +169,13 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
             return <tr key={a.appointment_id} className={isActive ? "ht-appointment-row-recording" : selected === a.appointment_id ? "ht-appointment-row-selected" : ""}>
               <Td><button className="ht-link-button" aria-pressed={selected === a.appointment_id} onClick={() => select(a)}><AppointmentDate appointment={a} /></button></Td>
               <Td><button type="button" className="ht-appointment-reason-select" aria-pressed={selected === a.appointment_id} onClick={() => select(a)}>{a.reason}</button></Td>
-              <Td>{role === "admin" && status !== "completed" ? <Select aria-label={`Appointment status for ${new Date(a.scheduled_at).toLocaleString()}`} value={status} disabled={statusBusy !== null} className={`ht-status-select ht-status-select-${status} ht-appointment-status`} onChange={e => updateStatus(a, e.target.value)}>
-                {STATUSES.map(status => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}
-              </Select> : <span className={statusClass}>{status.charAt(0).toUpperCase() + status.slice(1)}</span>}</Td>
+              <Td>{role === "admin" ? <AppointmentStatusControl
+                appointmentId={a.appointment_id}
+                label={new Date(a.scheduled_at).toLocaleString()}
+                status={status}
+                disabled={statusBusy !== null}
+                onChange={(nextStatus) => updateStatus(a, nextStatus)}
+              /> : <span className={statusClass}>{status.charAt(0).toUpperCase() + status.slice(1)}</span>}</Td>
               {role === "health_worker" ? (
                 <Td><span className="ht-appointment-record-restricted">Records Restricted</span></Td>
               ) : role === "admin" ? (
@@ -448,7 +453,7 @@ function NewAppointment({ patientId, onClose, onSaved }) {
           </div>
         </div>
         <Field label="Notes" className="ht-appointment-notes-field"><Textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)} /></Field>
-        <div className="ht-form-buttons ht-appointment-form-actions"><button type="button" className="ht-secondary-button" disabled={busy} onClick={onClose}>Cancel</button><button className="ht-primary-button" disabled={busy || !reason.trim() || !scheduledAt}>{busy ? "Saving…" : "Save & Activate"}</button></div>
+        <div className="ht-form-buttons ht-appointment-form-actions"><button className="ht-primary-button ht-button-mint" disabled={busy || !reason.trim() || !scheduledAt}>{busy ? "Saving…" : "Save & Activate"}</button><button type="button" className="ht-secondary-button ht-appointment-cancel-button" disabled={busy} onClick={onClose}>Cancel</button></div>
       </div>
     </form>
   </dialog>;

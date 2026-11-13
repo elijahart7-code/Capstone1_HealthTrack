@@ -333,17 +333,22 @@ async function clickButton(label) {
   await act(async () => button.dispatchEvent(new MouseEvent("click", { bubbles: true })));
 }
 
-for (const role of ["admin", "health_worker"]) {
-  test(`${role} can correct a pending email and keeps the account pending until confirmation`, async () => {
-    await mountPendingPatient(role); await clickButton("Change Email");
-    await fill("New email address", "corrected@example.com"); await submit();
-    assert.deepEqual(posts, [{ url: "/patients/P1/portal-account/email", body: { email: "corrected@example.com", current_email: "wrong@example.com" } }]);
-    assert.match(document.body.textContent, /corrected@example.com/);
-    assert.match(document.body.textContent, /Pending Email/);
-    assert.match(document.querySelector('[role="status"]').textContent, /Confirmation email sent/);
-    assert.equal(document.querySelector("form"), null);
-  });
-}
+test("Admin can see portal status but cannot manage account setup", async () => {
+  await mountPendingPatient("admin");
+  assert.match(document.querySelector(".ht-account-status").textContent, /Pending Email/);
+  assert.equal(document.body.textContent.includes("Account Setup:"), false);
+  assert.equal([...document.querySelectorAll("button")].some(button => ["Change Email", "Resend Email"].includes(button.textContent.trim())), false);
+});
+
+test("Health Worker can correct a pending email and keeps the account pending until confirmation", async () => {
+  await mountPendingPatient("health_worker"); await clickButton("Change Email");
+  await fill("New email address", "corrected@example.com"); await submit();
+  assert.deepEqual(posts, [{ url: "/patients/P1/portal-account/email", body: { email: "corrected@example.com", current_email: "wrong@example.com" } }]);
+  assert.match(document.body.textContent, /corrected@example.com/);
+  assert.match(document.body.textContent, /Pending Email/);
+  assert.match(document.querySelector('[role="status"]').textContent, /Confirmation email sent/);
+  assert.equal(document.querySelector("form"), null);
+});
 
 test("a rejected email correction keeps the form and draft for retry", async () => {
   await mountPendingPatient(); await clickButton("Change Email");

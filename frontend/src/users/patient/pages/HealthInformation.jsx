@@ -335,7 +335,7 @@ function PatientPortalAccount({ patient, currentUser }) {
   // Two separate facts: when the patient record was made, and when the portal
   // account actually activated. They are not the same moment.
   const patientCreatedDate = formatDate(patient.patient_created_at || patient.created_at) || "Not available";
-  const activatedDate = formatDate(patient.account_activated_at) || (patient.is_verified ? "Not available" : "Not yet activated");
+  const activatedDate = formatDate(patient.account_activated_at) || (patient.is_verified ? "Not available" : "Not Yet Activated");
 
   return (
     <section className="patient-healthinfo-card patient-general-account-card ht-portal-card" aria-labelledby="patient-general-account-title">

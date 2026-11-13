@@ -1075,6 +1075,62 @@ Reusable surfaces, panel headings, metrics, and section icons.
         background: #F2FAF7;
     }
 
+    .ht-admin-shell :is(
+        .ht-button,
+        .ht-primary-button,
+        .ht-secondary-button,
+        .ht-small-button,
+        .ht-page-btn,
+        .ht-record-action,
+        .ht-restore-row-action,
+        .ht-appointment-action-confirmed,
+        .ht-appointment-action-completed,
+        .ht-delete-patient-button,
+        .ht-confirm-cancel,
+        .ht-archive-patient-cancel,
+        .ht-account-confirm-submit,
+        .ht-account-confirm-cancel,
+        .ht-report-tabs button
+    ),
+    .ht-admin-shell :is(.ht-current-date-pill, .ht-pill-count) {
+        border-color: #c0e2d1;
+        background: #c0e2d1;
+        color: #000;
+    }
+
+    .ht-admin-shell :is(
+        .ht-button,
+        .ht-primary-button,
+        .ht-secondary-button,
+        .ht-small-button,
+        .ht-page-btn,
+        .ht-record-action,
+        .ht-restore-row-action,
+        .ht-appointment-action-confirmed,
+        .ht-appointment-action-completed,
+        .ht-delete-patient-button,
+        .ht-confirm-cancel,
+        .ht-archive-patient-cancel,
+        .ht-account-confirm-submit,
+        .ht-account-confirm-cancel,
+        .ht-report-tabs button
+    ):hover:not(:disabled) {
+        border-color: #b4dfcb;
+        background: #b4dfcb;
+        color: #000;
+    }
+
+    .ht-admin-shell .ht-page-btn-active,
+    .ht-admin-shell .ht-report-tabs button.is-active {
+        border-color: #a7d8bd;
+        background: #a7d8bd;
+        color: #000;
+    }
+
+    .ht-admin-shell .ht-archive-patient-cancel {
+        border-color: #c0e2d1 !important;
+    }
+
     .ht-healthworker-shell .ht-content {
         box-sizing: border-box;
         min-width: 0;
@@ -1554,8 +1610,9 @@ Reusable surfaces, panel headings, metrics, and section icons.
     }
 
     .ht-status-badge-completed {
-        background: rgba(51, 102, 153, 0.08);
-        color: #3366cc;
+        background: #3366cc;
+        color: #fff;
+        border-radius: 999px;
     }
 
     .ht-status-badge-cancelled {
@@ -1608,6 +1665,131 @@ Reusable surfaces, panel headings, metrics, and section icons.
         background-color: rgba(178, 69, 62, 0.12);
         background-image: linear-gradient(45deg, transparent 50%, #9a0200 50%), linear-gradient(135deg, #9a0200 50%, transparent 50%);
         color: #9a0200;
+    }
+
+    .ht-appointment-status-picker {
+        display: inline-flex;
+    }
+
+    .ht-appointment-status-pill,
+    .ht-appointment-status-trigger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+        box-sizing: border-box;
+        width: 120px;
+        min-width: 120px;
+        height: 34px;
+        padding: 0 0.875rem;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        font: inherit;
+        font-size: 0.875rem;
+        font-weight: 700;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .ht-appointment-status-pill-completed {
+        background: #3366cc;
+        color: #fff;
+    }
+
+    .ht-appointment-status-trigger {
+        cursor: pointer;
+        transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .ht-appointment-status-trigger-confirmed {
+        background: #0f6b5f;
+        color: #fff;
+    }
+
+    .ht-appointment-status-trigger-confirmed:hover:not(:disabled) {
+        border-color: #0b5b51;
+        background: #0b5b51;
+    }
+
+    .ht-appointment-status-trigger-cancelled {
+        background: #b2453e;
+        color: #fff;
+    }
+
+    .ht-appointment-status-trigger-cancelled:hover:not(:disabled) {
+        border-color: #963832;
+        background: #963832;
+    }
+
+    .ht-appointment-status-trigger:active:not(:disabled) {
+        transform: none;
+    }
+
+    .ht-appointment-status-trigger:focus-visible,
+    .ht-appointment-status-option:focus-visible {
+        outline: 2px solid var(--color-brand);
+        outline-offset: 2px;
+    }
+
+    .ht-appointment-status-trigger:disabled {
+        cursor: wait;
+        opacity: 0.6;
+    }
+
+    .ht-appointment-status-menu {
+        position: fixed;
+        z-index: 1000;
+        display: grid;
+        gap: 0.25rem;
+        min-width: 120px;
+        padding: 0.35rem;
+        border: 1px solid #dfeae4;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 5px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .ht-appointment-status-option {
+        width: 100%;
+        min-height: 30px;
+        padding: 0.4rem 0.65rem;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        font: inherit;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .ht-appointment-status-option-confirmed {
+        color: #0b5b51;
+    }
+
+    .ht-appointment-status-option-confirmed[aria-pressed="true"] {
+        background: #dcefeb;
+    }
+
+    .ht-appointment-status-option-confirmed:hover:not(:disabled) {
+        background: #dcefeb;
+    }
+
+    .ht-appointment-status-option-cancelled {
+        color: #963832;
+    }
+
+    .ht-appointment-status-option-cancelled[aria-pressed="true"] {
+        background: #f5e8e7;
+    }
+
+    .ht-appointment-status-option-cancelled:hover:not(:disabled) {
+        background: #f5e8e7;
+    }
+
+    .ht-appointment-status-option:disabled {
+        cursor: default;
+        opacity: 1;
     }
 
     .ht-appointments-panel {
@@ -1961,6 +2143,14 @@ Reusable surfaces, panel headings, metrics, and section icons.
         text-align: center;
     }
 
+    .ht-login-confirm-dialog .ht-confirm-message {
+        margin-bottom: 1.15rem;
+    }
+
+    .ht-login-confirm-dialog .ht-login-field > span {
+        font-size: 0.75rem;
+    }
+
     .ht-confirm-dialog .ht-resend-confirm-message {
         text-align: center;
     }
@@ -1981,6 +2171,28 @@ Reusable surfaces, panel headings, metrics, and section icons.
 
     .ht-login-confirm-actions {
         justify-content: center;
+    }
+
+    .ht-login-confirm-dialog .ht-password-reset-submit {
+        border-color: #16815a;
+        background: #16815a;
+        color: #fff;
+    }
+
+    .ht-login-confirm-dialog .ht-password-reset-submit:hover:not(:disabled) {
+        border-color: #116b4a;
+        background: #116b4a;
+    }
+
+    .ht-login-confirm-dialog .ht-password-reset-cancel {
+        border-color: #b83b3b !important;
+        background: #b83b3b;
+        color: #fff;
+    }
+
+    .ht-login-confirm-dialog .ht-password-reset-cancel:hover:not(:disabled) {
+        border-color: #963232 !important;
+        background: #963232;
     }
 
     .ht-archive-confirm-actions {
@@ -2063,6 +2275,16 @@ Reusable surfaces, panel headings, metrics, and section icons.
         border-color: #b8c9c0 !important;
         background: #fff;
         color: #40534a;
+    }
+
+    .ht-archive-patient-cancel {
+        border-color: #b83b3b !important;
+        background: #b83b3b;
+        color: #fff;
+    }
+
+    .ht-archive-patient-cancel:hover:not(:disabled) {
+        background: #963232;
     }
 
     .ht-confirm-submit {
@@ -8918,6 +9140,18 @@ Dashboard charts, report records, export dialogs, and print output.
           font-family: inherit;
         }
 
+.ht-appointment-workspace .ht-new-appointment-button.ht-button-mint {
+    border-color: #c0e2d1;
+    background: #c0e2d1;
+    color: #000;
+}
+
+.ht-appointment-workspace .ht-new-appointment-button.ht-button-mint:hover:not(:disabled) {
+    border-color: #b4dfcb;
+    background: #b4dfcb;
+    color: #000;
+}
+
 .ht-secondary-button {
           padding: 9px 14px;
           border: 1px solid #cbd8d1;
@@ -8968,6 +9202,25 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-new-appointment-dialog .ht-appointment-form-fields { grid-template-columns: minmax(0, 1.15fr) minmax(220px, .85fr); gap: 10px 14px; }
 .ht-new-appointment-dialog .ht-appointment-datetime-field,
 .ht-new-appointment-dialog .ht-appointment-form-actions { grid-column: 1 / -1; }
+.ht-new-appointment-dialog .ht-appointment-form-actions .ht-primary-button.ht-button-mint {
+    border-color: #c0e2d1;
+    background: #c0e2d1;
+    color: #000;
+}
+.ht-new-appointment-dialog .ht-appointment-form-actions .ht-primary-button.ht-button-mint:hover:not(:disabled) {
+    border-color: #b4dfcb;
+    background: #b4dfcb;
+    color: #000;
+}
+.ht-new-appointment-dialog .ht-appointment-cancel-button {
+    border-color: #b83b3b;
+    background: #b83b3b;
+    color: #fff;
+}
+.ht-new-appointment-dialog .ht-appointment-cancel-button:hover:not(:disabled) {
+    border-color: #963232;
+    background: #963232;
+}
 .ht-new-appointment-dialog .ht-appointment-reason-field,
 .ht-new-appointment-dialog .ht-appointment-notes-field { min-width: 0; align-content: start; }
 .ht-new-appointment-dialog .ht-appointment-reason-field { display: grid; grid-template-rows: auto minmax(48px, 1fr); grid-column: 2; grid-row: 2; align-self: stretch; width: 100%; margin-top: -6px; }

@@ -32,6 +32,7 @@ export function PatientRecord({
   onPatientUpdated,
 }) {
   const isAdmin = role === "admin";
+  const canManagePortalAccount = role === "health_worker";
   const [searchParams] = useSearchParams();
 
   const [patient, setPatient] = useState(null);
@@ -451,10 +452,10 @@ export function PatientRecord({
           </span>}
           </div>
           <div className="ht-portal-details">
-          <div className={`ht-portal-detail ht-portal-account-detail ${patient.user_id && !patient.is_verified && (isAdmin || role === "health_worker") ? "has-actions" : ""}`}>
+          <div className={`ht-portal-detail ht-portal-account-detail ${patient.user_id && !patient.is_verified && canManagePortalAccount ? "has-actions" : ""}`}>
           <div className="ht-portal-account-labels">
             <span>Account Status:</span>
-            {patient.user_id && !patient.is_verified && (isAdmin || role === "health_worker") && (
+            {patient.user_id && !patient.is_verified && canManagePortalAccount && (
               <span>Account Setup:</span>
             )}
           </div>
@@ -462,7 +463,7 @@ export function PatientRecord({
             <span className={`ht-account-status ${!patient.user_id ? "inactive" : patient.is_verified ? "active" : "pending"}`}>
               {!patient.user_id ? "Inactive" : patient.is_verified ? "Active" : "Pending Email"}
             </span>
-            {patient.user_id && !patient.is_verified && (isAdmin || role === "health_worker") && (
+            {patient.user_id && !patient.is_verified && canManagePortalAccount && (
               <div className="ht-account-actions">
               <button
                 type="button"
@@ -525,7 +526,7 @@ export function PatientRecord({
         </div>
 
         <div className="ht-portal-detail">
-          <span>Account Activated:</span>
+          <span>Account Created:</span>
 
           <strong>
             {patient.account_activated_at
@@ -538,7 +539,7 @@ export function PatientRecord({
                 })
               : patient.is_verified
                 ? "--"
-                : "Not yet activated"}
+                : "Not Yet Activated"}
           </strong>
         </div>
 
@@ -590,7 +591,7 @@ export function PatientRecord({
         </div>
       )}
 
-      {showEmailForm && !patient.is_verified && (isAdmin || role === "health_worker") && (
+      {showEmailForm && !patient.is_verified && canManagePortalAccount && (
         <div
           className={`ht-confirm-backdrop ht-archive-confirm-backdrop ${isClosingEmailForm ? "is-closing" : ""}`}
           onMouseDown={(event) => {
@@ -667,8 +668,8 @@ export function PatientRecord({
             <strong>{patient.patient_created_at || patient.created_at ? new Date(patient.patient_created_at || patient.created_at).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }) : "----------"}</strong>
           </div>
           <div className="ht-portal-detail">
-            <span>Account Activated:</span>
-            <strong>Not yet activated</strong>
+            <span>Account Created:</span>
+            <strong>Not Yet Activated</strong>
           </div>
           <p>Please coordinate with the Health Worker as soon as possible to create your account. Thankyou!</p>
         </div>

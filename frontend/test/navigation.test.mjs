@@ -190,17 +190,18 @@ test('dashboard has a shared spacing wrapper and adjacent Overview/Notable Event
 });
 
 
-test('appointment status dropdown supports all remaining statuses while browsing appointments', async () => {
+test('appointment status button supports Confirmed and Cancelled while browsing appointments', async () => {
   await mount('/admin?page=patients&patientId=P1&appointmentId=A1');
-  const select = document.querySelector('.ht-appointment-scroll select');
-  assert.deepEqual([...select.options].map(o => o.value), ['confirmed', 'cancelled']);
-  await act(async () => {
-    select.value = 'cancelled';
-    select.dispatchEvent(new Event('change', { bubbles: true }));
-  });
+  const trigger = document.querySelector('.ht-appointment-scroll .ht-appointment-status-trigger');
+  assert.equal(trigger.textContent.trim(), 'Confirmed');
+  await click(trigger);
+  const cancelledOption = [...document.querySelectorAll('.ht-appointment-status-option')].find(option => option.textContent.trim() === 'Cancelled');
+  assert.ok(cancelledOption);
+  await click(cancelledOption);
+  await act(async () => { await new Promise(resolve => setTimeout(resolve, 0)); });
   assert.equal(patched.length, 1);
   assert.equal(patched[0].body.status, 'cancelled');
-  assert.equal(document.querySelector('.ht-appointment-scroll select').value, 'cancelled');
+  assert.equal(document.querySelector('.ht-appointment-scroll .ht-appointment-status-trigger').textContent.trim(), 'Cancelled');
   assert.equal(document.querySelector('.ht-appointment-record.is-recording'), null);
   assert.equal(button('Activate'), undefined);
   assert.match(visibleText(), /No Record/);
@@ -209,11 +210,12 @@ test('appointment status dropdown supports all remaining statuses while browsing
 test('failed status update shows an error and retains the original status', async () => {
   await mount('/admin?page=patients&patientId=P1&appointmentId=A1');
   rejectStatus = true;
-  const select = document.querySelector('.ht-appointment-scroll select');
-  await act(async () => { select.value = 'cancelled'; select.dispatchEvent(new Event('change', { bubbles: true })); });
+  await click(document.querySelector('.ht-appointment-scroll .ht-appointment-status-trigger'));
+  await click([...document.querySelectorAll('.ht-appointment-status-option')].find(option => option.textContent.trim() === 'Cancelled'));
+  await act(async () => { await new Promise(resolve => setTimeout(resolve, 0)); });
   assert.match(document.querySelector('[role="alert"]').textContent, /Could not update/);
-  assert.equal(select.value, 'confirmed');
-  assert.equal(select.disabled, false);
+  assert.equal(document.querySelector('.ht-appointment-scroll .ht-appointment-status-trigger').textContent.trim(), 'Confirmed');
+  assert.equal(document.querySelector('.ht-appointment-scroll .ht-appointment-status-trigger').disabled, false);
 });
 
 test('patient action columns expose archive and keep row action layout consistent', async () => {
