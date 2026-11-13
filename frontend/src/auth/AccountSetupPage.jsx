@@ -8,8 +8,13 @@ function SetupLayout({ title, description, children }) {
     <div className="ht-auth-shell">
       <div className="ht-auth-wrap">
         <div className="ht-auth-branding">
-          <div className="ht-brand justify-center"><span className="ht-brand-mark">HT</span><span>HealthTrack</span></div>
-          <p className="ht-muted mt-2 text-sm">Your patient portal</p>
+          <div className="ht-login-brand">
+            <div className="ht-login-logo-box">
+              <img className="ht-login-logo" src="/images/healthtrack-symbol.png" alt="" />
+            </div>
+            <span className="ht-login-brand-name">HealthTrack</span>
+          </div>
+          <p className="ht-muted mt-2 text-sm">Barangay Health Center of Mambog I</p>
         </div>
         <div className="ht-auth-card">
           <div className="ht-login-panel">
