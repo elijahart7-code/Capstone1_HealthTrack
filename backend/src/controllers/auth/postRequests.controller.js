@@ -128,8 +128,10 @@ export async function initiateAccount(req, res) {
   res.set("Cache-Control", "no-store");
   try {
     await accountSetup.initiate(email);
-    // Same response for unknown, already verified, and recently emailed users.
-    return res.status(202).json({ message: "If this email belongs to a pending patient account, a setup link will arrive shortly. Check your inbox and spam folder. Links expire after 15 minutes; wait one minute before requesting another." });
+    // Same response for unknown, archived, recently emailed, and staff users.
+    // Active patients receive a reset link; pending ones receive an activation
+    // link. The response never reveals which case applied.
+    return res.status(202).json({ message: "If this email belongs to a patient account, an email will arrive shortly. Check your inbox and spam folder. Links expire after 15 minutes; wait one minute before requesting another." });
   } catch (error) {
     console.error("[mail] Account setup request failed:", error.code || error.name);
     return res.status(503).json({ error: "We could not send the setup email. Please try again later or contact your health center." });

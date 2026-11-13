@@ -78,6 +78,7 @@ async function fill(label, value) {
   });
 }
 async function submit() { await act(async () => document.querySelector("form").dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }))); }
+async function submitIn(scope) { await act(async () => scope.querySelector("form").dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }))); }
 afterEach(async () => { if (root) await act(async () => root.unmount()); root = null; });
 after(async () => { for (const channel of channels) { channel.port1.close(); channel.port2.close(); } globalThis.MessageChannel = originalChannel; dom.window.close(); await rm(scratch, { recursive: true, force: true }); });
 
@@ -123,6 +124,40 @@ for (const [role, url, label, dashboard] of [
     assert.ok(document.querySelector("form"));
   });
 }
+
+test("forgot password asks for the Gmail address and sends a reset link", async () => {
+  await mountLogin("/patient/login");
+  api.post = async (url, body) => {
+    posts.push({ url, body });
+    return { data: { message: "If this email belongs to a patient account, an email will arrive shortly. Check your inbox and spam folder." } };
+  };
+  await clickButton("Forgot your password?");
+  const dialog = document.querySelector('[role="dialog"]');
+  assert.ok(dialog, "Expected the forgot-password dialog");
+  assert.match(dialog.textContent, /Google \(Gmail\) address/i);
+  assert.ok(dialog.querySelector('input[type="email"]'), "Expected an email input");
+  assert.ok([...dialog.querySelectorAll("button")].some(b => b.textContent.trim() === "Send"));
+  await fill("Gmail account", "patient@example.com");
+  await submitIn(dialog);
+  assert.deepEqual(posts.at(-1), { url: "/auth/initiate", body: { email: "patient@example.com" } });
+  assert.match(document.querySelector('[role="status"]').textContent, /If this email belongs to a patient account/);
+});
+
+test("forgot password surfaces a delivery failure without revealing accounts", async () => {
+  await mountLogin("/patient/login");
+  api.post = async () => { throw { response: { status: 503, data: { error: "We could not send the setup email. Please try again later or contact your health center." } } }; };
+  await clickButton("Forgot your password?");
+  await fill("Gmail account", "nobody@example.com");
+  await submitIn(document.querySelector('[role="dialog"]'));
+  assert.match(document.querySelector('[role="alert"]').textContent, /could not send/i);
+});
+
+test("a reset link shows the change-password wording instead of account setup", async () => {
+  await mount(`/confirm-account?token=${"a".repeat(64)}&mode=reset`);
+  assert.match(document.body.textContent, /Change your password/);
+  assert.match(document.body.textContent, /Save new password/);
+  assert.doesNotMatch(document.body.textContent, /Welcome to HealthTrack/);
+});
 
 test("patient password success switches to a 6-digit code step without saving a session", async () => {
   await mountLogin("/patient/login");

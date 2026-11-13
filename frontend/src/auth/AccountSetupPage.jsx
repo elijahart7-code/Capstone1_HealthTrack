@@ -59,6 +59,9 @@ export function RequestAccountSetupPage() {
 export function ConfirmAccountPage() {
   const [params] = useSearchParams();
   const token = params.get("token") || "";
+  // Active patients receive a password-reset link; pending ones an activation
+  // link. The wording follows the mode the emailed link carries.
+  const isReset = params.get("mode") === "reset";
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
@@ -86,16 +89,19 @@ export function ConfirmAccountPage() {
   }
 
   return (
-    <SetupLayout title="Welcome to HealthTrack" description="Confirm your email and choose your password to get started.">
+    <SetupLayout
+      title={isReset ? "Change your password" : "Welcome to HealthTrack"}
+      description={isReset ? "Choose a new password for your patient account." : "Confirm your email and choose your password to get started."}
+    >
       {error && <p className="ht-login-alert ht-login-alert-error" role="alert">{error}</p>}
       {!validToken ? (
         <div>
-          {!error && <p role="alert">This setup link is missing or invalid. Request a new email to continue.</p>}
-          <Link className="ht-button ht-auth-submit" to="/setup-account">Request a new setup link</Link>
+          {!error && <p role="alert">This link is missing or invalid. Request a new email to continue.</p>}
+          <Link className="ht-button ht-auth-submit" to="/setup-account">{isReset ? "Request a new link" : "Request a new setup link"}</Link>
         </div>
       ) : (
         <form className="ht-login-form" onSubmit={submit}>
-          <p className="ht-muted text-sm">Your email is confirmed only when you save your password. Setup links expire after 15 minutes.</p>
+          <p className="ht-muted text-sm">{isReset ? "Your current password keeps working until you save the new one. Reset links expire after 15 minutes." : "Your email is confirmed only when you save your password. Setup links expire after 15 minutes."}</p>
           <label className="ht-login-field"><span>New Password</span>
             <input className="ht-input" type={showPassword ? "text" : "password"} autoComplete="new-password" required minLength={12} maxLength={72} aria-describedby="password-guidance" value={password} onChange={(event) => setPassword(event.target.value)} />
           </label>
@@ -104,7 +110,7 @@ export function ConfirmAccountPage() {
             <input className="ht-input" type={showPassword ? "text" : "password"} autoComplete="new-password" required minLength={12} maxLength={72} value={confirmation} onChange={(event) => setConfirmation(event.target.value)} />
           </label>
           <label className="ht-setup-show-password"><input type="checkbox" checked={showPassword} onChange={(event) => setShowPassword(event.target.checked)} /> Show passwords</label>
-          <button className="ht-button ht-auth-submit" disabled={loading}>{loading ? "Setting up..." : "Confirm email & save password"}</button>
+          <button className="ht-button ht-auth-submit" disabled={loading}>{loading ? "Saving..." : isReset ? "Save new password" : "Confirm email & save password"}</button>
         </form>
       )}
     </SetupLayout>

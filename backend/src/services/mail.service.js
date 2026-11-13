@@ -86,17 +86,31 @@ export async function sendLoginCodeEmail(email, code) {
   if (!result.accepted?.length) throw new Error("SMTP did not accept the sign-in code email.");
 }
 
-export async function sendVerificationEmail(email, token) {
+export async function sendVerificationEmail(email, token, variant = "activate") {
   assertMailConfigured();
+  const reset = variant === "reset";
   const url = new URL("/confirm-account", ENV.FRONTEND_URL);
   url.searchParams.set("token", token);
+  // The confirmation page uses this to show reset wording instead of setup.
+  if (reset) url.searchParams.set("mode", "reset");
   const confirmUrl = url.toString();
   const message = {
     from: { name: "HealthTrack System", address: ENV.MAIL_PROVIDER === "brevo" ? ENV.MAIL_FROM_EMAIL : ENV.GMAIL_USER },
     to: email,
-    subject: "Confirm your HealthTrack Account",
-    text: `Welcome to HealthTrack!\n\nConfirm this is your email and set your password:\n${confirmUrl}\n\nThis link expires in 15 minutes. Opening it will not activate your account until you submit your password. If you did not request this, ignore this email.`,
-    html: `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:32px;color:#073b2a">
+    subject: reset ? "Change your HealthTrack password" : "Confirm your HealthTrack Account",
+    text: reset
+      ? `We received a request to change the password for your HealthTrack patient account.\n\nChoose a new password here:\n${confirmUrl}\n\nThis link expires in 15 minutes and can be used once. If you did not ask for this, ignore this email — your current password stays the same.`
+      : `Welcome to HealthTrack!\n\nConfirm this is your email and set your password:\n${confirmUrl}\n\nThis link expires in 15 minutes. Opening it will not activate your account until you submit your password. If you did not request this, ignore this email.`,
+    html: reset
+      ? `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:32px;color:#073b2a">
+      <h2>Change your password</h2>
+      <p>We received a request to change the password for your HealthTrack patient account.</p>
+      <p style="margin:28px 0"><a href="${escapeHtml(confirmUrl)}" style="display:inline-block;padding:14px 24px;background:#16a34a;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">Change my password</a></p>
+      <p>This link expires in 15 minutes and can be used once. Your current password keeps working until you save a new one.</p>
+      <p>If the button does not work, copy this link into your browser:<br><a href="${escapeHtml(confirmUrl)}">${escapeHtml(confirmUrl)}</a></p>
+      <p style="color:#64748b;font-size:13px">If you did not ask for this, ignore this email. Your password stays the same.</p>
+    </div>`
+      : `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:32px;color:#073b2a">
       <h2>Welcome to HealthTrack</h2>
       <p>Your health center has created your patient portal account. Confirm this is your email and choose your password to get started.</p>
       <p style="margin:28px 0"><a href="${escapeHtml(confirmUrl)}" style="display:inline-block;padding:14px 24px;background:#16a34a;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">Yes, this is me</a></p>
