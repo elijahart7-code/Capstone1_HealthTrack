@@ -633,7 +633,7 @@ function LatestAppointment({
                     {columns.map(({ key, value }) => (
                       <td key={key}>
                         {key === "status"
-                          ? <span className={`patient-appointment-status patient-latest-appointment-status patient-latest-appointment-status-${normalizedStatus || "unknown"}`}>{statusLabel}</span>
+                          ? <span className={`ht-appointment-record-status ht-appointment-record-status-${normalizedStatus || "unknown"}`}>{statusLabel}</span>
                           : value}
                       </td>
                     ))}

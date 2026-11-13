@@ -1964,6 +1964,61 @@ Reusable surfaces, panel headings, metrics, and section icons.
         opacity: 0.65;
     }
 
+    .ht-change-password-dialog > .ht-muted {
+        margin-bottom: 0.25rem;
+        text-align: center;
+    }
+
+    .ht-change-password-dialog > .ht-field {
+        margin-top: 0.5rem;
+    }
+
+    .ht-change-password-dialog .ht-confirm-actions {
+        justify-content: center;
+    }
+
+    .ht-change-password-dialog .ht-confirm-actions button {
+        min-width: 0;
+        width: auto;
+        flex: 0 0 auto;
+        transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .ht-change-password-dialog .ht-confirm-actions button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.14);
+    }
+
+    .ht-change-password-dialog .ht-confirm-actions button:active:not(:disabled) {
+        transform: translateY(0) scale(0.97);
+    }
+
+    .ht-change-password-dialog .ht-auth-submit {
+        margin-top: 0;
+    }
+
+    .ht-change-password-dialog .ht-change-password-close {
+        border-color: var(--color-danger);
+        background: var(--color-danger);
+        color: #fff;
+    }
+
+    .ht-change-password-dialog .ht-change-password-close:hover:not(:disabled) {
+        border-color: #963832;
+        background: #963832;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ht-change-password-dialog .ht-confirm-actions button {
+            transition: none;
+        }
+
+        .ht-change-password-dialog .ht-confirm-actions button:hover:not(:disabled),
+        .ht-change-password-dialog .ht-confirm-actions button:active:not(:disabled) {
+            transform: none;
+        }
+    }
+
     .ht-confirm-cancel {
         border-color: #b8c9c0 !important;
         background: #fff;
@@ -2049,11 +2104,12 @@ Reusable surfaces, panel headings, metrics, and section icons.
     }
 
     .ht-topbar-inner {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 1.5rem;
-        width: min(100%, 1200px);
+        width: min(100%, 1400px);
         min-height: 78px;
         padding: 0.75rem 0.5rem;
         flex-wrap: nowrap;
@@ -2105,10 +2161,14 @@ Reusable surfaces, panel headings, metrics, and section icons.
     }
 
     .ht-nav {
+        position: absolute;
+        left: 50%;
+        top: 50%;
         display: flex;
         gap: 0.9rem;
         flex-wrap: wrap;
-        margin-inline: auto;
+        margin-inline: 0;
+        transform: translate(-50%, -50%);
     }
 
     .ht-nav a,
@@ -2147,6 +2207,7 @@ Reusable surfaces, panel headings, metrics, and section icons.
         display: flex;
         align-items: center;
         gap: 0.85rem;
+        margin-left: auto;
     }
 
     .ht-user-meta {
@@ -2336,14 +2397,20 @@ Reusable surfaces, panel headings, metrics, and section icons.
         accent-color: var(--color-brand);
     }
 
-    /* Tablet navigation wraps; record navigation becomes horizontal. */
-    @media (max-width: 980px) {
+    /* Keep the centered navigation on its own row when the header gets tight. */
+    @media (max-width: 1280px) {
         .ht-topbar-inner {
             flex-wrap: wrap;
-            justify-content: center;
+            justify-content: space-between;
+        }
+
+        .ht-brand {
+            margin-right: auto;
         }
 
         .ht-nav {
+            position: static;
+            transform: none;
             order: 3;
             width: 100%;
             justify-content: center;
@@ -9004,10 +9071,10 @@ Dashboard charts, report records, export dialogs, and print output.
     gap: 6px;
     min-height: 40px;
     padding: 8px 12px;
-    border: 1px solid #3366cc;
+    border: 1px solid #a8c9ef;
     border-radius: 8px;
-    background: #3366cc;
-    color: #fff;
+    background: #d9eaff;
+    color: #173d67;
     font: inherit;
     font-size: 0.88rem;
     font-weight: 700;
@@ -9016,8 +9083,8 @@ Dashboard charts, report records, export dialogs, and print output.
 }
 
 .patient-consultation-record-toggle:hover {
-    border-color: #2857b5;
-    background: #2857b5;
+    border-color: #83b7e5;
+    background: #c5dffc;
 }
 
 .patient-consultation-record-toggle svg {
@@ -9417,7 +9484,6 @@ Dashboard charts, report records, export dialogs, and print output.
     overflow-x: auto !important;
 }
 
-.patient-healthinfo-main-overview .patient-latest-appointment-status,
 .patient-healthinfo-main-overview .patient-latest-assessment-status {
     display: inline-flex;
     align-items: center;
@@ -9433,27 +9499,6 @@ Dashboard charts, report records, export dialogs, and print output.
     font-weight: 700;
     line-height: 1.2;
     white-space: nowrap;
-}
-
-.patient-healthinfo-main-overview .patient-latest-appointment-status-confirmed,
-.patient-healthinfo-main-overview .patient-latest-appointment-status-pending {
-    background: #dcefeb;
-    color: #0f6b5f;
-}
-
-.patient-healthinfo-main-overview .patient-latest-appointment-status-cancelled {
-    background: #f0e7e5;
-    color: #b00000;
-}
-
-.patient-healthinfo-main-overview .patient-latest-appointment-status-completed {
-    background: #e4eef8;
-    color: #3366cc;
-}
-
-.patient-healthinfo-main-overview .patient-latest-appointment-status-unknown {
-    background: #f1f4f2;
-    color: #52615b;
 }
 
 .patient-healthinfo-main-overview .patient-latest-assessment-status-active {

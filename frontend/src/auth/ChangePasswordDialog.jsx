@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { KeyRound } from "lucide-react";
 import { api } from "../lib/axios";
 
@@ -18,12 +18,23 @@ export function ChangePasswordButton() {
 }
 
 export function ChangePasswordDialog({ onClose }) {
+  const [isClosing, setIsClosing] = useState(false);
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState(null);
   const [done, setDone] = useState(null);
   const [loading, setLoading] = useState(false);
+  const closeTimer = useRef(null);
+
+  useEffect(() => () => window.clearTimeout(closeTimer.current), []);
+
+  function closeDialog() {
+    if (isClosing) return;
+    setIsClosing(true);
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    closeTimer.current = window.setTimeout(onClose, reduceMotion ? 0 : 220);
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -48,29 +59,29 @@ export function ChangePasswordDialog({ onClose }) {
   }
 
   return (
-    <div className="ht-confirm-backdrop" role="dialog" aria-label="Change password">
-      <form className="ht-confirm-dialog" onSubmit={handleSubmit}>
-        <h2>Change password</h2>
-        <p className="ht-muted">Use at least 12 characters. Other signed-in sessions stay valid until they expire.</p>
+    <div className={`ht-confirm-backdrop ht-archive-confirm-backdrop ${isClosing ? "is-closing" : ""}`} role="dialog" aria-label="Change password">
+      <form className={`ht-confirm-dialog ht-archive-confirm-dialog ht-change-password-dialog ${isClosing ? "is-closing" : ""}`} onSubmit={handleSubmit}>
+        <h2>Change Password</h2>
+        <p className="ht-muted">Use at least 12 characters. Other signed-in sessions stay valid until they expire. Thank you!</p>
         {error && <div role="alert" className="ht-login-alert ht-login-alert-error">{error}</div>}
         {done && <div role="status" className="ht-login-alert ht-login-alert-success">{done}</div>}
         <label className="ht-field">
-          <span>Current password</span>
+          <span>Current Password</span>
           <input className="ht-input" type="password" value={current} onChange={(e) => setCurrent(e.target.value)} autoComplete="current-password" />
         </label>
         <label className="ht-field">
-          <span>New password</span>
+          <span>New Password</span>
           <input className="ht-input" type="password" value={next} onChange={(e) => setNext(e.target.value)} autoComplete="new-password" />
         </label>
         <label className="ht-field">
-          <span>Confirm new password</span>
+          <span>Confirm New Password</span>
           <input className="ht-input" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" />
         </label>
         <div className="ht-confirm-actions">
-          <button type="button" className="ht-button" onClick={onClose}>Close</button>
           <button type="submit" className="ht-button ht-auth-submit" disabled={loading || !current || !next || !confirm}>
             {loading ? "Saving…" : "Save new password"}
           </button>
+          <button type="button" className="ht-button ht-change-password-close" onClick={closeDialog}>Close</button>
         </div>
       </form>
     </div>
