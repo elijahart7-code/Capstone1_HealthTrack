@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
-import { Users, CalendarDays, ShieldCheck, UserRoundX, Clock3, ChevronRight } from "lucide-react";
+import { Users, CalendarDays, ShieldCheck, UserRoundX, Clock3, Eye } from "lucide-react";
 import { PageHeader } from "../../../components/ui/PageHeader";
 import { StatCard } from "../../../components/ui/Card";
 import { EmptyState, Table, Th, Td } from "../../../components/ui/Table";
@@ -30,7 +30,7 @@ export function Dashboard({ dashboard, onRegisterClick }) {
   return (
     <div className="grid gap-4 ht-healthworker-dashboard">
       <PageHeader title="Health Worker Dashboard" subtitle="Register patients, view their medical records and information">
-        <div className="ht-current-date-pill">
+        <div className="ht-current-date-pill" style={{ background: "#c0e2d1", color: "#000" }}>
           <CalendarDays size={16} strokeWidth={2} />
           <span>{currentDate}</span>
         </div>
@@ -45,14 +45,18 @@ export function Dashboard({ dashboard, onRegisterClick }) {
 
       <div className="ht-panel ht-panel-table ht-healthworker-recent-patients">
         <div className="ht-table-header-row">
-          <h2 className="ht-section-title-with-icon">
-            <span className="ht-section-icon" aria-hidden="true">
-              <Clock3 size={16} strokeWidth={1.8} />
+          <h2 className="ht-section-title-with-icon" style={{ fontSize: "0.9375rem", gap: "0.55rem" }}>
+            <span className="ht-section-icon" style={{ width: 32, height: 32, borderRadius: 10 }} aria-hidden="true">
+              <Clock3 size={20} strokeWidth={1.8} style={{ width: 20, height: 20 }} />
             </span>
             Recently Registered Patients
           </h2>
-          <button className="ht-link-button" onClick={() => setSearchParams({ page: "patients" })}>
-            View all patients <ChevronRight size={16} strokeWidth={2} aria-hidden="true" />
+          <button
+            className="ht-link-button"
+            style={{ background: "#c0e2d1", border: 0, borderRadius: 10, color: "#000", fontSize: "0.9375rem", gap: "0.4rem", minHeight: 36, padding: "0.35rem 0.75rem" }}
+            onClick={() => setSearchParams({ page: "patients" })}
+          >
+            <Eye size={20} strokeWidth={1.8} aria-hidden="true" /> View all patients
           </button>
         </div>
 

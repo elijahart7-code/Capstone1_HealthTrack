@@ -432,7 +432,7 @@ export function PatientRecord({
                       setShowAccountForm(true);
                     }
                   }}
-                className="ht-small-button"
+                className="ht-small-button ht-create-account-button"
                 >
                 {showAccountForm
                 ? "Cancel"
@@ -442,31 +442,31 @@ export function PatientRecord({
        </div>
        {accountError && !showAccountForm && !showEmailForm && !showResendConfirm && <div className="ht-login-alert ht-login-alert-error" role="alert">{accountError}</div>}
        {accountMessage && !showAccountForm && !showEmailForm && !showResendConfirm && <div className="ht-login-alert" role="status">{accountMessage}</div>}
-               {patient.user_id ? (
+               {patient.user_id || role === "health_worker" ? (
           <div className="ht-portal-info">
           <div className="ht-portal-avatar">
           <UserRound size={46} strokeWidth={1.8} />
-          <span className="ht-portal-check">
+          {patient.user_id && <span className="ht-portal-check">
            ✓
-          </span>
+          </span>}
           </div>
           <div className="ht-portal-details">
-          <div className={`ht-portal-detail ht-portal-account-detail ${!patient.is_verified && (isAdmin || role === "health_worker") ? "has-actions" : ""}`}>
+          <div className={`ht-portal-detail ht-portal-account-detail ${patient.user_id && !patient.is_verified && (isAdmin || role === "health_worker") ? "has-actions" : ""}`}>
           <div className="ht-portal-account-labels">
             <span>Account Status:</span>
-            {!patient.is_verified && (isAdmin || role === "health_worker") && (
+            {patient.user_id && !patient.is_verified && (isAdmin || role === "health_worker") && (
               <span>Account Setup:</span>
             )}
           </div>
           <div className="ht-portal-account-controls">
-            <span className={`ht-account-status ${patient.is_verified ? "active" : "pending"}`}>
-              {patient.is_verified ? "Active" : "Pending Email"}
+            <span className={`ht-account-status ${!patient.user_id ? "inactive" : patient.is_verified ? "active" : "pending"}`}>
+              {!patient.user_id ? "Inactive" : patient.is_verified ? "Active" : "Pending Email"}
             </span>
-            {!patient.is_verified && (isAdmin || role === "health_worker") && (
+            {patient.user_id && !patient.is_verified && (isAdmin || role === "health_worker") && (
               <div className="ht-account-actions">
               <button
                 type="button"
-                className="ht-small-button"
+                className="ht-small-button ht-portal-action-mint-button"
                 disabled={accountBusy || !patient.email}
                 onClick={() => {
                   window.clearTimeout(resendConfirmCloseTimer.current);
@@ -480,7 +480,7 @@ export function PatientRecord({
               </button>
               <button
                 type="button"
-                className="ht-small-button"
+                className="ht-small-button ht-portal-action-mint-button"
                 disabled={accountBusy}
                 onClick={() => {
                   window.clearTimeout(emailFormCloseTimer.current);
@@ -502,9 +502,9 @@ export function PatientRecord({
           <span>Email Address:</span>
 
           <strong>
-            {patient.email ||
+            {patient.user_id ? patient.email ||
               patient.portal_email ||
-              "--"}
+              "---------------" : "---------------"}
           </strong>
         </div>
 
@@ -512,7 +512,7 @@ export function PatientRecord({
           <span>Account Created:</span>
 
           <strong>
-            {patient.account_created_at
+            {patient.user_id && patient.account_created_at
               ? new Date(
                   patient.account_created_at
                 ).toLocaleDateString(undefined, {
@@ -520,7 +520,7 @@ export function PatientRecord({
                   day: "numeric",
                   year: "numeric",
                 })
-              : "--"}
+              : "---------------"}
           </strong>
         </div>
 
@@ -552,20 +552,20 @@ export function PatientRecord({
             )}
             <div className="ht-confirm-actions ht-archive-confirm-actions">
               <button
-                className="ht-confirm-cancel"
-                disabled={accountBusy}
-                onClick={() => closeResendConfirm()}
-                type="button"
-              >
-                Cancel
-              </button>
-              <button
-                className="ht-confirm-submit"
+                className="ht-confirm-submit ht-account-confirm-submit"
                 disabled={accountBusy}
                 onClick={resendSetupEmail}
                 type="button"
               >
                 {accountBusy ? "Sending..." : "Resend"}
+              </button>
+              <button
+                className="ht-confirm-cancel ht-account-confirm-cancel"
+                disabled={accountBusy}
+                onClick={() => closeResendConfirm()}
+                type="button"
+              >
+                Cancel
               </button>
             </div>
           </section>
@@ -610,19 +610,19 @@ export function PatientRecord({
               </Field>
               <div className="ht-confirm-actions ht-archive-confirm-actions">
                 <button
-                  className="ht-confirm-cancel"
+                  className="ht-confirm-submit ht-account-confirm-submit"
+                  disabled={accountBusy}
+                  type="submit"
+                >
+                  {accountBusy ? "Saving..." : "Save & Send"}
+                </button>
+                <button
+                  className="ht-confirm-cancel ht-account-confirm-cancel"
                   disabled={accountBusy}
                   onClick={() => closeEmailForm()}
                   type="button"
                 >
                   Cancel
-                </button>
-                <button
-                  className="ht-confirm-submit"
-                  disabled={accountBusy}
-                  type="submit"
-                >
-                  {accountBusy ? "Saving..." : "Save & Send"}
                 </button>
               </div>
             </form>
@@ -654,62 +654,63 @@ export function PatientRecord({
         <div className="ht-empty">No portal account.</div>
       )}
 
-      {showAccountForm && role === "health_worker" && (
-        <div
-          className={`ht-confirm-backdrop ht-archive-confirm-backdrop ${isClosingAccountForm ? "is-closing" : ""}`}
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) {
-              closeAccountForm();
-            }
-          }}
-        >
-          <section
-            aria-labelledby="create-account-title"
-            aria-modal="true"
-            className={`ht-confirm-dialog ht-archive-confirm-dialog ${isClosingAccountForm ? "is-closing" : ""}`}
-            role="dialog"
-          >
-            <h2 id="create-account-title">Create Patient Portal Account</h2>
-            <p className="ht-resend-confirm-message">
-              The patient will receive a confirmation link to choose their password. The link expires after 15 minutes.
-            </p>
-            {accountError && (
-              <p className="ht-confirm-error" role="alert">{accountError}</p>
-            )}
-            <form onSubmit={createPortalAccount} className="ht-change-email-form">
-              <Field label="Email address" required>
-                <Input
-                  type="email"
-                  required
-                  maxLength={255}
-                  autoComplete="off"
-                  value={portalEmail}
-                  disabled={accountBusy}
-                  onChange={(event) => setPortalEmail(event.target.value)}
-                />
-              </Field>
-              <div className="ht-confirm-actions ht-archive-confirm-actions">
-                <button
-                  className="ht-confirm-cancel"
-                  disabled={accountBusy}
-                  onClick={() => closeAccountForm()}
-                  type="button"
-                >
-                  Cancel
-                </button>
-                <button
-                  className="ht-confirm-submit"
-                  disabled={accountBusy}
-                  type="submit"
-                >
-                  {accountBusy ? "Creating..." : "Create Account"}
-                </button>
-              </div>
-            </form>
-          </section>
-        </div>
-      )}
     </>
+  )}
+
+  {showAccountForm && role === "health_worker" && (
+    <div
+      className={`ht-confirm-backdrop ht-archive-confirm-backdrop ${isClosingAccountForm ? "is-closing" : ""}`}
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          closeAccountForm();
+        }
+      }}
+    >
+      <section
+        aria-labelledby="create-account-title"
+        aria-modal="true"
+        className={`ht-confirm-dialog ht-archive-confirm-dialog ${isClosingAccountForm ? "is-closing" : ""}`}
+        role="dialog"
+      >
+        <h2 id="create-account-title">Create Patient Portal Account</h2>
+        <p className="ht-resend-confirm-message">
+          The patient will receive a confirmation link to choose their password. The link expires after 15 minutes.
+        </p>
+        {accountError && (
+          <p className="ht-confirm-error" role="alert">{accountError}</p>
+        )}
+        <form onSubmit={createPortalAccount} className="ht-change-email-form">
+          <Field label="Email address" required>
+            <Input
+              type="email"
+              required
+              maxLength={255}
+              autoComplete="off"
+              value={portalEmail}
+              disabled={accountBusy}
+              onChange={(event) => setPortalEmail(event.target.value)}
+            />
+          </Field>
+          <div className="ht-confirm-actions ht-archive-confirm-actions">
+            <button
+              className="ht-confirm-submit ht-account-confirm-submit"
+              disabled={accountBusy}
+              type="submit"
+            >
+              {accountBusy ? "Creating..." : "Create Account"}
+            </button>
+            <button
+              className="ht-confirm-cancel ht-account-confirm-cancel"
+              disabled={accountBusy}
+              onClick={() => closeAccountForm()}
+              type="button"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
   )}
 
 </div>
@@ -842,11 +843,11 @@ export function PatientRecord({
   height: 42px;
   padding: 0 16px;
 
-  border: 1px solid #3f725b;
+  border: 1px solid #c0e2d1;
   border-radius: 7px;
 
-  background: #3f725b;
-  color: white;
+  background: #c0e2d1;
+  color: #000;
 
   font-family: inherit;
   font-size: 11px;
@@ -857,8 +858,8 @@ export function PatientRecord({
 }
 
 .ht-back-button:hover {
-  background: #295a42;
-  border-color: #295a42;
+  background: #b4dfcb;
+  border-color: #b4dfcb;
 }
 
 
@@ -1171,30 +1172,30 @@ export function PatientRecord({
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          padding: 8px 24px;
-          border: 1px solid rgba(15, 107, 95, 0.14);
-          border-radius: 10px;
-          background: #E0EFED;
-          color: #0F513F;
-          font-size: 0.875rem;
+          min-width: 96px;
+          min-height: 32px;
+          padding: 0.35rem 0.75rem;
+          border: 1px solid transparent;
+          border-radius: 999px;
+          background: #0f766e;
+          color: #fff;
+          font-size: 0.75rem;
           font-weight: 700;
+          line-height: 1.2;
         }
 
         .ht-account-status.active {
-          background: #E0EFED;
-          border-color: rgba(15, 107, 95, 0.14);
-          color: #0F513F;
+          background: #0f766e;
+          color: #fff;
         }
 
         .ht-account-status.pending {
-          background: rgba(255, 193, 7, 0.15);
-          border-color: rgba(183, 121, 31, 0.2);
-          color: #b7791f;
+          background: #8a6500;
+          color: #fff;
         }
         .ht-account-status.inactive {
-          background: #fff1f0;
-          border-color: #f2c2bf;
-          color: #b42318;
+          background: #b83b3b;
+          color: #fff;
         }
         .ht-change-email-form {
           display: grid;

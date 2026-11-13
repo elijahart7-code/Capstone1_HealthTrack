@@ -47,9 +47,11 @@ export function loginRouteForRole(role) {
 }
 
 export function roleLabel(role) {
-  switch (role) {
+  const normalizedRole = String(role ?? "").trim().toLowerCase().replace(/[\s-]+/g, "_");
+  switch (normalizedRole) {
     case "admin":
       return "Admin";
+    case "health":
     case "health_worker":
       return "Health Worker";
     case "patient":

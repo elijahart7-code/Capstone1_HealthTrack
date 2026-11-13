@@ -81,7 +81,7 @@ export function Patients({ patients, loadData }) {
   return (
     <div className="grid gap-4 ht-healthworker-patients-page">
       <PageHeader title="Patients List" subtitle="Everyone who registered at HealthTrack">
-        <button onClick={() => setSearchParams({ page: "register-patient" })} className="ht-button ht-button-strong-green">
+        <button onClick={() => setSearchParams({ page: "register-patient" })} className="ht-button ht-button-mint">
           Register Patient
         </button>
       </PageHeader>

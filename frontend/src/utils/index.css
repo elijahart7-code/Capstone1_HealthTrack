@@ -645,10 +645,25 @@ Reusable surfaces, panel headings, metrics, and section icons.
         border-color: var(--color-brand);
     }
 
+    .ht-button-mint {
+        background: #c0e2d1;
+        border-color: #c0e2d1;
+        color: #000;
+    }
+
+    .ht-button-mint:hover {
+        background: #b4dfcb;
+        border-color: #b4dfcb;
+    }
+
     .ht-form-actions {
         display: flex;
         gap: 0.75rem;
         margin-top: 0.25rem;
+    }
+
+    .ht-healthworker-register-page .ht-register-form-actions {
+        justify-content: center;
     }
 
     .ht-button-full {
@@ -1513,6 +1528,31 @@ Reusable surfaces, panel headings, metrics, and section icons.
         color: #b7791f;
     }
 
+    .ht-portal-account-status-badge {
+        box-sizing: border-box;
+        min-width: 96px;
+        min-height: 32px;
+        padding: 0.35rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+
+    .ht-portal-account-status-active {
+        background: #0f766e;
+        color: #fff;
+    }
+
+    .ht-portal-account-status-inactive {
+        background: #b83b3b;
+        color: #fff;
+    }
+
+    .ht-portal-account-status-pending {
+        background: #8a6500;
+        color: #fff;
+    }
+
     .ht-status-badge-completed {
         background: rgba(51, 102, 153, 0.08);
         color: #3366cc;
@@ -2034,6 +2074,28 @@ Reusable surfaces, panel headings, metrics, and section icons.
         background: #9e5d12;
     }
 
+    .ht-account-confirm-submit {
+        border-color: #16815a;
+        background: #16815a;
+        color: #fff;
+    }
+
+    .ht-account-confirm-submit:hover:not(:disabled) {
+        border-color: #116b4a;
+        background: #116b4a;
+    }
+
+    .ht-account-confirm-cancel {
+        border-color: #b83b3b !important;
+        background: #b83b3b;
+        color: #fff;
+    }
+
+    .ht-account-confirm-cancel:hover:not(:disabled) {
+        border-color: #982f2f !important;
+        background: #982f2f;
+    }
+
     .ht-logout-confirm-actions .ht-logout-confirm-yes {
         border-color: #16815a;
         background: #16815a;
@@ -2226,6 +2288,133 @@ Reusable surfaces, panel headings, metrics, and section icons.
     .ht-user-role {
         color: #000;
         font-size: 0.75rem;
+    }
+
+    .ht-topbar .ht-account-wrap {
+        position: relative;
+        flex: 0 0 auto;
+        justify-content: flex-end;
+        gap: 0.45rem;
+    }
+
+    .ht-account-desktop-meta {
+        display: none;
+    }
+
+    .ht-account-identity {
+        position: relative;
+        display: block;
+    }
+
+    .ht-account-profile-trigger {
+        display: inline-flex;
+        max-width: min(42vw, 160px);
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.65rem 0.25rem 0.3rem;
+        border: 1px solid #000;
+        border-radius: 999px;
+        background: #fff;
+        color: #183b34;
+        font: inherit;
+        cursor: pointer;
+    }
+
+    .ht-account-profile-initials {
+        display: grid;
+        flex: 0 0 30px;
+        width: 30px;
+        height: 30px;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--color-brand-strong);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 800;
+    }
+
+    .ht-account-profile-first-name {
+        overflow: hidden;
+        color: #173d35;
+        font-size: 0.875rem;
+        font-weight: 700;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .ht-account-profile-popover {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        z-index: 30;
+        display: grid;
+        min-width: 190px;
+        max-width: min(260px, calc(100vw - 20px));
+        gap: 4px;
+        padding: 12px 14px;
+        border: 1px solid #dfece7;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba(13, 74, 62, 0.14);
+        color: #183b34;
+        font-size: 0.875rem;
+        text-align: center;
+        overflow-wrap: anywhere;
+    }
+
+    .ht-account-profile-popover span {
+        color: #000;
+        font-size: 0.85rem;
+    }
+
+    .ht-account-menu-toggle {
+        display: grid;
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: #0c4f46;
+        cursor: pointer;
+    }
+
+    .ht-account-menu-toggle:hover,
+    .ht-account-menu-toggle:focus-visible {
+        background: #e4f2ec;
+    }
+
+    .ht-account-panel {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        z-index: 30;
+        display: none;
+        width: min(280px, calc(100vw - 20px));
+        padding: 12px;
+        border: 1px solid #dfece7;
+        border-radius: 8px;
+        background: #fff;
+        box-shadow: 0 8px 24px rgba(13, 74, 62, 0.14);
+    }
+
+    .ht-account-panel.is-open {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .ht-account-actions {
+        display: grid;
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .ht-account-actions .ht-header-logout {
+        width: 100%;
+        justify-content: flex-start;
     }
 
     .ht-header-logout {
@@ -2841,6 +3030,25 @@ Reusable surfaces, panel headings, metrics, and section icons.
         font-family: var(--font-sans);
         font-size: 0.95rem;
         margin-top: 0.25rem;
+    }
+
+    .ht-login-form {
+        width: 100%;
+    }
+
+    .ht-login-form .ht-input-wrap,
+    .ht-login-form .ht-auth-submit {
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    .ht-login-form .ht-input-wrap .ht-input,
+    .ht-login-form .ht-auth-submit {
+        border: 1px solid #000;
+    }
+
+    .ht-auth-shell[data-portal] .ht-auth-card {
+        border: 1px solid #000;
     }
 
     .ht-auth-submit svg {
@@ -6086,8 +6294,142 @@ Table layout, recorded-date information, and footer.
             justify-content: center;
         }
 
+        .ht-topbar .ht-account-wrap {
+            position: relative;
+            width: auto;
+            flex: 0 0 auto;
+            justify-content: flex-end;
+            gap: 0.45rem;
+            margin-left: auto;
+        }
+
+        .ht-account-desktop-meta {
+            display: none;
+        }
+
+        .ht-account-identity {
+            position: relative;
+            display: block;
+        }
+
+        .ht-account-profile-trigger {
+            display: inline-flex;
+            max-width: min(38vw, 155px);
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.65rem 0.25rem 0.3rem;
+            border: 1px solid #000;
+            border-radius: 999px;
+            background: #fff;
+            color: #183b34;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .ht-account-profile-initials {
+            display: grid;
+            flex: 0 0 30px;
+            width: 30px;
+            height: 30px;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--color-brand-strong);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .ht-account-profile-first-name {
+            overflow: hidden;
+            color: #173d35;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ht-account-profile-popover {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            z-index: 30;
+            display: grid;
+            min-width: 190px;
+            max-width: min(260px, calc(100vw - 20px));
+            gap: 4px;
+            padding: 12px 14px;
+            border: 1px solid #dfece7;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 8px 24px rgba(13, 74, 62, 0.14);
+            color: #183b34;
+            font-size: 0.875rem;
+            overflow-wrap: anywhere;
+        }
+
+        .ht-account-profile-popover span {
+            color: #000;
+            font-size: 0.85rem;
+        }
+
+        .ht-account-menu-toggle {
+            display: grid;
+            width: 40px;
+            height: 40px;
+            flex: 0 0 40px;
+            place-items: center;
+            padding: 0;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: #0c4f46;
+            cursor: pointer;
+        }
+
+        .ht-account-menu-toggle:hover,
+        .ht-account-menu-toggle:focus-visible {
+            background: #e4f2ec;
+        }
+
+        .ht-account-panel {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            z-index: 30;
+            display: none;
+            width: min(280px, calc(100vw - 20px));
+            padding: 12px;
+            border: 1px solid #dfece7;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 8px 24px rgba(13, 74, 62, 0.14);
+        }
+
+        .ht-account-panel.is-open {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ht-account-actions {
+            display: grid;
+            width: 100%;
+            gap: 0.5rem;
+        }
+
+        .ht-account-actions .ht-header-logout {
+            width: 100%;
+            justify-content: flex-start;
+        }
+
         .ht-topbar-inner {
             padding-bottom: 0.9rem;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .ht-topbar:has(.ht-account-wrap) .ht-brand > span:last-child {
+            display: none;
         }
     }
 
@@ -7169,16 +7511,47 @@ Table layout, recorded-date information, and footer.
 
 body:has(.patient-dashboard-shell) {
     --patient-page-max-width: 1400px;
-    --patient-page-gutter: clamp(24px, 3vw, 40px);
+    --portal-page-gutter: clamp(24px, 3vw, 40px);
     background: #F2FAF7;
     background-attachment: fixed;
+}
+
+body:has(.patient-healthinfo-page),
+body:has(.ht-admin-shell),
+body:has(.ht-healthworker-shell) {
+    --portal-page-gutter: clamp(24px, 3vw, 40px);
+}
+
+html:has(.patient-dashboard-shell),
+html:has(.patient-healthinfo-page),
+html:has(.ht-admin-shell),
+html:has(.ht-healthworker-shell) {
+    scrollbar-gutter: stable;
 }
 
 body:has(.patient-dashboard-shell) .ht-content {
     width: 100%;
     max-width: var(--patient-page-max-width);
     box-sizing: border-box;
-    padding: 1.5rem var(--patient-page-gutter);
+    padding: 1.5rem var(--portal-page-gutter);
+}
+
+body:has(.patient-dashboard-shell) .ht-topbar-inner,
+body:has(.patient-healthinfo-page) .ht-topbar-inner,
+body:has(.ht-admin-shell) .ht-topbar-inner,
+body:has(.ht-healthworker-shell) .ht-topbar-inner {
+    padding-right: var(--portal-page-gutter);
+    padding-left: var(--portal-page-gutter);
+}
+
+@media (max-width: 1448px) {
+    body:has(.patient-dashboard-shell) .ht-topbar-inner,
+    body:has(.patient-healthinfo-page) .ht-topbar-inner,
+    body:has(.ht-admin-shell) .ht-topbar-inner,
+    body:has(.ht-healthworker-shell) .ht-topbar-inner {
+        padding-right: max(0px, calc(var(--portal-page-gutter) - 24px + max(0px, (100vw - 1400px) / 2)));
+        padding-left: max(0px, calc(var(--portal-page-gutter) - 24px + max(0px, (100vw - 1400px) / 2)));
+    }
 }
 
 body:has(.patient-dashboard-shell) .ht-topbar {
@@ -7188,6 +7561,12 @@ body:has(.patient-dashboard-shell) .ht-topbar {
 }
 
 body:has(.patient-healthinfo-page) .ht-topbar {
+    background: #F2FAF7;
+    border-bottom: 1px solid #cce9dd;
+}
+
+body:has(.ht-admin-shell) .ht-topbar,
+body:has(.ht-healthworker-shell) .ht-topbar {
     background: #F2FAF7;
     border-bottom: 1px solid #cce9dd;
 }
@@ -8377,7 +8756,7 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-appointment-scroll .ht-table .ht-link-button { display: inline-flex; align-items: center; justify-content: center; }
 .ht-appointment-reason-select { padding: 0; border: 0; background: transparent; color: #17211d; font: inherit; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
 .ht-appointment-reason-select:hover { color: #0f6b5f; text-decoration: underline; }
-.ht-appointment-scroll { max-height: 280px; }
+.ht-appointment-scroll { max-height: 263px; }
 .ht-appointment-status { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; width: 145px; min-width: 145px; height: 36px; min-height: 36px; padding: 6px 10px; border: 1px solid transparent; border-radius: 8px; font-size: 12px; font-weight: 700; line-height: 1.2; white-space: nowrap; }
 .ht-appointment-status-confirmed { background: #dcefeb; color: #0f6b5f; }
 .ht-appointment-status-completed { background: #e4eef8; color: #3366cc; }
@@ -8453,6 +8832,19 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-healthworker-metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .ht-healthworker-dashboard > .ht-page-header,
 .ht-healthworker-dashboard > .ht-panel-table { border-color: #000; }
+.ht-healthworker-dashboard .ht-current-date-pill {
+    background: #c0e2d1;
+    color: #000;
+}
+.ht-healthworker-recent-patients .ht-table-header-row .ht-link-button {
+    min-height: 36px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.9375rem;
+    border: 0;
+    border-radius: 10px;
+    background: #c0e2d1;
+    color: #000;
+}
 .ht-healthworker-metric-grid .ht-metric {
     position: relative;
     justify-content: center;
@@ -8492,6 +8884,23 @@ Dashboard charts, report records, export dialogs, and print output.
           font-weight: 700;
           cursor: pointer;
         }
+
+.ht-create-account-button {
+        border-color: #c0e2d1;
+        background: #c0e2d1;
+        color: #000;
+}
+
+.ht-portal-action-mint-button {
+    border-color: #c0e2d1;
+    background: #c0e2d1;
+    color: #000;
+}
+
+.ht-portal-action-mint-button:hover:not(:disabled) {
+    border-color: #b4dfcb;
+    background: #b4dfcb;
+}
 
 .ht-primary-button {
           padding: 9px 14px;
@@ -8535,6 +8944,7 @@ Dashboard charts, report records, export dialogs, and print output.
   justify-content: center;
 }
 .ht-small-button:hover, .ht-secondary-button:hover { background: #edf6f1; border-color: #6f9b83; }
+.ht-create-account-button:hover { background: #b4dfcb; border-color: #b4dfcb; }
 .ht-primary-button:hover { background: #295a42; }
 .ht-small-button:focus-visible, .ht-primary-button:focus-visible, .ht-secondary-button:focus-visible { outline: 3px solid #82b69a; outline-offset: 2px; }
 .ht-small-button:disabled, .ht-primary-button:disabled, .ht-secondary-button:disabled { opacity: .55; cursor: not-allowed; }
@@ -8662,7 +9072,7 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-patient-section-heading { display: inline-flex; align-items: center; gap: 9px; }
 .ht-section-heading-icon { position: relative; display: inline-flex; flex: 0 0 30px; width: 30px; height: 30px; align-items: center; justify-content: flex-start; }
 .ht-section-heading-icon-general,
-.ht-section-heading-icon-portal { color: #000; }
+.ht-section-heading-icon-portal { color: var(--color-brand-strong); }
 .ht-section-heading-icon-badge { position: absolute; right: 0; bottom: 0; border-radius: 50%; background: #fff; }
 .ht-content-card .ht-patient-section-heading { color: var(--color-brand-strong); }
 .patient-healthinfo-main .patient-information-card .patient-card-title h2,
@@ -8673,6 +9083,7 @@ Dashboard charts, report records, export dialogs, and print output.
     line-height: 1.3;
 }
 .ht-appointments-heading { display: inline-flex; align-items: center; gap: 8px; color: var(--color-brand-strong); font-weight: 950; }
+.patient-healthinfo-main .patient-appointments-card .ht-appointments-heading > svg { color: var(--color-brand-strong); }
 .ht-appointment-record-compact.is-recording { margin-top: 0; background: #eaf7f0; border-color: #000; }
 .ht-appointment-record-summary,
 .ht-appointment-record-identity { display: contents; }
@@ -8691,8 +9102,8 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-appointment-record-status-confirmed { background: #0f6b5f; }
 .ht-appointment-record-controls { display: flex; grid-column: 2; grid-row: 1; align-items: center; justify-self: end; align-self: center; flex-wrap: wrap; gap: 10px; }
 .ht-appointment-record-controls button { box-sizing: border-box; width: 145px; min-height: 42px; margin-right: 12px; padding: 9px 12px; font-size: 14px; }
-.ht-appointment-record-activate-button { display: inline-flex; align-items: center; justify-content: center; text-align: center; border: 1px solid #3f725b; border-radius: 8px; background: #3f725b; color: #fff; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
-.ht-appointment-record-activate-button:hover { border-color: #315f4b; background: #315f4b; }
+.ht-appointment-record-activate-button { display: inline-flex; align-items: center; justify-content: center; text-align: center; border: 1px solid #3f725b; border-radius: 8px; background: #e3f6eb; color: #146441; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.ht-appointment-record-activate-button:hover { border-color: #315f4b; background: #d4ecdd; }
 .ht-appointment-action { display: inline-flex; box-sizing: border-box; align-items: center; justify-content: center; gap: 6px; width: 145px; min-height: 36px; padding: 6px 9px; border: 1px solid transparent; border-radius: 8px; font: inherit; font-size: 12px; font-weight: 700; line-height: 1.2; white-space: nowrap; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
 .ht-appointment-action-confirmed { border-color: #9ab9a8; background: #fff; color: #3f725b; }
 .ht-appointment-action-confirmed:hover:not(:disabled) { border-color: #3f725b; background: #eaf5ef; }
@@ -8703,9 +9114,122 @@ Dashboard charts, report records, export dialogs, and print output.
 .ht-appointment-action-cancelled:hover:not(:disabled) { border-color: #d7a29e; background: #f0d9d7; }
 .ht-appointment-action:disabled:not(.is-active) { opacity: .6; cursor: wait; }
 .ht-appointment-record-restricted { color: #b42318; font-size: 12px; font-weight: 700; }
-.ht-appointment-record-view-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; padding: 9px 12px; border: 1px solid #3366cc; border-radius: 8px; background: #3366cc; color: #fff; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
-.ht-appointment-record-view-button:hover { border-color: #2857b5; background: #2857b5; }
-.ht-appointment-no-records { min-height: 42px; padding: 9px 12px; border: 1px solid #b2453e; border-radius: 8px; background: #b2453e; color: #fff; font: inherit; font-size: 14px; font-weight: 700; }
+.ht-appointment-record-view-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 42px; padding: 9px 12px; border: 1px solid #3366cc; border-radius: 8px; background: #d9eaff; color: #173d67; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+.ht-appointment-record-view-button:hover { border-color: #2857b5; background: #c5dffc; }
+
+.ht-button-mint,
+.ht-create-account-button,
+.ht-portal-action-mint-button,
+.ht-account-confirm-submit,
+.ht-account-confirm-cancel,
+.ht-healthworker-recent-patients .ht-link-button,
+.ht-back-button,
+.ht-appointment-record-activate-button,
+.ht-appointment-record-view-button,
+.patient-dashboard-view-button,
+.patient-dashboard-shell .patient-view-button {
+    transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.ht-button-mint:hover:not(:disabled),
+.ht-create-account-button:hover:not(:disabled),
+.ht-portal-action-mint-button:hover:not(:disabled),
+.ht-account-confirm-submit:hover:not(:disabled),
+.ht-account-confirm-cancel:hover:not(:disabled),
+.ht-healthworker-recent-patients .ht-link-button:hover:not(:disabled),
+.ht-back-button:hover:not(:disabled),
+.ht-appointment-record-activate-button:hover:not(:disabled),
+.ht-appointment-record-view-button:hover:not(:disabled),
+.patient-dashboard-view-button:hover:not(:disabled),
+.patient-dashboard-shell .patient-view-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(8, 77, 61, 0.18);
+}
+
+.ht-button-mint:active:not(:disabled),
+.ht-create-account-button:active:not(:disabled),
+.ht-portal-action-mint-button:active:not(:disabled),
+.ht-account-confirm-submit:active:not(:disabled),
+.ht-account-confirm-cancel:active:not(:disabled),
+.ht-healthworker-recent-patients .ht-link-button:active:not(:disabled),
+.ht-back-button:active:not(:disabled),
+.ht-appointment-record-activate-button:active:not(:disabled),
+.ht-appointment-record-view-button:active:not(:disabled),
+.patient-dashboard-view-button:active:not(:disabled),
+.patient-dashboard-shell .patient-view-button:active:not(:disabled) {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 1px 3px rgba(8, 77, 61, 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ht-button-mint,
+    .ht-create-account-button,
+    .ht-portal-action-mint-button,
+    .ht-account-confirm-submit,
+    .ht-account-confirm-cancel,
+    .ht-healthworker-recent-patients .ht-link-button,
+    .ht-back-button,
+    .ht-appointment-record-activate-button,
+    .ht-appointment-record-view-button,
+    .patient-dashboard-view-button,
+    .patient-dashboard-shell .patient-view-button {
+        transition: none;
+    }
+
+    .ht-button-mint:hover:not(:disabled),
+    .ht-create-account-button:hover:not(:disabled),
+    .ht-portal-action-mint-button:hover:not(:disabled),
+    .ht-account-confirm-submit:hover:not(:disabled),
+    .ht-account-confirm-cancel:hover:not(:disabled),
+    .ht-healthworker-recent-patients .ht-link-button:hover:not(:disabled),
+    .ht-back-button:hover:not(:disabled),
+    .ht-appointment-record-activate-button:hover:not(:disabled),
+    .ht-appointment-record-view-button:hover:not(:disabled),
+    .patient-dashboard-view-button:hover:not(:disabled),
+    .patient-dashboard-shell .patient-view-button:hover:not(:disabled),
+    .ht-button-mint:active:not(:disabled),
+    .ht-create-account-button:active:not(:disabled),
+    .ht-portal-action-mint-button:active:not(:disabled),
+    .ht-account-confirm-submit:active:not(:disabled),
+    .ht-account-confirm-cancel:active:not(:disabled),
+    .ht-healthworker-recent-patients .ht-link-button:active:not(:disabled),
+    .ht-back-button:active:not(:disabled),
+    .ht-appointment-record-activate-button:active:not(:disabled),
+    .ht-appointment-record-view-button:active:not(:disabled),
+    .patient-dashboard-view-button:active:not(:disabled),
+    .patient-dashboard-shell .patient-view-button:active:not(:disabled) {
+        transform: none;
+        box-shadow: none;
+    }
+}
+.ht-appointment-no-records,
+.ht-appointment-restricted-exit {
+    transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+.ht-appointment-no-records:hover:not(:disabled),
+.ht-appointment-restricted-exit:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(8, 77, 61, 0.18);
+}
+.ht-appointment-no-records:active:not(:disabled),
+.ht-appointment-restricted-exit:active:not(:disabled) {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 1px 3px rgba(8, 77, 61, 0.16);
+}
+@media (prefers-reduced-motion: reduce) {
+    .ht-appointment-no-records,
+    .ht-appointment-restricted-exit {
+        transition: none;
+    }
+    .ht-appointment-no-records:hover:not(:disabled),
+    .ht-appointment-no-records:active:not(:disabled),
+    .ht-appointment-restricted-exit:hover:not(:disabled),
+    .ht-appointment-restricted-exit:active:not(:disabled) {
+        transform: none;
+        box-shadow: none;
+    }
+}
+.ht-appointment-no-records { min-height: 42px; padding: 9px 12px; border: 1px solid #b2453e; border-radius: 8px; background: #f0e7e5; color: #b00000; font: inherit; font-size: 14px; font-weight: 700; }
 .ht-appointment-compact-notes { grid-column: 1; grid-row: 3; max-height: 3.4em; overflow-y: auto; margin: 0; color: #000; font-size: 16px; line-height: 1.35; white-space: pre-wrap; }
 .ht-recording-form { grid-column: 1 / -1; min-width: 0; margin: 0; }
 .ht-recording-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding: 18px; margin-top: 16px; border: 1px solid #c8dfd0; border-radius: 10px; background: #edf7f0; }

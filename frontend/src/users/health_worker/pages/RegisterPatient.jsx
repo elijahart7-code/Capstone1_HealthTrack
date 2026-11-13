@@ -141,7 +141,7 @@ export function RegisterPatient({ loadData, onRegistered }) {
   return (
     <div className="grid gap-4 ht-healthworker-register-page">
       <PageHeader title="Register Patient" subtitle="Add a new patient to the Barangay Health Center of Mambog I.">
-        <button onClick={() => setSearchParams({ page: "patients" })} className="ht-button ht-button-strong-green">
+        <button onClick={() => setSearchParams({ page: "patients" })} className="ht-button ht-button-mint">
           Back to patients
         </button>
       </PageHeader>
@@ -398,11 +398,11 @@ export function RegisterPatient({ loadData, onRegistered }) {
           </div>
         </div>
 
-        <div className="ht-form-actions">
-          <button type="submit" className="ht-button" disabled={saving}>
+        <div className="ht-form-actions ht-register-form-actions">
+          <button type="submit" className="ht-button ht-button-mint" disabled={saving}>
             {saving ? "Saving..." : "Register Patient"}
           </button>
-          <button type="button" onClick={() => setSearchParams({ page: "patients" })} className="ht-button ht-button-muted">
+          <button type="button" onClick={() => setSearchParams({ page: "patients" })} className="ht-button ht-button-mint">
             Cancel
           </button>
         </div>

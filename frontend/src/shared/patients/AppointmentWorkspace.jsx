@@ -27,6 +27,8 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
   const [active, setActive] = useState(null);
   const [recordExpanded, setRecordExpanded] = useState(false);
   const [recordsRestrictedOpen, setRecordsRestrictedOpen] = useState(false);
+  const [isClosingRecordsRestricted, setIsClosingRecordsRestricted] = useState(false);
+  const [activationRestrictedOpen, setActivationRestrictedOpen] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [drafts, setDrafts] = useState({});
   const [saving, setSaving] = useState(false);
@@ -35,6 +37,8 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
   const [error, setError] = useState("");
   const [appointmentToRemove, setAppointmentToRemove] = useState(null);
   const [removeError, setRemoveError] = useState("");
+  const recordsRestrictedCloseTimer = useRef(null);
+  useEffect(() => () => window.clearTimeout(recordsRestrictedCloseTimer.current), []);
   useEffect(() => { if (params.get("appointmentId")) setSelected(params.get("appointmentId")); }, [params]);
   const appointment = appointments.find(a => a.appointment_id === selected);
   const appointmentStatus = appointment?.status === "pending" ? "confirmed" : appointment?.status;
@@ -57,6 +61,20 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
   function viewRecords(a) {
     select(a);
     setRecordExpanded(true);
+  }
+  function openRecordsRestricted() {
+    window.clearTimeout(recordsRestrictedCloseTimer.current);
+    setIsClosingRecordsRestricted(false);
+    setRecordsRestrictedOpen(true);
+  }
+  function closeRecordsRestricted() {
+    if (isClosingRecordsRestricted) return;
+    setIsClosingRecordsRestricted(true);
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    recordsRestrictedCloseTimer.current = window.setTimeout(() => {
+      setRecordsRestrictedOpen(false);
+      setIsClosingRecordsRestricted(false);
+    }, reduceMotion ? 0 : 220);
   }
   async function updateStatus(a, status) {
     setStatusBusy(a.appointment_id); setError("");
@@ -144,12 +162,15 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
           <tbody>{appointments.map(a => {
             const isActive = active === a.appointment_id && !["completed", "cancelled"].includes(a.status);
             const status = a.status === "pending" ? "confirmed" : a.status;
+            const statusClass = role === "health_worker"
+              ? `ht-appointment-record-status ht-appointment-record-status-${status}`
+              : `ht-appointment-status ht-appointment-status-${status}`;
             return <tr key={a.appointment_id} className={isActive ? "ht-appointment-row-recording" : selected === a.appointment_id ? "ht-appointment-row-selected" : ""}>
               <Td><button className="ht-link-button" aria-pressed={selected === a.appointment_id} onClick={() => select(a)}><AppointmentDate appointment={a} /></button></Td>
               <Td><button type="button" className="ht-appointment-reason-select" aria-pressed={selected === a.appointment_id} onClick={() => select(a)}>{a.reason}</button></Td>
               <Td>{role === "admin" && status !== "completed" ? <Select aria-label={`Appointment status for ${new Date(a.scheduled_at).toLocaleString()}`} value={status} disabled={statusBusy !== null} className={`ht-status-select ht-status-select-${status} ht-appointment-status`} onChange={e => updateStatus(a, e.target.value)}>
                 {STATUSES.map(status => <option key={status} value={status}>{status.charAt(0).toUpperCase() + status.slice(1)}</option>)}
-              </Select> : <span className={`ht-appointment-status ht-appointment-status-${status}`}>{status.charAt(0).toUpperCase() + status.slice(1)}</span>}</Td>
+              </Select> : <span className={statusClass}>{status.charAt(0).toUpperCase() + status.slice(1)}</span>}</Td>
               {role === "health_worker" ? (
                 <Td><span className="ht-appointment-record-restricted">Records Restricted</span></Td>
               ) : role === "admin" ? (
@@ -200,7 +221,7 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
               aria-expanded={role === "admin" ? recordExpanded : undefined}
               onClick={() => {
                 if (role === "health_worker") {
-                  setRecordsRestrictedOpen(true);
+                  openRecordsRestricted();
                   return;
                 }
                 setRecordExpanded(expanded => !expanded);
@@ -208,10 +229,19 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
             >
               <CheckCircle2 size={14} />{recordExpanded ? "Hide Record" : "View Record"}
             </button>
-          ) : appointmentStatus === "cancelled" && role === "admin" ? (
-            <button type="button" className="ht-appointment-no-records" disabled>No Record</button>
+          ) : appointmentStatus === "cancelled" ? (
+            <button
+              type="button"
+              className="ht-appointment-no-records"
+              disabled={role !== "health_worker"}
+              onClick={openRecordsRestricted}
+            >
+              No Record
+            </button>
           ) : role === "admin" ? (
             <button type="button" className="ht-appointment-record-activate-button" onClick={() => activate(appointment)}>Activate</button>
+          ) : role === "health_worker" ? (
+            <button type="button" className="ht-appointment-record-activate-button" onClick={() => setActivationRestrictedOpen(true)}>Activate</button>
           ) : null}
         </div>
       {showClinicalRecords && <form onSubmit={finishRecording} className="ht-recording-form">
@@ -265,22 +295,44 @@ export function AppointmentWorkspace({ patientId, appointments, role, onSaved })
     </div>}
     {recordsRestrictedOpen && role === "health_worker" && (
       <div
+        className={`ht-confirm-backdrop ht-archive-confirm-backdrop ${isClosingRecordsRestricted ? "is-closing" : ""}`}
+        onMouseDown={event => {
+          if (event.target === event.currentTarget) closeRecordsRestricted();
+        }}
+      >
+        <section
+          className={`ht-confirm-dialog ht-archive-confirm-dialog ${isClosingRecordsRestricted ? "is-closing" : ""}`}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="records-restricted-title"
+        >
+          <p id="records-restricted-title" className="ht-confirm-message">Patient Records are Restricted!</p>
+          <div className="ht-confirm-actions ht-archive-confirm-actions">
+            <button type="button" className="ht-confirm-submit ht-appointment-restricted-exit" onClick={closeRecordsRestricted}>
+              Exit
+            </button>
+          </div>
+        </section>
+      </div>
+    )}
+    {activationRestrictedOpen && role === "health_worker" && (
+      <div
         className="ht-confirm-backdrop ht-archive-confirm-backdrop"
         onMouseDown={event => {
-          if (event.target === event.currentTarget) setRecordsRestrictedOpen(false);
+          if (event.target === event.currentTarget) setActivationRestrictedOpen(false);
         }}
       >
         <section
           className="ht-confirm-dialog ht-archive-confirm-dialog"
           role="dialog"
           aria-modal="true"
-          aria-labelledby="records-restricted-title"
+          aria-labelledby="activation-restricted-title"
         >
-          <h2 id="records-restricted-title">Records Restricted</h2>
-          <p className="ht-confirm-message">Health Workers cannot access patient's medical records due to some valid reasons. Thank you!</p>
+          <h2 id="activation-restricted-title">Cannot Activate</h2>
+          <p className="ht-confirm-message">Only the midwife can perform the health assessment.</p>
           <div className="ht-confirm-actions ht-archive-confirm-actions">
-            <button type="button" className="ht-confirm-submit" onClick={() => setRecordsRestrictedOpen(false)}>
-              Exit
+            <button type="button" className="ht-confirm-submit" onClick={() => setActivationRestrictedOpen(false)}>
+              Okay
             </button>
           </div>
         </section>
