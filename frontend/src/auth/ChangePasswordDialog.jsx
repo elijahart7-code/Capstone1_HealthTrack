@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { KeyRound } from "lucide-react";
+import { Eye, EyeOff, KeyRound } from "lucide-react";
 import { api } from "../lib/axios";
 
 // Shared "Change my password" dialog for all three portals. The session JWT
@@ -22,6 +22,7 @@ export function ChangePasswordDialog({ onClose }) {
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [visiblePasswords, setVisiblePasswords] = useState({ current: false, next: false, confirm: false });
   const [error, setError] = useState(null);
   const [done, setDone] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -67,15 +68,30 @@ export function ChangePasswordDialog({ onClose }) {
         {done && <div role="status" className="ht-login-alert ht-login-alert-success">{done}</div>}
         <label className="ht-field">
           <span>Current Password</span>
-          <input className="ht-input" type="password" value={current} onChange={(e) => setCurrent(e.target.value)} autoComplete="current-password" />
+          <div className="ht-change-password-input-wrap">
+            <input className="ht-input ht-password-input" type={visiblePasswords.current ? "text" : "password"} value={current} onChange={(e) => setCurrent(e.target.value)} autoComplete="current-password" />
+            <button type="button" className="ht-password-toggle" aria-label={visiblePasswords.current ? "Hide current password" : "Show current password"} aria-pressed={visiblePasswords.current} onClick={() => setVisiblePasswords(value => ({ ...value, current: !value.current }))}>
+              {visiblePasswords.current ? <EyeOff size={20} strokeWidth={1.8} /> : <Eye size={20} strokeWidth={1.8} />}
+            </button>
+          </div>
         </label>
         <label className="ht-field">
           <span>New Password</span>
-          <input className="ht-input" type="password" value={next} onChange={(e) => setNext(e.target.value)} autoComplete="new-password" />
+          <div className="ht-change-password-input-wrap">
+            <input className="ht-input ht-password-input" type={visiblePasswords.next ? "text" : "password"} value={next} onChange={(e) => setNext(e.target.value)} autoComplete="new-password" />
+            <button type="button" className="ht-password-toggle" aria-label={visiblePasswords.next ? "Hide new password" : "Show new password"} aria-pressed={visiblePasswords.next} onClick={() => setVisiblePasswords(value => ({ ...value, next: !value.next }))}>
+              {visiblePasswords.next ? <EyeOff size={20} strokeWidth={1.8} /> : <Eye size={20} strokeWidth={1.8} />}
+            </button>
+          </div>
         </label>
         <label className="ht-field">
           <span>Confirm New Password</span>
-          <input className="ht-input" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" />
+          <div className="ht-change-password-input-wrap">
+            <input className="ht-input ht-password-input" type={visiblePasswords.confirm ? "text" : "password"} value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" />
+            <button type="button" className="ht-password-toggle" aria-label={visiblePasswords.confirm ? "Hide confirmation password" : "Show confirmation password"} aria-pressed={visiblePasswords.confirm} onClick={() => setVisiblePasswords(value => ({ ...value, confirm: !value.confirm }))}>
+              {visiblePasswords.confirm ? <EyeOff size={20} strokeWidth={1.8} /> : <Eye size={20} strokeWidth={1.8} />}
+            </button>
+          </div>
         </label>
         <div className="ht-confirm-actions">
           <button type="submit" className="ht-button ht-auth-submit" disabled={loading || !current || !next || !confirm}>

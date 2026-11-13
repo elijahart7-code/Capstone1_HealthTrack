@@ -25,7 +25,7 @@ export function Appointments({ appointments, loadData }) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState(() => {
     const requestedStatus = searchParams.get("status");
-    return ["confirmed", "cancelled", "completed"].includes(requestedStatus) ? requestedStatus : "all";
+    return ["upcoming", "confirmed", "cancelled", "completed"].includes(requestedStatus) ? requestedStatus : "upcoming";
   });
   const [page, setPage] = useState(1);
   const pageSize = 10;
@@ -34,7 +34,13 @@ export function Appointments({ appointments, loadData }) {
     const term = search.trim().toLowerCase();
 
     return appointments
-      .filter((appointment) => statusFilter === "all" || appointment.status === statusFilter)
+      .filter((appointment) => {
+        if (statusFilter === "all") return true;
+        if (statusFilter === "upcoming") {
+          return appointment.status === "confirmed" && new Date(appointment.scheduled_at).getTime() > Date.now();
+        }
+        return appointment.status === statusFilter;
+      })
       .filter((appointment) => {
         const patientName = getPatientName(appointment).toLowerCase();
         return !term || patientName.includes(term);
@@ -99,6 +105,7 @@ export function Appointments({ appointments, loadData }) {
               className="ht-sort-select"
             >
               <option value="all">All</option>
+              <option value="upcoming">Upcoming</option>
               <option value="cancelled">Cancelled</option>
               <option value="confirmed">Confirmed</option>
               <option value="completed">Completed</option>

@@ -2,8 +2,9 @@ import cors from "cors";
 import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { connectNeon } from "./config/db.js";
+import { connectNeon, sql } from "./config/db.js";
 import { ENV } from "./config/env.js";
+import { cancelOverdueConfirmedAppointments } from "./services/appointmentScheduler.js";
 import { authMiddleware, requireRole } from "./middlewares/auth.middleware.js";
 import { createSiteGate, createSiteRoutes } from "./middlewares/siteGate.middleware.js";
 
@@ -78,7 +79,30 @@ app.get("/{*splat}", (_req, res) => {
 });
 
 connectNeon()
-  .then(() => {
+  .then(async () => {
+    if (portal === "admin") {
+      let cancellationRunning = false;
+      const cancelOverdueAppointments = async () => {
+        if (cancellationRunning) return;
+        cancellationRunning = true;
+        try {
+          const cancelled = await cancelOverdueConfirmedAppointments(sql);
+          if (cancelled.length) {
+            console.info(`[appointments] Automatically cancelled ${cancelled.length} overdue confirmed appointment(s).`);
+          }
+        } catch (error) {
+          console.error("[appointments] Could not automatically cancel overdue appointments:", error);
+        } finally {
+          cancellationRunning = false;
+        }
+      };
+      await cancelOverdueAppointments();
+      const appointmentCancellationTimer = setInterval(() => {
+        void cancelOverdueAppointments();
+      }, 60_000);
+      appointmentCancellationTimer.unref();
+    }
+
     app.listen(ENV.PORT, ENV.NODE_ENV === "production" ? "0.0.0.0" : "127.0.0.1", () => {
       console.log(
         `[server] HealthTrack ${portal} API listening on port ${ENV.PORT}`

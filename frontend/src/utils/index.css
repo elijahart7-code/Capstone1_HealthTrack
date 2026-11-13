@@ -3243,6 +3243,10 @@ Reusable surfaces, panel headings, metrics, and section icons.
         padding-right: 2.7rem !important;
     }
 
+    .ht-change-password-input-wrap {
+        position: relative;
+    }
+
     .ht-password-toggle {
         position: absolute;
         right: 0.7rem;
@@ -11020,9 +11024,53 @@ body:has(.patient-dashboard-shell) .patient-welcome-simple p {
 .ht-export-dialog { display: flex; flex-direction: column; gap: 6px; max-height: 92vh; overflow: auto; padding: 22px 26px; }
 .ht-export-dialog > h2 { margin: 0 0 2px; }
 .ht-export-dialog > p { margin: 0 0 8px; }
+.ht-export-dialog > .ht-export-description { text-align: center; }
 .ht-export-dialog .ht-field { display: grid; gap: 4px; }
-.ht-export-dialog .ht-confirm-actions { margin-top: 14px; }
+.ht-export-dialog .ht-confirm-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+}
+.ht-export-dialog .ht-confirm-actions > button {
+    box-sizing: border-box;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 44px;
+    height: auto;
+    width: auto;
+    padding: 0.6rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+}
+.ht-export-dialog .ht-confirm-actions > .ht-export-cancel-button {
+    border-color: #b83b3b;
+    background: #b83b3b;
+    color: #fff;
+}
+.ht-export-dialog .ht-confirm-actions > .ht-export-cancel-button:hover:not(:disabled) {
+    border-color: #963232;
+    background: #963232;
+}
 @media (min-width: 460px) {
   .ht-export-sections { grid-template-columns: 1fr 1fr; column-gap: 18px; }
   .ht-export-sections > legend { grid-column: 1 / -1; }
+}
+
+.ht-change-password-dialog .ht-confirm-actions > .ht-change-password-close {
+  border-color: #b83b3b !important;
+  background: #b83b3b !important;
+  color: #fff !important;
+}
+.ht-change-password-dialog .ht-confirm-actions > .ht-change-password-close:hover:not(:disabled) {
+  border-color: #963232 !important;
+  background: #963232 !important;
+}
+.ht-logout-confirm-actions > .ht-logout-confirm-no {
+  border-color: #c62828 !important;
+  background: #c62828 !important;
+  color: #fff !important;
+}
+.ht-logout-confirm-actions > .ht-logout-confirm-no:hover:not(:disabled) {
+  border-color: #a61f1f !important;
+  background: #a61f1f !important;
 }

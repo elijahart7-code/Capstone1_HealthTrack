@@ -111,7 +111,7 @@ export function ExportDialog({ onClose, conditions = [] }) {
       <div className="ht-confirm-backdrop" role="dialog" aria-label="Export PDF options">
         <div className="ht-confirm-dialog ht-export-dialog">
           <h2>Export PDF</h2>
-          <p className="ht-muted">The PDF prints exactly what is configured here.</p>
+          <p className="ht-muted ht-export-description">The PDF prints exactly what is configured here.</p>
           {error && <div role="alert" className="ht-login-alert ht-login-alert-error">{error}</div>}
           <label className="ht-field">
             <span>Report type</span>
@@ -166,10 +166,10 @@ export function ExportDialog({ onClose, conditions = [] }) {
             </>
           )}
           <div className="ht-confirm-actions">
-            <button type="button" className="ht-button" onClick={onClose}>Cancel</button>
             <button type="button" className="ht-button ht-auth-submit" onClick={handleExport} disabled={working}>
               {working ? "Preparing…" : "Export PDF"}
             </button>
+            <button type="button" className="ht-button ht-export-cancel-button" onClick={onClose}>Cancel</button>
           </div>
         </div>
       </div>
